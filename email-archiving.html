@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | Email Archiving &amp; E-Discovery using NLP and LLM Summarization</title>
+  <meta name="description" content="Tayler Erbe, Lead Data Scientist, built a full end-to-end email archiving and e-discovery pipeline for historical institutional archives using PII detection, LDA topic modeling, and LLM summarization via Llama 3.2 and Presidio." />
+  <meta name="keywords" content="Tayler Erbe, data scientist, email archiving, e-discovery, NLP, LLM, presidio, topic modeling, LDA, Llama, PII detection, applied AI, Python" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/email-archiving.html" />
+  <meta property="og:title" content="Tayler Erbe | Email Archiving &amp; E-Discovery NLP Pipeline" />
+  <meta property="og:description" content="End-to-end NLP pipeline for institutional email archiving: PII extraction, LDA topic modeling, LLM anonymization, and e-discovery, built by Tayler Erbe." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://terbe2022.github.io/tayler-portfolio/email-archiving.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tayler Erbe | Email Archiving E-Discovery Pipeline" />
+  <meta name="twitter:description" content="NLP and LLM pipeline for anonymizing and making searchable a 20-year institutional email archive, built by Tayler Erbe." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Email Archiving and E-Discovery using NLP and LLM Summarization",
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://terbe2022.github.io/tayler-portfolio/" },
+    "description": "End-to-end NLP pipeline for institutional email archiving: PII extraction with Presidio, LDA topic modeling, and LLM-based anonymization via Llama 3.2, built by Tayler Erbe.",
+    "keywords": "Tayler Erbe, email archiving, e-discovery, NLP, LLM, Presidio, LDA, topic modeling, applied AI"
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-back:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      padding: 9rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -30%; right: -5%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1.0; color: var(--white);
+      letter-spacing: 0.01em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; }
+    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+
+    /* STAT STRIP */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-item { background: var(--surface); padding: 1.75rem 2rem; }
+    .stat-item:hover { background: var(--surface2); }
+    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* SECTIONS */
+    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* PROSE */
+    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p strong { color: var(--text); font-weight: 500; }
+
+    /* TWO / THREE COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+
+    /* CALLOUT */
+    .callout {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
+      margin-top: 1.5rem;
+    }
+    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+    /* PIPELINE */
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.5rem; padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .pipeline-step:last-child { border-bottom: none; }
+    .step-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem; }
+    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .step-body strong { color: var(--text); font-weight: 500; }
+
+    /* TAG CHIPS */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+
+    /* INSIGHT BOXES */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+
+    /* VIZ / TAKEAWAY */
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      padding: 1.25rem 1.5rem; margin-top: 1rem; overflow-x: auto;
+    }
+    .code-block pre { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); line-height: 1.7; white-space: pre; }
+    .code-block .kw { color: var(--accent2); }
+    .code-block .str { color: var(--accent3); }
+    .code-block .cm { color: var(--muted2); }
+    .code-block .fn { color: var(--accent); }
+
+    /* PII DEMO */
+    .pii-demo { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; margin-top: 1rem; }
+    .pii-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.6rem; }
+    .pii-text { font-family: 'DM Mono', monospace; font-size: 0.78rem; line-height: 1.8; color: var(--muted); }
+    .pii-text .redacted { color: var(--accent); background: rgba(91,200,220,0.08); padding: 0 0.2rem; }
+    .pii-text .original { color: var(--accent3); }
+    .pii-arrow { color: var(--muted2); font-family: 'DM Mono', monospace; font-size: 0.72rem; padding: 0.5rem 0; text-align: center; }
+
+    /* METHOD TABLE */
+    .method-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+    .method-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .method-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.83rem; color: var(--muted); }
+    .method-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); }
+    .method-table td:last-child { color: var(--text); font-size: 0.78rem; }
+    .method-table tr:hover td { background: var(--surface2); }
+
+    /* PERFORMANCE TABLE */
+    .perf-table { width: 100%; border-collapse: collapse; }
+    .perf-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.65rem 1rem; border-bottom: 2px solid var(--border); text-align: left; background: var(--surface2); }
+    .perf-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.82rem; color: var(--muted); }
+    .perf-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text); }
+    .perf-table .warn { color: var(--accent3); font-family: 'DM Mono', monospace; }
+    .perf-table .good { color: var(--accent); font-family: 'DM Mono', monospace; }
+
+
+    /* CHART SECTION */
+    .chart-section { margin-top: 3rem; }
+    .chart-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem 1.5rem 1.5rem;
+      margin-top: 1.5rem;
+      overflow-x: auto;
+    }
+    .chart-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 0.4rem;
+    }
+    .chart-subtitle {
+      font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.5;
+    }
+    .chart-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.06em;
+      color: var(--muted2); margin-top: 0.75rem; text-align: right;
+    }
+
+    /* BACK LINK */
+    .back-section { padding: 3rem; text-align: center; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); padding: 0.85rem 2rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 3rem 1.5rem; }
+      .stat-strip { grid-template-columns: 1fr 1fr; }
+      .two-col, .three-col, .insight-grid { grid-template-columns: 1fr; }
+      .back-section { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <a href="index.html" class="nav-back">&#8592; Back to Portfolio</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe · Project Case Study · University of Illinois System · December 2024 to Present</div>
+    <h1>Email Archiving<br>&amp; <span>E-Discovery</span><br>NLP Pipeline</h1>
+    <p class="hero-desc">An end-to-end applied AI pipeline for processing a 20-year institutional email archive, converting raw legacy PST and EML formats into research-ready, fully anonymized, and semantically searchable records using NLP, PII detection, topic modeling, and locally deployed LLM summarization. Initiated through a direct referral from institutional leadership and delivered as a working prototype with full scalability analysis.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Institution</div>
+        <div class="meta-value">University of Illinois System, RIMS &amp; Decision Support</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Stakeholders</div>
+        <div class="meta-value">University Archivist, UIUC Library · Associate Director, Information Governance (RIMS) · Dimuthu Tilakaratne, CDAO, University of Illinois System</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-value">Prototype Delivered · Scaling Analysis Complete · Production Path Defined</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Role</div>
+        <div class="meta-value">Lead Data Scientist · Full Pipeline Design &amp; Implementation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip" style="grid-template-columns: repeat(5, 1fr);">
+    <div class="stat-item">
+      <div class="stat-big">44,677</div>
+      <div class="stat-desc">EML Files Parsed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">79,676</div>
+      <div class="stat-desc">Message Segments Extracted</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">20+</div>
+      <div class="stat-desc">Years of Archive Processed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">5,810</div>
+      <div class="stat-desc">Records Through Full PII Pipeline</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">5</div>
+      <div class="stat-desc">PII Entity Types Anonymized</div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">Project Overview</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Universities and large institutions accumulate decades of digital correspondence from faculty, staff, and administrators who retire, leave, or pass away. This material often contains historically significant records, operational decisions, project documentation, and institutional knowledge, but sits entirely inaccessible because it arrives in bulk, in legacy formats, with no metadata, and cannot be manually reviewed at scale.</p>
+        <p>This project was initiated in December 2024 when the Associate Director for Information Governance at RIMS reached out directly, on recommendation from a senior colleague who identified the right person for the work. RIMS had been working with email archiving and e-discovery tools for several years and had developed a word frequency-based redaction strategy. The outreach was an explicit request for advanced data science and applied AI expertise to push that work further. The project was formally scoped in an April 2025 working meeting attended by the University Archivist, the Associate Director for Information Governance, and Dimuthu Tilakaratne, who now serves as Chief Data and Analytics Officer (CDAO) for the University of Illinois System. That meeting concluded with Tayler being tasked with designing and testing the full automated archival pipeline.</p>
+        <p>The resulting pipeline takes raw <strong>.pst legacy archive files</strong>, converts them to structured data, extracts and cleans individual messages from email threads, detects and replaces all personally identifiable information using named entity recognition, and generates fully anonymized plain-language summaries of each message using a locally deployed large language model. The output is a dataset that can be made available to researchers without any manual review step.</p>
+        <p>The pipeline was designed from first principles with privacy as a non-negotiable constraint: no data leaves the institution's environment at any stage, and the two-layer anonymization approach ensures both structured PII (names, phone numbers, emails) and unstructured contextual sensitivity are addressed.</p>
+        <blockquote style="border-left:3px solid var(--accent); padding-left:1.25rem; margin:1.5rem 0 0;">
+          <p style="font-style:italic; color:var(--text); font-size:0.92rem; line-height:1.7;">"Tayler also found novel solutions to these challenges by researching and identifying Python libraries and large language models that can be quickly leveraged. After meeting with Tayler, each of them was excited and inspired by her thoughts and engaged with her to develop solutions iteratively."</p>
+          <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-top:0.6rem;">Dimuthu Tilakaratne, CDAO, University of Illinois System · Performance Appraisal 2024 to 2025</p>
+        </blockquote>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-label">Institutional Problem</div>
+          <p>Digital archives from former staff arrive in bulk, often decades old, in mixed formats, with no metadata, and potentially containing sensitive personal information. Manual processing is not scalable. Content typically sits untouched for years, making historically significant institutional records completely inaccessible to researchers. This project was scoped to solve exactly that problem at institutional scale.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--accent2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--accent2);">Two-Layer Privacy Architecture</div>
+          <p><strong style="color:var(--text)">Layer 1, Presidio NER:</strong> Microsoft's presidio-analyzer detects and replaces structured PII (names, phone numbers, email addresses, dates, SSNs) with numbered placeholders like &lt;PERSON1&gt;, &lt;PHONE1&gt;.<br><br><strong style="color:var(--text)">Layer 2, LLM Rewriting:</strong> Llama 3.2, running locally via Ollama, rewrites each message as a fully anonymized plain-language summary, handling contextual and unstructured sensitive content that rule-based systems miss.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--muted2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--muted);">Privacy-First Design</div>
+          <p>The entire pipeline runs on local infrastructure. No email content, no PII, and no archive data is sent to any external API or cloud service at any stage of processing. The Llama 3.2 model is deployed and queried entirely on-device via Ollama.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--accent3); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--accent3);">Performance Recognition</div>
+          <p>This project contributed to an <strong style="color:var(--text);">Extraordinary / Distinguished</strong> performance rating from Dimuthu Tilakaratne (now CDAO, University of Illinois System) in 2023 to 2024, and a subsequent <strong style="color:var(--text);">AITS Excellence Award finalist</strong> nomination. The work was cited specifically for bringing novel AI solutions to complex institutional challenges and inspiring stakeholder engagement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA PIPELINE -->
+  <section id="pipeline">
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">Data Pipeline &amp; Ingestion</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>The archive originated as a set of legacy <strong>.pst (Personal Storage Table)</strong> files (Microsoft Outlook's proprietary binary archive format). These were first converted to individual <strong>.eml files</strong> using an external conversion tool, preserving the original Outlook folder hierarchy in the resulting directory structure. A single Python notebook then recursively walked the directory tree and extracted the plain-text body from every .eml file.</p>
+        <p>The key design decision at ingestion was to preserve the <strong>full absolute file path</strong> for every message. The folder names in the original archive carried meaningful organizational metadata (project names, department labels, topic categories) that would have been lost if only the filename was retained. This path is later split into individual <code style="color:var(--accent2); font-size:0.82rem;">Folder_N</code> columns in the downstream pipeline.</p>
+        <p>The ingestion script handled MIME multipart emails, single-part plain text emails, charset encoding variations across 20+ years of archive content, and attachment detection, all with graceful error handling that allowed processing to continue past any individual file failures.</p>
+      </div>
+      <div>
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <div class="step-title">PST → EML Conversion</div>
+              <div class="step-body">Legacy .pst binary archive files converted to individual .eml format using readpst, preserving the full original Outlook folder hierarchy as a directory structure. <strong>44,677 individual .eml files</strong> produced across the full archive.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <div class="step-title">Recursive Directory Walk &amp; Text Extraction</div>
+              <div class="step-body">Python os.walk() traversal of the full directory tree. For each .eml file: MIME structure parsed with Python's email library, text/plain parts extracted (multipart and single-part), character encoding read from headers with UTF-8 fallback. All results collected into a flat CSV with file_name, file_path, and email_text columns.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <div class="step-title">Folder Hierarchy Extraction</div>
+              <div class="step-body">file_path split on backslash separator, creating Folder_1 through Folder_N columns representing each level of the original PST hierarchy. Folder names like <strong>APP- Finance- Budget</strong>, <strong>Admin- Safety</strong>, and <strong>APP- Sys- Water Treatment</strong> preserved as queryable structured metadata.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">04</div>
+            <div class="step-content">
+              <div class="step-title">Email Chain Splitting</div>
+              <div class="step-body">Each .eml file may contain an entire conversation thread (reply-to-reply chains). Messages split on the <code style="color:var(--accent2); font-size:0.82rem;">-----Original Message-----</code> delimiter and exploded to one row per message segment using pandas .explode(). <strong>44,677 files → 79,676 individual message rows.</strong></div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">05</div>
+            <div class="step-content">
+              <div class="step-title">Header Parsing</div>
+              <div class="step-body">Structured metadata extracted from each message's header block using a multi-field regex pattern: From, Sent, To, Cc (optional), Subject, and Importance (optional). Header block removed from body; clean message body stored in email_text_content for downstream NLP.</div>
+            </div>
+          </div>
+        </div>
+        <div class="tag-row" style="margin-top: 1.25rem;">
+          <span class="chip chip-accent">Python</span>
+          <span class="chip chip-accent">email (stdlib)</span>
+          <span class="chip chip-accent">pandas</span>
+          <span class="chip">os.walk</span>
+          <span class="chip">MIME</span>
+          <span class="chip">regex</span>
+          <span class="chip">UTF-8 / charset handling</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PII DETECTION -->
+  <section id="pii">
+    <div class="section-header">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">PII Detection &amp; Anonymization</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2.5rem;">
+      <p>Privacy protection was the most technically demanding aspect of the project. The archive contained 20+ years of real personal correspondence, names, phone numbers, email addresses, dates, and potentially Social Security Numbers appear throughout. A two-stage anonymization architecture was designed: a <strong>structured PII extraction pass</strong> using Microsoft's presidio-analyzer, followed by an <strong>LLM rewriting pass</strong> using Llama 3.2 to handle the residual unstructured contextual sensitivity that rule-based systems cannot address.</p>
+    </div>
+
+    <!-- Presidio section -->
+    <div class="two-col" style="margin-bottom: 3rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">Stage 1, Presidio Analyzer (Microsoft)</div>
+        <p style="font-size:0.88rem; color:var(--muted); line-height:1.65; margin-bottom:1rem;">The core component of the PII extraction stage is Presidio's <code style="color:var(--accent2)">AnalyzerEngine</code>, which scans unstructured text and identifies sensitive entities using a combination of pre-trained NLP models and regex-based pattern matching. Five entity types are mapped to dedicated output columns:</p>
+        <div class="pipeline" style="margin-bottom:1rem;">
+          <div class="pipeline-step">
+            <div class="step-num" style="font-size:1.1rem; color:var(--accent);">→</div>
+            <div class="step-content">
+              <div class="step-title">PERSON → names column</div>
+              <div class="step-body">Personal names detected via spaCy NER model. Replaced with <code style="color:var(--accent2)">&lt;PERSON1&gt;</code>, <code style="color:var(--accent2)">&lt;PERSON2&gt;</code>, etc. The original value is stored in a mapping dictionary so the substitution is fully auditable.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num" style="font-size:1.1rem; color:var(--accent);">→</div>
+            <div class="step-content">
+              <div class="step-title">PHONE_NUMBER → phone_numbers column</div>
+              <div class="step-body">Phone numbers in US and international formats detected. Replaced with numbered placeholders. Multiple redaction modes available: full removal, blackout characters (████), last-4-digit masking (***-***-1234), or SHA-256 hashing for consistent cross-document identity tracking.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num" style="font-size:1.1rem; color:var(--accent);">→</div>
+            <div class="step-content">
+              <div class="step-title">EMAIL_ADDRESS · DATE_TIME · US_SSN</div>
+              <div class="step-body">Email addresses, date/time expressions (including relative terms like "this week", "yesterday"), and Social Security Numbers each stored in dedicated mapping columns. DATE_TIME detection is intentionally aggressive, even relative temporal expressions are flagged and replaced.</div>
+            </div>
+          </div>
+        </div>
+        <div class="viz-takeaway">
+          <strong>Replacement is performed in reverse order by character position</strong> within each message to prevent offset drift, as earlier characters are replaced with longer or shorter placeholder strings, the byte positions of later entities remain accurate.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">PII Replacement, Live Example</div>
+
+        <div class="pii-demo">
+          <div class="pii-label">Before, Raw Email Text</div>
+          <div class="pii-text">
+            Hi all,<br>
+            The document management plan will be ready for <span class="original">Mike's</span> review when<br>
+            he returns on <span class="original">June 16</span>. Inventorying is being done with<br>
+            <span class="original">Tayler Erbe</span> and began <span class="original">yesterday, June 9</span>.<br>
+            Please reach me at <span class="original">ext. 5512</span>.<br><br>
+            Regards, <span class="original">Beth</span>
+          </div>
+        </div>
+        <div class="pii-arrow">↓ presidio_analyzer · AnalyzerEngine · reverse-order replacement</div>
+        <div class="pii-demo">
+          <div class="pii-label">After, Cleaned Text with Placeholders</div>
+          <div class="pii-text">
+            Hi all,<br>
+            The document management plan will be ready for <span class="redacted">&lt;PERSON1&gt;</span>'s review when<br>
+            he returns on <span class="redacted">&lt;DATE_TIME1&gt;</span>. Inventorying is being done with<br>
+            <span class="redacted">&lt;PERSON2&gt;</span> and began <span class="redacted">&lt;DATE_TIME2&gt;</span>.<br>
+            Please reach me at <span class="redacted">&lt;PHONE1&gt;</span>.<br><br>
+           , <span class="redacted">&lt;PERSON3&gt;</span>
+          </div>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <div class="pii-label" style="margin-bottom:0.4rem;">Mapping Dictionaries Stored Per Row</div>
+          <div class="pii-text" style="font-size:0.72rem;">
+            names: {'&lt;PERSON1&gt;': '[Mike]', '&lt;PERSON2&gt;': '[Tayler Erbe]', '&lt;PERSON3&gt;': '[Beth]'}<br>
+            phone_numbers: {'&lt;PHONE1&gt;': '[ext. 5512]'}<br>
+            dates: {'&lt;DATE_TIME1&gt;': '[date]', '&lt;DATE_TIME2&gt;': '[date]'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Five anonymization modes -->
+    <div style="margin-bottom:2.5rem;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1.25rem;">Five Anonymization Modes Implemented &amp; Demonstrated</div>
+      <div class="three-col">
+        <div class="insight-box">
+          <div class="insight-box-title">Placeholder Replacement</div>
+          <p>Entities replaced with typed, numbered tokens. <code style="color:var(--accent2); font-size:0.78rem;">&lt;PERSON&gt;</code>, <code style="color:var(--accent2); font-size:0.78rem;">&lt;DATE_TIME&gt;</code>. Original values stored in mapping dictionaries. Preserves document structure while enabling full auditability.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">Full Redaction</div>
+          <p>Detected entities removed entirely from text, replaced with empty space. Produces the most conservative output. Used when downstream analysis does not require any information about the removed content.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">Blackout Style</div>
+          <p>PII spans replaced with block characters (████) matching the original character length. Preserves document structure visually while making all sensitive content unreadable. Useful for document review workflows.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">Partial Masking</div>
+          <p>Phone numbers masked to show only last 4 digits, <code style="color:var(--accent2); font-size:0.78rem;">***-***-1234</code>. Preserves formatting characters while removing identifying digits. Suitable for audit trails where partial identification is acceptable.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">SHA-256 Hashing</div>
+          <p>PERSON entities converted to irreversible cryptographic hashes. Enables cross-document communication pattern analysis (same person always produces same hash) without exposing any identifiable information.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">Batch Processing with Resume</div>
+          <p>Full dataset processed in batches of 10 rows. Pipeline writes output incrementally, if interrupted, processing resumes from the last completed row. Critical for a dataset of ~80K rows with ~1–2 seconds per row processing time.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance table -->
+    <div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">Presidio Processing Time Estimates</div>
+      <table class="perf-table">
+        <thead>
+          <tr>
+            <th>Batch Time (10 rows)</th>
+            <th>Avg Per Row</th>
+            <th>100,000 Rows</th>
+            <th>1,000,000 Rows</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>10 seconds</td><td>1.0 sec</td><td>~27.8 hrs</td><td>~278 hrs</td><td class="good">Acceptable</td></tr>
+          <tr><td>15 seconds</td><td>1.5 sec</td><td>~41.7 hrs</td><td>~417 hrs</td><td class="good">Acceptable</td></tr>
+          <tr><td>20 seconds</td><td>2.0 sec</td><td>~55.6 hrs</td><td>~556 hrs</td><td class="warn">Optimize</td></tr>
+        </tbody>
+      </table>
+      <div class="viz-takeaway" style="margin-top:0.75rem;">Key optimization: instantiating <code style="color:var(--accent2)">AnalyzerEngine</code> once outside the per-row loop eliminates repeated model loading and reduces per-row time by 40–60%.</div>
+    </div>
+  </section>
+
+  <!-- LLM SUMMARIZATION -->
+  <section id="llm">
+    <div class="section-header">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">LLM Summarization &amp; Stage 2 Anonymization</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Even after Presidio PII extraction, the cleaned text retains content that can be sensitive or identifying in context, references to specific projects, systems, operational incidents, or personal circumstances that are not captured by named-entity patterns. The second anonymization stage uses <strong>Llama 3.2 deployed locally via Ollama</strong> to rewrite each message as a concise, fully de-identified summary.</p>
+        <p>The <code style="color:var(--accent2); font-size:0.85rem;">rewrite_email_summary()</code> function sends each cleaned email to the model with a structured prompt instructing it to replace all specific identifying details with generic terms, personal names become "the writer" or "a contact," specific dates become relative time references, named projects become "a project," and operational details are generalized.</p>
+        <p>Two-stage design is deliberately sequential: the LLM receives text that already has names and phone numbers replaced with <code style="color:var(--accent2);">&lt;PERSON1&gt;</code> placeholders. This reduces the cognitive load on the model (it does not need to detect PII, only summarize) and eliminates the risk of the model failing to redact an edge-case entity that Presidio already caught. Validation testing confirmed that pre-cleaned text with typed placeholders produced more coherent summaries than raw text with names still present, as Llama treated the placeholders as generic role indicators rather than trying to infer intent from names.</p>
+        <p>The summarization pipeline runs with full <strong>resume support</strong>, output is appended to CSV incrementally after each batch of 10 rows, allowing the multi-day process to be interrupted and restarted without data loss.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">LLM Summarization, Example</div>
+        <div class="pii-demo">
+          <div class="pii-label">Input, After Presidio (Placeholders in place)</div>
+          <div class="pii-text" style="font-size:0.75rem;">
+            &lt;PERSON2&gt;,<br>
+            Below is &lt;PERSON1&gt;'s response to my request to meet with them.<br>
+            They referred me to &lt;PERSON3&gt;, but it looks promising so far.<br>
+            Do I need to notify anyone else? &lt;PERSON4&gt;? &lt;PERSON5&gt;?<br>
+           , &lt;PERSON6&gt;
+          </div>
+        </div>
+        <div class="pii-arrow">↓ Llama 3.2 · Ollama · local inference · structured prompt</div>
+        <div class="pii-demo">
+          <div class="pii-label">Output, Anonymized LLM Summary</div>
+          <div class="pii-text" style="font-size:0.75rem;">
+            A meeting with a contact has been scheduled and another<br>
+            individual has been informed of the arrangement. The writer<br>
+            is uncertain whether additional parties need to be notified<br>
+            about the upcoming event.
+          </div>
+        </div>
+        <div class="viz-takeaway" style="margin-top:0.75rem;"><strong>Research-ready output.</strong> The summary communicates the intent and nature of the communication, scheduling coordination, seeking approval, without revealing any participant, date, project, or institutional context.</div>
+
+        <div style="margin-top:1.5rem;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">LLM Processing Time (Observed)</div>
+          <table class="perf-table">
+            <thead><tr><th>Stage</th><th>Time / 10 rows</th><th>Avg / row</th><th>Bottleneck</th></tr></thead>
+            <tbody>
+              <tr><td>Presidio PII</td><td>~10–20 sec</td><td>~1–2 sec</td><td class="good">Acceptable</td></tr>
+              <tr><td>Ollama Summarize</td><td>347.80 sec (observed)</td><td>~34.78 sec</td><td class="warn">CLI reload</td></tr>
+            </tbody>
+          </table>
+          <div class="viz-takeaway" style="margin-top:0.5rem;">The primary bottleneck is the Ollama CLI invocation, the model reloads from disk on each call. Switching to Ollama server mode + REST API eliminates this overhead and projects a <strong>approximately 10x speedup</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOPIC MODELING -->
+  <section id="topics">
+    <div class="section-header">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">Topic Modeling &amp; Content Discovery</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom:2.5rem;">
+      <p>Topic modeling was applied at two stages of the pipeline, first on email subject lines, and second on the LLM-generated summaries, to automatically discover the major content themes present in the archive. LDA (Latent Dirichlet Allocation) surfaces keyword clusters; Llama 3.2 then converts those clusters into human-readable topic labels, making the archive's content map immediately interpretable to archivists and researchers with no NLP background.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">LDA Pipeline</div>
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <div class="step-title">Text Cleaning</div>
+              <div class="step-body">Subject lines (or summaries) lowercased, stripped of digits and punctuation, and filtered to remove English stopwords via NLTK. Cleaned text passed to vectorizer.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <div class="step-title">CountVectorizer, Bag of Words</div>
+              <div class="step-body"><code style="color:var(--accent2); font-size:0.82rem;">max_df=0.9</code> (ignore near-universal terms), <code style="color:var(--accent2); font-size:0.82rem;">min_df=2</code> (ignore rare one-offs). Produces a document-term matrix focused on meaningful mid-frequency vocabulary.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <div class="step-title">Latent Dirichlet Allocation</div>
+              <div class="step-body">LDA fitted on document-term matrix with <code style="color:var(--accent2); font-size:0.82rem;">n_components=5</code> (subject lines) or <code style="color:var(--accent2); font-size:0.82rem;">n_components=10</code> (summaries). Each document assigned to its dominant topic via argmax on the topic probability distribution.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">04</div>
+            <div class="step-content">
+              <div class="step-title">Llama 3.2 Topic Labeling</div>
+              <div class="step-body">Top 10 keywords per topic passed to Llama 3.2 with a prompt requesting a 5-word-or-fewer descriptive title. Converts abstract keyword clusters into plain-language labels that require no domain knowledge to interpret.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">Discovered Topics, Subject Line Analysis</div>
+        <div class="insight-grid" style="margin-top:0;">
+          <div class="insight-box">
+            <div class="insight-box-title">Topic 0</div>
+            <p style="font-size:0.75rem; color:var(--muted2); margin-bottom:0.3rem;">power, plant, project, gas, line, procurement, schedule</p>
+            <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"ABBOTT Power Plant Procurement Project"</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Topic 1</div>
+            <p style="font-size:0.75rem; color:var(--muted2); margin-bottom:0.3rem;">work, order, app, data, system, request, maintenance</p>
+            <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"Work Order &amp; System Management"</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Topic 2</div>
+            <p style="font-size:0.75rem; color:var(--muted2); margin-bottom:0.3rem;">steam, gas, plant, maintenance, controls, tunnel, service</p>
+            <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"Steam Plant Operations &amp; Controls"</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Topic 3</div>
+            <p style="font-size:0.75rem; color:var(--muted2); margin-bottom:0.3rem;">boiler, report, fuel, meeting, oil, gas, bid, plan</p>
+            <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"Energy Contract &amp; Fuel Planning"</p>
+          </div>
+        </div>
+
+
+    <!-- CHART: Subject Topics -->
+    <div class="chart-section">
+      <div class="chart-title">Email Subject Topics Named by Llama 3.2</div>
+      <div class="chart-subtitle">LDA topic distribution across ~79,676 message subject lines, with human-readable labels generated by Llama 3.2. Topic 0 dominates significantly, reflecting the Abbott Power Plant procurement and project management focus of the archive. Topics 1 through 4 each capture roughly 6,000 messages covering operational, engineering, and administrative themes.</div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;background:#0f1318;">
+  <rect x="76.0" y="43.8" width="122.0" height="151.2" fill="#3a8fc4" opacity="0.85"/>
+  <text x="137.0" y="209" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">ABBOTT Power Plant</text>
+  <text x="137.0" y="219" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">Procurement Project</text>
+  <rect x="210.0" y="179.1" width="122.0" height="15.9" fill="#3a8fc4" opacity="0.85"/>
+  <text x="271.0" y="209" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">UIUC IT Project</text>
+  <text x="271.0" y="219" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">Management Best Practices</text>
+  <rect x="344.0" y="177.9" width="122.0" height="17.1" fill="#3a8fc4" opacity="0.85"/>
+  <text x="405.0" y="209" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">Steam Plant Operations</text>
+  <text x="405.0" y="219" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">or Control Systems</text>
+  <rect x="478.0" y="178.2" width="122.0" height="16.8" fill="#3a8fc4" opacity="0.85"/>
+  <text x="539.0" y="209" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">Energy Contract</text>
+  <text x="539.0" y="219" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">Negotiation Strategies</text>
+  <rect x="612.0" y="176.8" width="122.0" height="18.1" fill="#3a8fc4" opacity="0.85"/>
+  <text x="673.0" y="209" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">Boiler Water System</text>
+  <text x="673.0" y="219" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">Notification Outage Response</text>
+  <line x1="70" y1="195.0" x2="740" y2="195.0" stroke="#1e2530" stroke-width="1"/>
+  <text x="65" y="198.0" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">0</text>
+  <line x1="70" y1="167.5" x2="740" y2="167.5" stroke="#1e2530" stroke-width="1"/>
+  <text x="65" y="170.5" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">10K</text>
+  <line x1="70" y1="140.0" x2="740" y2="140.0" stroke="#1e2530" stroke-width="1"/>
+  <text x="65" y="143.0" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">20K</text>
+  <line x1="70" y1="112.5" x2="740" y2="112.5" stroke="#1e2530" stroke-width="1"/>
+  <text x="65" y="115.5" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">30K</text>
+  <line x1="70" y1="85.0" x2="740" y2="85.0" stroke="#1e2530" stroke-width="1"/>
+  <text x="65" y="88.0" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">40K</text>
+  <line x1="70" y1="57.5" x2="740" y2="57.5" stroke="#1e2530" stroke-width="1"/>
+  <text x="65" y="60.5" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">50K</text>
+  <line x1="70" y1="30.0" x2="740" y2="30.0" stroke="#1e2530" stroke-width="1"/>
+  <text x="65" y="33.0" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">60K</text>
+  <text x="12" y="112.5" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#3a4556" letter-spacing="0.04em" transform="rotate(-90,12,112)">NUMBER OF EMAILS</text>
+  <text x="405.0" y="276" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#3a4556" letter-spacing="0.04em">LLAMA-GENERATED TOPIC TITLE</text>
+</svg>
+        <div class="chart-caption">Source: Data_Table_Preparation_Email_Archiving_Version_1.ipynb · number_of_emails_per_subject_matter.png</div>
+      </div>
+    </div>
+
+        <div style="margin-top:2rem;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">Topics from LLM Summaries (10-topic run)</div>
+          <div class="insight-grid" style="margin-top:0;">
+            <div class="insight-box">
+              <div class="insight-box-title">Topic 2</div>
+              <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"OSHA Safety Record Keeping"</p>
+            </div>
+            <div class="insight-box">
+              <div class="insight-box-title">Topic 4</div>
+              <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"Employee Issue Resolution"</p>
+            </div>
+            <div class="insight-box">
+              <div class="insight-box-title">Topic 7</div>
+              <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"Employee Relations &amp; HR"</p>
+            </div>
+            <div class="insight-box">
+              <div class="insight-box-title">Topic 8</div>
+              <p style="color:var(--accent); font-family:'DM Mono',monospace; font-size:0.72rem;">"Probationary Onboarding Process"</p>
+            </div>
+          </div>
+        </div>
+
+    <!-- CHART: Summary Topics -->
+    <div class="chart-section">
+      <div class="chart-title">Email Summary Topics Named by Llama 3.2 (10-Topic Run)</div>
+      <div class="chart-subtitle">LDA topics derived from LLM-generated summaries rather than raw subject lines, revealing deeper thematic structure. The "Sensitive Email Briefing" cluster (418 emails) emerged as the dominant topic on summaries, reflecting how often emails contained contextually sensitive material the LLM generalized into neutral language. HR and compliance themes invisible in subject-line analysis surface clearly here.</div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;background:#0f1318;">
+  <rect x="59.0" y="111.0" width="60.5" height="74.0" fill="#3a8fc4" opacity="0.85"/>
+  <text x="89.2" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Medical Disability</text>
+  <text x="89.2" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Status Updates</text>
+  <rect x="127.5" y="158.3" width="60.5" height="26.7" fill="#3a8fc4" opacity="0.85"/>
+  <text x="157.8" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Plant Operation</text>
+  <text x="157.8" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Management Guidelines</text>
+  <rect x="196.0" y="144.8" width="60.5" height="40.2" fill="#3a8fc4" opacity="0.85"/>
+  <text x="226.2" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">OSHA Record</text>
+  <text x="226.2" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Keeping Requirements</text>
+  <rect x="264.5" y="121.0" width="60.5" height="64.0" fill="#3a8fc4" opacity="0.85"/>
+  <text x="294.8" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Requesting Access</text>
+  <text x="294.8" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">to Project Files</text>
+  <rect x="333.0" y="139.8" width="60.5" height="45.2" fill="#3a8fc4" opacity="0.85"/>
+  <text x="363.2" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Employee Issue</text>
+  <text x="363.2" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Resolution Process</text>
+  <rect x="401.5" y="147.7" width="60.5" height="37.3" fill="#3a8fc4" opacity="0.85"/>
+  <text x="431.8" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Pre-Work Employment</text>
+  <text x="431.8" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Documentation</text>
+  <rect x="470.0" y="36.4" width="60.5" height="148.6" fill="#5bc8dc" opacity="0.85"/>
+  <text x="500.2" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Sensitive Email</text>
+  <text x="500.2" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Briefing</text>
+  <rect x="538.5" y="140.9" width="60.5" height="44.1" fill="#3a8fc4" opacity="0.85"/>
+  <text x="568.8" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Employee Relations</text>
+  <text x="568.8" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">& Work Resources</text>
+  <rect x="607.0" y="138.4" width="60.5" height="46.6" fill="#3a8fc4" opacity="0.85"/>
+  <text x="637.2" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Probationary Employee</text>
+  <text x="637.2" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Onboarding Process</text>
+  <rect x="675.5" y="128.1" width="60.5" height="56.9" fill="#3a8fc4" opacity="0.85"/>
+  <text x="705.8" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Time-Specific</text>
+  <text x="705.8" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#6b7c91">Location Request</text>
+  <line x1="55" y1="185.0" x2="740" y2="185.0" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="188.0" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">0</text>
+  <line x1="55" y1="167.2" x2="740" y2="167.2" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="170.2" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">50</text>
+  <line x1="55" y1="149.4" x2="740" y2="149.4" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="152.4" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">100</text>
+  <line x1="55" y1="131.7" x2="740" y2="131.7" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="134.7" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">150</text>
+  <line x1="55" y1="113.9" x2="740" y2="113.9" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="116.9" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">200</text>
+  <line x1="55" y1="96.1" x2="740" y2="96.1" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="99.1" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">250</text>
+  <line x1="55" y1="78.3" x2="740" y2="78.3" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="81.3" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">300</text>
+  <line x1="55" y1="60.6" x2="740" y2="60.6" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="63.6" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">350</text>
+  <line x1="55" y1="42.8" x2="740" y2="42.8" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="45.8" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">400</text>
+  <line x1="55" y1="25.0" x2="740" y2="25.0" stroke="#1e2530" stroke-width="1"/>
+  <text x="51" y="28.0" text-anchor="end" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">450</text>
+  <text x="10" y="105.0" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#3a4556" letter-spacing="0.04em" transform="rotate(-90,10,105)">NUMBER OF EMAILS</text>
+  <text x="397.5" y="256" text-anchor="middle" font-family="DM Mono, monospace" font-size="7.5" fill="#3a4556" letter-spacing="0.04em">LLAMA-GENERATED TOPIC TITLE</text>
+</svg>
+        <div class="chart-caption">Source: Data_Table_Preparation_Email_Archiving_Version_1.ipynb · top_topics_found_in_emails_simple.png</div>
+      </div>
+    </div>
+
+        <div class="viz-takeaway" style="margin-top:1rem;">Topic modeling on LLM summaries produces <strong>richer, more semantically coherent clusters</strong> than subject-line analysis alone, because summaries are longer, consistently worded, and already stripped of junk terms like "FW:", "RE:", and abbreviations.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPORAL AND SENDER ANALYSIS -->
+  <section id="analysis">
+    <div class="section-header">
+      <span class="section-tag">06</span>
+      <h2 class="section-title">Temporal &amp; Sender Analysis</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Beyond anonymization and topic discovery, the pipeline includes analytical tools that allow archivists and researchers to explore the structure of the archive without accessing any individual message content, enabling metadata-level discovery as a precursor to requesting access to specific materials.</p>
+        <p>The <strong>temporal analysis module</strong> parses the <code style="color:var(--accent2); font-size:0.85rem;">sent_email</code> field into proper datetime objects using <code style="color:var(--accent2); font-size:0.85rem;">pd.to_datetime(..., errors="coerce")</code>, the <code style="color:var(--accent2); font-size:0.85rem;">errors="coerce"</code> argument is essential for a 20-year archive where date formats vary significantly across email clients and eras. Messages are then aggregated by Year-Month period and visualized as horizontal bar charts showing communication volume over time.</p>
+        <p>The <strong>fuzzy sender search module</strong> uses <code style="color:var(--accent2); font-size:0.85rem;">fuzzywuzzy partial_ratio</code> matching to identify all messages from a specified sender, even when the sender's name appears in different formats across the archive, "Smith, Jane", "Jane Smith (Dept)", "J. Smith &lt;jsmith@org.edu&gt;" all match the same query at a threshold of 80.</p>
+      </div>
+      <div>
+
+    <!-- CHART: Email Volume Per Month -->
+    <div class="chart-section">
+      <div class="chart-title">Archive-Wide Temporal Analysis</div>
+      <div class="chart-subtitle">Email volume by year-month across the full archive corpus. Peak activity concentrated in early-to-mid 2003, with the archive spanning records from 1903 through early 2004. The volume ramp from 1999 onward reflects the engineer's increasing reliance on email as a primary communication channel.</div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 760 952" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;background:#0f1318;">
+  <rect x="82" y="30" width="98.7" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="38.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2004-01</text>
+  <rect x="82" y="44" width="119.3" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="52.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-12</text>
+  <rect x="82" y="58" width="275.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="66.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-11</text>
+  <rect x="82" y="72" width="518.2" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="80.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-10</text>
+  <rect x="82" y="86" width="353.7" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="94.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-09</text>
+  <rect x="82" y="100" width="542.9" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="108.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-08</text>
+  <rect x="82" y="114" width="571.6" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="122.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-07</text>
+  <rect x="82" y="128" width="394.8" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="136.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-06</text>
+  <rect x="82" y="142" width="464.7" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="150.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-05</text>
+  <rect x="82" y="156" width="555.2" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="164.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-04</text>
+  <rect x="82" y="170" width="600.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="178.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-03</text>
+  <rect x="82" y="184" width="592.2" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="192.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-02</text>
+  <rect x="82" y="198" width="475.0" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="206.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2003-01</text>
+  <rect x="82" y="212" width="329.0" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="220.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-12</text>
+  <rect x="82" y="226" width="320.8" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="234.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-11</text>
+  <rect x="82" y="240" width="269.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="248.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-10</text>
+  <rect x="82" y="254" width="361.9" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="262.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-09</text>
+  <rect x="82" y="268" width="238.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="276.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-08</text>
+  <rect x="82" y="282" width="230.3" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="290.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-07</text>
+  <rect x="82" y="296" width="271.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="304.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-06</text>
+  <rect x="82" y="310" width="218.0" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="318.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-05</text>
+  <rect x="82" y="324" width="316.7" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="332.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-04</text>
+  <rect x="82" y="338" width="187.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="346.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-03</text>
+  <rect x="82" y="352" width="185.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="360.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-02</text>
+  <rect x="82" y="366" width="121.3" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="374.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2002-01</text>
+  <rect x="82" y="380" width="90.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="388.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-12</text>
+  <rect x="82" y="394" width="150.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="402.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-11</text>
+  <rect x="82" y="408" width="139.8" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="416.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-10</text>
+  <rect x="82" y="422" width="209.7" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="430.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-09</text>
+  <rect x="82" y="436" width="238.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="444.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-08</text>
+  <rect x="82" y="450" width="168.6" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="458.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-07</text>
+  <rect x="82" y="464" width="148.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="472.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-06</text>
+  <rect x="82" y="478" width="310.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="486.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-05</text>
+  <rect x="82" y="492" width="283.8" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="500.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-04</text>
+  <rect x="82" y="506" width="176.8" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="514.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-03</text>
+  <rect x="82" y="520" width="86.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="528.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-02</text>
+  <rect x="82" y="534" width="121.3" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="542.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2001-01</text>
+  <rect x="82" y="548" width="63.7" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="556.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-12</text>
+  <rect x="82" y="562" width="88.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="570.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-11</text>
+  <rect x="82" y="576" width="135.7" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="584.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-10</text>
+  <rect x="82" y="590" width="162.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="598.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-09</text>
+  <rect x="82" y="604" width="164.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="612.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-08</text>
+  <rect x="82" y="618" width="88.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="626.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-07</text>
+  <rect x="82" y="632" width="146.0" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="640.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-06</text>
+  <rect x="82" y="646" width="123.4" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="654.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-05</text>
+  <rect x="82" y="660" width="84.3" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="668.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-04</text>
+  <rect x="82" y="674" width="127.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="682.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-03</text>
+  <rect x="82" y="688" width="109.0" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="696.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-02</text>
+  <rect x="82" y="702" width="102.8" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="710.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">2000-01</text>
+  <rect x="82" y="716" width="72.0" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="724.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1999-12</text>
+  <rect x="82" y="730" width="6.2" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="738.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1999-11</text>
+  <rect x="82" y="744" width="4.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="752.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1999-10</text>
+  <rect x="82" y="758" width="3.3" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="766.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1999-09</text>
+  <rect x="82" y="772" width="3.3" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="780.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1999-08</text>
+  <rect x="82" y="786" width="2.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="794.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1999-07</text>
+  <rect x="82" y="800" width="2.5" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="808.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1999-02</text>
+  <rect x="82" y="814" width="2.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="822.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1998-12</text>
+  <rect x="82" y="828" width="2.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="836.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1998-10</text>
+  <rect x="82" y="842" width="6.2" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="850.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1997-09</text>
+  <rect x="82" y="856" width="2.1" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="864.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1997-08</text>
+  <rect x="82" y="870" width="1.6" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="878.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1970-01</text>
+  <rect x="82" y="884" width="1.6" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="892.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1969-12</text>
+  <rect x="82" y="898" width="1.2" height="11" fill="#3a8fc4" opacity="0.85"/>
+  <text x="78" y="906.5" text-anchor="end" font-family="DM Mono, monospace" font-size="7.5" fill="#6b7c91">1903-12</text>
+  <line x1="82.0" y1="30" x2="82.0" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="82.0" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">0</text>
+  <line x1="164.2" y1="30" x2="164.2" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="164.2" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">200</text>
+  <line x1="246.5" y1="30" x2="246.5" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="246.5" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">400</text>
+  <line x1="328.8" y1="30" x2="328.8" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="328.8" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">600</text>
+  <line x1="411.0" y1="30" x2="411.0" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="411.0" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">800</text>
+  <line x1="493.2" y1="30" x2="493.2" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="493.2" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">1000</text>
+  <line x1="575.5" y1="30" x2="575.5" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="575.5" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">1200</text>
+  <line x1="657.8" y1="30" x2="657.8" y2="912" stroke="#1e2530" stroke-width="1"/>
+  <text x="657.8" y="924" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#6b7c91">1400</text>
+  <text x="411.0" y="938" text-anchor="middle" font-family="DM Mono, monospace" font-size="8.5" fill="#3a4556" letter-spacing="0.05em">NUMBER OF EMAILS</text>
+  <text x="10" y="319.0" text-anchor="middle" font-family="DM Mono, monospace" font-size="8.5" fill="#3a4556" letter-spacing="0.05em" transform="rotate(-90, 10, 471)">YEAR-MONTH</text>
+</svg>
+        <div class="chart-caption">Source: emails_parsed_cleaned_PII_Extracted_v3.csv · number_of_emails_per_month.png</div>
+      </div>
+    </div>
+
+        <div class="insight-grid" style="margin-top:2rem;">
+          <div class="insight-box">
+            <div class="insight-box-title">Temporal Volume Analysis</div>
+            <p>Monthly email volume charted across the full 20-year archive span. Identifies periods of high institutional activity, project phases, and communication gaps. Useful for archivists building finding aids and for historians contextualizing the archive's contents.</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Sender-Specific Timeline</div>
+            <p>For any target sender, fuzzy matching surfaces all relevant messages, which are then aggregated and charted by month. Enables researchers to trace an individual's communication activity over time without accessing message content.</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Why partial_ratio vs ratio</div>
+            <p>fuzzywuzzy's <code style="color:var(--accent2); font-size:0.78rem;">partial_ratio</code> computes similarity of the best-matching substring rather than full string. This catches short names like "Smith, J." against long formatted strings like "Smith, Jane A. (Engineering)", a critical distinction for inconsistently formatted archival sender fields.</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Scale Result</div>
+            <p>Fuzzy search across ~79,676 message rows for a single sender returned 386 matching records, demonstrating both the precision of the matching approach and the feasibility of targeted retrieval at scale without full-text indexing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section id="methodology">
+    <div class="section-header">
+      <span class="section-tag">07</span>
+      <h2 class="section-title">Methodology &amp; Design Decisions</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="three-col">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Why Two Anonymization Layers</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Presidio catches structured PII reliably, names, phone numbers, SSNs, but cannot handle contextual sensitivity. A message referencing "the boiler 7 incident on North Campus" may identify an individual even with names removed. LLM rewriting generalizes this residual context in a way no rule-based system can.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Local-Only LLM Deployment</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Llama 3.2 is deployed on-device via Ollama. No email content, no names, no institutional data is sent to any external API. This is non-negotiable for an archive containing real personal correspondence. The privacy guarantee is enforced architecturally, not by policy.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">List Accumulation Before DataFrame</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">All EML extraction results are accumulated in a Python list before the single pd.DataFrame() call. DataFrame append in a loop is O(n²) due to reallocation at each step, the correct pattern for 44,677 files reduces processing time by orders of magnitude.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Full File Path Preservation</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Every message retains its full original file path, which encodes the PST folder hierarchy. Downstream splitting creates Folder_N columns that preserve organizational context, department, project, and topic area, as queryable structured metadata without any manual tagging.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Reverse-Order PII Replacement</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">PII spans are replaced from right to left through each message string. Replacing earlier spans first shifts character positions of all subsequent spans, producing incorrect replacements. Processing in reverse order keeps all byte offsets accurate throughout the substitution pass.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">errors='replace' Throughout</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">All file reads and byte decoding use errors='replace' rather than 'strict' or 'ignore'. An archive spanning 20+ years contains emails from many clients, encodings, and eras. 'replace' substitutes malformed bytes with the Unicode replacement character, visible and detectable, rather than silently dropping content or crashing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- REDACTION METHODS -->
+  <section id="methods">
+    <div class="section-header">
+      <span class="section-tag">08</span>
+      <h2 class="section-title">Redaction Method Landscape</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom:2rem;">
+      <p>Beyond the core approach implemented, the project evaluated and documented a comprehensive landscape of redaction methodologies. This serves as a technical reference and roadmap for future iterations of the pipeline, and documents the trade-offs that informed the current design choices.</p>
+    </div>
+    <table class="method-table">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Approach</th>
+          <th>Libraries</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Word Frequency / TF-IDF</td>
+          <td>Redact infrequently appearing words, rare words are more likely to be identifying</td>
+          <td>NLTK, scikit-learn</td>
+          <td>Fast baseline; low resource environments</td>
+        </tr>
+        <tr>
+          <td>Named Entity Recognition (NER)</td>
+          <td>Pre-trained NER models detect and redact names, orgs, locations, phone numbers</td>
+          <td>spaCy, Flair, Presidio, HuggingFace</td>
+          <td>High recall on structured PII</td>
+        </tr>
+        <tr>
+          <td>Regex Pattern Matching</td>
+          <td>Regular expressions target structured patterns: email addresses, SSNs, phone numbers</td>
+          <td>re, pandas</td>
+          <td>Fast, deterministic, auditable</td>
+        </tr>
+        <tr>
+          <td>Differential Privacy</td>
+          <td>Laplace noise added to word frequencies, reducing re-identification risk mathematically</td>
+          <td>PySyft, DiffPrivLib</td>
+          <td>Formal privacy guarantees; research datasets</td>
+        </tr>
+        <tr>
+          <td>Contextual Embeddings (BERT/RoBERTa)</td>
+          <td>Transformer models understand word context to detect sensitivity not visible to regex</td>
+          <td>transformers, sentence-transformers</td>
+          <td>Highest accuracy; context-dependent PII</td>
+        </tr>
+        <tr>
+          <td>LDA Topic Modeling</td>
+          <td>Outlier words that don't belong to common topics flagged for redaction</td>
+          <td>sklearn, gensim</td>
+          <td>Identifying rare, potentially identifying vocabulary</td>
+        </tr>
+        <tr>
+          <td>Word Replacement / Anonymization</td>
+          <td>Sensitive terms replaced with synthetic placeholders preserving document structure</td>
+          <td>faker, textacy, spacy-anonymizer</td>
+          <td>Readability preservation; research access</td>
+        </tr>
+        <tr>
+          <td>LLM Rewriting (Implemented)</td>
+          <td>Local LLM rewrites email as anonymized plain-language summary</td>
+          <td>Llama 3.2, Ollama</td>
+          <td>Residual contextual sensitivity; research-ready summaries</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FUTURE WORK -->
+  <section id="future">
+    <div class="section-header">
+      <span class="section-tag">09</span>
+      <h2 class="section-title">Future Work &amp; Roadmap</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="three-col">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Semantic Search Layer</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Embed all LLM summaries using a sentence transformer model and build a vector index (FAISS or ChromaDB) to enable semantic query-based retrieval. Researchers could query "correspondence about boiler safety compliance" and surface relevant anonymized summaries without any keyword matching.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Finding Aid Generator</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Auto-generate structured finding aid documents (EAD XML or plain text) describing the contents of each archive batch, suitable for submission to institutional repositories. Topic clusters and temporal analysis outputs form the raw material for machine-generated finding aids.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Extended File Type Support</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Apply the same ingest-extract-anonymize-summarize pipeline to non-email file types: Word documents, PDFs, scanned images (via OCR), and spreadsheets. The meeting that scoped this project identified this as the primary expansion path for processing full institutional digital legacies.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Parallelization &amp; Performance</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Presidio processing parallelized via multiprocessing or joblib, projected 4 to 8x speedup on multi-core hardware. Ollama switched to server mode with REST API calls to eliminate model reload overhead, projected approximately 10x speedup for LLM summarization stage.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Differential Privacy Evaluation</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Evaluate differential privacy techniques (Laplace noise injection via DiffPrivLib) for production deployment where formal mathematical privacy guarantees are required. Develop an evaluation framework comparing readability preservation scores vs. privacy protection metrics across approaches.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Institutional Systems Integration</div>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Connect pipeline output to institutional records management systems for automated retention scheduling and disposition tracking. Provide a researcher-facing web interface for searching and reviewing anonymized summaries without requiring direct data access.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section id="stack">
+    <div class="section-header">
+      <span class="section-tag">10</span>
+      <h2 class="section-title">Technology Stack</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="three-col">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); padding-bottom:0.5rem; border-bottom:1px solid var(--border); margin-bottom:0.75rem;">Ingestion &amp; Processing</div>
+        <div class="tag-row" style="margin:0; flex-direction:column; gap:0.35rem;">
+          <span style="font-size:0.83rem; color:var(--muted);">Python 3.11 (stdlib: os, email, re)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">pandas (DataFrame ops, explode, to_datetime)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">MIME / RFC 2822 email parsing</span>
+          <span style="font-size:0.83rem; color:var(--muted);">readpst (PST → EML conversion)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">numpy (topic assignment via argmax)</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); padding-bottom:0.5rem; border-bottom:1px solid var(--border); margin-bottom:0.75rem;">NLP &amp; Privacy</div>
+        <div class="tag-row" style="margin:0; flex-direction:column; gap:0.35rem;">
+          <span style="font-size:0.83rem; color:var(--muted);">Microsoft Presidio (presidio-analyzer, presidio-anonymizer)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">spaCy en_core_web_lg (NER model)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">NLTK (stopwords, corpus)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">scikit-learn (CountVectorizer, LDA)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">fuzzywuzzy / python-Levenshtein</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); padding-bottom:0.5rem; border-bottom:1px solid var(--border); margin-bottom:0.75rem;">LLM &amp; Visualization</div>
+        <div class="tag-row" style="margin:0; flex-direction:column; gap:0.35rem;">
+          <span style="font-size:0.83rem; color:var(--muted);">Llama 3.2 (local inference, on-device)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">Ollama CLI (model deployment &amp; serving)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">subprocess (Python → Ollama bridge)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">matplotlib (temporal &amp; topic bar charts)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">Jupyter (interactive development environment)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+</body>
+</html>
