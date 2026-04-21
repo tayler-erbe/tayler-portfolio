@@ -432,6 +432,105 @@
     </div>
   </section>
 
+  <!-- DATA PREPARATION -->
+  <section id="dataprep">
+    <div class="section-header">
+      <span class="section-tag">02b</span>
+      <h2 class="section-title">Data Preparation</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom:2.5rem;">
+      <p>Data preparation was one of the most consequential phases of the entire project. All data originates from the raw <strong>ALL_DATA_6162023</strong> parquet file produced during wrangling. A single Python script then handles the full pipeline: appending engineered features, segmenting by student level for correct aggregation, labeling four variations of the target variable, and exporting multiple dataset formats for different modeling strategies.</p>
+      <p>A critical design decision was made to keep all term-count features <strong>relative to the student's current degree level</strong>. Without this, students who completed both undergraduate and graduate programs would accumulate inflated graduate term counts — corrupting the signal the model depends on most.</p>
+    </div>
+
+    <div class="two-col" style="margin-bottom:2.5rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">Engineered Features Added</div>
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <div class="step-title">UNIQUE_TERM_CD</div>
+              <div class="step-body">A complete list of every term in which each student was enrolled. Used to label continuation (1 if enrolled next term, 0 if not) and to calculate completed term counts accurately.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <div class="step-title">AH_ACAD_YEAR_CD_LIST</div>
+              <div class="step-body">Academic year codes for every year a student was enrolled. Year codes are preferred over calendar years because a full academic year spans fall of one year through summer of the next.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <div class="step-title">CURRENT_COMPLETED_TERMS</div>
+              <div class="step-body">Number of terms successfully completed up to each snapshot point. Strongly recommended for model training — early-career students show elevated dropout risk, while students nearing completion show increasing persistence probability.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">04</div>
+            <div class="step-content">
+              <div class="step-title">TOTAL_COMPLETED_TERMS</div>
+              <div class="step-body">Total terms completed across all recorded history. <strong>Excluded from model training</strong> — its inclusion risks data leakage by effectively revealing the outcome to the model. Used for statistical analysis only.</div>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-num">05</div>
+            <div class="step-content">
+              <div class="step-title">CURRENT_COMPLETED_ACAD_YEARS</div>
+              <div class="step-body">Number of academic years completed relative to current degree. Complements term-level counts with a year-level signal for degree progression.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">Target Variable Labeling Strategy</div>
+        <p style="font-size:0.88rem; color:var(--muted); line-height:1.65; margin-bottom:1.25rem;">Significant design effort went into how to label student outcomes. Three potential outcomes exist — <strong style="color:var(--text)">discontinuation</strong>, <strong style="color:var(--text)">graduation</strong>, and <strong style="color:var(--text)">continuation</strong> — and the boundary between them is nuanced. Should summer non-enrollment count as dropout? Should graduation be treated separately from continuation, or grouped together as "success"? Four labeling variations were created and evaluated:</p>
+        <div class="insight-grid" style="margin-top:0;">
+          <div class="insight-box">
+            <div class="insight-box-title">Target: Next Term</div>
+            <p>Labels continuation as 1 if enrolled in the immediately following fall/spring term. Summer skips are not penalized. Graduation = 2, dropout = 0.</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Target: Next Year (Any Term)</div>
+            <p>Checks whether the student enrolled in any term within the following academic year — more forgiving of gaps. Graduation = 2, dropout = 0.</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Target: Next Fall Only</div>
+            <p>Looks only for fall term re-enrollment in the following year, isolating the strongest continuation signal independent of spring/summer behavior.</p>
+          </div>
+          <div class="insight-box">
+            <div class="insight-box-title">Target: Binary Success</div>
+            <p>Collapses continuation and graduation into a single success label (1). Dropout = 0. Recommended approach — graduation and continuation share more feature similarity with each other than either does with dropout.</p>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:1.25rem;">
+          <div class="callout-label">Key Insight on Label Design</div>
+          <p>Although both dropout and graduation reduce enrollment, they do not share similar characteristics. Grouping them together as a single "not continuing" outcome would weaken the predictive signal for each. The binary success framing — where the model distinguishes successful students from those who discontinued — produced the most coherent feature clusters and was the recommended production target.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1rem;">Aggregation &amp; Sampling Strategies</div>
+    <div class="three-col">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text); margin-bottom:0.5rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Single Point per Term</div>
+        <p style="font-size:0.83rem; color:var(--muted); line-height:1.65;">Raw labeled data with one row per student per term. No aggregation applied. Used for term-over-term prediction tasks where temporal granularity matters.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text); margin-bottom:0.5rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Single Point per Year</div>
+        <p style="font-size:0.83rem; color:var(--muted); line-height:1.65;">Aggregated to the most recent term snapshot per student per academic year. Reduces duplicate signals while preserving the most current state. Used for year-over-year forecasting.</p>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text); margin-bottom:0.5rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Downsampled Random Selection</div>
+        <p style="font-size:0.83rem; color:var(--muted); line-height:1.65;">One randomly selected term snapshot per student. Prevents overfitting caused by near-duplicate rows (stable features like sex, degree, and resident status remain constant across terms). Preserves real-world target variable distribution. <strong style="color:var(--text)">Recommended dataset for model training.</strong></p>
+      </div>
+    </div>
+  </section>
+
   <!-- FEATURE SELECTION -->
   <section id="features">
     <div class="section-header">
