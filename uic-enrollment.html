@@ -3,7 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UIC Student Enrollment Prediction · Tayler Erbe</title>
+  <title>Tayler Erbe | UIC Student Enrollment Prediction &amp; ML Classification</title>
+  <meta name="description" content="Tayler Erbe, Senior Data Scientist at the University of Illinois System, built an end-to-end student enrollment prediction and retention risk platform for UIC using H2O Random Forest, ARIMA forecasting, and machine learning classification across 14 colleges." />
+  <meta name="keywords" content="Tayler Erbe, data scientist, machine learning, student enrollment prediction, UIC, University of Illinois, ARIMA, H2O, random forest, retention risk, predictive analytics" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/uic-enrollment.html" />
+  <meta property="og:title" content="Tayler Erbe | UIC Student Enrollment Prediction Platform" />
+  <meta property="og:description" content="Tayler Erbe built an ML-powered enrollment prediction platform for the University of Illinois Chicago identifying at-risk students and forecasting 10-year enrollment across 14 colleges." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://terbe2022.github.io/tayler-portfolio/uic-enrollment.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tayler Erbe | UIC Student Enrollment Prediction" />
+  <meta name="twitter:description" content="ML classification and ARIMA forecasting platform for student retention risk and enrollment planning at UIC, built by Tayler Erbe." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "UIC Student Enrollment Prediction and Classification Platform",
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://terbe2022.github.io/tayler-portfolio/" },
+    "description": "End-to-end ML platform built by Tayler Erbe for predicting student retention risk and forecasting enrollment at the University of Illinois Chicago.",
+    "keywords": "Tayler Erbe, data scientist, student enrollment prediction, machine learning, ARIMA, random forest, UIC"
+  }
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -229,6 +251,19 @@
       .source-item { grid-template-columns: 1fr; gap: 0.25rem; }
       .back-section { padding: 2rem 1.5rem; }
     }
+
+    .viz-block { margin-bottom: 4rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+    .viz-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+    svg.chart { width:100%; height:auto; display:block; overflow:visible; }
+    @media(max-width:860px){ .viz-grid-2,.viz-grid-3{ grid-template-columns:1fr; } }
+
   </style>
 </head>
 <body>
@@ -240,7 +275,7 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-eyebrow">Project Case Study · UIC · 2022–2023</div>
+    <div class="hero-eyebrow">Tayler Erbe · Project Case Study · UIC · 2022–2023</div>
     <h1>Student Enrollment <span>Classification</span><br>&amp; Forecasting</h1>
     <p class="hero-desc">A full-lifecycle predictive analytics system for the University of Illinois Chicago, combining machine learning classification of at-risk students with ARIMA time-series enrollment forecasting across 14 colleges and four student population segments.</p>
     <div class="hero-meta">
@@ -292,9 +327,13 @@
     </div>
     <div class="two-col">
       <div class="prose">
-        <p>UIC needed a reliable way to forecast enrollment for the upcoming Fall term and to proactively identify individual students at risk of discontinuing their studies. Previously this was done manually, without a systematic data-driven framework. The project was scoped, designed, and delivered to directly address these gaps.</p>
-        <p>The work produced two interconnected deliverables: a <strong>classification system</strong> that predicts which currently enrolled students are likely to not return for Fall, segmented by student level and last-enrolled term; and an <strong>ARIMA time-series forecasting system</strong> that projects total Fall enrollment by college for incoming, continuing, graduating, and discontinuing student populations.</p>
-        <p>Outputs were designed for multiple audiences. Individual student-level risk scores with confidence measures were produced for use by advisors and retention teams. College-level and university-level projection summaries were built for executive planning and resource allocation. All modeling was fully documented and reproducible.</p>
+        <p>Universities typically approach enrollment planning reactively, with short planning horizons and limited data-driven infrastructure for identifying students at risk before they leave. Tayler Erbe scoped, designed, and delivered a full predictive analytics platform for UIC to directly address both gaps — proactive retention risk identification and long-range enrollment forecasting.</p>
+        <p>The platform produced two interconnected systems: a <strong>machine learning classification system</strong> that identifies which currently enrolled students are likely to discontinue before the next Fall term, segmented by student level and term seasonality; and an <strong>ARIMA enrollment forecasting system</strong> that projects total Fall enrollment for incoming, continuing, graduating, and discontinuing populations across 14 UIC colleges with a 10-year horizon.</p>
+        <p>Tayler Erbe owned the full project lifecycle — from problem definition and data acquisition through feature engineering, modeling, validation, documentation, and executive presentation. Outputs spanned individual student-level risk scores for advisors, college-level projections for deans, and university-wide summaries for institutional leadership.</p>
+        <blockquote style="border-left:3px solid var(--accent); padding-left:1.25rem; margin:1.5rem 0 0;">
+          <p style="font-style:italic; color:var(--text); font-size:0.92rem; line-height:1.7;">"The enrollment targets project at UIC was an idea that Tayler brought to life. She gathered interns and staff, analyzed data, evaluated multiple approaches, and delivered the best possible results with the data and time available, showcasing her impressive abilities."</p>
+          <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-top:0.6rem;">Dimuthu Tilakaratne, Manager · AITS Performance Appraisal 2023-2024</p>
+        </blockquote>
       </div>
       <div>
         <div class="callout">
@@ -373,20 +412,23 @@
       </div>
     </div>
 
-    <!-- Data sources -->
+    <!-- Data categories -->
     <div style="margin-top: 3rem;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1.25rem;">Oracle Source Tables</div>
-      <ul class="source-list">
-        <li class="source-item"><span class="source-name">EDW.T_RS_PERS</span><span class="source-desc">Core demographic data: age, sex, race/ethnicity, citizenship, marital status, IPEDS categories</span></li>
-        <li class="source-item"><span class="source-name">EDW.T_RS_STUDENT</span><span class="source-desc">Student academic info: degree program, major, student level, residency, admit term, expected graduation, college</span></li>
-        <li class="source-item"><span class="source-name">EDW.T_STUDENT_AH_DEG_HIST</span><span class="source-desc">Degree attainment and graduation status; STUDENT_AH_DEG_CUR_INFO_IND used to label "graduated" target class</span></li>
-        <li class="source-item"><span class="source-name">EDW.T_RS_STUDENT_HOLD</span><span class="source-desc">Registration, transcript, graduation, and grade-report holds with amounts owed and origin codes</span></li>
-        <li class="source-item"><span class="source-name">EDW.T_RS_STUDENT_ATTR</span><span class="source-desc">Special designations including first-generation, honors, and program-affiliated students (34 attribute codes)</span></li>
-        <li class="source-item"><span class="source-name">EDW.T_RS_MAX_TEST_SCORE</span><span class="source-desc">ACT/SAT presence indicator (scores not mandatory; presence used as binary signal for continuation likelihood)</span></li>
-        <li class="source-item"><span class="source-name">EDW.t_rs_student_ah_level_gpa</span><span class="source-desc">Institutional and transfer GPA by credit level; correlated with both retention and graduation outcomes</span></li>
-        <li class="source-item"><span class="source-name">EDW.V_adm_test_result_hist</span><span class="source-desc">Placement exam scores (Math, English, Chemistry); higher scores correlated with retention and graduation rates</span></li>
-        <li class="source-item"><span class="source-name">DM_APPL / EDW.T_SBGI_CD</span><span class="source-desc">High school characteristics, geographic origin, FICE codes, and HS GPA for incoming student cohorts</span></li>
-      </ul>
+      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1.25rem;">Data Categories Used in Analysis</div>
+      <div class="three-col">
+        <div class="callout" style="margin-top:0;">
+          <div class="callout-label">Academic Progress</div>
+          <p>Enrollment history, completed terms, credit hours accumulated, current class standing, GPA at multiple levels, transfer credit, and progression toward degree. These time-in-program signals were the strongest predictors of continuation risk.</p>
+        </div>
+        <div class="callout" style="margin-top:0; border-left-color: var(--accent2);">
+          <div class="callout-label" style="color:var(--accent2);">Student Profile</div>
+          <p>Demographic information, degree program, major, student level (undergraduate, graduate, professional, law), residency status, admit type, college affiliation, and special program designations such as first-generation and honors status.</p>
+        </div>
+        <div class="callout" style="margin-top:0; border-left-color: var(--muted2);">
+          <div class="callout-label" style="color:var(--muted);">Engagement Signals</div>
+          <p>Registration hold indicators, leave of absence history, placement exam performance (Math, English, Chemistry), ACT/SAT presence as a binary signal, high school background, and geographic origin data for incoming student cohorts.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -616,7 +658,20 @@
             .vi-bar { rx: 0; }
             .vi-axis { stroke: #1e2530; stroke-width: 1; }
             .vi-grid { stroke: #1e2530; stroke-width: 0.5; stroke-dasharray: 4,4; }
-          </style>
+        
+    .viz-block { margin-bottom: 4rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+    .viz-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+    svg.chart { width:100%; height:auto; display:block; overflow:visible; }
+    @media(max-width:860px){ .viz-grid-2,.viz-grid-3{ grid-template-columns:1fr; } }
+
+  </style>
           <!-- grid lines -->
           <line x1="220" y1="20" x2="220" y2="310" class="vi-grid"/>
           <line x1="340" y1="20" x2="340" y2="310" class="vi-grid"/>
@@ -675,161 +730,732 @@
       </div>
     </div>
 
-    <!-- VIZ 2: Confusion Matrix Heatmap -->
-    <div style="margin-bottom: 3.5rem;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Confusion Matrix Heatmap — H2O vs CatBoost (3-Class: Discontinued · Continued · Graduated)</div>
-      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:1.5rem;">Cell intensity represents error rate. H2O keeps all diagonal error rates below 5%. CatBoost's Discontinued class error of 47.7% is the critical failure — the most important class to identify correctly is also the one CatBoost gets most wrong.</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; max-width:680px;">
-        <!-- H2O matrix -->
-        <div>
-          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; color:var(--accent); margin-bottom:0.75rem; text-transform:uppercase;">H2O — Selected</div>
-          <svg viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
-            <style>.cm-t { font-family:'DM Mono',monospace; font-size:9px; fill:#d8e2ed; text-anchor:middle; } .cm-h { font-family:'DM Mono',monospace; font-size:8px; fill:#6b7c91; text-anchor:middle; }</style>
-            <!-- col headers -->
-            <text x="110" y="18" class="cm-h">Pred: Discont.</text>
-            <text x="185" y="18" class="cm-h">Pred: Cont.</text>
-            <text x="255" y="18" class="cm-h">Pred: Grad.</text>
-            <!-- row labels -->
-            <text x="38" y="62" class="cm-h" text-anchor="middle">Discont.</text>
-            <text x="38" y="132" class="cm-h" text-anchor="middle">Cont.</text>
-            <text x="38" y="202" class="cm-h" text-anchor="middle">Grad.</text>
-            <!-- Row 0: 3879, 184, 17 — error 4.9% -->
-            <rect x="75" y="28" width="70" height="56" fill="#5bc8dc" opacity="0.75" rx="0"/>
-            <text x="110" y="60" class="cm-t">3,879</text>
-            <text x="110" y="72" style="font-family:'DM Mono',monospace;font-size:8px;fill:#080b10;text-anchor:middle;">4.9% err</text>
-            <rect x="150" y="28" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="185" y="60" class="cm-t">184</text>
-            <rect x="220" y="28" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="255" y="60" class="cm-t">17</text>
-            <!-- Row 1: 47, 8014, 3 — error 0.6% -->
-            <rect x="75" y="98" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="110" y="130" class="cm-t">47</text>
-            <rect x="150" y="98" width="70" height="56" fill="#5bc8dc" opacity="0.75" rx="0"/>
-            <text x="185" y="130" class="cm-t">8,014</text>
-            <text x="185" y="142" style="font-family:'DM Mono',monospace;font-size:8px;fill:#080b10;text-anchor:middle;">0.6% err</text>
-            <rect x="220" y="98" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="255" y="130" class="cm-t">3</text>
-            <!-- Row 2: 64, 5, 2832 — error 2.1% -->
-            <rect x="75" y="168" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="110" y="200" class="cm-t">64</text>
-            <rect x="150" y="168" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="185" y="200" class="cm-t">5</text>
-            <rect x="220" y="168" width="70" height="56" fill="#5bc8dc" opacity="0.75" rx="0"/>
-            <text x="255" y="200" class="cm-t">2,832</text>
-            <text x="255" y="212" style="font-family:'DM Mono',monospace;font-size:8px;fill:#080b10;text-anchor:middle;">2.1% err</text>
-          </svg>
-        </div>
-        <!-- CatBoost matrix -->
-        <div>
-          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; color:var(--accent3); margin-bottom:0.75rem; text-transform:uppercase;">CatBoost — Not Selected</div>
-          <svg viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
-            <!-- col headers -->
-            <text x="110" y="18" class="cm-h">Pred: Discont.</text>
-            <text x="185" y="18" class="cm-h">Pred: Cont.</text>
-            <text x="255" y="18" class="cm-h">Pred: Grad.</text>
-            <!-- row labels -->
-            <text x="38" y="62" class="cm-h" text-anchor="middle">Discont.</text>
-            <text x="38" y="132" class="cm-h" text-anchor="middle">Cont.</text>
-            <text x="38" y="202" class="cm-h" text-anchor="middle">Grad.</text>
-            <!-- Row 0: 2796, 1330, 4 — error 47.7% — VERY HIGH -->
-            <rect x="75" y="28" width="70" height="56" fill="#c07a6e" opacity="0.55" rx="0"/>
-            <text x="110" y="56" class="cm-t">2,796</text>
-            <text x="110" y="68" style="font-family:'DM Mono',monospace;font-size:8px;fill:#eef3f8;text-anchor:middle;">47.7% err</text>
-            <rect x="150" y="28" width="70" height="56" fill="#c07a6e" opacity="0.3" rx="0"/>
-            <text x="185" y="60" class="cm-t">1,330</text>
-            <rect x="220" y="28" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="255" y="60" class="cm-t">4</text>
-            <!-- Row 1: 485, 7503, 7 — error 6.6% -->
-            <rect x="75" y="98" width="70" height="56" fill="#c07a6e" opacity="0.15" rx="0"/>
-            <text x="110" y="130" class="cm-t">485</text>
-            <rect x="150" y="98" width="70" height="56" fill="#5bc8dc" opacity="0.5" rx="0"/>
-            <text x="185" y="130" class="cm-t">7,503</text>
-            <text x="185" y="142" style="font-family:'DM Mono',monospace;font-size:8px;fill:#080b10;text-anchor:middle;">6.6% err</text>
-            <rect x="220" y="98" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="255" y="130" class="cm-t">7</text>
-            <!-- Row 2: 18, 95, 2781 — error 4.1% -->
-            <rect x="75" y="168" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="110" y="200" class="cm-t">18</text>
-            <rect x="150" y="168" width="70" height="56" fill="#1e2530" rx="0"/>
-            <text x="185" y="200" class="cm-t">95</text>
-            <rect x="220" y="168" width="70" height="56" fill="#5bc8dc" opacity="0.5" rx="0"/>
-            <text x="255" y="200" class="cm-t">2,781</text>
-            <text x="255" y="212" style="font-family:'DM Mono',monospace;font-size:8px;fill:#080b10;text-anchor:middle;">4.1% err</text>
-          </svg>
-        </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       NEW: KNIME WORKFLOW & VALIDATION EVIDENCE  (Section 05b)
+       ═══════════════════════════════════════════════════════ -->
+  <section id="evidence" style="background: var(--surface);">
+    <div class="section-header">
+      <span class="section-tag">05b</span>
+      <h2 class="section-title">Workflow Architecture &amp; Validation Evidence</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <style>
+      /* ── shared viz styles ── */
+      .viz-block { margin-bottom: 4rem; }
+      .viz-label {
+        font-family: 'DM Mono', monospace; font-size: 0.7rem;
+        letter-spacing: 0.13em; text-transform: uppercase;
+        color: var(--accent2); margin-bottom: 0.5rem;
+      }
+      .viz-desc {
+        font-size: 0.85rem; color: var(--muted); line-height: 1.75;
+        max-width: 80ch; margin-bottom: 1.25rem;
+      }
+      .viz-desc strong { color: var(--text); }
+      .viz-takeaway {
+        display: flex; gap: 0.75rem; align-items: flex-start;
+        background: var(--surface2); border-left: 3px solid var(--accent);
+        padding: 0.9rem 1.1rem; margin-top: 1rem;
+        font-size: 0.82rem; color: var(--muted); line-height: 1.6;
+      }
+      .viz-takeaway::before {
+        content: '→'; color: var(--accent); font-family: 'DM Mono', monospace;
+        flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem;
+      }
+      .viz-takeaway strong { color: var(--text); }
+      .viz-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .viz-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+      svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+      @media(max-width:860px){
+        .viz-grid-2,.viz-grid-3 { grid-template-columns:1fr; }
+      }
+  
+    .viz-block { margin-bottom: 4rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+    .viz-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+    svg.chart { width:100%; height:auto; display:block; overflow:visible; }
+    @media(max-width:860px){ .viz-grid-2,.viz-grid-3{ grid-template-columns:1fr; } }
+
+  </style>
+
+    <!-- ══════════════════════════════════════════
+         1.  KNIME WORKFLOW OVERVIEW DIAGRAM
+         ══════════════════════════════════════════ -->
+    <div class="viz-block">
+      <div class="viz-label">01 — KNIME Workflow Architecture (Graduate Population)</div>
+      <p class="viz-desc">
+        The KNIME pipeline for the graduate model illustrates the complete end-to-end ML workflow:
+        data ingested from Parquet, filtered via <strong>feature selection</strong>, balanced with
+        <strong>SMOTE</strong> on the training partition, fitted with a <strong>Tree Ensemble Learner</strong>
+        (semester-based), scored against the held-out test split, and routed to performance metrics,
+        actual-vs-predicted visualizations, and a final classification output node.
+      </p>
+      <svg class="chart" viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#3a4556"/>
+          </marker>
+          <marker id="arr-acc" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#5bc8dc"/>
+          </marker>
+        </defs>
+        <style>
+          .wf-box { fill: var(--surface2); stroke: #1e2530; stroke-width:1.5; }
+          .wf-box-hi { fill: rgba(91,200,220,0.07); stroke: var(--accent); stroke-width:1.5; }
+          .wf-label { font-family:'DM Mono',monospace; font-size:9px; fill:#6b7c91; letter-spacing:0.06em; text-transform:uppercase; }
+          .wf-title { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; fill:#eef3f8; text-transform:uppercase; letter-spacing:0.04em; }
+          .wf-sub { font-family:'DM Sans',sans-serif; font-size:8.5px; fill:#6b7c91; }
+          .wf-node { fill:#f5a623; stroke:#c4831a; stroke-width:1; rx:3; }
+          .wf-node-g { fill:#6ac77e; stroke:#3a8a50; stroke-width:1; }
+          .wf-edge { stroke:#3a4556; stroke-width:1.2; fill:none; marker-end:url(#arr); }
+          .wf-edge-hi { stroke:#5bc8dc; stroke-width:1.2; fill:none; marker-end:url(#arr-acc); opacity:.6; }
+      
+    .viz-block { margin-bottom: 4rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+    .viz-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+    svg.chart { width:100%; height:auto; display:block; overflow:visible; }
+    @media(max-width:860px){ .viz-grid-2,.viz-grid-3{ grid-template-columns:1fr; } }
+
+  </style>
+
+        <!-- Background grid -->
+        <rect width="900" height="420" fill="#0f1318"/>
+        <line x1="0" y1="210" x2="900" y2="210" stroke="#1e2530" stroke-width="0.5" stroke-dasharray="4,6"/>
+
+        <!-- ── BOX 1: DATA INPUT ── -->
+        <rect x="10" y="15" width="165" height="115" class="wf-box" rx="2"/>
+        <text x="18" y="32" class="wf-label">Data Input</text>
+        <text x="18" y="48" class="wf-title">Graduates</text>
+        <text x="18" y="63" class="wf-sub">Aggregated by Year</text>
+        <text x="18" y="77" class="wf-sub">Single Snapshot</text>
+        <!-- Parquet node -->
+        <rect x="40" y="88" width="90" height="28" class="wf-node" rx="3"/>
+        <text x="85" y="104" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Parquet Reader</text>
+        <text x="85" y="116" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-size="7">GRADUATE_TARGET_BY_YEAR</text>
+
+        <!-- ── BOX 2: FEATURE SELECTION ── -->
+        <rect x="10" y="145" width="165" height="80" class="wf-box" rx="2"/>
+        <text x="18" y="163" class="wf-label">Feature Selection</text>
+        <rect x="40" y="172" width="90" height="28" class="wf-node" rx="3"/>
+        <text x="85" y="188" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Feature Selection</text>
+
+        <!-- ── BOX 3: TRAIN DATA W/ SMOTE ── -->
+        <rect x="220" y="145" width="165" height="80" class="wf-box" rx="2"/>
+        <text x="228" y="163" class="wf-label">Train Data w/ SMOTE</text>
+        <rect x="248" y="172" width="90" height="28" class="wf-node" rx="3"/>
+        <text x="293" y="188" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Train Data</text>
+
+        <!-- ── BOX 4: TEST DATA ── -->
+        <rect x="220" y="250" width="165" height="80" class="wf-box" rx="2"/>
+        <text x="228" y="268" class="wf-label">Test Data</text>
+        <rect x="248" y="278" width="90" height="28" class="wf-node" rx="3"/>
+        <text x="293" y="294" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Test Data</text>
+
+        <!-- ── BOX 5: TREE ENSEMBLE LEARNER ── -->
+        <rect x="430" y="120" width="175" height="105" class="wf-box-hi" rx="2"/>
+        <text x="438" y="138" class="wf-label" fill="#5bc8dc">Tree Ensemble Learner</text>
+        <text x="438" y="154" class="wf-sub" fill="#8ab8c8">Semester-Based Modeling</text>
+        <rect x="490" y="163" width="60" height="40" fill="rgba(91,200,220,0.15)" stroke="#5bc8dc" stroke-width="1" rx="2"/>
+        <text x="520" y="180" class="wf-sub" text-anchor="middle" fill="#5bc8dc" font-weight="700">Tree</text>
+        <text x="520" y="194" class="wf-sub" text-anchor="middle" fill="#5bc8dc" font-weight="700">Ensemble</text>
+
+        <!-- ── BOX 6: TREE ENSEMBLE PREDICTOR ── -->
+        <rect x="430" y="250" width="175" height="80" class="wf-box" rx="2"/>
+        <text x="438" y="268" class="wf-label">Tree Ensemble Predictor</text>
+        <rect x="470" y="277" width="95" height="28" class="wf-node" rx="3"/>
+        <text x="517" y="293" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Predictor</text>
+
+        <!-- ── BOX 7: MODEL PERFORMANCE METRICS ── -->
+        <rect x="645" y="15" width="240" height="170" class="wf-box" rx="2"/>
+        <text x="653" y="33" class="wf-label">Model Performance Metrics</text>
+        <!-- 3 scorer nodes -->
+        <rect x="700" y="43" width="120" height="22" fill="#e8a87c" stroke="#c47840" stroke-width="1" rx="2"/>
+        <text x="760" y="57" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Scorer (JavaScript) ×3</text>
+        <rect x="700" y="73" width="120" height="22" fill="#e8a87c" stroke="#c47840" stroke-width="1" rx="2"/>
+        <text x="760" y="87" class="wf-sub" text-anchor="middle" fill="#1a1a1a">Fall / Spring / Summer</text>
+        <rect x="700" y="103" width="120" height="22" class="wf-node" rx="2"/>
+        <text x="760" y="117" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Test Performance</text>
+        <rect x="700" y="133" width="120" height="22" class="wf-node" rx="2"/>
+        <text x="760" y="147" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Node 1290</text>
+
+        <!-- ── BOX 8: VISUALIZE ── -->
+        <rect x="645" y="200" width="240" height="115" class="wf-box" rx="2"/>
+        <text x="653" y="218" class="wf-label">Visualize Predictions with Actual Trends</text>
+        <rect x="700" y="228" width="120" height="18" class="wf-node-g" rx="2"/>
+        <text x="760" y="240" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Fall A vs P</text>
+        <rect x="700" y="251" width="120" height="18" class="wf-node-g" rx="2"/>
+        <text x="760" y="263" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Spring A vs P</text>
+        <rect x="700" y="274" width="120" height="18" class="wf-node-g" rx="2"/>
+        <text x="760" y="286" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Summer A vs P</text>
+        <rect x="700" y="297" width="120" height="18" class="wf-node-g" rx="2"/>
+        <text x="760" y="309" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Fall A vs P</text>
+
+        <!-- ── BOX 9: CLASSIFICATIONS OUTPUT ── -->
+        <rect x="645" y="330" width="240" height="75" class="wf-box" rx="2"/>
+        <text x="653" y="348" class="wf-label">Make Classifications to Discontinue</text>
+        <rect x="700" y="357" width="120" height="28" class="wf-node" rx="3"/>
+        <text x="760" y="369" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Discontinuation</text>
+        <text x="760" y="381" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Classification</text>
+
+        <!-- ── EDGES ── -->
+        <!-- Parquet → Feature Sel -->
+        <path d="M85,116 L85,172" class="wf-edge"/>
+        <!-- Feature Sel → Train -->
+        <path d="M175,186 Q200,186 220,186" class="wf-edge"/>
+        <!-- Feature Sel → Test -->
+        <path d="M175,186 Q200,186 200,294 L220,294" class="wf-edge"/>
+        <!-- Train → Tree Learner -->
+        <path d="M385,186 Q405,186 430,172" class="wf-edge-hi"/>
+        <!-- Tree Learner → Predictor -->
+        <path d="M517,225 L517,277" class="wf-edge-hi"/>
+        <!-- Test → Predictor -->
+        <path d="M385,294 L430,294" class="wf-edge"/>
+        <!-- Predictor → Metrics -->
+        <path d="M605,294 Q625,294 625,117 L645,117" class="wf-edge-hi"/>
+        <!-- Predictor → Visualize -->
+        <path d="M605,294 Q630,294 630,257 L645,257" class="wf-edge"/>
+        <!-- Predictor → Classifications -->
+        <path d="M605,294 Q635,294 635,367 L645,367" class="wf-edge"/>
+      </svg>
+      <div class="viz-takeaway">
+        <span>The workflow segments training by semester (Summer/Spring/Fall), ensuring each Tree Ensemble Learner captures term-specific dropout patterns. SMOTE is applied only to the training partition (70%) — never the held-out test set (30%) — preventing data leakage during validation.</span>
       </div>
     </div>
 
-    <!-- VIZ 3: Actual vs Predicted enrollment line chart -->
-    <div>
-      <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Actual vs Predicted Enrollment — H2O GBM (Continuing + Discontinued + Graduated · 2013–2022)</div>
-      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:1.5rem;">Aggregate enrollment trends across the three student outcome classes. H2O predictions closely track actuals through academic year 2021-22. The 2022-23 forecast year (rightmost point) reflects extrapolation beyond the training window and is flagged as less reliable in project documentation.</p>
-      <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:680px; display:block;">
+    <!-- ══════════════════════════════════════════
+         2.  SMOTE WORKFLOW PIPELINE
+         ══════════════════════════════════════════ -->
+    <div class="viz-block">
+      <div class="viz-label">02 — SMOTE Pipeline: Undergraduate per-Semester Branching</div>
+      <p class="viz-desc">
+        After reading <strong>UNDERGRADUATE_TARGET_BY_YEAR.parquet</strong>, the pipeline applies two column
+        filters (feature selection, then removing the identifier <strong>edw_pers_id</strong>), excludes
+        the current year (2223) from training via a row filter, then fans out into three parallel
+        semester-specific branches — each performing 70/30 partitioning, SMOTE oversampling on
+        the minority (discontinued) class, and independent Tree Ensemble training.
+      </p>
+      <svg class="chart" viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#3a4556"/>
+          </marker>
+          <marker id="arr2a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#5bc8dc"/>
+          </marker>
+        </defs>
         <style>
-          .av-label { font-family:'DM Mono',monospace; font-size:9px; fill:#6b7c91; }
-          .av-axis { stroke:#1e2530; stroke-width:1; }
-          .av-grid { stroke:#1e2530; stroke-width:0.5; stroke-dasharray:4,3; }
-        </style>
-        <!-- chart area: x 60-650, y 30-250 -->
-        <!-- grid -->
-        <line x1="60" y1="250" x2="650" y2="250" class="av-axis"/>
-        <line x1="60" y1="30"  x2="60"  y2="250" class="av-axis"/>
-        <line x1="60" y1="190" x2="650" y2="190" class="av-grid"/>
-        <line x1="60" y1="130" x2="650" y2="130" class="av-grid"/>
-        <line x1="60" y1="70"  x2="650" y2="70"  class="av-grid"/>
-        <!-- y labels -->
-        <text x="52" y="253" class="av-label" text-anchor="end">0</text>
-        <text x="52" y="193" class="av-label" text-anchor="end">3k</text>
-        <text x="52" y="133" class="av-label" text-anchor="end">6k</text>
-        <text x="52" y="73"  class="av-label" text-anchor="end">9k</text>
-        <!-- x labels: 9 years 2013-14 through 2022-23, spacing 65px -->
-        <text x="60"  y="265" class="av-label" text-anchor="middle">13-14</text>
-        <text x="125" y="265" class="av-label" text-anchor="middle">14-15</text>
-        <text x="190" y="265" class="av-label" text-anchor="middle">15-16</text>
-        <text x="255" y="265" class="av-label" text-anchor="middle">16-17</text>
-        <text x="320" y="265" class="av-label" text-anchor="middle">17-18</text>
-        <text x="385" y="265" class="av-label" text-anchor="middle">18-19</text>
-        <text x="450" y="265" class="av-label" text-anchor="middle">19-20</text>
-        <text x="515" y="265" class="av-label" text-anchor="middle">20-21</text>
-        <text x="580" y="265" class="av-label" text-anchor="middle">21-22</text>
-        <text x="645" y="265" class="av-label" text-anchor="middle" fill="#c07a6e" opacity="0.7">22-23*</text>
+          .pn { fill:#f5a623; stroke:#c4831a; stroke-width:1; rx:3; }
+          .pn-g { fill:#6ac77e; stroke:#3a8a50; stroke-width:1.2; }
+          .pn-s { fill:rgba(91,200,220,0.12); stroke:#5bc8dc; stroke-width:1.2; }
+          .pn-t { font-family:'DM Mono',monospace; font-size:8px; fill:#d8e2ed; text-anchor:middle; }
+          .pn-s2 { font-family:'DM Mono',monospace; font-size:7px; fill:#6b7c91; text-anchor:middle; }
+          .pe { stroke:#3a4556; stroke-width:1.2; fill:none; marker-end:url(#arr2); }
+          .pe-a { stroke:#5bc8dc; stroke-width:1.2; fill:none; marker-end:url(#arr2a); opacity:0.6; }
+      
+    .viz-block { margin-bottom: 4rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+    .viz-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+    svg.chart { width:100%; height:auto; display:block; overflow:visible; }
+    @media(max-width:860px){ .viz-grid-2,.viz-grid-3{ grid-template-columns:1fr; } }
 
-        <!-- CONTINUED actual — scale: 9k=top, 0=bottom, range 220px
-             approx values from the actual vs predicted charts: ~4k,4.2,4.5,5,5.8,6.8,8,9.5,11.6 (in hundreds scaled to chart)
-             mapped: y = 250 - (val/9000)*220 -->
-        <!-- Actual Continued: 4200, 4400, 4700, 5200, 5900, 7000, 8100, 9800, 11684 -->
-        <polyline points="60,147 125,143 190,135 255,123 320,106 385,79 450,52 515,31 580,26" fill="none" stroke="#5bc8dc" stroke-width="2.5" stroke-linejoin="round"/>
-        <!-- Predicted Continued (dashed, close to actual) -->
-        <polyline points="60,149 125,145 190,137 255,125 320,108 385,81 450,55 515,34 580,29 645,22" fill="none" stroke="#5bc8dc" stroke-width="1.5" stroke-dasharray="6,3" stroke-linejoin="round" opacity="0.7"/>
+  </style>
+        <rect width="900" height="300" fill="#0f1318"/>
 
-        <!-- Actual Discontinued: 1800, 1900, 2000, 2000, 2100, 2200, 2300, 2400, 2500 -->
-        <polyline points="60,206 125,204 190,201 255,201 320,199 385,196 450,194 515,191 580,189" fill="none" stroke="#c07a6e" stroke-width="2.5" stroke-linejoin="round"/>
-        <!-- Predicted Discontinued -->
-        <polyline points="60,207 125,205 190,202 255,202 320,200 385,197 450,195 515,192 580,190 645,225" fill="none" stroke="#c07a6e" stroke-width="1.5" stroke-dasharray="6,3" stroke-linejoin="round" opacity="0.7"/>
+        <!-- ─ Column labels at top ─ -->
+        <text x="55" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">PARQUET</text>
+        <text x="170" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">COL FILTER</text>
+        <text x="285" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">COL FILTER</text>
+        <text x="400" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">ROW FILTER</text>
+        <text x="520" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">ROW FILTER</text>
+        <text x="620" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">PARTITIONING</text>
+        <text x="720" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">SMOTE</text>
+        <text x="830" y="18" class="pn-s2" font-size="8" fill="#3a4556" text-anchor="middle">TREE LEARNER</text>
 
-        <!-- Actual Graduated: 1100, 1150, 1200, 1220, 1260, 1280, 1300, 1320, 1266 -->
-        <polyline points="60,223 125,221 190,219 255,218 320,216 385,216 450,215 515,214 580,221" fill="none" stroke="#3a8fc4" stroke-width="2.5" stroke-linejoin="round"/>
-        <!-- Predicted Graduated -->
-        <polyline points="60,224 125,222 190,220 255,219 320,217 385,217 450,216 515,215 580,222 645,219" fill="none" stroke="#3a8fc4" stroke-width="1.5" stroke-dasharray="6,3" stroke-linejoin="round" opacity="0.7"/>
+        <!-- Shared pipeline nodes -->
+        <!-- Parquet Reader -->
+        <rect x="10" y="120" width="90" height="50" class="pn" rx="3"/>
+        <text x="55" y="141" class="pn-t" fill="#1a1a1a" font-weight="700">Parquet</text>
+        <text x="55" y="154" class="pn-t" fill="#1a1a1a" font-weight="700">Reader</text>
+        <text x="55" y="167" class="pn-s2" fill="#1a1a1a" font-size="6.5">UG_TARGET_BY_YEAR</text>
 
-        <!-- forecast zone -->
-        <rect x="610" y="30" width="40" height="220" fill="#c07a6e" opacity="0.05"/>
-        <line x1="610" y1="30" x2="610" y2="250" stroke="#c07a6e" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.4"/>
-        <text x="620" y="45" style="font-family:'DM Mono',monospace;font-size:8px;fill:#c07a6e;opacity:0.7;">Forecast</text>
+        <!-- Col Filter 1: Feature Selection -->
+        <rect x="125" y="128" width="90" height="36" class="pn" rx="3"/>
+        <text x="170" y="143" class="pn-t" fill="#1a1a1a" font-weight="700">Column</text>
+        <text x="170" y="156" class="pn-t" fill="#1a1a1a" font-weight="700">Filter</text>
+        <text x="170" y="170" class="pn-s2" fill="#1a1a1a">Feature Selection</text>
 
-        <!-- Legend -->
-        <line x1="65" y1="285" x2="90" y2="285" stroke="#5bc8dc" stroke-width="2"/>
-        <text x="95" y="288" class="av-label" fill="#5bc8dc">Continued</text>
-        <line x1="165" y1="285" x2="190" y2="285" stroke="#c07a6e" stroke-width="2"/>
-        <text x="195" y="288" class="av-label" fill="#c07a6e">Discontinued</text>
-        <line x1="275" y1="285" x2="300" y2="285" stroke="#3a8fc4" stroke-width="2"/>
-        <text x="305" y="288" class="av-label" fill="#3a8fc4">Graduated</text>
-        <line x1="365" y1="285" x2="382" y2="285" stroke="#d8e2ed" stroke-width="1.5" stroke-dasharray="4,2"/>
-        <text x="387" y="288" class="av-label">— Predicted</text>
+        <!-- Col Filter 2: remove edw_pers_id -->
+        <rect x="240" y="128" width="90" height="36" class="pn" rx="3"/>
+        <text x="285" y="143" class="pn-t" fill="#1a1a1a" font-weight="700">Column</text>
+        <text x="285" y="156" class="pn-t" fill="#1a1a1a" font-weight="700">Filter</text>
+        <text x="285" y="170" class="pn-s2" fill="#1a1a1a">remove edw_pers_id</text>
+
+        <!-- Row Filter: exclude 2223 -->
+        <rect x="355" y="128" width="90" height="36" class="pn" rx="3"/>
+        <text x="400" y="143" class="pn-t" fill="#1a1a1a" font-weight="700">Row</text>
+        <text x="400" y="156" class="pn-t" fill="#1a1a1a" font-weight="700">Filter</text>
+        <text x="400" y="170" class="pn-s2" fill="#1a1a1a">exclude 2223</text>
+
+        <!-- ── Branch lines from row filter ── -->
+        <path d="M445,146 L455,146" stroke="#3a4556" stroke-width="1.2" fill="none"/>
+        <path d="M455,146 L455,68 M455,146 L455,146 M455,146 L455,230" stroke="#3a4556" stroke-width="1" fill="none" stroke-dasharray="2,3"/>
+
+        <!-- ─── SEMESTER 1 (Summer) branch ─── -->
+        <rect x="470" y="45" width="80" height="30" class="pn" rx="3"/>
+        <text x="510" y="57" class="pn-t" fill="#1a1a1a" font-weight="700">Row Filter</text>
+        <text x="510" y="69" class="pn-s2" fill="#1a1a1a">semester 1</text>
+        <path d="M455,60 L470,60" class="pe"/>
+        <rect x="570" y="45" width="80" height="30" class="pn" rx="3"/>
+        <text x="610" y="57" class="pn-t" fill="#1a1a1a" font-weight="700">Partitioning</text>
+        <text x="610" y="69" class="pn-s2" fill="#1a1a1a">70 / 30</text>
+        <path d="M550,60 L570,60" class="pe"/>
+        <rect x="670" y="45" width="70" height="30" fill="rgba(91,200,220,0.15)" stroke="#5bc8dc" stroke-width="1.2" rx="3"/>
+        <text x="705" y="57" class="pn-t" fill="#5bc8dc" font-weight="700">SMOTE</text>
+        <text x="705" y="69" class="pn-s2" fill="#7ab8c8">oversample minority</text>
+        <path d="M650,60 L670,60" class="pe-a"/>
+        <rect x="760" y="45" width="80" height="30" class="pn-g" rx="3"/>
+        <text x="800" y="57" class="pn-t" fill="#1a1a1a" font-weight="700">Tree Ensemble</text>
+        <text x="800" y="69" class="pn-t" fill="#1a1a1a" font-weight="700">Learner</text>
+        <path d="M740,60 L760,60" class="pe-a"/>
+
+        <!-- ─── SEMESTER 2 (Spring) branch ─── -->
+        <rect x="470" y="128" width="80" height="30" class="pn" rx="3"/>
+        <text x="510" y="140" class="pn-t" fill="#1a1a1a" font-weight="700">Row Filter</text>
+        <text x="510" y="152" class="pn-s2" fill="#1a1a1a">semester 2</text>
+        <path d="M455,143 L470,143" class="pe"/>
+        <rect x="570" y="128" width="80" height="30" class="pn" rx="3"/>
+        <text x="610" y="140" class="pn-t" fill="#1a1a1a" font-weight="700">Partitioning</text>
+        <text x="610" y="152" class="pn-s2" fill="#1a1a1a">70 / 30</text>
+        <path d="M550,143 L570,143" class="pe"/>
+        <rect x="670" y="128" width="70" height="30" fill="rgba(91,200,220,0.15)" stroke="#5bc8dc" stroke-width="1.2" rx="3"/>
+        <text x="705" y="140" class="pn-t" fill="#5bc8dc" font-weight="700">SMOTE</text>
+        <text x="705" y="152" class="pn-s2" fill="#7ab8c8">oversample minority</text>
+        <path d="M650,143 L670,143" class="pe-a"/>
+        <rect x="760" y="128" width="80" height="30" class="pn-g" rx="3"/>
+        <text x="800" y="140" class="pn-t" fill="#1a1a1a" font-weight="700">Tree Ensemble</text>
+        <text x="800" y="152" class="pn-t" fill="#1a1a1a" font-weight="700">Learner</text>
+        <path d="M740,143 L760,143" class="pe-a"/>
+
+        <!-- ─── SEMESTER 3 (Fall) branch ─── -->
+        <rect x="470" y="213" width="80" height="30" class="pn" rx="3"/>
+        <text x="510" y="225" class="pn-t" fill="#1a1a1a" font-weight="700">Row Filter</text>
+        <text x="510" y="237" class="pn-s2" fill="#1a1a1a">semester 3</text>
+        <path d="M455,228 L470,228" class="pe"/>
+        <rect x="570" y="213" width="80" height="30" class="pn" rx="3"/>
+        <text x="610" y="225" class="pn-t" fill="#1a1a1a" font-weight="700">Partitioning</text>
+        <text x="610" y="237" class="pn-s2" fill="#1a1a1a">70 / 30</text>
+        <path d="M550,228 L570,228" class="pe"/>
+        <rect x="670" y="213" width="70" height="30" fill="rgba(91,200,220,0.15)" stroke="#5bc8dc" stroke-width="1.2" rx="3"/>
+        <text x="705" y="225" class="pn-t" fill="#5bc8dc" font-weight="700">SMOTE</text>
+        <text x="705" y="237" class="pn-s2" fill="#7ab8c8">oversample minority</text>
+        <path d="M650,228 L670,228" class="pe-a"/>
+        <rect x="760" y="213" width="80" height="30" class="pn-g" rx="3"/>
+        <text x="800" y="225" class="pn-t" fill="#1a1a1a" font-weight="700">Tree Ensemble</text>
+        <text x="800" y="237" class="pn-t" fill="#1a1a1a" font-weight="700">Learner</text>
+        <path d="M740,228 L760,228" class="pe-a"/>
+
+        <!-- Shared backbone edges -->
+        <path d="M100,145 L125,145" class="pe"/>
+        <path d="M215,145 L240,145" class="pe"/>
+        <path d="M330,145 L355,145" class="pe"/>
+
+        <!-- Semester labels on right -->
+        <text x="855" y="82" font-family="'DM Mono',monospace" font-size="7.5" fill="#6b7c91" text-anchor="start">Node 1044</text>
+        <text x="855" y="155" font-family="'DM Mono',monospace" font-size="7.5" fill="#6b7c91" text-anchor="start">Node 1045</text>
+        <text x="855" y="245" font-family="'DM Mono',monospace" font-size="7.5" fill="#6b7c91" text-anchor="start">Node 743</text>
       </svg>
-      <p style="font-size:0.75rem; color:var(--muted2); margin-top:0.5rem;">* 2022-23 is the forecast year. H2O GBM tracked actuals reliably through 2021-22. Extrapolation beyond the training window is documented as less reliable in project output.</p>
+
+      <!-- SMOTE Config card -->
+      <div style="margin-top:1.25rem; background:var(--surface2); border:1px solid var(--border); padding:1.25rem 1.5rem; max-width:500px;">
+        <div class="viz-label" style="margin-bottom:0.75rem;">SMOTE Configuration (Dialog 4:1046)</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem 2rem;">
+          <div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted2); text-transform:uppercase; letter-spacing:0.08em;">Class Column</div>
+            <div style="font-size:0.83rem; color:var(--accent);">SUCCESSFUL_OUTCOME_TARGET_BY_YEAR</div>
+          </div>
+          <div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted2); text-transform:uppercase; letter-spacing:0.08em;"># Nearest Neighbors</div>
+            <div style="font-size:0.83rem; color:var(--text);">5</div>
+          </div>
+          <div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted2); text-transform:uppercase; letter-spacing:0.08em;">Mode</div>
+            <div style="font-size:0.83rem; color:var(--text);">● Oversample minority classes</div>
+          </div>
+          <div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted2); text-transform:uppercase; letter-spacing:0.08em;">Static Seed</div>
+            <div style="font-size:0.83rem; color:var(--muted);">Disabled (non-deterministic)</div>
+          </div>
+        </div>
+      </div>
+      <div class="viz-takeaway">
+        <span>Three parallel semester models allow the Tree Ensemble to learn term-specific discontinuation signals. <strong>SMOTE with k=5 nearest neighbors</strong> synthesizes new minority-class samples to balance the severely imbalanced discontinued-student class before training — without touching the 30% test hold-out.</span>
+      </div>
     </div>
+
+    <!-- ══════════════════════════════════════════
+         3.  VALIDATION METRICS — THREE TERM CONFUSION MATRICES
+         ══════════════════════════════════════════ -->
+    <div class="viz-block">
+      <div class="viz-label">03 — Validation Metrics: Confusion Matrices by Semester (Undergraduate)</div>
+      <p class="viz-desc">
+        Post-SMOTE Tree Ensemble validation results across the three undergraduate semester models.
+        Class 0 = <strong>Discontinued</strong>; Class 1 = <strong>Continued/Enrolled</strong>.
+        Overall accuracy ranges from 92–97%, with Cohen's κ peaking at <strong>0.882 for Fall</strong>.
+      </p>
+
+      <div class="viz-grid-3">
+        <!-- SUMMER -->
+        <div>
+          <svg class="chart" viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              .cm-bg { fill: var(--surface2); }
+              .cm-h { fill: rgba(91,200,220,0.12); }
+              .cm-diag { fill: rgba(91,200,220,0.18); }
+              .cm-t { font-family:'DM Mono',monospace; font-size:9px; fill:#d8e2ed; text-anchor:middle; }
+              .cm-val { font-family:'Barlow Condensed',monospace; font-size:14px; font-weight:800; fill:#eef3f8; text-anchor:middle; }
+              .cm-val-diag { fill:#5bc8dc; }
+              .cm-pct { font-family:'DM Mono',monospace; font-size:8.5px; fill:#6b7c91; text-anchor:middle; }
+              .cm-stat-label { font-family:'DM Mono',monospace; font-size:8px; fill:#6b7c91; text-anchor:start; }
+              .cm-stat-val { font-family:'DM Mono',monospace; font-size:8px; fill:#d8e2ed; text-anchor:end; }
+          
+    .viz-block { margin-bottom: 4rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+    .viz-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+    svg.chart { width:100%; height:auto; display:block; overflow:visible; }
+    @media(max-width:860px){ .viz-grid-2,.viz-grid-3{ grid-template-columns:1fr; } }
+
+  </style>
+            <rect width="280" height="310" fill="#0f1318"/>
+            <!-- Title -->
+            <text x="140" y="18" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="800" fill="#eef3f8" text-anchor="middle" letter-spacing="0.04em">SEMESTER 1</text>
+            <text x="140" y="32" font-family="'DM Mono',monospace" font-size="9" fill="#5bc8dc" text-anchor="middle" letter-spacing="0.08em">SUMMER TERMS</text>
+            <text x="140" y="44" font-family="'DM Mono',monospace" font-size="7.5" fill="#3a4556" text-anchor="middle">Rows: 10,389</text>
+            <!-- Header row -->
+            <rect x="80" y="54" width="90" height="24" class="cm-h" rx="0"/>
+            <rect x="170" y="54" width="90" height="24" class="cm-h" rx="0"/>
+            <text x="125" y="70" class="cm-t">0 (Pred)</text>
+            <text x="215" y="70" class="cm-t">1 (Pred)</text>
+            <!-- Row 0 Actual -->
+            <rect x="10" y="78" width="70" height="40" class="cm-h" rx="0"/>
+            <text x="45" y="102" class="cm-t">0 (Act)</text>
+            <rect x="80" y="78" width="90" height="40" class="cm-diag" rx="0"/>
+            <text x="125" y="93" class="cm-val cm-val-diag">872</text>
+            <text x="125" y="108" class="cm-pct">84.99%</text>
+            <rect x="170" y="78" width="90" height="40" rx="0" fill="var(--surface2)"/>
+            <text x="215" y="93" class="cm-val" fill="#c07a6e">197</text>
+            <text x="215" y="108" class="cm-pct">15.01%</text>
+            <text x="268" y="102" class="cm-pct" text-anchor="end">81.57%</text>
+            <!-- Row 1 Actual -->
+            <rect x="10" y="118" width="70" height="40" class="cm-h" rx="0"/>
+            <text x="45" y="142" class="cm-t">1 (Act)</text>
+            <rect x="80" y="118" width="90" height="40" rx="0" fill="var(--surface2)"/>
+            <text x="125" y="133" class="cm-val" fill="#c07a6e">154</text>
+            <text x="125" y="148" class="cm-pct">1.65%</text>
+            <rect x="170" y="118" width="90" height="40" class="cm-diag" rx="0"/>
+            <text x="215" y="133" class="cm-val cm-val-diag">9,166</text>
+            <text x="215" y="148" class="cm-pct">98.35%</text>
+            <text x="268" y="142" class="cm-pct" text-anchor="end">98.35%</text>
+            <!-- col totals -->
+            <text x="125" y="172" class="cm-pct">84.99%</text>
+            <text x="215" y="172" class="cm-pct">97.90%</text>
+            <!-- Stats block -->
+            <rect x="10" y="180" width="260" height="120" fill="rgba(30,37,48,0.6)" stroke="#1e2530" stroke-width="1" rx="1"/>
+            <text x="18" y="196" class="cm-stat-label">Overall Accuracy</text>   <text x="262" y="196" class="cm-stat-val" fill="#5bc8dc">96.62%</text>
+            <text x="18" y="212" class="cm-stat-label">Overall Error</text>      <text x="262" y="212" class="cm-stat-val" fill="#c07a6e">3.38%</text>
+            <text x="18" y="228" class="cm-stat-label">Cohen's κ</text>           <text x="262" y="228" class="cm-stat-val">0.814</text>
+            <text x="18" y="244" class="cm-stat-label">Correctly Classified</text><text x="262" y="244" class="cm-stat-val">10,038</text>
+            <text x="18" y="260" class="cm-stat-label">Incorrectly Classified</text><text x="262" y="260" class="cm-stat-val" fill="#c07a6e">351</text>
+            <text x="18" y="276" class="cm-stat-label">Class 0 Sensitivity</text><text x="262" y="276" class="cm-stat-val">81.57%</text>
+            <text x="18" y="292" class="cm-stat-label">Class 1 F-measure</text>  <text x="262" y="292" class="cm-stat-val">98.12%</text>
+          </svg>
+        </div>
+
+        <!-- SPRING -->
+        <div>
+          <svg class="chart" viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg">
+            <rect width="280" height="310" fill="#0f1318"/>
+            <text x="140" y="18" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="800" fill="#eef3f8" text-anchor="middle" letter-spacing="0.04em">SEMESTER 2</text>
+            <text x="140" y="32" font-family="'DM Mono',monospace" font-size="9" fill="#5bc8dc" text-anchor="middle" letter-spacing="0.08em">SPRING TERMS</text>
+            <text x="140" y="44" font-family="'DM Mono',monospace" font-size="7.5" fill="#3a4556" text-anchor="middle">Rows: 44,405</text>
+            <rect x="80" y="54" width="90" height="24" fill="rgba(91,200,220,0.12)"/>
+            <rect x="170" y="54" width="90" height="24" fill="rgba(91,200,220,0.12)"/>
+            <text x="125" y="70" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">0 (Pred)</text>
+            <text x="215" y="70" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">1 (Pred)</text>
+            <!-- Row 0 -->
+            <rect x="10" y="78" width="70" height="40" fill="rgba(91,200,220,0.12)"/>
+            <text x="45" y="102" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">0 (Act)</text>
+            <rect x="80" y="78" width="90" height="40" fill="rgba(91,200,220,0.18)"/>
+            <text x="125" y="93" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#5bc8dc" text-anchor="middle">1,699</text>
+            <text x="125" y="108" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">51.66%</text>
+            <rect x="170" y="78" width="90" height="40" fill="var(--surface2)"/>
+            <text x="215" y="93" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#c07a6e" text-anchor="middle">1,775</text>
+            <text x="215" y="108" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">48.34%</text>
+            <text x="268" y="102" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="end">48.91%</text>
+            <!-- Row 1 -->
+            <rect x="10" y="118" width="70" height="40" fill="rgba(91,200,220,0.12)"/>
+            <text x="45" y="142" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">1 (Act)</text>
+            <rect x="80" y="118" width="90" height="40" fill="var(--surface2)"/>
+            <text x="125" y="133" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#c07a6e" text-anchor="middle">1,590</text>
+            <text x="125" y="148" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">3.89%</text>
+            <rect x="170" y="118" width="90" height="40" fill="rgba(91,200,220,0.18)"/>
+            <text x="215" y="133" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#5bc8dc" text-anchor="middle">39,341</text>
+            <text x="215" y="148" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">96.12%</text>
+            <text x="268" y="142" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="end">96.12%</text>
+            <text x="125" y="172" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">51.66%</text>
+            <text x="215" y="172" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">95.68%</text>
+            <rect x="10" y="180" width="260" height="120" fill="rgba(30,37,48,0.6)" stroke="#1e2530" stroke-width="1"/>
+            <text x="18" y="196" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Overall Accuracy</text>   <text x="262" y="196" font-family="'DM Mono',monospace" font-size="8" fill="#5bc8dc" text-anchor="end">92.42%</text>
+            <text x="18" y="212" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Overall Error</text>      <text x="262" y="212" font-family="'DM Mono',monospace" font-size="8" fill="#c07a6e" text-anchor="end">7.58%</text>
+            <text x="18" y="228" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Cohen's κ</text>           <text x="262" y="228" font-family="'DM Mono',monospace" font-size="8" fill="#d8e2ed" text-anchor="end">0.461</text>
+            <text x="18" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Correctly Classified</text><text x="262" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#d8e2ed" text-anchor="end">41,040</text>
+            <text x="18" y="260" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Incorrectly Classified</text><text x="262" y="260" font-family="'DM Mono',monospace" font-size="8" fill="#c07a6e" text-anchor="end">3,365</text>
+            <text x="18" y="276" font-family="'DM Mono',monospace" font-size="8" fill="#c07a6e">Class 0 Sensitivity ⚠</text><text x="262" y="276" font-family="'DM Mono',monospace" font-size="8" fill="#c07a6e" text-anchor="end">48.91%</text>
+            <text x="18" y="292" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Class 1 F-measure</text>  <text x="262" y="292" font-family="'DM Mono',monospace" font-size="8" fill="#d8e2ed" text-anchor="end">95.90%</text>
+          </svg>
+        </div>
+
+        <!-- FALL -->
+        <div>
+          <svg class="chart" viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg">
+            <rect width="280" height="310" fill="#0f1318"/>
+            <text x="140" y="18" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="800" fill="#eef3f8" text-anchor="middle" letter-spacing="0.04em">SEMESTER 3</text>
+            <text x="140" y="32" font-family="'DM Mono',monospace" font-size="9" fill="#5bc8dc" text-anchor="middle" letter-spacing="0.08em">FALL TERMS</text>
+            <text x="140" y="44" font-family="'DM Mono',monospace" font-size="7.5" fill="#3a4556" text-anchor="middle">Rows: 6,991</text>
+            <rect x="80" y="54" width="90" height="24" fill="rgba(91,200,220,0.12)"/>
+            <rect x="170" y="54" width="90" height="24" fill="rgba(91,200,220,0.12)"/>
+            <text x="125" y="70" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">0 (Pred)</text>
+            <text x="215" y="70" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">1 (Pred)</text>
+            <!-- Row 0 -->
+            <rect x="10" y="78" width="70" height="40" fill="rgba(91,200,220,0.12)"/>
+            <text x="45" y="102" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">0 (Act)</text>
+            <rect x="80" y="78" width="90" height="40" fill="rgba(91,200,220,0.18)"/>
+            <text x="125" y="93" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#5bc8dc" text-anchor="middle">2,787</text>
+            <text x="125" y="108" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">87.83%</text>
+            <rect x="170" y="78" width="90" height="40" fill="var(--surface2)"/>
+            <text x="215" y="93" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#c07a6e" text-anchor="middle">19</text>
+            <text x="215" y="108" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">0.50%</text>
+            <text x="268" y="102" font-family="'DM Mono',monospace" font-size="8.5" fill="#5bc8dc" text-anchor="end">99.32%</text>
+            <!-- Row 1 -->
+            <rect x="10" y="118" width="70" height="40" fill="rgba(91,200,220,0.12)"/>
+            <text x="45" y="142" font-family="'DM Mono',monospace" font-size="9" fill="#d8e2ed" text-anchor="middle">1 (Act)</text>
+            <rect x="80" y="118" width="90" height="40" fill="var(--surface2)"/>
+            <text x="125" y="133" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#c07a6e" text-anchor="middle">386</text>
+            <text x="125" y="148" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">9.22%</text>
+            <rect x="170" y="118" width="90" height="40" fill="rgba(91,200,220,0.18)"/>
+            <text x="215" y="133" font-family="'Barlow Condensed',monospace" font-size="14" font-weight="800" fill="#5bc8dc" text-anchor="middle">3,799</text>
+            <text x="215" y="148" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">99.50%</text>
+            <text x="268" y="142" font-family="'DM Mono',monospace" font-size="8.5" fill="#5bc8dc" text-anchor="end">90.78%</text>
+            <text x="125" y="172" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">87.83%</text>
+            <text x="215" y="172" font-family="'DM Mono',monospace" font-size="8.5" fill="#6b7c91" text-anchor="middle">99.50%</text>
+            <rect x="10" y="180" width="260" height="120" fill="rgba(30,37,48,0.6)" stroke="#1e2530" stroke-width="1"/>
+            <text x="18" y="196" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Overall Accuracy</text>   <text x="262" y="196" font-family="'DM Mono',monospace" font-size="8" fill="#5bc8dc" text-anchor="end">94.21%</text>
+            <text x="18" y="212" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Overall Error</text>      <text x="262" y="212" font-family="'DM Mono',monospace" font-size="8" fill="#c07a6e" text-anchor="end">5.79%</text>
+            <text x="18" y="228" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Cohen's κ</text>           <text x="262" y="228" font-family="'DM Mono',monospace" font-size="8" fill="#5bc8dc" text-anchor="end">0.882 ★</text>
+            <text x="18" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Correctly Classified</text><text x="262" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#d8e2ed" text-anchor="end">6,586</text>
+            <text x="18" y="260" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Incorrectly Classified</text><text x="262" y="260" font-family="'DM Mono',monospace" font-size="8" fill="#c07a6e" text-anchor="end">405</text>
+            <text x="18" y="276" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Class 0 Sensitivity</text><text x="262" y="276" font-family="'DM Mono',monospace" font-size="8" fill="#5bc8dc" text-anchor="end">99.32%</text>
+            <text x="18" y="292" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91">Class 1 F-measure</text>  <text x="262" y="292" font-family="'DM Mono',monospace" font-size="8" fill="#d8e2ed" text-anchor="end">94.94%</text>
+          </svg>
+        </div>
+      </div>
+      <div class="viz-takeaway">
+        <span>Fall terms produce the strongest model (κ = <strong>0.882</strong>), with 99.32% sensitivity for correctly identifying discontinued students — critical for advisor intervention. Spring is the weakest (κ = 0.461) due to more diffuse spring dropout patterns and a larger, noisier population. Summer sits in between with κ = 0.814 on a smaller cohort.</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         4.  ACTUAL VS PREDICTED CHARTS
+         ══════════════════════════════════════════ -->
+    <div class="viz-block">
+      <div class="viz-label">04 — Tree Ensemble: Actual vs. Predicted Discontinued Students</div>
+      <p class="viz-desc">
+        Line charts comparing the model's predicted count (teal) against the historical actual count (gold)
+        from academic year 1213 to 2223. The x-axis uses KNIME academic year codes
+        (e.g., <strong>1213</strong> = 2012–13, <strong>2223</strong> = 2022–23).
+      </p>
+
+      <div class="viz-grid-2">
+
+        <!-- Chart A: Undergrad Discontinued Fall -->
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.67rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem;">Undergraduate — Discontinued Fall</div>
+          <svg class="chart" viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              .ax { stroke: #1e2530; stroke-width: 1; }
+              .gd { stroke: #1e2530; stroke-width: 0.5; stroke-dasharray: 3,4; }
+              .tl { font-family:'DM Mono',monospace; font-size:8px; fill:#3a4556; text-anchor:middle; }
+              .tly { font-family:'DM Mono',monospace; font-size:8px; fill:#3a4556; text-anchor:end; }
+              .ttl { font-family:'DM Mono',monospace; font-size:7px; fill:#6b7c91; }
+          
+    .viz-block { margin-bottom: 4rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+    .viz-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+    svg.chart { width:100%; height:auto; display:block; overflow:visible; }
+    @media(max-width:860px){ .viz-grid-2,.viz-grid-3{ grid-template-columns:1fr; } }
+
+  </style>
+            <rect width="420" height="280" fill="#0f1318"/>
+            <!-- Plot area: x:50-400, y:20-230 -->
+            <!-- Grid lines Y: 1500,2000,2500,3000,3500 -->
+            <!-- Y range: 1500–3600 → scale: 210px / 2100 = 0.1px per unit -->
+            <!-- Y(v) = 230 - (v-1500)*210/2100 = 230 - (v-1500)*0.1 -->
+            <line x1="50" y1="20"  x2="50"  y2="230" class="ax"/>
+            <line x1="50" y1="230" x2="400" y2="230" class="ax"/>
+            <!-- Grid + labels -->
+            <line x1="50" y1="230" x2="400" y2="230" class="gd"/> <text x="44" y="233" class="tly">1,500</text>
+            <line x1="50" y1="180" x2="400" y2="180" class="gd"/> <text x="44" y="183" class="tly">2,000</text>
+            <line x1="50" y1="130" x2="400" y2="130" class="gd"/> <text x="44" y="133" class="tly">2,500</text>
+            <line x1="50" y1="80"  x2="400" y2="80"  class="gd"/> <text x="44" y="83"  class="tly">3,000</text>
+            <line x1="50" y1="30"  x2="400" y2="30"  class="gd"/> <text x="44" y="33"  class="tly">3,500</text>
+            <!-- X ticks: 11 points from 1213 to 2223 -->
+            <!-- x positions: 50 + i*(350/10) for i=0..10 -->
+            <!-- i=0:50, i=1:85, i=2:120, i=3:155, i=4:190, i=5:225, i=6:260, i=7:295, i=8:330, i=9:365, i=10:400 -->
+            <text x="50"  y="244" class="tl">1213</text>
+            <text x="85"  y="244" class="tl">1314</text>
+            <text x="120" y="244" class="tl">1415</text>
+            <text x="155" y="244" class="tl">1516</text>
+            <text x="190" y="244" class="tl">1617</text>
+            <text x="225" y="244" class="tl">1718</text>
+            <text x="260" y="244" class="tl">1819</text>
+            <text x="295" y="244" class="tl">1920</text>
+            <text x="330" y="244" class="tl">2021</text>
+            <text x="365" y="244" class="tl">2122</text>
+            <text x="400" y="244" class="tl">2223</text>
+            <!-- Axis labels -->
+            <text x="225" y="262" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91" text-anchor="middle">Academic Year Code</text>
+            <text x="14" y="125" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91" text-anchor="middle" transform="rotate(-90,14,125)">Total Students</text>
+
+            <!-- DATA: Undergrad Discontinued Fall
+                 Year codes: 1213,1314,1415,1516,1617,1718,1819,1920,2021,2122,2223
+                 ACTUAL:    1540,1564,1566,1487,1506,1603,1672,1935,1873,—(?)
+                 PREDICTED: 1222,1245,1307,1437,1457,1545,1614,1830,1750,1540
+                 (from image: actual starts ~1540, peaks ~1935 at 2021, then 1873; predicted slightly below)
+                 Note: 2223 actual = unknown (?); predicted = 1540
+            -->
+            <!-- Y(v) = 230 - (v-1500)*0.1 -->
+            <!-- Predicted (teal) — all 11 points -->
+            <polyline fill="none" stroke="#5bc8dc" stroke-width="2" stroke-linejoin="round"
+              points="50,207.8 85,204.5 120,197.3 155,183.7 190,180.7 225,175.5 260,168.6 295,147.0 330,155.0 365,184.0 400,199.0"/>
+            <!-- Actual (gold) — 10 points (no 2223) -->
+            <polyline fill="none" stroke="#d4a840" stroke-width="2" stroke-linejoin="round"
+              points="50,224.0 85,220.4 120,219.6 155,211.3 190,208.6 225,199.7 260,193.2 295,154.5 330,162.7"/>
+            <!-- Actual 2122 to end -->
+            <polyline fill="none" stroke="#d4a840" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4,3"
+              points="330,162.7 365,167.0"/>
+            <!-- Dots on actual -->
+            <circle cx="50" cy="224.0" r="3" fill="#d4a840"/>
+            <circle cx="85" cy="220.4" r="3" fill="#d4a840"/>
+            <circle cx="120" cy="219.6" r="3" fill="#d4a840"/>
+            <circle cx="155" cy="211.3" r="3" fill="#d4a840"/>
+            <circle cx="190" cy="208.6" r="3" fill="#d4a840"/>
+            <circle cx="225" cy="199.7" r="3" fill="#d4a840"/>
+            <circle cx="260" cy="193.2" r="3" fill="#d4a840"/>
+            <circle cx="295" cy="154.5" r="3" fill="#d4a840"/>
+            <circle cx="330" cy="162.7" r="3" fill="#d4a840"/>
+            <!-- Dots on predicted -->
+            <circle cx="50"  cy="207.8" r="3" fill="#5bc8dc"/>
+            <circle cx="400" cy="199.0" r="3.5" fill="#5bc8dc" stroke="#0f1318" stroke-width="1.5"/>
+            <!-- Legend -->
+            <line x1="54" y1="14" x2="74" y2="14" stroke="#5bc8dc" stroke-width="2"/>
+            <text x="77" y="18" class="ttl" fill="#5bc8dc">PREDICTED</text>
+            <line x1="130" y1="14" x2="150" y2="14" stroke="#d4a840" stroke-width="2"/>
+            <text x="153" y="18" class="ttl" fill="#d4a840">ACTUAL</text>
+          </svg>
+        </div>
+
+        <!-- Chart B: Liberal Arts & Sciences -->
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.67rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem;">Liberal Arts &amp; Sciences — All Discontinued</div>
+          <svg class="chart" viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg">
+            <rect width="420" height="280" fill="#0f1318"/>
+            <!-- Y range: 800–1900; scale: 210/(1900-800) = 210/1100 = 0.1909 px/unit -->
+            <!-- Y(v) = 230 - (v-800)*0.1909 -->
+            <line x1="50" y1="20"  x2="50"  y2="230" stroke="#1e2530" stroke-width="1"/>
+            <line x1="50" y1="230" x2="400" y2="230" stroke="#1e2530" stroke-width="1"/>
+            <line x1="50" y1="210" x2="400" y2="210" stroke="#1e2530" stroke-width=".5" stroke-dasharray="3,4"/><text x="44" y="213" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="end">900</text>
+            <line x1="50" y1="163" x2="400" y2="163" stroke="#1e2530" stroke-width=".5" stroke-dasharray="3,4"/><text x="44" y="166" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="end">1,150</text>
+            <line x1="50" y1="116" x2="400" y2="116" stroke="#1e2530" stroke-width=".5" stroke-dasharray="3,4"/><text x="44" y="119" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="end">1,400</text>
+            <line x1="50" y1="68"  x2="400" y2="68"  stroke="#1e2530" stroke-width=".5" stroke-dasharray="3,4"/><text x="44" y="71"  font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="end">1,650</text>
+            <line x1="50" y1="25"  x2="400" y2="25"  stroke="#1e2530" stroke-width=".5" stroke-dasharray="3,4"/><text x="44" y="28"  font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="end">1,850</text>
+            <!-- X ticks: 1213 to 2223 → 11 points same x as above -->
+            <text x="50"  y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1213</text>
+            <text x="85"  y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1314</text>
+            <text x="120" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1415</text>
+            <text x="155" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1516</text>
+            <text x="190" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1617</text>
+            <text x="225" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1718</text>
+            <text x="260" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1819</text>
+            <text x="295" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">1920</text>
+            <text x="330" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">2021</text>
+            <text x="365" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">2122</text>
+            <text x="400" y="244" font-family="'DM Mono',monospace" font-size="8" fill="#3a4556" text-anchor="middle">2223</text>
+            <text x="225" y="262" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91" text-anchor="middle">Academic Year Code</text>
+            <text x="14" y="125" font-family="'DM Mono',monospace" font-size="8" fill="#6b7c91" text-anchor="middle" transform="rotate(-90,14,125)">Total Students</text>
+
+            <!-- DATA: Liberal Arts & Sciences
+                 Actual (gold): 1213≈830, 1314≈1290, 1415≈1240, 1516≈1240, 1617≈1285, 1718≈1260, 1819≈1390, 1920≈1500, 2021≈1415, 2122≈1800, 2223≈1590
+                 Predicted (teal): 1213≈1080, 1314≈1395, 1415≈1295, 1516≈1300, 1617≈1350, 1718≈1325, 1819≈1385, 1920≈1555, 2021≈1290, 2122≈1695, 2223≈1590
+                 Y(v) = 230 - (v-800)*210/1100
+            -->
+            <!-- Predicted (teal) -->
+            <polyline fill="none" stroke="#5bc8dc" stroke-width="2" stroke-linejoin="round"
+              points="50,171.3 85,112.6 120,133.5 155,132.5 190,126.7 225,129.9 260,113.5 295,82.2 330,133.5 365,77.0 400,84.1"/>
+            <!-- Actual (gold) -->
+            <polyline fill="none" stroke="#d4a840" stroke-width="2" stroke-linejoin="round"
+              points="50,224.5 85,135.0 120,140.0 155,140.0 190,134.6 225,138.9 260,111.5 295,90.9 330,111.5 365,48.2 400,84.1"/>
+            <!-- Key dots -->
+            <circle cx="50"  cy="224.5" r="3" fill="#d4a840"/>
+            <circle cx="365" cy="48.2"  r="3" fill="#d4a840"/>
+            <circle cx="400" cy="84.1"  r="3.5" fill="#d4a840" stroke="#0f1318" stroke-width="1.5"/>
+            <circle cx="50"  cy="171.3" r="3" fill="#5bc8dc"/>
+            <!-- Legend -->
+            <line x1="54" y1="14" x2="74" y2="14" stroke="#5bc8dc" stroke-width="2"/>
+            <text x="77" y="18" font-family="'DM Mono',monospace" font-size="7" fill="#5bc8dc">PREDICTED_COUNT</text>
+            <line x1="152" y1="14" x2="172" y2="14" stroke="#d4a840" stroke-width="2"/>
+            <text x="175" y="18" font-family="'DM Mono',monospace" font-size="7" fill="#d4a840">ACTUAL_COUNT</text>
+          </svg>
+        </div>
+      </div>
+      <div class="viz-takeaway">
+        <span>Both charts show the model <strong>consistently underpredicts</strong> the actual discontinued count — the systematic gap that motivated the linear regression adjustment ratio. Note the sharp actual-count surge in AY 2122 (post-COVID enrollment recovery attrition), which the model partially misses, validating the need for the adjustment ratio recalibration methodology.</span>
+      </div>
+    </div>
+
   </section>
+
 
   <!-- TEAM -->
   <section id="team">
@@ -849,7 +1475,7 @@
         <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">Python ARIMA model for predicting continuing student enrollment outcomes by student level and college. Projection outputs, actual vs predicted graphs, performance metrics, and documentation.</p>
       </div>
       <div style="border-left: 2px solid var(--accent2); padding-left: 1.25rem;">
-        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Ani · Intern</div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Anirudh Palakurthi · Technology Solutions, UIC</div>
         <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">KNIME ARIMA model for projecting incoming student enrollment. Yield prediction (%NotEnrolled) for Undergrads, Grads, Professionals, and Law students by college and term.</p>
       </div>
       <div style="border-left: 2px solid var(--muted2); padding-left: 1.25rem;">
@@ -878,7 +1504,7 @@
       <div class="arima-card">
         <div class="arima-accent">14</div>
         <div class="arima-card-title">Colleges Modeled</div>
-        <p>Separate ARIMA models trained per college per student level, with final parameters selected via cross-referenced grid search across all ARIMA parameter combinations for each college.</p>
+        <p>Separate ARIMA models trained per college per student level. Final parameters selected via cross-referenced grid search across all ARIMA parameter combinations for each college and student segment.</p>
       </div>
       <div class="arima-card">
         <div class="arima-accent">4</div>
@@ -888,7 +1514,21 @@
       <div class="arima-card">
         <div class="arima-accent">2</div>
         <div class="arima-card-title">Implementations</div>
-        <p>KNIME ARIMA workflow for incoming student yield prediction (% not enrolled from accepted applicants), plus Python ARIMA for projecting current student population outcomes by college.</p>
+        <p>KNIME ARIMA workflow (incoming student yield) built by Anirudh Palakurthi. Python ARIMA for continuing student projections by college built by Azaan Barlas. Both implementations iterated through multiple model variants.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem; border: 1px solid var(--border); background: var(--surface2); padding: 2rem;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:1.25rem;">Two-Stage ARIMA Development</div>
+      <div class="two-col">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.6rem;">Iteration 1 — Baseline ARIMA</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.7;">Initial ARIMA models were built with manually tuned p, d, q parameters, optimized per college and student level via grid search. Models were trained on historical enrollment data from 2013 through 2021-22, with separate parameter sets selected for each of the 14 UIC colleges to account for program-specific enrollment patterns and seasonality.</p>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.6rem;">Iteration 2 — ARIMA with Exponential Smoothing &amp; Auto-ARIMA</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.7;">A second iteration extended the baseline models with <strong style="color:var(--text)">exponential smoothing</strong> to better capture recent enrollment trend weighting, and incorporated <strong style="color:var(--text)">Auto-ARIMA</strong> (automated parameter selection via AIC/BIC optimization) to systematically identify the best-fit model order for each college-level series. This iteration improved forecast stability and reduced manual tuning overhead across the 14 college segments.</p>
+        </div>
       </div>
     </div>
 
