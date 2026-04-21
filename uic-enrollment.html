@@ -814,8 +814,8 @@
           .wf-label { font-family:'DM Mono',monospace; font-size:9px; fill:#6b7c91; letter-spacing:0.06em; text-transform:uppercase; }
           .wf-title { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; fill:#eef3f8; text-transform:uppercase; letter-spacing:0.04em; }
           .wf-sub { font-family:'DM Sans',sans-serif; font-size:8.5px; fill:#6b7c91; }
-          .wf-node { fill:#f5a623; stroke:#c4831a; stroke-width:1; rx:3; }
-          .wf-node-g { fill:#6ac77e; stroke:#3a8a50; stroke-width:1; }
+          .wf-node { fill:#1e5f7a; stroke:#3a8fc4; stroke-width:1.2; rx:3; }
+          .wf-node-g { fill:#2a7a5a; stroke:#3dba84; stroke-width:1.2; }
           .wf-edge { stroke:#3a4556; stroke-width:1.2; fill:none; marker-end:url(#arr); }
           .wf-edge-hi { stroke:#5bc8dc; stroke-width:1.2; fill:none; marker-end:url(#arr-acc); opacity:.6; }
       
@@ -844,27 +844,27 @@
         <text x="18" y="63" class="wf-sub">Aggregated by Year</text>
         <text x="18" y="77" class="wf-sub">Single Snapshot</text>
         <!-- Parquet node -->
-        <rect x="40" y="88" width="90" height="28" class="wf-node" rx="3"/>
-        <text x="85" y="104" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Parquet Reader</text>
-        <text x="85" y="116" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-size="7">GRADUATE_TARGET_BY_YEAR</text>
+        <rect x="25" y="88" width="120" height="28" class="wf-node" rx="3"/>
+        <text x="85" y="102" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Parquet Reader</text>
+        <text x="85" y="116" class="wf-sub" text-anchor="middle" fill="#6b9ab8" font-size="7">GRADUATE_TARGET_BY_YEAR</text>
 
         <!-- ── BOX 2: FEATURE SELECTION ── -->
         <rect x="10" y="145" width="165" height="80" class="wf-box" rx="2"/>
         <text x="18" y="163" class="wf-label">Feature Selection</text>
         <rect x="40" y="172" width="90" height="28" class="wf-node" rx="3"/>
-        <text x="85" y="188" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Feature Selection</text>
+        <text x="85" y="188" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Feature Selection</text>
 
         <!-- ── BOX 3: TRAIN DATA W/ SMOTE ── -->
         <rect x="220" y="145" width="165" height="80" class="wf-box" rx="2"/>
         <text x="228" y="163" class="wf-label">Train Data w/ SMOTE</text>
         <rect x="248" y="172" width="90" height="28" class="wf-node" rx="3"/>
-        <text x="293" y="188" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Train Data</text>
+        <text x="293" y="188" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Train Data</text>
 
         <!-- ── BOX 4: TEST DATA ── -->
         <rect x="220" y="250" width="165" height="80" class="wf-box" rx="2"/>
         <text x="228" y="268" class="wf-label">Test Data</text>
         <rect x="248" y="278" width="90" height="28" class="wf-node" rx="3"/>
-        <text x="293" y="294" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Test Data</text>
+        <text x="293" y="294" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Test Data</text>
 
         <!-- ── BOX 5: TREE ENSEMBLE LEARNER ── -->
         <rect x="430" y="120" width="175" height="105" class="wf-box-hi" rx="2"/>
@@ -878,39 +878,39 @@
         <rect x="430" y="250" width="175" height="80" class="wf-box" rx="2"/>
         <text x="438" y="268" class="wf-label">Tree Ensemble Predictor</text>
         <rect x="470" y="277" width="95" height="28" class="wf-node" rx="3"/>
-        <text x="517" y="293" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Predictor</text>
+        <text x="517" y="293" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Predictor</text>
 
         <!-- ── BOX 7: MODEL PERFORMANCE METRICS ── -->
         <rect x="645" y="15" width="240" height="170" class="wf-box" rx="2"/>
         <text x="653" y="33" class="wf-label">Model Performance Metrics</text>
         <!-- 3 scorer nodes -->
-        <rect x="700" y="43" width="120" height="22" fill="#e8a87c" stroke="#c47840" stroke-width="1" rx="2"/>
-        <text x="760" y="57" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Scorer (JavaScript) ×3</text>
-        <rect x="700" y="73" width="120" height="22" fill="#e8a87c" stroke="#c47840" stroke-width="1" rx="2"/>
-        <text x="760" y="87" class="wf-sub" text-anchor="middle" fill="#1a1a1a">Fall / Spring / Summer</text>
+        <rect x="700" y="43" width="120" height="22" fill="#1e5f7a" stroke="#3a8fc4" stroke-width="1" rx="2"/>
+        <text x="760" y="57" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Scorer (JavaScript) ×3</text>
+        <rect x="700" y="73" width="120" height="22" fill="#1e5f7a" stroke="#3a8fc4" stroke-width="1" rx="2"/>
+        <text x="760" y="87" class="wf-sub" text-anchor="middle" fill="#d8e2ed">Fall / Spring / Summer</text>
         <rect x="700" y="103" width="120" height="22" class="wf-node" rx="2"/>
-        <text x="760" y="117" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Test Performance</text>
+        <text x="760" y="117" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Test Performance</text>
         <rect x="700" y="133" width="120" height="22" class="wf-node" rx="2"/>
-        <text x="760" y="147" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Node 1290</text>
+        <text x="760" y="147" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Node 1290</text>
 
         <!-- ── BOX 8: VISUALIZE ── -->
         <rect x="645" y="200" width="240" height="115" class="wf-box" rx="2"/>
         <text x="653" y="218" class="wf-label">Visualize Predictions with Actual Trends</text>
         <rect x="700" y="228" width="120" height="18" class="wf-node-g" rx="2"/>
-        <text x="760" y="240" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Fall A vs P</text>
+        <text x="760" y="240" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Line Plot — Fall A vs P</text>
         <rect x="700" y="251" width="120" height="18" class="wf-node-g" rx="2"/>
-        <text x="760" y="263" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Spring A vs P</text>
+        <text x="760" y="263" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Line Plot — Spring A vs P</text>
         <rect x="700" y="274" width="120" height="18" class="wf-node-g" rx="2"/>
-        <text x="760" y="286" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Summer A vs P</text>
+        <text x="760" y="286" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Line Plot — Summer A vs P</text>
         <rect x="700" y="297" width="120" height="18" class="wf-node-g" rx="2"/>
-        <text x="760" y="309" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Line Plot — Fall A vs P</text>
+        <text x="760" y="309" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Line Plot — Fall A vs P</text>
 
         <!-- ── BOX 9: CLASSIFICATIONS OUTPUT ── -->
         <rect x="645" y="330" width="240" height="75" class="wf-box" rx="2"/>
         <text x="653" y="348" class="wf-label">Make Classifications to Discontinue</text>
         <rect x="700" y="357" width="120" height="28" class="wf-node" rx="3"/>
-        <text x="760" y="369" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Discontinuation</text>
-        <text x="760" y="381" class="wf-sub" text-anchor="middle" fill="#1a1a1a" font-weight="700">Classification</text>
+        <text x="760" y="369" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Discontinuation</text>
+        <text x="760" y="381" class="wf-sub" text-anchor="middle" fill="#d8e2ed" font-weight="700">Classification</text>
 
         <!-- ── EDGES ── -->
         <!-- Parquet → Feature Sel -->
@@ -959,8 +959,8 @@
           </marker>
         </defs>
         <style>
-          .pn { fill:#f5a623; stroke:#c4831a; stroke-width:1; rx:3; }
-          .pn-g { fill:#6ac77e; stroke:#3a8a50; stroke-width:1.2; }
+          .pn { fill:#1e5f7a; stroke:#3a8fc4; stroke-width:1.2; rx:3; }
+          .pn-g { fill:#2a7a5a; stroke:#3dba84; stroke-width:1.4; }
           .pn-s { fill:rgba(91,200,220,0.12); stroke:#5bc8dc; stroke-width:1.2; }
           .pn-t { font-family:'DM Mono',monospace; font-size:8px; fill:#d8e2ed; text-anchor:middle; }
           .pn-s2 { font-family:'DM Mono',monospace; font-size:7px; fill:#6b7c91; text-anchor:middle; }
@@ -995,27 +995,27 @@
         <!-- Shared pipeline nodes -->
         <!-- Parquet Reader -->
         <rect x="10" y="120" width="90" height="50" class="pn" rx="3"/>
-        <text x="55" y="141" class="pn-t" fill="#1a1a1a" font-weight="700">Parquet</text>
-        <text x="55" y="154" class="pn-t" fill="#1a1a1a" font-weight="700">Reader</text>
-        <text x="55" y="167" class="pn-s2" fill="#1a1a1a" font-size="6.5">UG_TARGET_BY_YEAR</text>
+        <text x="55" y="141" class="pn-t" fill="#d8e2ed" font-weight="700">Parquet</text>
+        <text x="55" y="154" class="pn-t" fill="#d8e2ed" font-weight="700">Reader</text>
+        <text x="55" y="167" class="pn-s2" fill="#6b9ab8" font-size="6.5">UG_TARGET_BY_YEAR</text>
 
         <!-- Col Filter 1: Feature Selection -->
-        <rect x="125" y="128" width="90" height="36" class="pn" rx="3"/>
-        <text x="170" y="143" class="pn-t" fill="#1a1a1a" font-weight="700">Column</text>
-        <text x="170" y="156" class="pn-t" fill="#1a1a1a" font-weight="700">Filter</text>
-        <text x="170" y="170" class="pn-s2" fill="#1a1a1a">Feature Selection</text>
+        <rect x="118" y="128" width="104" height="36" class="pn" rx="3"/>
+        <text x="170" y="143" class="pn-t" fill="#d8e2ed" font-weight="700">Column</text>
+        <text x="170" y="156" class="pn-t" fill="#d8e2ed" font-weight="700">Filter</text>
+        <text x="170" y="170" class="pn-s2" fill="#d8e2ed">Feature Selection</text>
 
         <!-- Col Filter 2: remove edw_pers_id -->
         <rect x="240" y="128" width="90" height="36" class="pn" rx="3"/>
-        <text x="285" y="143" class="pn-t" fill="#1a1a1a" font-weight="700">Column</text>
-        <text x="285" y="156" class="pn-t" fill="#1a1a1a" font-weight="700">Filter</text>
-        <text x="285" y="170" class="pn-s2" fill="#1a1a1a">remove edw_pers_id</text>
+        <text x="285" y="143" class="pn-t" fill="#d8e2ed" font-weight="700">Column</text>
+        <text x="285" y="156" class="pn-t" fill="#d8e2ed" font-weight="700">Filter</text>
+        <text x="285" y="170" class="pn-s2" fill="#d8e2ed">remove edw_pers_id</text>
 
         <!-- Row Filter: exclude 2223 -->
         <rect x="355" y="128" width="90" height="36" class="pn" rx="3"/>
-        <text x="400" y="143" class="pn-t" fill="#1a1a1a" font-weight="700">Row</text>
-        <text x="400" y="156" class="pn-t" fill="#1a1a1a" font-weight="700">Filter</text>
-        <text x="400" y="170" class="pn-s2" fill="#1a1a1a">exclude 2223</text>
+        <text x="400" y="143" class="pn-t" fill="#d8e2ed" font-weight="700">Row</text>
+        <text x="400" y="156" class="pn-t" fill="#d8e2ed" font-weight="700">Filter</text>
+        <text x="400" y="170" class="pn-s2" fill="#d8e2ed">exclude 2223</text>
 
         <!-- ── Branch lines from row filter ── -->
         <path d="M445,146 L455,146" stroke="#3a4556" stroke-width="1.2" fill="none"/>
@@ -1023,56 +1023,56 @@
 
         <!-- ─── SEMESTER 1 (Summer) branch ─── -->
         <rect x="470" y="45" width="80" height="30" class="pn" rx="3"/>
-        <text x="510" y="57" class="pn-t" fill="#1a1a1a" font-weight="700">Row Filter</text>
-        <text x="510" y="69" class="pn-s2" fill="#1a1a1a">semester 1</text>
+        <text x="510" y="57" class="pn-t" fill="#d8e2ed" font-weight="700">Row Filter</text>
+        <text x="510" y="69" class="pn-s2" fill="#d8e2ed">semester 1</text>
         <path d="M455,60 L470,60" class="pe"/>
         <rect x="570" y="45" width="80" height="30" class="pn" rx="3"/>
-        <text x="610" y="57" class="pn-t" fill="#1a1a1a" font-weight="700">Partitioning</text>
-        <text x="610" y="69" class="pn-s2" fill="#1a1a1a">70 / 30</text>
+        <text x="610" y="57" class="pn-t" fill="#d8e2ed" font-weight="700">Partitioning</text>
+        <text x="610" y="69" class="pn-s2" fill="#d8e2ed">70 / 30</text>
         <path d="M550,60 L570,60" class="pe"/>
         <rect x="670" y="45" width="70" height="30" fill="rgba(91,200,220,0.15)" stroke="#5bc8dc" stroke-width="1.2" rx="3"/>
         <text x="705" y="57" class="pn-t" fill="#5bc8dc" font-weight="700">SMOTE</text>
         <text x="705" y="69" class="pn-s2" fill="#7ab8c8">oversample minority</text>
         <path d="M650,60 L670,60" class="pe-a"/>
         <rect x="760" y="45" width="80" height="30" class="pn-g" rx="3"/>
-        <text x="800" y="57" class="pn-t" fill="#1a1a1a" font-weight="700">Tree Ensemble</text>
-        <text x="800" y="69" class="pn-t" fill="#1a1a1a" font-weight="700">Learner</text>
+        <text x="800" y="57" class="pn-t" fill="#d8e2ed" font-weight="700">Tree Ensemble</text>
+        <text x="800" y="69" class="pn-t" fill="#d8e2ed" font-weight="700">Learner</text>
         <path d="M740,60 L760,60" class="pe-a"/>
 
         <!-- ─── SEMESTER 2 (Spring) branch ─── -->
         <rect x="470" y="128" width="80" height="30" class="pn" rx="3"/>
-        <text x="510" y="140" class="pn-t" fill="#1a1a1a" font-weight="700">Row Filter</text>
-        <text x="510" y="152" class="pn-s2" fill="#1a1a1a">semester 2</text>
+        <text x="510" y="140" class="pn-t" fill="#d8e2ed" font-weight="700">Row Filter</text>
+        <text x="510" y="152" class="pn-s2" fill="#d8e2ed">semester 2</text>
         <path d="M455,143 L470,143" class="pe"/>
         <rect x="570" y="128" width="80" height="30" class="pn" rx="3"/>
-        <text x="610" y="140" class="pn-t" fill="#1a1a1a" font-weight="700">Partitioning</text>
-        <text x="610" y="152" class="pn-s2" fill="#1a1a1a">70 / 30</text>
+        <text x="610" y="140" class="pn-t" fill="#d8e2ed" font-weight="700">Partitioning</text>
+        <text x="610" y="152" class="pn-s2" fill="#d8e2ed">70 / 30</text>
         <path d="M550,143 L570,143" class="pe"/>
         <rect x="670" y="128" width="70" height="30" fill="rgba(91,200,220,0.15)" stroke="#5bc8dc" stroke-width="1.2" rx="3"/>
         <text x="705" y="140" class="pn-t" fill="#5bc8dc" font-weight="700">SMOTE</text>
         <text x="705" y="152" class="pn-s2" fill="#7ab8c8">oversample minority</text>
         <path d="M650,143 L670,143" class="pe-a"/>
         <rect x="760" y="128" width="80" height="30" class="pn-g" rx="3"/>
-        <text x="800" y="140" class="pn-t" fill="#1a1a1a" font-weight="700">Tree Ensemble</text>
-        <text x="800" y="152" class="pn-t" fill="#1a1a1a" font-weight="700">Learner</text>
+        <text x="800" y="140" class="pn-t" fill="#d8e2ed" font-weight="700">Tree Ensemble</text>
+        <text x="800" y="152" class="pn-t" fill="#d8e2ed" font-weight="700">Learner</text>
         <path d="M740,143 L760,143" class="pe-a"/>
 
         <!-- ─── SEMESTER 3 (Fall) branch ─── -->
         <rect x="470" y="213" width="80" height="30" class="pn" rx="3"/>
-        <text x="510" y="225" class="pn-t" fill="#1a1a1a" font-weight="700">Row Filter</text>
-        <text x="510" y="237" class="pn-s2" fill="#1a1a1a">semester 3</text>
+        <text x="510" y="225" class="pn-t" fill="#d8e2ed" font-weight="700">Row Filter</text>
+        <text x="510" y="237" class="pn-s2" fill="#d8e2ed">semester 3</text>
         <path d="M455,228 L470,228" class="pe"/>
         <rect x="570" y="213" width="80" height="30" class="pn" rx="3"/>
-        <text x="610" y="225" class="pn-t" fill="#1a1a1a" font-weight="700">Partitioning</text>
-        <text x="610" y="237" class="pn-s2" fill="#1a1a1a">70 / 30</text>
+        <text x="610" y="225" class="pn-t" fill="#d8e2ed" font-weight="700">Partitioning</text>
+        <text x="610" y="237" class="pn-s2" fill="#d8e2ed">70 / 30</text>
         <path d="M550,228 L570,228" class="pe"/>
         <rect x="670" y="213" width="70" height="30" fill="rgba(91,200,220,0.15)" stroke="#5bc8dc" stroke-width="1.2" rx="3"/>
         <text x="705" y="225" class="pn-t" fill="#5bc8dc" font-weight="700">SMOTE</text>
         <text x="705" y="237" class="pn-s2" fill="#7ab8c8">oversample minority</text>
         <path d="M650,228 L670,228" class="pe-a"/>
         <rect x="760" y="213" width="80" height="30" class="pn-g" rx="3"/>
-        <text x="800" y="225" class="pn-t" fill="#1a1a1a" font-weight="700">Tree Ensemble</text>
-        <text x="800" y="237" class="pn-t" fill="#1a1a1a" font-weight="700">Learner</text>
+        <text x="800" y="225" class="pn-t" fill="#d8e2ed" font-weight="700">Tree Ensemble</text>
+        <text x="800" y="237" class="pn-t" fill="#d8e2ed" font-weight="700">Learner</text>
         <path d="M740,228 L760,228" class="pe-a"/>
 
         <!-- Shared backbone edges -->
@@ -1471,20 +1471,20 @@
         <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">KNIME data wrangling workflow · Python feature engineering and target labeling · KNIME classification model (Tree Ensemble, Random Forest, GBM) · Project architecture, stakeholder delivery, documentation</p>
       </div>
       <div style="border-left: 2px solid var(--accent2); padding-left: 1.25rem;">
-        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Azaan Barlas · Intern</div>
-        <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">Python ARIMA model for predicting continuing student enrollment outcomes by student level and college. Projection outputs, actual vs predicted graphs, performance metrics, and documentation.</p>
-      </div>
-      <div style="border-left: 2px solid var(--accent2); padding-left: 1.25rem;">
         <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Anirudh Palakurthi · Technology Solutions, UIC</div>
         <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">KNIME ARIMA model for projecting incoming student enrollment. Yield prediction (%NotEnrolled) for Undergrads, Grads, Professionals, and Law students by college and term.</p>
       </div>
-      <div style="border-left: 2px solid var(--muted2); padding-left: 1.25rem;">
-        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem;">Zhitao Zeng · Intern</div>
-        <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">Python data exploration and feature importance analysis using SweetViz comparison reports. Student outcome probability modeling (high/medium/low risk classification by term).</p>
+      <div style="border-left: 2px solid var(--accent2); padding-left: 1.25rem;">
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Azaan Barlas · Intern</div>
+        <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">Python ARIMA model for predicting continuing student enrollment outcomes by student level and college. Projection outputs, actual vs predicted graphs, performance metrics, and documentation.</p>
       </div>
       <div style="border-left: 2px solid var(--muted2); padding-left: 1.25rem;">
-        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem;">Riya Saini · Intern</div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:#8ab870; margin-bottom:0.5rem;">Riya Saini · Intern</div>
         <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">Python model comparison analysis — CatBoost vs H2O evaluation, sampling methods, encoding strategies, cross-validation scoring, and documented recommendations for future optimization.</p>
+      </div>
+      <div style="border-left: 2px solid var(--muted2); padding-left: 1.25rem;">
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:#8ab870; margin-bottom:0.5rem;">Zhitao Zeng · Intern</div>
+        <p style="font-size:0.83rem; color:var(--muted); line-height:1.6;">Python data exploration and feature importance analysis using SweetViz comparison reports. Student outcome probability modeling (high/medium/low risk classification by term).</p>
       </div>
     </div>
   </section>
