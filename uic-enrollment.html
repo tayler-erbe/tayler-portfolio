@@ -1626,7 +1626,64 @@
         </div>
         <div>
           <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.6rem;">Iteration 2 — ARIMA with Exponential Smoothing &amp; Auto-ARIMA</div>
-          <p style="font-size:0.85rem; color:var(--muted); line-height:1.7;">A second iteration extended the baseline models with <strong style="color:var(--text)">exponential smoothing</strong> to better capture recent enrollment trend weighting, and incorporated <strong style="color:var(--text)">Auto-ARIMA</strong> (automated parameter selection via AIC/BIC optimization) to systematically identify the best-fit model order for each college-level series. This iteration improved forecast stability and reduced manual tuning overhead across the 14 college segments.</p>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.7;">A second iteration extended the baseline models with <strong style="color:var(--text)">exponential smoothing</strong> to handle combinations where ARIMA could not produce a reliable forecast, and incorporated <strong style="color:var(--text)">Auto-ARIMA</strong> (automated parameter selection via AIC/BIC optimization) to systematically identify the best-fit model order for each college-level series. This iteration improved forecast stability and reduced manual tuning overhead across the 14 college segments.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPONENTIAL SMOOTHING DEEP DIVE -->
+    <div style="margin-top: 2rem; border: 1px solid var(--border); padding: 2rem;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem;">Exponential Smoothing — Non-Continuing Student Forecasts</div>
+      <p style="font-size:0.88rem; color:var(--muted); line-height:1.7; margin-bottom:1.5rem;">The full 10-year forecast was divided into two student types — <strong style="color:var(--text)">Continuing</strong> and <strong style="color:var(--text)">Non-Continuing</strong> — on the premise that their enrollment drivers differ substantially. For each type, separate models were run across every combination of Student Level (Undergraduate, Graduate, Professional), College, and Term (Fall, Spring, Summer). In practice, this meant dozens of individual ARIMA models. For 12 specific college-level-term combinations, ARIMA failed to produce a reliable forecast and an ad-hoc <strong style="color:var(--text)">Holt's Double Exponential Smoothing</strong> model was implemented as a replacement.</p>
+
+      <div class="two-col" style="margin-bottom: 1.75rem;">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.75rem;">Why Holt's (Double) Exponential Smoothing?</div>
+          <p style="font-size:0.83rem; color:var(--muted); line-height:1.65; margin-bottom:0.75rem;">By splitting the enrollment data into Fall, Spring, and Summer subsets and running separate models on each, seasonality was effectively removed from each individual series. What remained was a trend-bearing, non-seasonal time series — exactly the use case Holt's method is designed for.</p>
+          <p style="font-size:0.83rem; color:var(--muted); line-height:1.65;">Holt's method extends simple exponential smoothing with two parameters: <strong style="color:var(--text)">α (alpha)</strong> controls the weight given to the current level observation, and <strong style="color:var(--text)">β (beta)</strong> controls the weight given to the current trend estimate. Both decay exponentially, giving more influence to recent observations without discarding older patterns entirely.</p>
+          <div style="background:var(--surface2); border:1px solid var(--border); padding:1rem 1.25rem; margin-top:1rem; font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--accent2); line-height:2;">
+            <div>s<sub>t</sub> = αx<sub>t</sub> + (1 – α)(s<sub>t-1</sub> + b<sub>t-1</sub>)</div>
+            <div>b<sub>t</sub> = β(s<sub>t</sub> – s<sub>t-1</sub>) + (1 – β)b<sub>t-1</sub></div>
+            <div style="font-size:0.65rem; color:var(--muted); margin-top:0.5rem; letter-spacing:0.05em;">where s = smoothed level, b = trend estimate, α/β ∈ (0,1)</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.75rem;">12 Combinations Handled by Exponential Smoothing</div>
+          <div style="display:flex; flex-direction:column; gap:0;">
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; gap:0; border-bottom:1px solid var(--border);">
+              <div style="font-family:'DM Mono',monospace; font-size:0.63rem; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted2); padding:0.4rem 0.6rem;">Level</div>
+              <div style="font-family:'DM Mono',monospace; font-size:0.63rem; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted2); padding:0.4rem 0.6rem;">College</div>
+              <div style="font-family:'DM Mono',monospace; font-size:0.63rem; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted2); padding:0.4rem 0.6rem;">Term</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Undergrad</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Business Administration</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Spring</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Undergrad</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Applied Health</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Summer</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Graduate</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Business Administration</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Fall</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Graduate</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Medicine</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Fall</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Graduate</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Dentistry</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Spring</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Graduate</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Pharmacy</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Spring</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Graduate</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Liberal Arts &amp; Sciences</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Summer</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Graduate</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Medicine</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Summer</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Professional</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Applied Health</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Spring</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Professional</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Dentistry</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Spring</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px; border-bottom:1px solid var(--border);"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Professional</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Nursing</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Spring</div></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 80px;"><div style="font-size:0.78rem; color:var(--muted); padding:0.35rem 0.6rem;">Professional</div><div style="font-size:0.78rem; color:var(--text); padding:0.35rem 0.6rem;">Dentistry</div><div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--accent2); padding:0.35rem 0.6rem;">Summer</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.75rem;">Optimization &amp; Forecast Pipeline</div>
+      <div class="three-col">
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem; padding-bottom:0.4rem; border-bottom:1px solid var(--border);">Parameter Grid Search</div>
+          <p style="font-size:0.82rem; color:var(--muted); line-height:1.6;">Alpha (α) and beta (β) were both swept from 0.05 to 1.0 in steps of 0.05. Every combination was evaluated against an 80/20 train-validation split using RMSE as the selection criterion. The pair yielding the lowest validation RMSE was retained as the best model for that combination.</p>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem; padding-bottom:0.4rem; border-bottom:1px solid var(--border);">Full-Data Refit &amp; Forecasting</div>
+          <p style="font-size:0.82rem; color:var(--muted); line-height:1.6;">After the best α and β were identified, the model was refit on the entire dataset (training + validation) to maximize the information available before projecting forward. The fitted model then produced a 10-period point forecast for each of the 12 problem combinations.</p>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.4rem; padding-bottom:0.4rem; border-bottom:1px solid var(--border);">Forecast Range via MAE</div>
+          <p style="font-size:0.82rem; color:var(--muted); line-height:1.6;">Mean Absolute Error (MAE) was computed on the validation set using the best-fit model. The forecast range was expressed as the point forecast ± MAE, providing a practical uncertainty band for each projected enrollment figure to communicate forecast confidence to stakeholders.</p>
         </div>
       </div>
     </div>
