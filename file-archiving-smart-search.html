@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | File Archiving & Intelligent Search System</title>
+  <meta name="description" content="Tayler Erbe built a full end-to-end intelligent archiving system connecting to Box cloud storage, extracting text from 15+ file types using local LLMs and vision models, and enabling semantic vector search over an entire legacy archive." />
+  <meta name="keywords" content="Tayler Erbe, data scientist, LLM, FAISS, vector search, file archiving, LLaVA, LLaMA, Ollama, Box SDK, semantic search, digital preservation, University of Illinois" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/file-archiving-smart-search.html" />
+  <meta property="og:title" content="Tayler Erbe | File Archiving & Intelligent Search System" />
+  <meta property="og:description" content="End-to-end digital archiving pipeline using LLaMA 3.2, LLaVA, FAISS, and Box SDK to make any legacy archive fully semantically searchable." />
+  <meta property="og:type" content="article" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-back:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      padding: 9rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -30%; right: -5%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1.0; color: var(--white);
+      letter-spacing: 0.01em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; }
+    .meta-item {}
+    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+
+    /* STAT STRIP */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-item { background: var(--surface); padding: 1.75rem 2rem; }
+    .stat-item:hover { background: var(--surface2); }
+    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* SECTIONS */
+    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* PROSE */
+    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p strong { color: var(--text); font-weight: 500; }
+
+    /* TWO-COL / THREE-COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+
+    /* CALLOUT CARD */
+    .callout {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
+      margin-top: 1.5rem;
+    }
+    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .callout p strong { color: var(--text); }
+
+    /* PIPELINE STEPS */
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.5rem; padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .pipeline-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
+    }
+    .step-content {}
+    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .step-body strong { color: var(--text); font-weight: 500; }
+
+    /* TAG CHIPS */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+
+    /* FILE TYPE GRID */
+    .filetype-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2rem; }
+    .filetype-cell { background: var(--surface); padding: 1.25rem 1.5rem; }
+    .filetype-cell:hover { background: var(--surface2); }
+    .filetype-ext { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--accent); letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+    .filetype-method { font-size: 0.75rem; color: var(--accent2); margin-bottom: 0.4rem; font-family: 'DM Mono', monospace; letter-spacing: 0.03em; }
+    .filetype-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
+
+    /* ARCHITECTURE DIAGRAM */
+    .arch-flow { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); margin-top: 2rem; }
+    .arch-row {
+      display: grid; grid-template-columns: 200px 1fr;
+      gap: 0; border-bottom: 1px solid var(--border);
+    }
+    .arch-row:last-child { border-bottom: none; }
+    .arch-step-num {
+      background: var(--surface2); padding: 1.25rem 1.5rem;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 0.9rem; color: var(--accent2); text-transform: uppercase;
+      letter-spacing: 0.05em; border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .arch-step-num span { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); text-transform: none; letter-spacing: 0; margin-top: 0.25rem; font-weight: 400; }
+    .arch-content { padding: 1.25rem 1.75rem; background: var(--surface); }
+    .arch-content-title { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); margin-bottom: 0.4rem; }
+    .arch-content p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .arch-content p strong { color: var(--text); }
+
+    /* INSIGHT BOXES */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+    .insight-box p strong { color: var(--text); }
+
+    /* MODEL CARD (reused for component cards) */
+    .model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .model-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
+    .model-card.winner { border-color: var(--accent); border-top-width: 3px; }
+    .model-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .model-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--white); text-transform: uppercase; }
+    .model-badge { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.6rem; background: rgba(91,200,220,0.12); color: var(--accent); border: 1px solid var(--accent); }
+    .model-badge-alt { background: rgba(58,143,196,0.12); color: var(--accent2); border-color: var(--accent2); }
+    .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 0.82rem; color: var(--muted); }
+    .metric-value { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: var(--text); }
+    .metric-value.good { color: var(--accent); }
+
+    /* SEARCH RESULTS DEMO */
+    .search-demo { background: var(--surface); border: 1px solid var(--border); margin-top: 2rem; }
+    .search-demo-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; }
+    .search-prompt { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--accent); }
+    .search-prompt::before { content: '❯ '; color: var(--muted2); }
+    .search-results { padding: 0; }
+    .search-result-item { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 60px 1fr; gap: 1rem; align-items: start; }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: var(--surface2); }
+    .result-score { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent); line-height: 1; }
+    .result-score span { display: block; font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); font-weight: 400; margin-top: 0.15rem; }
+    .result-name { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--white); margin-bottom: 0.2rem; }
+    .result-path { font-size: 0.72rem; color: var(--muted2); font-family: 'DM Mono', monospace; margin-bottom: 0.35rem; }
+    .result-summary { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+
+    /* TECH STACK */
+    .stack-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 1.5rem; }
+    .stack-cell { background: var(--surface); padding: 1.5rem; }
+    .stack-cell:hover { background: var(--surface2); }
+    .stack-category { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.75rem; }
+    .stack-items { display: flex; flex-direction: column; gap: 0.3rem; }
+    .stack-item { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); letter-spacing: 0.03em; }
+
+    /* SOURCE LIST */
+    .source-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    .source-item { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; align-items: start; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
+    .source-item:last-child { border-bottom: none; }
+    .source-name { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); letter-spacing: 0.04em; }
+    .source-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+
+    /* VIZ */
+    .viz-block { margin-bottom: 3rem; }
+    .viz-label { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.5rem; }
+    .viz-desc { font-size:0.85rem; color:var(--muted); line-height:1.75; max-width:80ch; margin-bottom:1.25rem; }
+    .viz-desc strong { color:var(--text); }
+    .viz-takeaway { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-left:3px solid var(--accent); padding:0.9rem 1.1rem; margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    .viz-takeaway::before { content:'→'; color:var(--accent); font-family:'DM Mono',monospace; flex-shrink:0; font-size:0.9rem; margin-top:0.05rem; }
+    .viz-takeaway strong { color:var(--text); }
+
+    /* BACK LINK */
+    .back-section { padding: 3rem; text-align: center; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; border: 1px solid var(--border); padding: 0.85rem 2rem; transition: border-color 0.2s, color 0.2s; }
+    .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 3rem 1.5rem; }
+      .stat-strip { grid-template-columns: 1fr 1fr; }
+      .two-col, .three-col, .model-grid, .insight-grid { grid-template-columns: 1fr; }
+      .filetype-grid { grid-template-columns: 1fr 1fr; }
+      .stack-grid { grid-template-columns: 1fr 1fr; }
+      .arch-row { grid-template-columns: 1fr; }
+      .arch-step-num { border-right: none; border-bottom: 1px solid var(--border); }
+      .source-item { grid-template-columns: 1fr; gap: 0.25rem; }
+      .search-result-item { grid-template-columns: 1fr; }
+      .back-section { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">T.Erbe</a>
+  <a href="index.html" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Tayler Erbe · Project Case Study · AITS · University of Illinois System · 2024–2025</div>
+  <h1>File Archiving &<br><span>Intelligent Search</span></h1>
+  <p class="hero-desc">
+    A full end-to-end digital preservation pipeline that connects to Box cloud storage, downloads every file regardless of format, extracts or generates textual metadata for each one — including photographs via a local vision model — summarizes everything with a locally-running LLaMA 3.2 model, and indexes all content into a FAISS semantic search engine. Designed to make any legacy archive fully searchable with natural language.
+  </p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <div class="meta-label">Institution</div>
+      <div class="meta-value">University of Illinois System (AITS)</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Role</div>
+      <div class="meta-value">Lead Data Scientist · Full Lifecycle Ownership</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Status</div>
+      <div class="meta-value">Delivered · Extensible Framework</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Code</div>
+      <div class="meta-value"><a href="https://github.com/terbe2022" style="color:var(--accent);text-decoration:none;">GitHub Repository →</a></div>
+    </div>
+  </div>
+</header>
+
+<!-- STAT STRIP -->
+<div class="stat-strip">
+  <div class="stat-item">
+    <div class="stat-big">15+</div>
+    <div class="stat-desc">File Types Processed</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-big">100%</div>
+    <div class="stat-desc">Local — No Cloud AI APIs</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-big">FAISS</div>
+    <div class="stat-desc">Semantic Vector Index</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-big">LLaVA</div>
+    <div class="stat-desc">Vision Model for Images</div>
+  </div>
+</div>
+
+<!-- SECTION 01: PROJECT OVERVIEW -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">01</span>
+    <h2 class="section-title">Project Overview</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="prose">
+      <p>
+        Institutions accumulate enormous amounts of unstructured digital content — often belonging to individuals who have retired, passed away, or transitioned out. This content typically lives in cloud storage (Box, SharePoint, etc.) as thousands of mixed-format files with no metadata, no descriptions, and no way to search them beyond exact filename matches.
+      </p>
+      <p>
+        This project was built around a real institutional archive: the life's work of a faculty member spanning decades of academic research — papers, correspondence, scanned photographs, experimental data files, presentations, and emails. <strong>None of it was searchable in any meaningful way.</strong>
+      </p>
+      <p>
+        The system connects to Box via the Box SDK, downloads every file, and routes each one through the appropriate text extraction method for its format. Images are described by a local vision-language model. Structured files like Excel are analyzed by reading column headers rather than row data. Every file ultimately receives an LLM-generated summary, title, and document type classification — then gets indexed into a FAISS semantic search engine.
+      </p>
+      <p>
+        The entire pipeline runs <strong>locally with no cloud AI APIs</strong>. All LLM and vision model inference is handled by Ollama running on-device. This was a deliberate architectural choice: the files in this archive contained private personal correspondence, research data, and institutional records, making cloud API transmission inappropriate.
+      </p>
+    </div>
+
+    <div>
+      <div class="callout">
+        <div class="callout-label">The Problem Statement</div>
+        <p>When a researcher retires, passes away, or moves on, decades of institutional knowledge — research, correspondence, data, images — becomes inaccessible. Standard file systems offer only filename search. The goal was to make any archive fully searchable through natural language, regardless of file type, regardless of whether content was ever labeled or organized.</p>
+      </div>
+      <div class="callout" style="margin-top:1rem; border-left-color: var(--accent2);">
+        <div class="callout-label" style="color:var(--accent2);">Why Everything Runs Locally</div>
+        <p>The archive included private email correspondence, personal photographs, confidential administrative records, and decades of unpublished research. Routing any of this through a cloud LLM API would raise serious privacy and institutional data governance concerns. <strong>Ollama running LLaMA 3.2 and LLaVA-LLaMA3 locally</strong> was the only architecturally acceptable approach.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 02: ARCHITECTURE -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">02</span>
+    <h2 class="section-title">Pipeline Architecture</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="prose" style="margin-bottom:2rem;">
+    <p>The system is a sequential eight-stage pipeline. Each stage produces a structured output that feeds the next. Stages 3–5 are the most complex — text extraction and LLM summarization vary substantially by file type and require per-type engineering. Every processing loop includes <strong>resume support</strong>: progress is checkpointed after every batch of rows, so the pipeline can be interrupted and restarted without reprocessing completed work.</p>
+  </div>
+
+  <div class="arch-flow">
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 01<span>Box Connection</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">File Inventory — Box SDK Recursive Crawl</div>
+        <p>Authenticates to Box via OAuth2 developer token. Recursively walks the entire folder tree, collecting metadata for every file: full path, extension, size, created/modified timestamps, and the <strong>Box file_id</strong> — a unique numeric identifier that becomes the primary key throughout the entire pipeline. Output saved as <code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--accent2);">file_path_directory.csv</code>.</p>
+      </div>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 02<span>Download</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">Bulk Download — All Files to Local Directory</div>
+        <p>Downloads every file from Box to a local working directory. Filenames are sanitized (spaces, colons, slashes removed) and the Box file_id is appended to ensure uniqueness and traceability across all downstream steps. Already-downloaded files are skipped on re-run. Failures are logged but do not halt the process.</p>
+      </div>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 03<span>Extraction</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">Text Extraction — 15+ File Types, Type-Specific Methods</div>
+        <p>Each file type is routed to the appropriate extraction method. PDFs use PyPDF2. Images are passed to <strong>LLaVA-LLaMA3 via Ollama</strong> for vision-model descriptions. Word docs use python-docx with Win32 COM fallback for legacy formats. Excel files read column headers only — not row data — and pass those to LLaMA to infer content. Emails are parsed into structured rows (Subject/From/To/Date/Body). HTML uses BeautifulSoup. RTF uses striprtf.</p>
+      </div>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 04<span>Pre-Summarize</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">Semantic Compression — SentenceTransformer Before LLM</div>
+        <p>Documents over 250 sentences are compressed before reaching LLaMA. Each sentence is embedded with <strong>all-MiniLM-L6-v2</strong>, scored by average pairwise cosine similarity (a proxy for semantic centrality), and the top 250 most representative sentences are retained. This preserves the document's core meaning without naive truncation, and ensures every document fits within LLaMA's context window.</p>
+      </div>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 05<span>LLM Pass</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">LLaMA 3.2 — Summary, Title, Document Type (Local via Ollama)</div>
+        <p>Every document passes through three separate LLaMA 3.2 prompts: a <strong>plain-language summary</strong>, a <strong>one-sentence title</strong>, and a <strong>document type classification</strong> (e.g., "research paper on turbulent pipe flow", "email between faculty regarding a budget request"). Prompts are designed to produce clean single-output responses. Processing is batched in groups of 3 with Parquet checkpoint saves after each batch.</p>
+      </div>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 06<span>Merge</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">Schema Standardization — All Types to Unified DataFrame</div>
+        <p>All per-file-type DataFrames are standardized to a unified schema: <code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--accent2);">file_path, file_name, file_id, extension, original_text, llama_generated_summary</code>. Joined back to the Box inventory on file_id to attach size, timestamps, and original Box path. Produces <code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--accent2);">final_df_summaries.csv</code> — the master output.</p>
+      </div>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 07<span>Clustering</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">Topic Discovery — TF-IDF + KMeans + LLaMA Topic Titles</div>
+        <p>TF-IDF vectorizes all summaries (bigrams, frequency-filtered). The elbow method selects K. KMeans clusters documents into topics. Top 20 keywords per cluster are sent to LLaMA to generate human-readable topic titles. A hierarchical second pass creates subtopics within each top-level cluster. Result: automatic discovery of the thematic structure of the entire archive.</p>
+      </div>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-step-num">Step 08<span>Search</span></div>
+      <div class="arch-content">
+        <div class="arch-content-title">FAISS Semantic Index — Natural Language Search CLI</div>
+        <p>All summaries are embedded with SentenceTransformer and indexed into a <strong>FAISS HNSW index</strong> persisted to disk. An interactive CLI allows natural language queries with top-k or similarity threshold search. Image results open directly in the OS viewer. Text results print full extracted content. The index loads in seconds even across thousands of documents.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 03: FILE TYPE COVERAGE -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">03</span>
+    <h2 class="section-title">File Type Coverage</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="prose" style="margin-bottom:1rem;">
+    <p>One of the core engineering challenges was handling a genuinely heterogeneous archive — not just the clean file types, but decades-old formats, broken extensions, vendor-specific variants, and files with no extension at all. Each type required a different approach, and several required special handling or fallback strategies.</p>
+  </div>
+
+  <div class="filetype-grid">
+    <div class="filetype-cell">
+      <div class="filetype-ext">.pdf / .pdf1 / .pd</div>
+      <div class="filetype-method">PyPDF2 + Text Cleaning</div>
+      <div class="filetype-desc">Page-by-page text extraction. Post-processing removes copyright footers, page markers, figure labels, and non-ASCII artifacts from OCR-generated PDFs.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.jpg / .png / .tif / .gif / .eps</div>
+      <div class="filetype-method">LLaVA-LLaMA3 (Vision Model)</div>
+      <div class="filetype-desc">TIF and GIF converted to JPG via PIL. Each image passed to LLaVA-LLaMA3 running locally via Ollama. The model generates a detailed natural language description — making photographs fully semantically searchable for the first time.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.docx / .doc / .doc1 / .doc2</div>
+      <div class="filetype-method">python-docx + Win32 COM</div>
+      <div class="filetype-desc">.docx uses python-docx (pure Python). Legacy .doc variants first try antiword, then fall back to Win32 COM automation via Microsoft Word. Covers the full range of Word formats found in older institutional archives.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.xlsx / .xls / .xls2</div>
+      <div class="filetype-method">Win32 COM → Headers Only → LLaMA</div>
+      <div class="filetype-desc">Rather than loading row data (which could be thousands of rows), the system reads sheet names and column headers only, then asks LLaMA: "based on these column names, what does this spreadsheet contain?" Efficient and surprisingly accurate.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.ppt / .ppt1 / .pptx</div>
+      <div class="filetype-method">python-pptx + Win32 COM</div>
+      <div class="filetype-desc">.pptx uses python-pptx to extract text from all shapes across all slides. Legacy .ppt and .ppt1 use Win32 COM automation (requires PowerPoint installed). Text concatenated by slide.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.eml / .mbox</div>
+      <div class="filetype-method">Email Parser → Structured Rows</div>
+      <div class="filetype-desc">Email files are parsed into structured rows: Subject, From, To, Date, Body. Each individual message within a file becomes its own DataFrame row. Original source filename preserved for traceability back to the Box archive.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.mhtml / .mht / .htm / .html</div>
+      <div class="filetype-method">BeautifulSoup</div>
+      <div class="filetype-desc">HTML-archived web pages and email newsletters. BeautifulSoup strips markup, scripts, and styles, extracting only visible text content.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.rtf</div>
+      <div class="filetype-method">striprtf (Pure Python)</div>
+      <div class="filetype-desc">Rich Text Format converted to plain text using the striprtf library. No external binary dependencies required.</div>
+    </div>
+    <div class="filetype-cell">
+      <div class="filetype-ext">.txt / plain text</div>
+      <div class="filetype-method">Direct Read</div>
+      <div class="filetype-desc">UTF-8 read with error tolerance. Pre-summarization applied if content exceeds 5,000 tokens before LLaMA pass.</div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:2rem;">
+    <div class="callout-label">Note on Unknown & Malformed Extensions</div>
+    <p>The real-world archive contained dozens of files with unusual or broken extensions — <code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);">.toc, .particleturbulence, .lagrangian, .hanrttydoc</code>, batch labels like <code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--muted);">00361-00850</code>, and files with no extension at all. These were catalogued, inspected via file content sniffing, and either processed if readable or flagged for manual review. The pipeline was designed to log and continue rather than fail on unknown formats.</p>
+  </div>
+</section>
+
+<!-- SECTION 04: LLM STRATEGY -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">04</span>
+    <h2 class="section-title">LLM & Vision Model Strategy</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="prose" style="margin-bottom:1.5rem;">
+        <p>Three local models are used across the pipeline, each chosen for a specific role. All run via Ollama with no internet connection required after the initial model pull.</p>
+      </div>
+      <div class="model-grid" style="grid-template-columns:1fr;">
+
+        <div class="model-card winner" style="margin-bottom:1rem;">
+          <div class="model-header">
+            <div class="model-name">LLaMA 3.2</div>
+            <div class="model-badge">Text Summarization</div>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Role</span>
+            <span class="metric-value">Summary · Title · Document Type</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Deployment</span>
+            <span class="metric-value good">Local via Ollama</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Prompting strategy</span>
+            <span class="metric-value">Strict output-only, no preamble</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Resume support</span>
+            <span class="metric-value good">Parquet checkpoint per 3 rows</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <div class="model-header">
+            <div class="model-name">LLaVA-LLaMA3</div>
+            <div class="model-badge model-badge-alt">Vision / Images</div>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Role</span>
+            <span class="metric-value">Describe image contents in detail</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Input</span>
+            <span class="metric-value">JPG / PNG (TIF/GIF converted first)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Why not OCR?</span>
+            <span class="metric-value">Archive contains photographs, not just scanned text</span>
+          </div>
+        </div>
+
+        <div class="model-card" style="margin-top:1rem;">
+          <div class="model-header">
+            <div class="model-name">all-MiniLM-L6-v2</div>
+            <div class="model-badge model-badge-alt">Embeddings</div>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Role 1</span>
+            <span class="metric-value">Pre-summarization (semantic sentence selection)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Role 2</span>
+            <span class="metric-value">FAISS index embedding (search)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Framework</span>
+            <span class="metric-value">SentenceTransformer</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div>
+      <div class="viz-label" style="margin-bottom:1rem;">Pre-Summarization Logic</div>
+      <div class="prose" style="margin-bottom:1.5rem;">
+        <p>Before any document reaches LLaMA, a semantic compression pass runs if it exceeds 250 sentences (or 5,000 tokens). This is one of the more nuanced engineering decisions in the pipeline.</p>
+        <p>Simple truncation (take the first N sentences) fails for academic papers and research documents, which typically front-load abstract and introduction content while burying key findings and conclusions. A naive head-truncation would systematically bias the summaries toward intros.</p>
+        <p><strong>The semantic approach</strong>: embed every sentence, compute each sentence's average cosine similarity to all others in the document (a proxy for how "central" it is to the overall content), and keep the top 250. This tends to select sentences that are thematically representative of the full document rather than just the beginning.</p>
+      </div>
+      <div class="viz-takeaway">
+        <strong>Result:</strong> Every document, regardless of length, arrives at LLaMA as a semantically representative ~250-sentence excerpt rather than an arbitrary truncation. This consistently produced better summaries on long academic papers than naive truncation approaches.
+      </div>
+
+      <div class="callout" style="margin-top:1.5rem; border-left-color:var(--accent2);">
+        <div class="callout-label" style="color:var(--accent2);">Excel Strategy: Headers Over Rows</div>
+        <p>For Excel files, loading thousands of rows into a summarization prompt produces poor results — the LLM gets lost in numbers. Instead, the pipeline reads only <strong>sheet names and column header labels</strong>, then prompts LLaMA: "based on these column names, write a summary of what this spreadsheet contains." The model infers purpose from structure alone, and does so remarkably well. A sheet named "QG34_TLC_26-29_June_Houston_mtg" with columns like "Attendee", "Organization", "Day 1 AM" is correctly identified as a conference meeting roster.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 05: SEMANTIC SEARCH -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">05</span>
+    <h2 class="section-title">Semantic Search Engine</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:3rem;">
+    <div class="prose">
+      <p>Once all documents have summaries, the search system indexes them using <strong>FAISS (Facebook AI Similarity Search)</strong>. Every LLaMA-generated summary is embedded with SentenceTransformer into a 384-dimensional vector, and the full set is added to a <strong>HNSW (Hierarchical Navigable Small World)</strong> index for fast approximate nearest-neighbor lookup.</p>
+      <p>The index is persisted to disk (<code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--accent2);">summaries_hnsw.index</code>) alongside a metadata pickle of file paths, names, and summaries. Subsequent runs load the index in seconds without re-embedding.</p>
+      <p>An interactive command-line interface supports two search modes: <strong>top-k</strong> (return the N most similar documents) and <strong>threshold</strong> (return all documents above a minimum similarity score). For image results, the matched file opens directly in the OS image viewer. For text files, the full extracted content prints to the terminal.</p>
+    </div>
+    <div>
+      <div class="insight-grid">
+        <div class="insight-box">
+          <div class="insight-box-title">Why HNSW?</div>
+          <p>HNSW provides approximate nearest-neighbor search with sub-linear query time. For archival use at the scale of thousands of documents, it loads instantly from disk and queries in milliseconds — no database server required.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">Haystack Alternative</div>
+          <p>A parallel implementation using the Haystack framework provides a higher-level abstraction with FAISSDocumentStore and EmbeddingRetriever, making it easier to extend with extractive QA or hybrid BM25 retrieval.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">What Gets Indexed</div>
+          <p>The FAISS index embeds <strong>LLaMA-generated summaries</strong>, not raw text. This means the search space is clean, normalized, and consistently phrased — dramatically improving recall over raw-text search.</p>
+        </div>
+        <div class="insight-box">
+          <div class="insight-box-title">Image Search</div>
+          <p>Photographs are indexed the same way as text documents — via their LLaVA-generated description. A query like "photo of students at a protest" finds matching images by semantic similarity of their descriptions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH DEMO -->
+  <div class="viz-label">Search Interface — Example Output</div>
+  <div class="viz-desc">The interactive CLI accepts natural language queries and returns ranked results with scores, file paths, and summary previews. Image files open in the system viewer.</div>
+
+  <div class="search-demo">
+    <div class="search-demo-header">
+      <span class="search-prompt">photo of students at a campus rally or protest</span>
+    </div>
+    <div class="search-results">
+      <div class="search-result-item">
+        <div>
+          <div class="result-score">0.847<span>score</span></div>
+        </div>
+        <div>
+          <div class="result-name">IMG_4319.jpg</div>
+          <div class="result-path">Research Archive / Photos / 2017 / IMG_4319_1844529697695.jpg</div>
+          <div class="result-summary">A photograph taken outdoors showing a crowd of people gathered on what appears to be a university campus, several holding handwritten protest signs. An American flag is visible in the background. The setting suggests a political demonstration or rally.</div>
+        </div>
+      </div>
+      <div class="search-result-item">
+        <div>
+          <div class="result-score">0.821<span>score</span></div>
+        </div>
+        <div>
+          <div class="result-name">IMG_4360.jpg</div>
+          <div class="result-path">Research Archive / Photos / 2017 / IMG_4360_1844529556559.jpg</div>
+          <div class="result-summary">An outdoor photograph of a large gathering of people in winter clothing, standing on a paved area in front of an institutional building. Several individuals are holding signs and banners. The image appears to capture a protest or community organizing event.</div>
+        </div>
+      </div>
+      <div class="search-result-item">
+        <div>
+          <div class="result-score">0.793<span>score</span></div>
+        </div>
+        <div>
+          <div class="result-name">PANEL_EVENT_Immigration.pdf</div>
+          <div class="result-path">Research Archive / Documents / PANEL_EVENT_President_Trump_Executive_Order_Immigration.pdf</div>
+          <div class="result-summary">A flyer or announcement for a panel event discussing the President's Executive Order on Immigration, organized at a university. The document lists faculty and staff panelists and provides event date, time, and location information.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-demo" style="margin-top:1.5rem;">
+    <div class="search-demo-header">
+      <span class="search-prompt">research on annular flow and turbulence in pipes</span>
+    </div>
+    <div class="search-results">
+      <div class="search-result-item">
+        <div>
+          <div class="result-score">0.912<span>score</span></div>
+        </div>
+        <div>
+          <div class="result-name">annular5_draft6.pdf</div>
+          <div class="result-path">Research Archive / Documents / annular5_draft6_1844495505566.pdf</div>
+          <div class="result-summary">A research paper draft examining the behavior of liquid films and droplet entrainment in horizontal annular two-phase flow. The document presents experimental results, discusses interfacial wave dynamics, and compares findings to existing theoretical models for turbulent pipe flow regimes.</div>
+        </div>
+      </div>
+      <div class="search-result-item">
+        <div>
+          <div class="result-score">0.889<span>score</span></div>
+        </div>
+        <div>
+          <div class="result-name">Horizongtal_annular_flows.docx</div>
+          <div class="result-path">Research Archive / Documents / Horizongtal_annular_flows_1844492692438.docx</div>
+          <div class="result-summary">A Word document containing a technical review of horizontal annular flow characteristics, including data tables, figure references, and discussion of critical velocity thresholds and film thickness measurements across varying Reynolds numbers.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 06: TOPIC CLUSTERING -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">06</span>
+    <h2 class="section-title">Topic Clustering & Archive Intelligence</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="prose">
+      <p>Beyond enabling search, the pipeline automatically discovers the <strong>thematic structure of the entire archive</strong> without any manual labeling. TF-IDF vectorization of all summaries, followed by KMeans clustering with elbow-method K selection, groups documents into coherent topics.</p>
+      <p>For each cluster, the top 20 keywords by centroid weight are extracted and sent to LLaMA with the prompt: <em>"Given these topic keywords, write a concise one-sentence title summarizing this topic."</em> The result is a set of human-readable topic labels that can be browsed by institutional stakeholders to understand what the archive contains before running any searches.</p>
+      <p>A <strong>hierarchical second pass</strong> runs within each top-level topic: KMeans again at a smaller granularity, producing subtopics with their own LLaMA-generated titles. This two-level taxonomy gives both a high-level overview and fine-grained navigation.</p>
+    </div>
+    <div>
+      <div class="viz-label" style="margin-bottom:1rem;">Example Topics Discovered in Archive</div>
+      <div class="source-list">
+        <div class="source-item" style="grid-template-columns:1fr;">
+          <div>
+            <div class="source-name" style="margin-bottom:0.3rem;">Topic 0 — 150 documents</div>
+            <div class="source-desc">"Visualizing Data: A Guide to Creating Effective Graphs and Diagrams" — Figures, charts, and data visualization files from decades of research publications.</div>
+          </div>
+        </div>
+        <div class="source-item" style="grid-template-columns:1fr;">
+          <div>
+            <div class="source-name" style="margin-bottom:0.3rem;">Topic 1 — 124 documents</div>
+            <div class="source-desc">"Unraveling the Dynamics of Gas-Liquid Flows and Turbulence in Slug-Flow Regimes" — Core research papers, drafts, and data files on multiphase fluid dynamics.</div>
+          </div>
+        </div>
+        <div class="source-item" style="grid-template-columns:1fr;">
+          <div>
+            <div class="source-name" style="margin-bottom:0.3rem;">Topic 2 — 101 documents</div>
+            <div class="source-desc">"Crafting a Striking Image: Mastering Composition on a Gray Background" — Scanned photographs, lab images, and personal photographs from the archive.</div>
+          </div>
+        </div>
+        <div class="source-item" style="grid-template-columns:1fr;">
+          <div>
+            <div class="source-name" style="margin-bottom:0.3rem;">Topic 3 — 79 documents</div>
+            <div class="source-desc">"The Capturing of a Scene: People in a Group Setting" — Event photographs, conference photos, and group portraits from academic career.</div>
+          </div>
+        </div>
+        <div class="source-item" style="grid-template-columns:1fr; border-bottom:none;">
+          <div>
+            <div class="source-name" style="margin-bottom:0.3rem;">Topic 4 — 52 documents</div>
+            <div class="source-desc">"University of Illinois Intellectual Property and Technology Transfer Committee Reports" — Administrative records, committee minutes, and institutional correspondence.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 07: DESIGN DECISIONS -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">07</span>
+    <h2 class="section-title">Design Decisions & Methodology</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="pipeline">
+
+    <div class="pipeline-step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <div class="step-title">File ID as Primary Key Throughout</div>
+        <div class="step-body">Box assigns a unique numeric ID to every file. Every downloaded filename has the Box file_id appended. This ID propagates through every DataFrame join across all eight pipeline stages. Any search result can always be traced back to its <strong>exact original location in Box</strong> — even years later, even if the filename was ambiguous or contained special characters.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <div class="step-title">Resume Support Everywhere</div>
+        <div class="step-body">At the scale of a real institutional archive (hundreds to thousands of files), LLaMA summarization takes hours. Every processing loop — PDF extraction, image description, LLaMA summarization, title generation, topic clustering — checks for already-processed rows and skips them. <strong>Progress is saved after every 3 rows.</strong> Machine sleep, Ollama crashes, and network issues are not problems — the pipeline resumes exactly where it left off.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <div class="step-title">LLaVA for Images — Not OCR</div>
+        <div class="step-body">Standard OCR (Tesseract) would only work on scanned text. The archive contained <strong>photographs</strong> — of people, campus events, lab equipment, political rallies, experimental apparatus. LLaVA produces rich natural language descriptions that make photographs semantically searchable in a way OCR never could. A query for "photo of someone holding a protest sign" correctly retrieves matching images without any manual tagging.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <div class="step-title">Indexing Summaries, Not Raw Text</div>
+        <div class="step-body">The FAISS index embeds LLaMA-generated summaries rather than raw extracted text. This is a deliberate choice. Raw text is noisy — OCR artifacts, copyright footers, email headers, table formatting — and embedding it directly produces poor search precision. <strong>Summaries are clean, normalized, consistently phrased</strong>, and represent the semantic content of the document rather than its formatting noise.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-step">
+      <div class="step-num">05</div>
+      <div class="step-content">
+        <div class="step-title">Strict LLM Output Formatting</div>
+        <div class="step-body">All LLaMA prompts are engineered to produce clean single-output responses: <em>"ONLY output the summary. Do NOT include any introductions, explanations, or additional text."</em> For document type classification, the prompt specifies: <em>"Be specific (e.g., 'research paper on fluid dynamics', 'email about budget approval'). ONLY output the document type as a single sentence."</em> This prevents the verbose preambles that would corrupt downstream processing.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-step">
+      <div class="step-num">06</div>
+      <div class="step-content">
+        <div class="step-title">Win32 COM for Legacy Office Formats</div>
+        <div class="step-body">The archive contained dozens of legacy Word and PowerPoint files (.doc, .ppt, .doc1, .ppt1) that pure-Python libraries cannot reliably open. On Windows, Win32 COM automation — launching the actual Microsoft Word or PowerPoint application via pywin32 — reads these files natively. This handled everything including malformed documents that would cause python-docx or python-pptx to crash.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 08: TECH STACK -->
+<section>
+  <div class="section-header">
+    <span class="section-tag">08</span>
+    <h2 class="section-title">Technology Stack</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="stack-grid">
+    <div class="stack-cell">
+      <div class="stack-category">LLM / AI Models</div>
+      <div class="stack-items">
+        <div class="stack-item">LLaMA 3.2</div>
+        <div class="stack-item">LLaVA-LLaMA3</div>
+        <div class="stack-item">all-MiniLM-L6-v2</div>
+        <div class="stack-item">Ollama (local inference)</div>
+        <div class="stack-item">SentenceTransformers</div>
+      </div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-category">Search & Indexing</div>
+      <div class="stack-items">
+        <div class="stack-item">FAISS (HNSW + Flat)</div>
+        <div class="stack-item">Haystack (alt. impl.)</div>
+        <div class="stack-item">TF-IDF (sklearn)</div>
+        <div class="stack-item">KMeans clustering</div>
+        <div class="stack-item">Cosine similarity</div>
+      </div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-category">File Extraction</div>
+      <div class="stack-items">
+        <div class="stack-item">PyPDF2 / PyMuPDF</div>
+        <div class="stack-item">python-docx</div>
+        <div class="stack-item">python-pptx</div>
+        <div class="stack-item">BeautifulSoup4</div>
+        <div class="stack-item">striprtf · PIL · pywin32</div>
+      </div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-category">Infrastructure</div>
+      <div class="stack-items">
+        <div class="stack-item">Box Python SDK</div>
+        <div class="stack-item">pandas · numpy</div>
+        <div class="stack-item">Parquet (pyarrow)</div>
+        <div class="stack-item">Jupyter Notebooks</div>
+        <div class="stack-item">Python 3.11</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tag-row" style="margin-top:1.5rem;">
+    <span class="chip chip-accent">Local LLM Inference</span>
+    <span class="chip chip-accent">Vision-Language Models</span>
+    <span class="chip chip-accent">Vector Search</span>
+    <span class="chip chip-accent">Digital Preservation</span>
+    <span class="chip chip-accent">Box SDK</span>
+    <span class="chip">Python</span>
+    <span class="chip">FAISS</span>
+    <span class="chip">Ollama</span>
+    <span class="chip">SentenceTransformers</span>
+    <span class="chip">pywin32</span>
+    <span class="chip">HNSW Index</span>
+    <span class="chip">NLP Pipeline</span>
+    <span class="chip">Metadata Extraction</span>
+  </div>
+</section>
+
+<!-- BACK LINK -->
+<div class="back-section">
+  <a href="index.html" class="back-link">← Back to Portfolio</a>
+</div>
+
+</body>
+</html>
