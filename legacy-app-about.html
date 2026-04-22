@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | Legacy, A Memory Vault and AI Voice for the People You Love</title>
+  <meta name="description" content="Legacy is a private memory vault that captures photos, voice, and stories and uses them to train a personal AI that can keep speaking in your voice to your family, your loved ones, and your children long after you pass away. A personal side project by Tayler Erbe." />
+  <meta name="keywords" content="Tayler Erbe, Legacy app, digital legacy, AI voice preservation, memory vault, personal AI, grief technology, PWA" />
+  <meta name="author" content="Tayler Erbe" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --accent-warm: #e07a3d;
+      --accent-dim: rgba(91,200,220,0.12);
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(11,12,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-back {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8rem 3rem 4rem;
+    }
+
+    /* HERO */
+    .cs-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      min-height: 70vh;
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4rem;
+      position: relative;
+    }
+    .cs-hero::after {
+      content: '';
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(ellipse at center, rgba(224,122,61,0.06) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .cs-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .cs-eyebrow::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent-warm);
+    }
+
+    .cs-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3rem, 5.5vw, 5rem);
+      line-height: 1.0;
+      color: var(--white);
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .cs-title em {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      text-transform: none;
+      font-weight: 400;
+      color: var(--accent);
+      font-size: 1.05em;
+      letter-spacing: -0.02em;
+    }
+
+    .cs-lede {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 2rem;
+      max-width: 52ch;
+    }
+
+    .cs-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.3rem 0.6rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+    .tag-accent {
+      color: var(--accent);
+      border-color: var(--accent-dim);
+      background: rgba(91,200,220,0.04);
+    }
+    .tag-warm {
+      color: var(--accent-warm);
+      border-color: rgba(224,122,61,0.2);
+      background: rgba(224,122,61,0.04);
+    }
+
+    .cs-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary, .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.75rem;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #0b0c0f;
+    }
+    .btn-primary:hover { background: #82d9e8; transform: translateY(-1px); }
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-ghost:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* HERO PREVIEW */
+    .cs-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+    }
+    .cs-preview::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px;
+      height: 32px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-preview::after {
+      content: '\25CF \2002 \25CF \2002 \25CF';
+      position: absolute;
+      top: 10px; left: 14px;
+      color: var(--muted2);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+    }
+    .cs-preview-inner {
+      margin-top: 32px;
+      padding: 2rem;
+      background: #faf6ef;
+      color: #0a1628;
+      text-align: center;
+      font-family: 'Fraunces', serif;
+    }
+    .cs-preview-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #6b7a90;
+      margin-bottom: 0.75rem;
+    }
+    .cs-preview-title {
+      font-style: italic;
+      font-size: 2rem;
+      font-weight: 400;
+      font-variation-settings: 'opsz' 144;
+      margin-bottom: 0.5rem;
+    }
+    .cs-preview-sub {
+      font-size: 0.85rem;
+      color: #6b7a90;
+      font-style: italic;
+      margin-bottom: 2rem;
+    }
+    .cs-preview-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #0a1628;
+      color: #faf6ef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 2.4rem;
+      position: relative;
+    }
+    .cs-preview-avatar::after {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      width: 10px;
+      height: 10px;
+      background: #c8541a;
+      border-radius: 50%;
+    }
+    .cs-preview-body {
+      font-size: 0.85rem;
+      color: #6b7a90;
+      font-family: 'Fraunces', serif;
+      line-height: 1.5;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+    .cs-preview-status {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(10,22,40,0.12);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #c8541a;
+    }
+
+    /* SECTION HEADERS */
+    .section-header { margin-bottom: 3rem; }
+    .section-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.0;
+      color: var(--white);
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .section-line {
+      width: 60px;
+      height: 2px;
+      background: var(--accent-warm);
+    }
+
+    section.cs-section {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    section.cs-section:last-of-type { border-bottom: none; }
+
+    /* PROSE */
+    .prose { max-width: 70ch; }
+    .prose p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .prose p.lede {
+      font-size: 1.25rem;
+      color: var(--white);
+      font-weight: 400;
+      line-height: 1.6;
+    }
+    .prose strong { color: var(--white); font-weight: 500; }
+    .prose em {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      color: var(--accent);
+    }
+    .prose blockquote {
+      border-left: 2px solid var(--accent-warm);
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      margin: 2rem 0;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--white);
+      line-height: 1.5;
+    }
+
+    /* VISION BLOCK */
+    .vision-block {
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(224,122,61,0.05) 100%);
+      border: 1px solid rgba(224,122,61,0.25);
+      padding: 3rem 2.5rem;
+      margin-top: 2.5rem;
+      position: relative;
+    }
+    .vision-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: var(--accent-warm);
+    }
+    .vision-head {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 1rem;
+    }
+    .vision-title {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+      line-height: 1.3;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      font-variation-settings: 'opsz' 144;
+      letter-spacing: -0.01em;
+      max-width: 38ch;
+    }
+    .vision-block p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      max-width: 62ch;
+    }
+    .vision-block p:last-child { margin-bottom: 0; }
+    .vision-block strong { color: var(--white); font-weight: 500; }
+
+    /* GOAL CARDS */
+    .goal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .goal-card {
+      background: var(--surface);
+      padding: 2rem;
+      transition: background 0.2s;
+    }
+    .goal-card:hover { background: var(--surface2); }
+    .goal-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--accent-warm);
+      margin-bottom: 1rem;
+    }
+    .goal-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+      line-height: 1.15;
+    }
+    .goal-desc {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ARCHITECTURE */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .arch-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+    }
+    .arch-card-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .arch-card-heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+    .arch-card-desc {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+    .arch-card ul { list-style: none; padding: 0; }
+    .arch-card ul li {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text);
+      padding: 0.25rem 0;
+      padding-left: 1.2rem;
+      position: relative;
+      letter-spacing: 0.02em;
+    }
+    .arch-card ul li::before {
+      content: '\2192';
+      position: absolute;
+      left: 0;
+      color: var(--accent-warm);
+    }
+
+    /* ROADMAP */
+    .stages {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 2rem;
+      border-left: 1px solid var(--border);
+      padding-left: 2rem;
+      position: relative;
+    }
+    .stage {
+      position: relative;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stage:last-child { border-bottom: none; }
+    .stage::before {
+      content: '';
+      position: absolute;
+      left: -2.4rem;
+      top: 2rem;
+      width: 10px; height: 10px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+    }
+    .stage.active::before {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(91,200,220,0.15);
+    }
+    .stage.done::before {
+      background: var(--accent-warm);
+      border-color: var(--accent-warm);
+    }
+    .stage-head {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .stage-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+    }
+    .stage-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+    }
+    .stage-status.done {
+      color: var(--accent-warm);
+      background: rgba(224,122,61,0.08);
+      border: 1px solid rgba(224,122,61,0.25);
+    }
+    .stage-status.active {
+      color: var(--accent);
+      background: rgba(91,200,220,0.08);
+      border: 1px solid var(--accent-dim);
+    }
+    .stage-status.planned {
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .stage-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      color: var(--white);
+      letter-spacing: 0.01em;
+      margin: 0.4rem 0 0.6rem;
+    }
+    .stage-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 70ch;
+    }
+
+    /* BUSINESS */
+    .biz-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .biz-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+    .biz-head {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 0.75rem;
+    }
+    .biz-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1rem;
+      letter-spacing: 0.01em;
+    }
+    .biz-card p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .biz-card p:last-child { margin-bottom: 0; }
+    .biz-card strong { color: var(--text); }
+
+    /* CTA */
+    .cs-cta-block {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border: 1px solid var(--border);
+      padding: 3.5rem 2.5rem;
+      text-align: center;
+      margin-top: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .cs-cta-block::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -10%;
+      width: 60%; height: 200%;
+      background: radial-gradient(ellipse at center, rgba(224,122,61,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cs-cta-title {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 1rem;
+      font-variation-settings: 'opsz' 144;
+      letter-spacing: -0.01em;
+      position: relative;
+    }
+    .cs-cta-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 52ch;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+      position: relative;
+    }
+    .cs-cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    footer {
+      padding: 3rem 3rem 4rem;
+      border-top: 1px solid var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: var(--muted2);
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      main { padding: 7rem 1.5rem 3rem; }
+      .cs-hero { grid-template-columns: 1fr; gap: 3rem; padding: 2rem 0; }
+      .goal-grid { grid-template-columns: 1fr; }
+      .arch-grid { grid-template-columns: 1fr; }
+      .biz-grid { grid-template-columns: 1fr; }
+      .vision-block { padding: 2rem 1.5rem; }
+      footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li><a href="index.html#experience">Experience</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <a href="index.html" class="nav-back">&larr; Back</a>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <div class="cs-hero">
+      <div>
+        <div class="cs-eyebrow">Personal Project &middot; Side Venture</div>
+        <h1 class="cs-title">Legacy<br><em>A memory for later</em></h1>
+        <p class="cs-lede">A private memory vault that captures photos, voice, and stories, and uses them to build an AI version of you that can keep speaking to your family, your loved ones, and your children long after you pass away.</p>
+        <div class="cs-tags">
+          <span class="tag tag-warm">Personal Venture</span>
+          <span class="tag tag-accent">PWA</span>
+          <span class="tag tag-accent">IndexedDB</span>
+          <span class="tag">iOS Installable</span>
+          <span class="tag">Offline First</span>
+          <span class="tag">RAG (Planned)</span>
+          <span class="tag">Claude / GPT-4</span>
+          <span class="tag">Whisper</span>
+        </div>
+        <div class="cs-ctas">
+          <a href="https://tayler-erbe.github.io/legacy-app/" target="_blank" class="btn-primary">Open the app &rarr;</a>
+          <a href="https://github.com/tayler-erbe/legacy-app" target="_blank" class="btn-ghost">GitHub &#8599;</a>
+        </div>
+      </div>
+
+      <div class="cs-preview">
+        <div class="cs-preview-inner">
+          <div class="cs-preview-eyebrow">Legacy &middot; MVP</div>
+          <div class="cs-preview-avatar">L</div>
+          <div class="cs-preview-title"><em style="font-style:italic;">Talk to me</em></div>
+          <div class="cs-preview-sub">Quiet stories, saved in your voice.</div>
+          <div class="cs-preview-body">Ask about a day. A person. A memory you're trying to remember the shape of.</div>
+          <div class="cs-preview-status">Stage 1 Shipped &middot; Stage 2 In Progress</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 01 WHY -->
+    <section class="cs-section" id="why">
+      <div class="section-header">
+        <span class="section-tag">01 / The idea</span>
+        <h2 class="section-title">Why I'm building this</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="prose">
+        <p class="lede">I'm a mom. One day I started thinking about what happens when I'm no longer here, and whether my kids would really remember the small stuff. The stories behind the photos. The way I'd tell them. The sound of my voice.</p>
+
+        <p>Most of what survives a person is the things they wrote down, the photos they took, and whatever other people happen to remember. That is a lot of gaps. Photos show you what something looked like, but not what it <em>felt</em> like, or what led up to it, or what happened right after. Videos help, but most of us don't film our ordinary days, and the ordinary days are the ones our kids will want back.</p>
+
+        <p>I wanted to build something that captures the story alongside the photo. A voice recording of me telling it. A written version when I can't record. The date, the people, the context. So that decades from now my kids can ask <em>"Mom, what was I like as a baby?"</em> and actually get an answer, in my voice, with the details I'd give if I were still here to tell them.</p>
+
+        <blockquote>
+          It started as a personal thing. Then I realized that if I want this, other people probably want it too.
+        </blockquote>
+
+        <p>So I'm building it for myself first, but with the architecture in place from day one to become something other people can use. A quiet, careful product for anyone who wants to leave their voice behind for the people they love.</p>
+      </div>
+
+      <div class="vision-block">
+        <div class="vision-head">The long arc</div>
+        <div class="vision-title">An AI version of you that your family can actually talk to, long after you're gone.</div>
+        <p>The memories you save here aren't just an archive. Every photo, every voice recording, every story you tell becomes training material for a private AI trained to be <strong>you</strong>. It remembers your stories. It knows your personality. It knows how you talk, what you cared about, how you'd answer.</p>
+        <p>When you're no longer here, your kids, your grandchildren, your partner, the people who love you, they can open the app and ask you something. About a day. About a person. About who they were as a baby. About what you thought of them. And they get an answer back, <strong>in your voice, from the version of you who actually lived it</strong>.</p>
+        <p>This is not a scraped chatbot cobbled together from social media posts after you're gone. It's something you build deliberately, over years, while you're alive. A careful, chosen version of yourself, saved for the people who'll still want to hear from you after you're no longer around to tell them yourself.</p>
+      </div>
+    </section>
+
+    <!-- 02 GOALS -->
+    <section class="cs-section">
+      <div class="section-header">
+        <span class="section-tag">02 / Goals</span>
+        <h2 class="section-title">What this is meant to do</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="goal-grid">
+        <div class="goal-card">
+          <div class="goal-num">01</div>
+          <div class="goal-title">Capture the moment, not just the photo</div>
+          <div class="goal-desc">Pair every image with a voice recording, a written story, a date, and the people who were there. Photos alone don't survive you. Context does.</div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-num">02</div>
+          <div class="goal-title">Preserve the voice, literally</div>
+          <div class="goal-desc">Audio recordings are a first-class citizen, not an afterthought. Over time they become the training data for an AI that speaks in your actual voice, and tells stories the way you told them.</div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-num">03</div>
+          <div class="goal-title">Outlive the product</div>
+          <div class="goal-desc">Every memory can be exported to plain JSON and media files at any time. If the app ever dies, the data doesn't. Your family always gets the archive, no matter what happens to the business.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 ARCHITECTURE -->
+    <section class="cs-section" id="architecture">
+      <div class="section-header">
+        <span class="section-tag">03 / How it's built</span>
+        <h2 class="section-title">Technical architecture</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="prose">
+        <p>Legacy is built in three stages. Stage 1 is live today. The architecture is multi-tenant-ready even while only one user (me) is live on it. Every data record carries a <code>userId</code>, every storage path is user-scoped, and every API call is designed as if there were already a hundred users. When it's time to open it up, switching from personal to public is an additive change, not a rewrite.</p>
+      </div>
+
+      <div class="arch-grid">
+        <div class="arch-card">
+          <div class="arch-card-title">01 / Capture (shipped)</div>
+          <div class="arch-card-heading">Progressive Web App</div>
+          <p class="arch-card-desc">Installable on iPhone from Safari, using Add to Home Screen. Works fully offline. No App Store tax, no review cycle, instant deploys.</p>
+          <ul>
+            <li>Vanilla HTML / CSS / JS, no build step</li>
+            <li>IndexedDB for structured records and Blob storage</li>
+            <li>Service worker for offline caching</li>
+            <li>MediaRecorder API for voice capture</li>
+            <li>GitHub Pages and Actions for CI/CD</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-card-title">02 / Backend (in progress)</div>
+          <div class="arch-card-heading">Multi-tenant Python API</div>
+          <p class="arch-card-desc">Server layer for sync, cross-device access, and feeding the AI. Designed around the same schema as the local app, so the migration is mostly plumbing.</p>
+          <ul>
+            <li>FastAPI with async PostgreSQL</li>
+            <li>Cloudflare R2 for media (no egress fees)</li>
+            <li>Presigned URL uploads, client to storage direct</li>
+            <li>Whisper API for voice transcription</li>
+            <li>Fly.io for hosting and managed Postgres</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-card-title">03 / The AI layer (planned)</div>
+          <div class="arch-card-heading">Persona-grounded chat</div>
+          <p class="arch-card-desc">Chat with an AI that answers as you, grounded in the memories you've saved. Not a generic chatbot. A specific person, speaking in your voice, about your life.</p>
+          <ul>
+            <li>Anthropic Claude or OpenAI GPT-4 via API</li>
+            <li>RAG over memories, semantic and filter hybrid</li>
+            <li>Persona core always in system prompt</li>
+            <li>Voice samples as few-shot for tone</li>
+            <li>Prompt caching to keep per-turn costs near zero</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-card-title">04 / Trust and portability</div>
+          <div class="arch-card-heading">Your data is always yours</div>
+          <p class="arch-card-desc">The whole thing is designed to survive even if the business doesn't. No vendor lock-in, no proprietary format, no hostage data.</p>
+          <ul>
+            <li>One-tap export, JSON with base64 embedded media</li>
+            <li>Documented, versioned schema</li>
+            <li>Encryption at rest (backend phase)</li>
+            <li>No training on user data, ever</li>
+            <li>Designated heir access for estate planning</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 ROADMAP -->
+    <section class="cs-section" id="roadmap">
+      <div class="section-header">
+        <span class="section-tag">04 / Roadmap</span>
+        <h2 class="section-title">Where this is going</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="stages">
+        <div class="stage done">
+          <div class="stage-head">
+            <span class="stage-num">Stage 01</span>
+            <span class="stage-status done">Shipped</span>
+          </div>
+          <div class="stage-title">The capture app</div>
+          <div class="stage-desc">Offline-first PWA on iPhone. Add memories with photo, voice, story, date, people, tags. Export everything to JSON. This is what exists today. I'm using it myself to seed real memories before Stage 2.</div>
+        </div>
+
+        <div class="stage active">
+          <div class="stage-head">
+            <span class="stage-num">Stage 02</span>
+            <span class="stage-status active">In Progress</span>
+          </div>
+          <div class="stage-title">Backend and sync</div>
+          <div class="stage-desc">Multi-tenant API, object storage for media, sync across devices, Whisper transcription for recorded audio. This is where the data stops being trapped on one phone and starts being durable across devices and years.</div>
+        </div>
+
+        <div class="stage">
+          <div class="stage-head">
+            <span class="stage-num">Stage 03</span>
+            <span class="stage-status planned">Planned</span>
+          </div>
+          <div class="stage-title">The AI voice</div>
+          <div class="stage-desc">The chat layer that talks back in your voice, grounded in your memories. Hybrid retrieval: semantic search over memory text, date and people filters for specific questions, persona core always loaded. This is the whole point of saving everything else in the first place.</div>
+        </div>
+
+        <div class="stage">
+          <div class="stage-head">
+            <span class="stage-num">Stage 04</span>
+            <span class="stage-status planned">Planned</span>
+          </div>
+          <div class="stage-title">Legacy mode and public launch</div>
+          <div class="stage-desc">Designated heir access, so your chosen people can continue talking to your AI after you're gone. Auth, subscriptions via Stripe, legal review, content moderation, data deletion workflows. The boring but essential work of turning a personal project into something other families can trust with the most important memories they have.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 BUSINESS -->
+    <section class="cs-section" id="business">
+      <div class="section-header">
+        <span class="section-tag">05 / As a product</span>
+        <h2 class="section-title">The business case</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="prose">
+        <p>I'm building this primarily because I want it to exist. But the market for it is real. People increasingly understand that AI is going to reshape what it means to leave something behind. There's a growing space around "digital legacy," but most of it is either passwords for heirs or generic chatbots trained on scraped Facebook posts. Neither is what I'd want for my kids.</p>
+
+        <p>Legacy takes the opposite approach. A careful, private capture experience first. Then, only after years of real memories, the AI layer on top. Earned, not extracted.</p>
+      </div>
+
+      <div class="biz-grid">
+        <div class="biz-card">
+          <div class="biz-head">Model</div>
+          <div class="biz-title">Subscription, $10 to $15 per month</div>
+          <p>Direct to consumer SaaS, billed via Stripe. <strong>97% revenue retention</strong> because it's a PWA, no Apple 30% tax. At scale, infrastructure costs are roughly $1 to $10 per user per month depending on usage, giving healthy margins.</p>
+          <p>Long-form plans (annual or multi-year prepaid) make sense here given the emotional permanence of the product.</p>
+        </div>
+        <div class="biz-card">
+          <div class="biz-head">Audience</div>
+          <div class="biz-title">Parents, grandparents, the recently diagnosed</div>
+          <p>Primary segment: <strong>parents of young children</strong> who want to leave something substantive behind. Secondary: grandparents, people processing a diagnosis, adult children capturing stories from aging parents before it's too late.</p>
+          <p>The unifying thread isn't demographic. It's <em>the desire to leave your voice behind for someone specific</em>.</p>
+        </div>
+        <div class="biz-card">
+          <div class="biz-head">Differentiation</div>
+          <div class="biz-title">Voice and authenticity, not volume</div>
+          <p>Legacy is not trying to be a social network, a photo cloud, or a generic AI companion. It's a <strong>quiet, private, emotionally serious</strong> tool designed for one use case and executed carefully.</p>
+          <p>The product aesthetic (warm paper tones, serif typography, zero feeds or followers) is part of the moat. It tells the user what this <em>is</em> and what it isn't.</p>
+        </div>
+        <div class="biz-card">
+          <div class="biz-head">Moat</div>
+          <div class="biz-title">Switching cost is literal years of memories</div>
+          <p>Classic subscription-product dynamic amplified by emotional weight. Once someone has captured five years of memories here, they're not leaving. And they shouldn't have to. Portability guarantees (full JSON export) turn that into a <strong>trust asset</strong> instead of a lock-in risk.</p>
+          <p>The AI layer compounds the effect. The longer you've used Legacy, the richer the AI gets. That's a flywheel that only this kind of slow-captured dataset can produce.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="cs-section">
+      <div class="cs-cta-block">
+        <div class="cs-cta-title">Try the app. Or read the code.</div>
+        <p class="cs-cta-sub">Stage 1 is live. Open it in Safari on an iPhone and tap Share, then Add to Home Screen, to install it as a real app. The repo is public. Everything is there, including the architecture docs.</p>
+        <div class="cs-cta-buttons">
+          <a href="https://tayler-erbe.github.io/legacy-app/" target="_blank" class="btn-primary">Open the app &rarr;</a>
+          <a href="https://github.com/tayler-erbe/legacy-app" target="_blank" class="btn-ghost">View on GitHub &#8599;</a>
+          <a href="index.html" class="btn-ghost">&larr; Back to work</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Tayler Erbe &middot; Legacy is a personal side project</p>
+    <p>Last updated April 2026</p>
+  </footer>
+
+</body>
+</html>
