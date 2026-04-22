@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | HR Workforce Analytics Intelligence Platform</title>
+  <meta name="description" content="Tayler Erbe, Senior Data Scientist at the University of Illinois System, is leading the design and development of a predictive HR Workforce Analytics Intelligence Platform using EDW data, Markov chain career simulation, graph analytics, and NLP-driven skill enrichment." />
+  <meta name="keywords" content="Tayler Erbe, data scientist, workforce analytics, HR analytics, succession planning, internal mobility, Markov chain, Random Forest, graph analytics, University of Illinois, AITS" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/hr-workforce-analytics.html" />
+  <meta property="og:title" content="Tayler Erbe | HR Workforce Analytics Intelligence Platform" />
+  <meta property="og:description" content="Predictive workforce analytics platform using EDW HR data, machine learning, career path simulation, and graph analytics to give the University of Illinois forward-looking intelligence on its workforce." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://terbe2022.github.io/tayler-portfolio/hr-workforce-analytics.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tayler Erbe | HR Workforce Analytics Intelligence Platform" />
+  <meta name="twitter:description" content="Predictive workforce analytics: succession readiness, internal mobility modeling, and career path simulation at the University of Illinois." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "HR Workforce Analytics Intelligence Platform",
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://terbe2022.github.io/tayler-portfolio/" },
+    "description": "Predictive workforce analytics platform designed by Tayler Erbe for the University of Illinois System to surface succession gaps, internal mobility patterns, and attrition risk before they become operational problems.",
+    "keywords": "Tayler Erbe, data scientist, workforce analytics, HR analytics, succession planning, internal mobility, AITS"
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --accent-dim: rgba(91,200,220,0.12);
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-back:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      padding: 9rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -30%; right: -5%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(ellipse at center, rgba(58,143,196,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1.0; color: var(--white);
+      letter-spacing: 0.01em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
+
+    /* STATUS BADGE */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.4rem 0.9rem; border: 1px solid var(--accent3);
+      color: var(--accent3); background: rgba(192,122,110,0.08);
+      margin-bottom: 2rem;
+    }
+    .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); display: block; animation: pulse-warm 2s ease-in-out infinite; }
+    @keyframes pulse-warm { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem; }
+    .meta-item {}
+    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+
+    /* STAT STRIP */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-item { background: var(--surface); padding: 1.75rem 2rem; transition: background 0.2s; }
+    .stat-item:hover { background: var(--surface2); }
+    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* SECTIONS */
+    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* PROSE */
+    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p strong { color: var(--text); font-weight: 500; }
+
+    /* LAYOUTS */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+
+    /* CALLOUT */
+    .callout {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
+      margin-top: 1.5rem;
+    }
+    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .callout p strong { color: var(--text); font-weight: 500; }
+
+    /* PIPELINE STEPS */
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.5rem; padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .pipeline-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
+    }
+    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .step-body strong { color: var(--text); font-weight: 500; }
+
+    /* TAG CHIPS */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+    .chip-warm { border-color: var(--accent3); color: var(--accent3); }
+    .chip-green { border-color: #5dbf8a; color: #5dbf8a; }
+
+    /* MODEL CARDS */
+    .model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .model-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; border-top: 3px solid var(--accent2); }
+    .model-card.primary { border-top-color: var(--accent); }
+    .model-card.generative { border-top-color: #5dbf8a; }
+    .model-card.graph { border-top-color: var(--accent3); }
+    .model-card.forecast { border-top-color: #a78bdc; }
+    .model-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--white); text-transform: uppercase; margin-bottom: 0.4rem; }
+    .model-algo { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1rem; }
+    .model-algo.green { color: #5dbf8a; }
+    .model-algo.warm { color: var(--accent3); }
+    .model-algo.purple { color: #a78bdc; }
+    .model-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.45rem 0; border-bottom: 1px solid var(--border); }
+    .model-row:last-child { border-bottom: none; }
+    .model-row-label { font-size: 0.8rem; color: var(--muted); }
+    .model-row-value { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text); text-align: right; max-width: 60%; }
+
+    /* CATEGORY TABLE */
+    .cat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .cat-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .cat-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; vertical-align: top; }
+    .cat-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+    .cat-table tr:last-child td { border-bottom: none; }
+    .cat-table td strong { color: var(--text); font-weight: 500; }
+    .cat-table th:last-child, .cat-table td:last-child { text-align: right; }
+
+    /* INSIGHT BOXES */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+    .insight-box p strong { color: var(--text); font-weight: 500; }
+
+    /* TAKEAWAY STRIP */
+    .takeaway { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--surface2); border-left: 3px solid var(--accent); padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .takeaway::before { content: '→'; color: var(--accent); font-family: 'DM Mono', monospace; flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem; }
+    .takeaway strong { color: var(--text); }
+
+    /* WHAT WE KNOW vs DON'T KNOW GRID */
+    .know-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .know-card { border: 1px solid var(--border); padding: 1.75rem; }
+    .know-card.reactive { border-top: 3px solid var(--accent3); background: rgba(192,122,110,0.04); }
+    .know-card.proactive { border-top: 3px solid var(--accent); background: rgba(91,200,220,0.04); }
+    .know-card-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; color: var(--white); margin-bottom: 1rem; }
+    .know-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .know-list li { font-size: 0.83rem; color: var(--muted); display: flex; gap: 0.6rem; line-height: 1.5; }
+    .know-list li::before { flex-shrink: 0; font-family: 'DM Mono', monospace; font-size: 0.75rem; margin-top: 0.05rem; }
+    .reactive .know-list li::before { content: '✗'; color: var(--accent3); }
+    .proactive .know-list li::before { content: '✓'; color: var(--accent); }
+
+    /* FORMULA BOX */
+    .formula-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 1.5rem 2rem; margin: 1.5rem 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.95rem; color: var(--accent);
+      letter-spacing: 0.03em; text-align: center;
+    }
+    .formula-note { font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; text-align: center; font-family: 'DM Sans', sans-serif; font-style: italic; }
+
+    /* FEATURE GRID */
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+    .feature-item { background: var(--surface2); border: 1px solid var(--border); padding: 1.1rem 1.25rem; }
+    .feature-name { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.35rem; }
+    .feature-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    /* SCENARIO CARDS */
+    .scenario-list { display: flex; flex-direction: column; gap: 1rem; }
+    .scenario-card { display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem; background: var(--surface2); border: 1px solid var(--border); padding: 1.5rem; align-items: start; }
+    .scenario-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--muted2); line-height: 1; }
+    .scenario-title { font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+    .scenario-body { font-size: 0.86rem; color: var(--muted); line-height: 1.65; }
+    .scenario-body strong { color: var(--text); font-weight: 500; }
+
+    /* EDW TABLE */
+    .edw-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .edw-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .edw-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+    .edw-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent); white-space: nowrap; }
+    .edw-table td:nth-child(2) { color: var(--text); font-size: 0.82rem; }
+    .edw-table tr:last-child td { border-bottom: none; }
+
+    /* POC STRIP */
+    .poc-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); margin-top: 2rem; }
+    .poc-card { background: var(--surface); padding: 1.75rem; }
+    .poc-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .poc-title { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .poc-author { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted2); margin-bottom: 0.75rem; }
+    .poc-body { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .poc-body li { margin-bottom: 0.3rem; list-style: none; display: flex; gap: 0.4rem; }
+    .poc-body li::before { content: ' '; color: var(--muted2); flex-shrink: 0; }
+
+    /* FUTURE TABLE */
+    .next-table { width: 100%; border-collapse: collapse; }
+    .next-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 2px solid var(--border); text-align: left; }
+    .next-table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--muted); vertical-align: top; }
+    .next-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); white-space: nowrap; }
+    .next-table td:nth-child(2) { color: var(--text); font-weight: 500; }
+    .next-table tr:last-child td { border-bottom: none; }
+
+    /* BACK LINK */
+    .back-section { padding: 3rem 3rem; border-top: 1px solid var(--border); }
+    .back-link { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .back-link:hover { color: var(--accent); }
+
+    /* FADE ANIMATIONS */
+    .fadeUp { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: none; } }
+    .fadeUp:nth-child(1) { animation-delay: 0.05s; }
+    .fadeUp:nth-child(2) { animation-delay: 0.12s; }
+    .fadeUp:nth-child(3) { animation-delay: 0.19s; }
+    .fadeUp:nth-child(4) { animation-delay: 0.26s; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 3rem 1.5rem; }
+      .stat-strip { grid-template-columns: 1fr 1fr; }
+      .two-col, .model-grid, .insight-grid, .know-grid, .feature-grid, .poc-strip { grid-template-columns: 1fr; }
+      .three-col { grid-template-columns: 1fr; }
+      .back-section { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <a href="index.html" class="nav-back">&#8592; Back to Portfolio</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe · Project Case Study · AITS / University of Illinois System · 2025</div>
+    <h1>HR Workforce<br><span>Analytics Intelligence</span><br>Platform</h1>
+    <p class="hero-desc">
+      A predictive workforce analytics initiative designed to transform raw HR and payroll data from the
+      university's Enterprise Data Warehouse into forward-looking strategic intelligence: surfacing succession
+      gaps, internal career pathways, attrition risk, and workforce growth trends before they become problems.
+    </p>
+
+    <div class="status-badge">Active &nbsp;·&nbsp; POC Complete · Full Build Under Review</div>
+
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Organization</div>
+        <div class="meta-value">AITS Decision Support · University of Illinois System</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">HR Stakeholder</div>
+        <div class="meta-value"><a href="https://www.linkedin.com/in/luannemayorga/" target="_blank" style="color:var(--accent); text-decoration:none;">Luanne Mayorga ↗</a><span style="color:var(--muted); font-size:0.85rem;"> · Assistant Chancellor, Illinois HR</span></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-value">POC Complete · Full Project Build Under Review</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">POC Work Completed</div>
+        <div class="meta-value">Internal Mobility · Succession Readiness · Growth Forecasting</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Role</div>
+        <div class="meta-value">Lead Data Scientist · Platform Architect · Full Lifecycle Ownership</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Code</div>
+        <div class="meta-value"><a href="https://github.com/tayler-erbe/hr-analytics-intelligence-platform" target="_blank" style="color:var(--accent); text-decoration:none;">GitHub Repository ↗</a></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Planned Team</div>
+        <div class="meta-value">Lead Data Scientist + 3 Intern Analysts · ~2,460 hrs · 6 months</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-item fadeUp">
+      <div class="stat-big">3</div>
+      <div class="stat-desc">POC Workstreams Completed</div>
+    </div>
+    <div class="stat-item fadeUp">
+      <div class="stat-big">6+</div>
+      <div class="stat-desc">EDW HR Tables Referenced</div>
+    </div>
+    <div class="stat-item fadeUp">
+      <div class="stat-big">5</div>
+      <div class="stat-desc">Core Analytics Capabilities</div>
+    </div>
+    <div class="stat-item fadeUp">
+      <div class="stat-big">EDW</div>
+      <div class="stat-desc">Existing HR &amp; Payroll Infrastructure</div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">Project Overview</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Workforce planning at most universities: including the University of Illinois System: is <strong>largely reactive</strong>. Leadership learns about staffing challenges after they have already materialized: critical roles become vacant with no internal successors ready, departments lose years of institutional knowledge through unexpected attrition, and hiring decisions are made without visibility into internal mobility patterns or future demand.</p>
+        <p>This initiative is designed to change that. Developed in partnership with <a href="https://www.linkedin.com/in/luannemayorga/" target="_blank" style="color:var(--accent); text-decoration:none;">Luanne Mayorga</a>, Assistant Chancellor for Illinois HR, the <strong>HR Workforce Analytics Intelligence Platform</strong> applies predictive modeling, career path simulation, and graph analytics to the university's existing HR and payroll data: no new data collection required: to generate forward-looking intelligence that HR teams and leadership can act on <em>before</em> gaps become crises.</p>
+        <p>The project has already completed three substantial proof-of-concept workstreams covering internal mobility modeling, succession readiness prediction, and workforce growth forecasting. The platform architecture, modeling approach, and feature engineering pipeline are fully designed. The full project build is currently <strong>under review</strong> with the goal of beginning production development soon.</p>
+        <p>All POC work was built on a <strong>synthetic dataset mirroring the structure of EDW HR tables</strong>: demonstrating the full analytical pipeline before connecting to production data, which will occur in Phase 1 under appropriate data governance review.</p>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-label">The Core Problem</div>
+          <p>The university cannot currently answer several fundamental workforce questions in real time: Which departments will face capacity gaps in the next 12 months? Which roles have no internal succession pipeline? Where is turnover signaling instability versus normal movement? Which employees are quietly at flight risk? Without predictive analytics, these questions surface only after the damage has been done.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--accent2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--accent2);">What Makes This Different</div>
+          <p>Most HR reporting is descriptive: it tells you what happened. This platform is <strong>generative and predictive</strong>: it simulates where the workforce is going, who is ready to step up, which career pathways are silently blocked, and which departments are structurally understaffed before those conditions become visible in turnover reports.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--muted2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--muted);">Existing Data Infrastructure</div>
+          <p>Every insight the platform generates is derived from <strong>data the university already collects</strong>: HR records, payroll history, job titles, and tenure data within the Enterprise Data Warehouse. This is an analytics problem, not a data collection problem.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT THE UNIVERSITY DOESN'T KNOW -->
+  <section id="knowgap">
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">Seeing What the University Doesn't Know</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2.5rem;">
+      <p>The most important value this platform creates is not answering questions that are already being asked: it's surfacing <strong>insights no one knew to look for</strong>. The shift from reactive to proactive workforce intelligence means giving leadership and HR the visibility to act on trends months before those trends become operational problems.</p>
+    </div>
+    <div class="know-grid">
+      <div class="know-card reactive">
+        <div class="know-card-title" style="color: var(--accent3);">Today: What Gets Seen Too Late</div>
+        <ul class="know-list">
+          <li>A long-tenured director retires with no successor identified or developed</li>
+          <li>A department loses three analysts in six months: instability noticed in an annual report</li>
+          <li>An open role sits unfilled for 90 days; qualified internal candidates were never surfaced</li>
+          <li>A cohort of mid-career employees in a low-growth role quietly disengages over two years</li>
+          <li>Leadership is surprised by budget pressure from overlapping vacancies across a unit</li>
+          <li>An entire cluster of specialized knowledge retires without a documented succession path</li>
+          <li>A role is repeatedly filled externally when strong internal candidates existed all along</li>
+        </ul>
+      </div>
+      <div class="know-card proactive">
+        <div class="know-card-title" style="color: var(--accent);">With the Platform: Known in Advance</div>
+        <ul class="know-list">
+          <li>Which departments are most likely to face capacity gaps in the next 12–18 months</li>
+          <li>Which critical roles have no viable internal succession pipeline right now</li>
+          <li>Which employees have the strongest readiness profile to step into a target role</li>
+          <li>Which roles act as structural dead ends: stalling careers and driving attrition</li>
+          <li>Which units are silently losing institutional knowledge through retirement concentration</li>
+          <li>Where cross-department mobility opportunities exist that are currently invisible</li>
+          <li>Which job families are at risk from labor market competition based on external growth data</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaway">
+      <span>The platform is not a reporting tool. It is an <strong>intelligence layer</strong>: a system that continuously processes workforce data and surfaces the patterns that no one has time to look for manually, enabling the university to plan rather than react.</span>
+    </div>
+  </section>
+
+  <!-- THREE PILLARS -->
+  <section id="pillars">
+    <div class="section-header">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">Three Core Analytics Capabilities</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2.5rem;">
+      <p>The platform delivers three interconnected analytical capabilities, each targeting a different dimension of workforce intelligence. Together they provide a comprehensive, forward-looking view of how the workforce is structured, how it moves, and where it is headed.</p>
+    </div>
+
+    <div class="pipeline">
+
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Internal Mobility Modeling &amp; Career Path Analysis</div>
+          <div class="step-body">
+            <p style="margin-bottom:0.75rem;">Analyzes historical job transition data to construct a <strong>comprehensive map of how employees actually move through the organization</strong>: which roles feed into which, which pathways accelerate careers, and which are structural dead ends that stall progression and quietly drive attrition.</p>
+            <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;">The core of this capability is a <strong>career transition matrix</strong> built from each employee's historical job title sequence: a probabilistic map of the most likely next role from any starting position. On top of that matrix, a <strong>Markov chain simulation</strong> engine projects career journeys forward, generating distributions of where employees in a given role tend to land after N moves. This gives HR a generative view of internal mobility: not just what happened historically, but what will likely happen next.</p>
+            <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;"><strong>Graph analytics</strong> are then applied to the transition network to identify natural career communities: clusters of roles that tend to flow into each other: and to compute PageRank-style centrality scores that surface which roles are hubs of career movement versus isolated dead ends.</p>
+            <div class="tag-row">
+              <span class="chip chip-accent">Markov Chain</span>
+              <span class="chip chip-accent">Transition Matrix</span>
+              <span class="chip chip-accent">NetworkX Graph</span>
+              <span class="chip chip-accent">Community Detection</span>
+              <span class="chip">Career Pathways</span>
+              <span class="chip">Dead-End Detection</span>
+              <span class="chip">Feeder Role Analysis</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Succession Readiness Prediction</div>
+          <div class="step-body">
+            <p style="margin-bottom:0.75rem;">Identifies <strong>which internal employees are most ready to step into leadership or specialist roles</strong> before those positions become vacant: and flags roles across the organization that have no viable internal succession pipeline at all.</p>
+            <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;">Two sub-models drive this capability. The first estimates <strong>departure risk</strong>: the probability that a role becomes vacant in the next 6–12 months: using features like tenure slope, proximity to pay band ceiling, department churn rates, and retirement eligibility (SURS) indicators. The second estimates <strong>candidate readiness</strong>, predicting how well a given employee fits a target role based on skill similarity, grade progression, and mobility history.</p>
+            <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;">These two scores combine into a <strong>Succession Readiness Index (SRI)</strong>: a composite score per (candidate, role) pair that ranks internal candidates and provides interpretable rationale for each recommendation.</p>
+            <div class="formula-box">
+              SRI = w₁·p_success + w₂·SkillSim + w₃·TenureFit + w₄·ExperienceFit
+            </div>
+            <div class="formula-note">Succession Readiness Index: a weighted composite of predictive readiness components per candidate-role pair</div>
+            <div class="tag-row" style="margin-top:1rem;">
+              <span class="chip chip-accent">XGBoost / Logistic Regression</span>
+              <span class="chip chip-accent">Gradient Boosting</span>
+              <span class="chip chip-accent">LambdaMART</span>
+              <span class="chip">Departure Risk</span>
+              <span class="chip">SRI Score</span>
+              <span class="chip">Equity Audit View</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Workforce Growth Forecasting &amp; Attrition Intelligence</div>
+          <div class="step-body">
+            <p style="margin-bottom:0.75rem;">Projects <strong>headcount, hiring demand, and turnover patterns</strong> by department and job family: giving leadership a data-driven view of where the workforce is contracting, growing, and becoming structurally unstable over a 1–3 year horizon.</p>
+            <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;">Time series and trend analysis methods are applied to historical EDW data to model each department's growth trajectory, turnover seasonality, and net headcount change. Clustering algorithms group departments by workforce behavior patterns: distinguishing stable and growing units from those showing early signs of instability. External labor market data from <strong>O*NET and BLS</strong> is incorporated to benchmark internal roles against occupational growth outlooks, identifying job families at elevated risk from market competition.</p>
+            <div class="tag-row">
+              <span class="chip chip-accent">Time Series Analysis</span>
+              <span class="chip chip-accent">Trend Decomposition</span>
+              <span class="chip chip-accent">Department Clustering</span>
+              <span class="chip">O*NET Integration</span>
+              <span class="chip">BLS Growth Outlook</span>
+              <span class="chip">Attrition Scoring</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MODELS & ALGORITHMS -->
+  <section id="models">
+    <div class="section-header">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">Models &amp; Algorithms</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2.5rem;">
+      <p>The platform uses a <strong>multi-model architecture</strong>: combining supervised machine learning, generative simulation, graph analytics, and NLP-driven skill enrichment to provide complementary views of workforce dynamics. No single model captures the full picture; the insight emerges from how these layers interact.</p>
+    </div>
+
+    <div class="model-grid">
+
+      <div class="model-card primary">
+        <div class="model-name">Promotion Prediction</div>
+        <div class="model-algo">Random Forest Classifier · Supervised</div>
+        <div class="model-row"><span class="model-row-label">Purpose</span><span class="model-row-value">Predict likelihood of promotion vs. lateral move within 12–18 months</span></div>
+        <div class="model-row"><span class="model-row-label">Key Inputs</span><span class="model-row-value">Age, tenure, time in role, move rate, pay grade, job family, growth outlook, title embeddings</span></div>
+        <div class="model-row"><span class="model-row-label">Pipeline</span><span class="model-row-value">ColumnTransformer → StandardScaler + OneHotEncoder → RandomForest (class_weight="balanced")</span></div>
+        <div class="model-row"><span class="model-row-label">Output</span><span class="model-row-value">Promotion likelihood score per employee</span></div>
+        <div class="model-row"><span class="model-row-label">Rationale</span><span class="model-row-value">Interpretable baseline; balances class imbalance; feature importance directly explainable in HR terms</span></div>
+      </div>
+
+      <div class="model-card generative">
+        <div class="model-name">Career Path Simulation</div>
+        <div class="model-algo green">Markov Chain · Generative</div>
+        <div class="model-row"><span class="model-row-label">Purpose</span><span class="model-row-value">Simulate probable career journeys forward from any starting role across N moves</span></div>
+        <div class="model-row"><span class="model-row-label">Key Inputs</span><span class="model-row-value">Career transition matrix built from parsed past_job_titles sequences per employee</span></div>
+        <div class="model-row"><span class="model-row-label">Method</span><span class="model-row-value">simulate_career_path() walks transitions stochastically; simulate_many_paths() summarizes final-role distributions</span></div>
+        <div class="model-row"><span class="model-row-label">Output</span><span class="model-row-value">Probability distributions of career destinations from any starting job title</span></div>
+        <div class="model-row"><span class="model-row-label">Use Case</span><span class="model-row-value">"After 4 moves, where do Academic Advisors typically end up?": shown as a Sankey-style flow</span></div>
+      </div>
+
+      <div class="model-card graph">
+        <div class="model-name">Career Community Detection</div>
+        <div class="model-algo warm">Graph Analytics · NetworkX</div>
+        <div class="model-row"><span class="model-row-label">Purpose</span><span class="model-row-value">Identify natural clusters of roles that flow into each other: "career families"</span></div>
+        <div class="model-row"><span class="model-row-label">Key Inputs</span><span class="model-row-value">Weighted directed graph of role-to-role transitions (edge weight = transition probability)</span></div>
+        <div class="model-row"><span class="model-row-label">Algorithm</span><span class="model-row-value">greedy_modularity_communities (NetworkX); PageRank-style centrality for hub role identification</span></div>
+        <div class="model-row"><span class="model-row-label">Output</span><span class="model-row-value">Career clusters (e.g., "IT Cluster," "Academic Affairs Cluster"); hub roles; dead-end and feeder role classification</span></div>
+        <div class="model-row"><span class="model-row-label">Use Case</span><span class="model-row-value">Visualize career communities; surface roles that connect many pathways vs. those that isolate employees</span></div>
+      </div>
+
+      <div class="model-card forecast">
+        <div class="model-name">Departure Risk Model</div>
+        <div class="model-algo purple">XGBoost / Logistic Regression · Supervised</div>
+        <div class="model-row"><span class="model-row-label">Purpose</span><span class="model-row-value">Estimate probability a role becomes vacant in the next 6–12 months</span></div>
+        <div class="model-row"><span class="model-row-label">Key Inputs</span><span class="model-row-value">Tenure slope, SURS retirement indicator, department churn rate, role-level attrition history, pay band ceiling proximity</span></div>
+        <div class="model-row"><span class="model-row-label">Output</span><span class="model-row-value">p_vacancy: vacancy probability score per position</span></div>
+        <div class="model-row"><span class="model-row-label">Succession Link</span><span class="model-row-value">p_vacancy feeds directly into SRI matching: high-departure roles are automatically prioritized for succession analysis</span></div>
+        <div class="model-row"><span class="model-row-label">Fallback</span><span class="model-row-value">If model performance is insufficient, heuristic rules based on SURS status and tenure are used</span></div>
+      </div>
+
+    </div>
+
+    <!-- Candidate Readiness Model – full width -->
+    <div style="margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent2); padding: 2rem;">
+      <div class="model-name">Candidate Readiness &amp; Succession Matching</div>
+      <div class="model-algo">Gradient Boosting · Learning-to-Rank (LambdaMART) · Semantic Embedding</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1.25rem;">
+        <div>
+          <div class="step-title" style="margin-bottom:0.5rem;">What It Does</div>
+          <div style="font-size:0.83rem; color:var(--muted); line-height:1.65;">Predicts how well an internal candidate fits a specific target role. Uses a Learning-to-Rank approach (LambdaMART) to rank candidates within each role context rather than producing a single absolute score in isolation.</div>
+        </div>
+        <div>
+          <div class="step-title" style="margin-bottom:0.5rem;">Skill Enrichment Layer</div>
+          <div style="font-size:0.83rem; color:var(--muted); line-height:1.65;">LLMs (GPT/LLaMA) extract skills from job titles and descriptions. Skills are mapped to <strong>O*NET canonical standards</strong>. Sentence Transformers (InstructorXL) generate semantic embeddings. Cosine similarity measures fit between candidate and target role skill profiles.</div>
+        </div>
+        <div>
+          <div class="step-title" style="margin-bottom:0.5rem;">Equity &amp; Explainability</div>
+          <div style="font-size:0.83rem; color:var(--muted); line-height:1.65;">Top-K candidate lists are reviewed for demographic representation balance. All recommendations are accompanied by interpretable feature rationale: e.g., "High tenure + high move rate in a high-growth job family." A fairness audit view surfaces recommendation parity across demographic groups.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workforce Growth Forecasting full width -->
+    <div style="margin-top: 1.5rem; background: var(--surface2); border: 1px solid var(--border); padding: 1.5rem 2rem; border-left: 3px solid #5dbf8a;">
+      <div class="callout-label" style="color: #5dbf8a;">Workforce Growth Forecasting Model</div>
+      <p style="font-size:0.88rem; color:var(--muted); line-height:1.65; margin-top:0.4rem;">Time series decomposition and trend analysis are applied to historical EDW hiring, termination, and headcount records by department and job family. The model produces headcount forecasts over 1–3 year horizons, turnover trend models segmented by unit, and attrition risk scores per department cluster. BLS occupational growth outlook data (Very High / High / Moderate / Low) is joined to internal job family codes via O*NET crosswalks to identify which internal roles face elevated external competition for talent: a leading indicator of future turnover that doesn't yet appear in internal records.</p>
+    </div>
+  </section>
+
+  <!-- FEATURE ENGINEERING -->
+  <section id="features">
+    <div class="section-header">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">Feature Engineering</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 1.5rem;">
+      <p>Every model in the platform is built on a shared foundation of <strong>derived analytical features</strong> computed from raw EDW data. These features transform flat HR records into a rich representation of each employee's career trajectory, mobility behavior, and structural fit within the organization.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-name">Tenure Buckets</div>
+        <div class="feature-desc">0–3 · 3–7 · 7–15 · 15+ years. Total organizational tenure and time in current role are separately bucketed to distinguish early-career mobility from long-tenured stability.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">Move Rate per Year</div>
+        <div class="feature-desc">n_internal_moves / tenure_years: a normalized signal of mobility intensity that controls for the fact that a longer-tenured employee has had more time to accumulate moves.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">Transition Probability Matrix</div>
+        <div class="feature-desc">For each from_title → to_title pair observed in historical job sequences: transition count and conditional probability. The backbone of Markov simulation and graph analytics.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">Job Title Embeddings</div>
+        <div class="feature-desc">SentenceTransformer vector representations of job titles (InstructorXL). Enable semantic similarity between roles for succession matching: e.g., "Research Analyst" and "Policy Analyst" are closer than "Research Analyst" and "Building Engineer."</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">Career Path Structure Metrics</div>
+        <div class="feature-desc">Fast-track roles (high promotion probability + sufficient volume), dead-end roles (low onward transition diversity), feeder roles (transition to many distinct destinations), and diversity index per role.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">Departure Risk Signals</div>
+        <div class="feature-desc">SURS retirement eligibility indicator, proximity to pay band ceiling, department-level churn rate (trailing 12 months), tenure slope (rate of tenure accumulation relative to peers in same role class).</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">Mobility Cluster Labels</div>
+        <div class="feature-desc">Behaviorally-derived segments: Early-career ladder, Fast-track leader, Stable long-tenure, Cross-department mobile. Used as a categorical feature across all models and as a dashboard filter dimension.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">O*NET Growth Outlook</div>
+        <div class="feature-desc">External labor market classification mapped to each internal job family via O*NET occupation code crosswalk: Low / Moderate / High / Very High. Enriches both the promotion model and the attrition risk model with labor market context the EDW alone cannot provide.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-name">Skill Similarity Score</div>
+        <div class="feature-desc">Cosine similarity between the O*NET skill vector of a candidate's current role and a target role. Computed after LLM-assisted skill extraction and O*NET canonical mapping. Input to both the Readiness model and the SRI composite.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA SOURCES -->
+  <section id="data">
+    <div class="section-header">
+      <span class="section-tag">06</span>
+      <h2 class="section-title">Data Sources &amp; EDW Architecture</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2rem;">
+      <p>All data required for this platform exists within the university's existing HR and payroll infrastructure. The <strong>Enterprise Data Warehouse (EDW)</strong> contains the historical employee, job, and payroll records needed to power every analytical capability described here. No new data collection, vendor relationships, or external surveys are required.</p>
+    </div>
+
+    <table class="edw-table">
+      <thead>
+        <tr>
+          <th>EDW Table</th>
+          <th>Contents</th>
+          <th>Used For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>T_PERS_HIST</td>
+          <td>Biographical and demographic data: person ID, gender, age, hire date</td>
+          <td>Person-level joins and identifiers; demographic features for equity audit</td>
+        </tr>
+        <tr>
+          <td>V_EMPEE_HIST_1</td>
+          <td>Current employment view: active employee filter</td>
+          <td>Filter to active employee population; point-in-time snapshots</td>
+        </tr>
+        <tr>
+          <td>T_EMPEE_HIST</td>
+          <td>Employment lifecycle: hire date, FTE, job class, current snapshot</td>
+          <td>Tenure computation, FTE features, employment continuity, mobility modeling</td>
+        </tr>
+        <tr>
+          <td>T_EMPEE_HIST_5</td>
+          <td>Termination and SURS retirement details: separation codes, annuitant status</td>
+          <td>Departure risk modeling; retirement eligibility indicator; SURS feature</td>
+        </tr>
+        <tr>
+          <td>T_JOB_DETL_HIST</td>
+          <td>Job-level history: title, pay rate, department, supervisor, effective dates</td>
+          <td>Career transition sequences; role similarity; position mapping; pay grade features</td>
+        </tr>
+        <tr>
+          <td>T_PAYR_ACCTG_DETL</td>
+          <td>Payroll accounting history: earnings continuity, position-level records</td>
+          <td>Pay band ceiling proximity; earnings trend; tenure proxy via payroll continuity</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top: 2rem;">
+      <div class="section-tag" style="margin-bottom: 1rem; display: block;">External &amp; Augmented Sources</div>
+      <div class="three-col">
+        <div class="callout" style="margin-top: 0;">
+          <div class="callout-label">O*NET Skill Taxonomies</div>
+          <p>Standardized occupational skill and knowledge attributes. Used to map internal job titles to canonical skill profiles and generate semantic embeddings for succession matching. Provides the external benchmark layer the EDW alone cannot supply.</p>
+        </div>
+        <div class="callout" style="margin-top: 0; border-left-color: var(--accent2);">
+          <div class="callout-label" style="color: var(--accent2);">BLS Workforce Trends</div>
+          <p>Bureau of Labor Statistics occupational growth outlook classifications. Joined to internal job families via O*NET codes to identify which roles face elevated external talent competition: a leading indicator for future internal attrition risk.</p>
+        </div>
+        <div class="callout" style="margin-top: 0; border-left-color: var(--muted2);">
+          <div class="callout-label" style="color: var(--muted);">Augmented Cluster Tags</div>
+          <p>Mobility cluster labels and skill cluster IDs derived from job title NLP and behavioral history. Treated as pre-computed features from a separate embedding pipeline. Used for segmentation, dashboard filtering, and career community detection.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="takeaway" style="margin-top: 2rem;">
+      <span>Effective-date logic (<code style="font-family:'DM Mono',monospace; color:var(--accent2); font-size:0.8rem;">*_EFF_DT</code> / <code style="font-family:'DM Mono',monospace; color:var(--accent2); font-size:0.8rem;">*_EXP_DT</code>) across EDW tables enables <strong>as-of snapshots</strong> at any point in time: essential for backtesting models against historical workforce trends and computing rolling features like tenure slope and department churn rate.</span>
+    </div>
+  </section>
+
+  <!-- WHAT THE PLATFORM GENERATES -->
+  <section id="insights">
+    <div class="section-header">
+      <span class="section-tag">07</span>
+      <h2 class="section-title">What the Platform Surfaces</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2.5rem;">
+      <p>Every analytical capability translates into concrete, actionable intelligence delivered through the platform's dashboard and reporting layer. These are not abstract model outputs: they are <strong>workforce insights formatted for HR teams and leadership</strong> to act on directly.</p>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-box">
+        <div class="insight-box-title">Succession Gap Heatmap</div>
+        <p>Vacancy risk score (p_vacancy) plotted against bench depth: how many viable internal candidates exist for each role. Immediately surfaces which high-risk roles have <strong>no internal pipeline</strong> and require proactive development or hiring planning.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Career Pathway Maps</div>
+        <p>Sankey-style visualizations showing the top 3 most likely next roles from any starting position, with transition probabilities. Markov simulation extends this to show <strong>where employees typically end up after 4+ moves</strong>: surfacing structural dead ends and fast-track ladders.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Internal Mobility Health</div>
+        <p>Department- and job-family-level metrics: average move rate, promotion-vs-lateral ratio, diversity of onward pathways, and identification of roles with <strong>unusually low mobility</strong>: a signal of stagnation and attrition risk that doesn't appear in turnover data until it's too late.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Candidate Readiness Shortlist</div>
+        <p>For each target role, a ranked list of internal candidates with their SRI score, skill similarity breakdown, tenure fit, and interpretable rationale. Includes a <strong>gap-to-green development plan</strong> identifying which specific skill gaps the candidate would need to address.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Department Growth Forecast</div>
+        <p>1–3 year headcount projections per department and job family, incorporating historical hiring trends, turnover rates, and external labor market outlook. Flags departments with <strong>converging retirement risk and low bench depth</strong> as highest-priority planning needs.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Labor Market Benchmarking</div>
+        <p>Internal job families ranked by external growth outlook (O*NET / BLS). Identifies which roles are in high-demand fields where the university competes against the private sector for talent: informing <strong>proactive retention and compensation strategy</strong> before market pressure materializes in exits.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Career Community Clusters</div>
+        <p>Network-detected groups of roles that naturally flow into each other: the "IT cluster," "Academic Affairs cluster," etc. Reveals <strong>cross-unit mobility opportunities</strong> that are currently invisible to HR, and identifies isolated role clusters where employees have limited natural pathways forward.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Equity &amp; Recommendation Parity</div>
+        <p>An audit view that surfaces whether succession and promotion recommendations are proportionally distributed across demographic groups. Ensures the platform's outputs support <strong>equitable talent development practices</strong> and flags any model patterns that require fairness review before operational use.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENARIO EXAMPLES -->
+  <section id="scenarios">
+    <div class="section-header">
+      <span class="section-tag">08</span>
+      <h2 class="section-title">Scenario-Based Intelligence</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2rem;">
+      <p>These illustrative scenarios show what the platform makes possible. Each represents a real workforce challenge that is currently invisible until it becomes an operational problem: and the specific intelligence the platform would surface to allow proactive action instead.</p>
+    </div>
+    <div class="scenario-list">
+      <div class="scenario-card">
+        <div class="scenario-num">01</div>
+        <div>
+          <div class="scenario-title">Department Chair Retirement: Succession Without a Pipeline</div>
+          <div class="scenario-body">A senior director's SURS indicator crosses retirement eligibility threshold. The departure risk model flags <strong>p_vacancy = 0.87</strong> for the role within 12 months. The succession model surfaces three internal candidates with ≥80% skill similarity to the role's O*NET profile: two from within the department and one from a related unit identified via graph community detection. HR initiates early mentorship and structured leadership transition planning <strong>eight months before the vacancy occurs</strong>, rather than three weeks after the announcement.</div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-num">02</div>
+        <div>
+          <div class="scenario-title">Dead-End Role Cluster Driving Silent Attrition</div>
+          <div class="scenario-body">The career community detection model identifies a cluster of mid-level administrative roles with <strong>near-zero onward transition diversity</strong>: employees in these roles rarely move anywhere else in the organization. The promotion likelihood metric shows these roles have a 4% internal promotion rate versus a 31% system average. Cross-referenced with tenure data, the cluster shows long average tenure followed by abrupt departure: a signature of stagnation-driven attrition. HR and leadership now have the evidence to redesign progression pathways and create deliberate mobility bridges <strong>before losing another cohort of experienced staff</strong>.</div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-num">03</div>
+        <div>
+          <div class="scenario-title">Cross-Unit Candidate Surface: Internal Hiring Opportunity</div>
+          <div class="scenario-body">A specialist research role opens in one college. Historically, HR would post externally because no obvious candidates are visible within the unit. The succession model's semantic skill matching identifies a <strong>strong internal candidate from a different college</strong>: a role that shares 74% of the target's O*NET skill profile despite having a different job title. The candidate has a high SRI score driven by strong grade progression and mobility history. The cross-unit transfer is explored before any external search is posted, saving recruiting time and cost while strengthening internal mobility culture.</div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-num">04</div>
+        <div>
+          <div class="scenario-title">Department Growth Forecast Signals a Hiring Cliff</div>
+          <div class="scenario-body">The workforce growth forecasting model identifies that a service-critical department is trending toward a <strong>23% headcount reduction over 18 months</strong>: driven by a retirement concentration wave combined with low recent hiring. External BLS data shows the relevant job family has a "Very High" growth outlook nationally, meaning competition for replacements will be intense. Leadership now has 18 months of lead time to adjust budget planning, accelerate hiring pipelines, and explore whether internal development can fill part of the gap: instead of discovering the shortfall when operations are already affected.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POC WORK COMPLETED -->
+  <section id="poc">
+    <div class="section-header">
+      <span class="section-tag">09</span>
+      <h2 class="section-title">Proof-of-Concept Work Completed</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2rem;">
+      <p>Before the project was approved for full development, three substantial proof-of-concept workstreams were completed to <strong>validate the technical approach and demonstrate feasibility</strong> on synthetic datasets mirroring EDW structure. These POCs established the full analytical pipeline, modeling architecture, and feature engineering logic that the production platform will implement against real data.</p>
+    </div>
+
+    <div class="poc-strip">
+      <div class="poc-card">
+        <div class="poc-icon">◈</div>
+        <div class="poc-title">Internal Mobility &amp; Career Path Forecasting</div>
+        <div class="poc-author">Ruchita Alate · Data Science Analyst</div>
+        <ul class="poc-body">
+          <li>Synthetic 500-employee dataset mirroring EDW HR table structure</li>
+          <li>Full feature engineering pipeline: tenure buckets, move rate, title embeddings, transition matrix</li>
+          <li>Random Forest promotion prediction model with balanced class weighting</li>
+          <li>Markov chain career path simulation: simulate_career_path() + simulate_many_paths()</li>
+          <li>Career community detection via NetworkX + greedy modularity</li>
+          <li>Fast-track, dead-end, and feeder role classification</li>
+          <li>Complete dashboard mockup suite: Sankey flows, transition waterfalls, network density</li>
+          <li>Produced: career_transition_matrix.csv, internal_mobility_features_for_dashboard.csv</li>
+        </ul>
+      </div>
+      <div class="poc-card">
+        <div class="poc-icon">◈</div>
+        <div class="poc-title">Succession Readiness Prediction</div>
+        <div class="poc-author">Tejasri Joshi · Data Science Analyst</div>
+        <ul class="poc-body">
+          <li>EDW schema mapping for succession use case (T_PERS_HIST, T_JOB_DETL_HIST, T_EMPEE_HIST_5)</li>
+          <li>Departure risk model design: XGBoost / Logistic Regression on SURS + churn features</li>
+          <li>Candidate readiness model: Gradient Boosting + LambdaMART Learning-to-Rank</li>
+          <li>O*NET skill enrichment pipeline with FAISS embedding index</li>
+          <li>SRI composite formula: w₁·p_success + w₂·SkillSim + w₃·TenureFit + w₄·ExperienceFit</li>
+          <li>Succession dashboard prototype: vacancy heatmap, skill gap views, equity audit</li>
+          <li>Three scenario walkthroughs: retirement succession, training gap, cross-unit mobility</li>
+        </ul>
+      </div>
+      <div class="poc-card">
+        <div class="poc-icon">◈</div>
+        <div class="poc-title">Workforce Growth Forecasting</div>
+        <div class="poc-author">Tanvi · Data Science Analyst</div>
+        <ul class="poc-body">
+          <li>Headcount forecasting by department and job family</li>
+          <li>Hiring demand prediction models</li>
+          <li>Turnover trend analysis and seasonality decomposition</li>
+          <li>Department growth and stability clustering</li>
+          <li>Integration of BLS / O*NET external growth outlook data</li>
+          <li>Attrition risk scoring at the unit level</li>
+          <li>Dashboard visualization prototypes for Power BI / Tableau integration</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="takeaway" style="margin-top: 2rem;">
+      <span>The POC phase was not exploratory: it was <strong>deliberate validation</strong>. Every model architecture, feature engineering decision, EDW table mapping, and dashboard design in the production platform is grounded in work that was prototyped, tested, and evaluated prior to seeking full production build approval.</span>
+    </div>
+  </section>
+
+  <!-- BUILD PHASES -->
+  <section id="roadmap">
+    <div class="section-header">
+      <span class="section-tag">10</span>
+      <h2 class="section-title">Build Roadmap: Pending Resource Approval</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2.5rem;">
+      <p>The platform build is structured across four sequential phases spanning <strong>approximately six months</strong> with a team of one lead data scientist and three intern analysts (~2,460 total hours). The project is currently under review and the build is expected to begin once resources are confirmed.</p>
+    </div>
+    <table class="next-table">
+      <thead>
+        <tr>
+          <th>Phase</th>
+          <th>Name</th>
+          <th>Duration</th>
+          <th>Focus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Phase 1</td>
+          <td>Data Preparation &amp; Quality Analysis</td>
+          <td style="color:var(--muted); font-size:0.82rem;">Weeks 1–6 · ~500 hrs</td>
+          <td style="font-weight:400; color:var(--muted); font-size:0.83rem;">EDW extraction, data cleaning, employee transition dataset construction, feature engineering, O*NET/BLS external join</td>
+        </tr>
+        <tr>
+          <td>Phase 2</td>
+          <td>Workforce Analytics Model Development</td>
+          <td style="color:var(--muted); font-size:0.82rem;">Weeks 6–14 · ~800 hrs</td>
+          <td style="font-weight:400; color:var(--muted); font-size:0.83rem;">Promotion model, transition matrix + Markov simulation, graph analytics, succession models, growth forecasting: all three tracks in parallel</td>
+        </tr>
+        <tr>
+          <td>Phase 3</td>
+          <td>Model Validation &amp; Output Generation</td>
+          <td style="color:var(--muted); font-size:0.82rem;">Weeks 14–18 · ~400 hrs</td>
+          <td style="font-weight:400; color:var(--muted); font-size:0.83rem;">Validation against historical trends, parameter refinement, fairness review across demographic groups, structured output generation for dashboard layer</td>
+        </tr>
+        <tr>
+          <td>Phase 4</td>
+          <td>Workforce Intelligence Platform Development</td>
+          <td style="color:var(--muted); font-size:0.82rem;">Weeks 18–26 · ~760 hrs</td>
+          <td style="font-weight:400; color:var(--muted); font-size:0.83rem;">Platform architecture, Power BI / Tableau dashboard build, career pathway maps, mobility network views, HR reporting tools, leadership user testing</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- LONG-TERM VISION -->
+  <section id="future">
+    <div class="section-header">
+      <span class="section-tag">11</span>
+      <h2 class="section-title">Long-Term Vision &amp; Strategic Fit</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2rem;">
+      <p>The Workforce Analytics Platform is not a standalone project. By standardizing HR data, enriching it with external occupational frameworks, and generating structured semantic metadata, it establishes a <strong>reusable workforce data infrastructure</strong> that supports a broader institutional AI and analytics strategy well beyond the scope of this initial build.</p>
+    </div>
+    <table class="cat-table">
+      <thead>
+        <tr>
+          <th>Future Capability</th>
+          <th>How This Platform Enables It</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ERP Modernization Readiness</td>
+          <td><strong>Standardized workforce data</strong>, job taxonomy normalization, and enriched metadata reduce migration risk and improve data consistency for future ERP upgrades: a direct institutional priority.</td>
+        </tr>
+        <tr>
+          <td>AI-Driven Talent Acquisition</td>
+          <td>Semantic role embeddings and career mobility models enable <strong>intelligent internal candidate identification</strong> and job matching before external searches are opened.</td>
+        </tr>
+        <tr>
+          <td>Skill Gap Analysis</td>
+          <td>Mapping internal job roles to O*NET/BLS frameworks enables <strong>workforce capability gap modeling</strong>: identifying where the university's skill profile is diverging from future demand.</td>
+        </tr>
+        <tr>
+          <td>LLM-Powered HR Assistant</td>
+          <td>Clean workforce datasets, structured metadata, and semantic embeddings provide the <strong>retrieval and grounding layer</strong> required for conversational AI tools (e.g., Denodo AI interface).</td>
+        </tr>
+        <tr>
+          <td>University-Wide Analytics Platform</td>
+          <td>The platform architecture establishes a <strong>reusable semantic data layer</strong> that can extend beyond HR: to finance, research operations, and enrollment analytics.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- BACK LINK -->
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+</body>
+</html>
