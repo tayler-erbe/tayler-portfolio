@@ -750,34 +750,7 @@
     </div>
     <div class="projects-grid">
 
-      <!-- Featured: Legacy, Personal Venture -->
-      <div class="project-card featured" style="border-color: rgba(224,122,61,0.3); background: linear-gradient(135deg, var(--surface) 0%, rgba(224,122,61,0.03) 100%);">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
-          <span class="project-status" style="background: rgba(224,122,61,0.1); color: #e07a3d; border: 1px solid rgba(224,122,61,0.25); padding: 0.3rem 0.6rem; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">
-            <span class="status-dot" style="background: #e07a3d;"></span>Personal Venture &middot; Live MVP
-          </span>
-          <div style="display:flex;gap:1rem; flex-wrap: wrap;">
-            <a href="legacy-app-about.html" class="project-link">Case Study &#8599;</a>
-            <a href="https://tayler-erbe.github.io/legacy-app/" target="_blank" class="project-link">Live App &#8599;</a>
-            <a href="https://github.com/tayler-erbe/legacy-app" target="_blank" class="project-link">GitHub &#8599;</a>
-          </div>
-        </div>
-        <div class="project-num" style="color: #e07a3d;">00</div>
-        <div class="project-title">Legacy, A Memory Vault for Later</div>
-        <p class="project-desc">A private memory-vault PWA that pairs photos with voice recordings and written stories, eventually feeding a personal AI that can keep speaking in your own voice to the people you leave behind. Built iPhone-first as an installable Progressive Web App with an offline-first IndexedDB architecture that is multi-tenant-ready for public launch. Stage 1 live, with backend and AI layers in progress as a side venture.</p>
-        <div class="project-tags">
-          <span class="tag tag-accent">Personal Project</span>
-          <span class="tag tag-accent">PWA iOS Installable</span>
-          <span class="tag">IndexedDB</span>
-          <span class="tag">Offline First</span>
-          <span class="tag">FastAPI (Planned)</span>
-          <span class="tag">Cloudflare R2</span>
-          <span class="tag">Claude / GPT-4 RAG</span>
-          <span class="tag">Whisper Transcription</span>
-        </div>
-      </div>
-
-      <!-- Featured: Legislative Platform -->
+      <!-- 01 Featured: Legislative Platform -->
       <div class="project-card featured">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active Azure Live Beta</span>
@@ -801,42 +774,27 @@
         </div>
       </div>
 
-      <!-- Research Proposals NLP -->
+      <!-- 02 UIC Enrollment -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-prod"><span class="status-dot"></span>Production · Cron Scheduled</span>
-          <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
+          <span class="project-status status-complete"><span class="status-dot"></span>Delivered · UIC</span>
+          <div style="display:flex;gap:1rem;">
+            <a href="uic-enrollment.html" class="project-link">Case Study ↗</a>
+            <a href="https://github.com/tayler-erbe/student-enrollment-ml-forecasting" target="_blank" class="project-link">GitHub ↗</a>
+          </div>
         </div>
         <div class="project-num">02</div>
-        <div class="project-title">Research Proposals NLP Pipeline</div>
-        <p class="project-desc">Full-stack production pipeline connecting live Oracle databases through 11-step NLP processing (TF-IDF + KeyBERT + LDA fusion, HERDS classification) to structured Oracle writeback, running unattended on an automated schedule . Processes all SPA research proposals and awards system-wide across UIUC and UIC.</p>
+        <div class="project-title">Student Enrollment Classification & Forecasting (UIC)</div>
+        <p class="project-desc">Predictive ML system identifying students at risk of discontinuing enrollment, with ~82% classification accuracy. Random Forest, Tree Ensemble, and ARIMA models with 10-year enrollment projections by department and college. Full lifecycle ownership from feature engineering to executive presentation to UIC leadership.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Oracle ETL</span>
-          <span class="tag">KeyBERT</span>
-          <span class="tag">LDA</span>
-          <span class="tag">HERDS Classification</span>
-          <span class="tag">Python</span>
+          <span class="tag tag-accent">Random Forest</span>
+          <span class="tag">ARIMA</span>
+          <span class="tag">82% Accuracy</span>
+          <span class="tag">Feature Engineering</span>
         </div>
       </div>
 
-      <!-- Job Execution Monitoring -->
-      <div class="project-card">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-prod"><span class="status-dot"></span>Production · Built from Scratch</span>
-          <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
-        </div>
-        <div class="project-num">03</div>
-        <div class="project-title">Job Execution Monitoring Application</div>
-        <p class="project-desc">Custom-designed centralized health-checking and alerting system for all scheduled analytics workflows. Detects failures, cascade errors, and silent pipelines, and generates diagnostic alert emails via Linux sendmail with full traceback detail. Runs every 30–60 min with zero manual intervention.</p>
-        <div class="project-tags">
-          <span class="tag tag-accent">Observability</span>
-          <span class="tag">Parquet Logging</span>
-          <span class="tag">Python</span>
-          <span class="tag">Linux</span>
-        </div>
-      </div>
-
-      <!-- Email Archiving -->
+      <!-- 03 Email Archiving -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>R&D · Prototype Delivered</span>
@@ -845,7 +803,7 @@
             <a href="https://github.com/tayler-erbe/email-archiving-ai-pipeline" target="_blank" class="project-link">GitHub ↗</a>
           </div>
         </div>
-        <div class="project-num">04</div>
+        <div class="project-num">03</div>
         <div class="project-title">Email Archiving, E-Discovery & Privacy-Preserving NLP</div>
         <p class="project-desc">Processed 79,676 historical .eml records from a 20-year institutional archive. PII detection and anonymization via Microsoft Presidio (5 strategies), LLaMA de-identified summarization, LDA + LLM-labeled topic modeling. Scalability analysis documented the production path. Built in partnership with RIMS and the University Library.</p>
         <div class="project-tags">
@@ -857,27 +815,7 @@
         </div>
       </div>
 
-      <!-- Enrollment Forecasting -->
-      <div class="project-card">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-complete"><span class="status-dot"></span>Delivered · UIC</span>
-          <div style="display:flex;gap:1rem;">
-            <a href="uic-enrollment.html" class="project-link">Case Study ↗</a>
-            <a href="https://github.com/tayler-erbe/student-enrollment-ml-forecasting" target="_blank" class="project-link">GitHub ↗</a>
-          </div>
-        </div>
-        <div class="project-num">05</div>
-        <div class="project-title">Student Enrollment Classification & Forecasting (UIC)</div>
-        <p class="project-desc">Predictive ML system identifying students at risk of discontinuing enrollment, with ~82% classification accuracy. Random Forest, Tree Ensemble, and ARIMA models with 10-year enrollment projections by department and college. Full lifecycle ownership from feature engineering to executive presentation to UIC leadership.</p>
-        <div class="project-tags">
-          <span class="tag tag-accent">Random Forest</span>
-          <span class="tag">ARIMA</span>
-          <span class="tag">82% Accuracy</span>
-          <span class="tag">Feature Engineering</span>
-        </div>
-      </div>
-
-      <!-- Image Classification CORRECTED -->
+      <!-- 04 Archival Image Classification -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active POC · RIMS Partnership</span>
@@ -886,7 +824,7 @@
             <a href="https://github.com/tayler-erbe/archival-image-intelligence" target="_blank" class="project-link">GitHub ↗</a>
           </div>
         </div>
-        <div class="project-num">06</div>
+        <div class="project-num">04</div>
         <div class="project-title">Archival Image Classification & Digital Preservation</div>
         <p class="project-desc">Multimodal image moderation POC for large-scale historical collections empirically evaluated at 10,000+ images. Compared semantic similarity-based classification against LLaVA multimodal LLM at scale. Developed domain-specific sensitive content taxonomy for archival and legal risk. Active collaboration with the RIMS Committee at UIUC and the University Library cataloguing program.</p>
         <div class="project-tags">
@@ -898,7 +836,7 @@
         </div>
       </div>
 
-      <!-- Legacy Archive Search -->
+      <!-- 05 Legacy File Archive -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active · ERP Modernization</span>
@@ -907,7 +845,7 @@
             <a href="https://github.com/tayler-erbe/legacy-archive-intelligence" target="_blank" class="project-link">GitHub ↗</a>
           </div>
         </div>
-        <div class="project-num">07</div>
+        <div class="project-num">05</div>
         <div class="project-title">Legacy File Archive Intelligence & Semantic Search</div>
         <p class="project-desc">15+ file-type extraction pipeline (PDF, Word, Excel, PowerPoint, images, code, HTML) with LLaVA visual intelligence and LLaMA text summarization. FAISS vector search returns Box file paths from natural-language queries, making decades of legacy institutional content discoverable for the first time. Includes image querying via LLaVA descriptions.</p>
         <div class="project-tags">
@@ -919,14 +857,14 @@
         </div>
       </div>
 
-      <!-- HR Analytics -->
+      <!-- 06 HR Analytics -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active · POC Complete · Under Review</span>
           <a href="hr-workforce-analytics.html" class="project-link">Case Study ↗</a>
           <a href="https://github.com/tayler-erbe/hr-analytics-intelligence-platform" target="_blank" class="project-link">GitHub ↗</a>
         </div>
-        <div class="project-num">08</div>
+        <div class="project-num">06</div>
         <div class="project-title">HR Workforce Analytics Intelligence Platform</div>
         <p class="project-desc">Predictive workforce analytics platform designed to transform EDW HR and payroll data into forward-looking strategic intelligence. Three completed POC workstreams cover internal mobility modeling, succession readiness prediction, and workforce growth forecasting. Uses Markov chain career simulation, Random Forest promotion prediction, graph-based career community detection, and O*NET-enriched skill matching. Developed in partnership with Luanne Mayorga, Assistant Chancellor for Illinois HR.</p>
         <div class="project-tags">
@@ -937,13 +875,97 @@
         </div>
       </div>
 
-      <!-- Personal Project Adaptive Narrative Engine -->
+      <!-- 07 Job Execution Monitoring -->
+      <div class="project-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
+          <span class="project-status status-prod"><span class="status-dot"></span>Production · Built from Scratch</span>
+          <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
+        </div>
+        <div class="project-num">07</div>
+        <div class="project-title">Job Execution Monitoring Application</div>
+        <p class="project-desc">Custom-designed centralized health-checking and alerting system for all scheduled analytics workflows. Detects failures, cascade errors, and silent pipelines, and generates diagnostic alert emails via Linux sendmail with full traceback detail. Runs every 30–60 min with zero manual intervention.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">Observability</span>
+          <span class="tag">Parquet Logging</span>
+          <span class="tag">Python</span>
+          <span class="tag">Linux</span>
+        </div>
+      </div>
+
+      <!-- 08 Research Proposals NLP -->
+      <div class="project-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
+          <span class="project-status status-prod"><span class="status-dot"></span>Production · Cron Scheduled</span>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="research-proposal-processing.html" class="project-link">Case Study ↗</a>
+            <a href="https://github.com/tayler-erbe/research-proposal-processing" target="_blank" class="project-link">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="project-num">08</div>
+        <div class="project-title">Research Proposals NLP Pipeline</div>
+        <p class="project-desc">Full-stack production pipeline connecting live Oracle databases through 11-step NLP processing (TF-IDF + KeyBERT + LDA fusion, HERDS classification) to structured Oracle writeback, running unattended on an automated schedule. Processes all SPA research proposals and awards system-wide across UIUC and UIC — foundation for the emerging Research Proposal Intelligence platform supporting the System's ~$517M annual research portfolio.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">Oracle ETL</span>
+          <span class="tag tag-accent">KeyBERT</span>
+          <span class="tag">LDA</span>
+          <span class="tag">HERDS Classification</span>
+          <span class="tag">SentenceTransformer</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <!-- PERSONAL 01 Featured: Legacy Memory Vault -->
+      <div class="project-card featured" style="border-color: rgba(224,122,61,0.3); background: linear-gradient(135deg, var(--surface) 0%, rgba(224,122,61,0.03) 100%); border-left: 3px solid var(--accent3);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
+          <span class="project-status" style="background: rgba(224,122,61,0.1); color: #e07a3d; border: 1px solid rgba(224,122,61,0.25); padding: 0.3rem 0.6rem; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">
+            <span class="status-dot" style="background: #e07a3d;"></span>Personal Venture · Live MVP
+          </span>
+          <div style="display:flex;gap:1rem; flex-wrap: wrap;">
+            <a href="legacy-app-about.html" class="project-link">Case Study &#8599;</a>
+            <a href="https://tayler-erbe.github.io/legacy-app/" target="_blank" class="project-link">Live App &#8599;</a>
+            <a href="https://github.com/tayler-erbe/legacy-app" target="_blank" class="project-link">GitHub &#8599;</a>
+          </div>
+        </div>
+        <div class="project-num" style="color: var(--accent3);">✦ P1</div>
+        <div class="project-title">Legacy, A Memory Vault for Later</div>
+        <p class="project-desc">A private memory-vault PWA that pairs photos with voice recordings and written stories, eventually feeding a personal AI that can keep speaking in your own voice to the people you leave behind. Built iPhone-first as an installable Progressive Web App with an offline-first IndexedDB architecture that is multi-tenant-ready for public launch. Stage 1 live, with backend and AI layers in progress as a side venture.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">Personal Project</span>
+          <span class="tag tag-accent">PWA iOS Installable</span>
+          <span class="tag">IndexedDB</span>
+          <span class="tag">Offline First</span>
+          <span class="tag">FastAPI (Planned)</span>
+          <span class="tag">Cloudflare R2</span>
+          <span class="tag">Claude / GPT-4 RAG</span>
+          <span class="tag">Whisper Transcription</span>
+        </div>
+      </div>
+
+      <!-- PERSONAL 02 AI Chatbot That Mimics Me -->
       <div class="project-card" style="border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal · In Development</span>
           <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
         </div>
-        <div class="project-num" style="color: var(--accent3);">✦</div>
+        <div class="project-num" style="color: var(--accent3);">✦ P2</div>
+        <div class="project-title">Personal AI Chatbot That Mimics Me</div>
+        <p class="project-desc">A helpful little professional chatbot that acts as a conversational introduction to me — answering questions about my background, projects, and working style using my resume, case studies, and portfolio content as its grounding corpus. Retrieval-augmented so answers stay factual; voiced in my own cadence so it feels like reading something I actually wrote. Intended to live on this portfolio site as an alternative to scrolling.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">RAG</span>
+          <span class="tag tag-accent">LLM Agents</span>
+          <span class="tag">Vector Search</span>
+          <span class="tag">Persona Grounding</span>
+          <span class="tag">FastAPI</span>
+        </div>
+      </div>
+
+      <!-- PERSONAL 03 Adaptive Narrative Engine -->
+      <div class="project-card" style="border-left: 3px solid var(--accent3);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
+          <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal · In Development</span>
+          <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
+        </div>
+        <div class="project-num" style="color: var(--accent3);">✦ P3</div>
         <div class="project-title">Adaptive Narrative Engine Psychologically Driven RPG</div>
         <p class="project-desc">A personal project exploring the intersection of psychology, game design, and AI. An adaptive storytelling system where NPCs and narrative branches respond dynamically to a player's personality, inferred from dialogue choices mapped to the Big Five (OCEAN) framework. LLM-generated dialogue serves dual purpose: advancing story and extracting personality signals. Includes a Jungian archetype NPC system, FAISS-backed memory, and a healing/safety layer. Built modularly with FastAPI backend, vector memory, and a React chat-style UI.</p>
         <div class="project-tags">
@@ -958,6 +980,7 @@
       </div>
 
     </div>
+
   </section>
 
   <!-- SKILLS -->
