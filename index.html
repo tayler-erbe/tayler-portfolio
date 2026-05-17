@@ -827,10 +827,11 @@
         </div>
         <div class="project-num">04</div>
         <div class="project-title">Archival Image Classification & Digital Preservation</div>
-        <p class="project-desc">Multimodal image moderation POC for large-scale historical collections empirically evaluated at 10,000+ images. Compared semantic similarity-based classification against LLaVA multimodal LLM at scale. Developed domain-specific sensitive content taxonomy for archival and legal risk. Active collaboration with the RIMS Committee at UIUC and the University Library cataloguing program.</p>
+        <p class="project-desc">Multimodal image moderation POC for large-scale historical collections, scaled to 12,125 images. Compared semantic similarity-based classification against LLaVA multimodal LLM at scale. Developed domain-specific sensitive content taxonomy for archival and legal risk. Inference throughput later re-engineered for a <strong>6.22× speedup</strong> on the same NVIDIA L4 GPU — see Project 09. Active collaboration with the RIMS Committee at UIUC and the University Library cataloguing program.</p>
         <div class="project-tags">
           <span class="tag tag-accent">LLaVA</span>
-          <span class="tag tag-accent">10,000+ Images</span>
+          <span class="tag tag-accent">12,125 Images</span>
+          <span class="tag tag-accent">vLLM Throughput</span>
           <span class="tag">Semantic Similarity</span>
           <span class="tag">Dublin Core</span>
           <span class="tag">RIMS / Library</span>
@@ -912,6 +913,28 @@
           <span class="tag">HERDS Classification</span>
           <span class="tag">SentenceTransformer</span>
           <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <!-- 09 vLLM Throughput Engineering -->
+      <div class="project-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
+          <span class="project-status status-complete"><span class="status-dot"></span>Evaluation Complete · Migration Planned</span>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="vllm-inference-throughput-evaluation.html" class="project-link">Case Study ↗</a>
+            <a href="https://github.com/tayler-erbe/llava-vision-inference-backend-throughput-evaluation" target="_blank" class="project-link">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="project-num">09</div>
+        <div class="project-title">vLLM vs Ollama Inference Throughput Evaluation</div>
+        <p class="project-desc">Performance engineering case study on a single NVIDIA L4 GPU. Controlled benchmark methodology isolated request serialization in the production Ollama serving layer as the throughput bottleneck — not the hardware or model. Migration to vLLM continuous batching delivered a <strong>6.22× speedup at C=8</strong> on the same hardware and same model class, taking the 12,125-image archival corpus from 22 hours to 3.7 hours with GPU utilization rising from 28% to 97%.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">vLLM</span>
+          <span class="tag tag-accent">LLaVA</span>
+          <span class="tag tag-accent">NVIDIA L4</span>
+          <span class="tag">Continuous Batching</span>
+          <span class="tag">GPU Profiling</span>
+          <span class="tag">Performance Engineering</span>
         </div>
       </div>
 
@@ -1009,6 +1032,7 @@
         <ul class="skill-list">
           <li>LLaMA (Ollama local inference)</li>
           <li>LLaVA multimodal models</li>
+          <li>vLLM continuous batching</li>
           <li>GPT-4.1 (Copilot AI Agent)</li>
           <li>spaCy · NLTK · KeyBERT</li>
           <li>LDA topic modeling</li>
@@ -1035,6 +1059,8 @@
           <li>Azure App Service (live)</li>
           <li>Azure Blob Storage</li>
           <li>Linux analytics servers</li>
+          <li>NVIDIA L4 GPU / CUDA</li>
+          <li>GPU profiling &amp; benchmarking</li>
           <li>GitHub Actions</li>
           <li>Streamlit dashboards</li>
           <li>Box API</li>
@@ -1174,7 +1200,7 @@
   <!-- FOOTER -->
   <footer>
     <p>Tayler Erbe · Senior Data Scientist · AI Solutions, University of Illinois System</p>
-    <p>Last updated April 2026</p>
+    <p>Last updated May 2026</p>
   </footer>
 
 </body>
