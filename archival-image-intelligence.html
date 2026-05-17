@@ -690,11 +690,23 @@
 
         <div class="callout" style="margin-top: 1.5rem;">
           <div class="callout-label">Example: True Positive (Human Remains) — Image 0000207</div>
+          <div style="margin: 1rem 0;">
+            <img src="docs/examples/0000207_true_positive_skull.jpg"
+                 alt="Archival photograph 0000207 — a man in a white coat examining a sculpted bust with a partial skull face, correctly flagged as Human Remains"
+                 style="width:100%; max-width:340px; display:block; border:1px solid var(--border); filter:saturate(0.7) contrast(1.05);" />
+            <div style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted2); margin-top:0.4rem;">0000207 — flagged: Human Remains · correct</div>
+          </div>
           <p><strong>Strict description:</strong> "A man is holding up a skull to the face of a dummy head for display purposes."<br><br>Matched keyword: <code style="font-family:'DM Mono',monospace; color:var(--accent2);">skull</code> → Category: Human Remains. Clean, unambiguous match.</p>
         </div>
         <div class="callout" style="border-left-color: var(--accent3); margin-top: 1rem;">
           <div class="callout-label" style="color: var(--accent3);">Example: False Positive (Native American Imagery) — Image 0000700</div>
-          <p><strong>Description:</strong> "Two women wearing medieval outfits stand side by side with a man."<br><br>Flagged as Native American imagery due to semantic overlap between "ceremonial" and "medieval costume." A clear threshold tuning and context-awareness challenge.</p>
+          <div style="margin: 1rem 0;">
+            <img src="docs/examples/0000700_false_positive_costume.jpg"
+                 alt="Archival photograph 0000700 — a man and a woman in period theatrical costume, incorrectly flagged as Native American imagery"
+                 style="width:100%; max-width:340px; display:block; border:1px solid var(--border); filter:saturate(0.7) contrast(1.05);" />
+            <div style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted2); margin-top:0.4rem;">0000700 — flagged: Native American Imagery · false positive</div>
+          </div>
+          <p><strong>LLaVA description:</strong> "Two women wearing medieval outfits stand side by side with a man."<br><br>The photograph actually shows <strong>one man and one woman</strong> in period theatrical costume — a separate model perception error worth noting. Flagged as Native American imagery due to semantic overlap between "ceremonial" and "medieval costume." Both the count error and the false-positive category illustrate the challenge of using general-purpose multimodal descriptions as inputs to a moderation classifier.</p>
         </div>
       </div>
     </div>
