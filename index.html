@@ -35,7 +35,6 @@
       line-height: 1.6;
     }
 
-    /* Grain overlay */
     body::before {
       content: '';
       position: fixed;
@@ -46,578 +45,131 @@
       opacity: 0.4;
     }
 
-    /* ---- NAV ---- */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 3rem;
-      background: rgba(11,12,15,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      text-decoration: none;
-    }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; background: rgba(11,12,15,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-size: 0.82rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
+    .nav-links a { font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
     .nav-links a:hover { color: var(--text); }
 
-    /* ---- HERO ---- */
-    .hero {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      padding: 8rem 3rem 4rem;
-      gap: 4rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: -20%;
-      right: -10%;
-      width: 60vw;
-      height: 60vw;
-      background: radial-gradient(ellipse at center, rgba(91,200,220,0.05) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent2);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .hero-eyebrow::before {
-      content: '';
-      display: block;
-      width: 2rem;
-      height: 1px;
-      background: var(--accent2);
-    }
-    .hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      font-size: clamp(3rem, 5.5vw, 5rem);
-      line-height: 1.0;
-      color: var(--white);
-      letter-spacing: 0.01em;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--accent);
-    }
-    .hero-desc {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 46ch;
-      line-height: 1.75;
-      margin-bottom: 2.5rem;
-    }
+    .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 8rem 3rem 4rem; gap: 4rem; position: relative; overflow: hidden; }
+    .hero::after { content: ''; position: absolute; top: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(ellipse at center, rgba(91,200,220,0.05) 0%, transparent 65%); pointer-events: none; }
+    .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(3rem, 5.5vw, 5rem); line-height: 1.0; color: var(--white); letter-spacing: 0.01em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 46ch; line-height: 1.75; margin-bottom: 2.5rem; }
     .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--accent);
-      color: #0b0c0f;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.85rem 1.75rem;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-      font-weight: 500;
-    }
+    .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent); color: #0b0c0f; font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.85rem 1.75rem; text-decoration: none; transition: background 0.2s, transform 0.15s; font-weight: 500; }
     .btn-primary:hover { background: #82d9e8; transform: translateY(-1px); }
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.85rem 1.75rem;
-      text-decoration: none;
-      transition: border-color 0.2s, color 0.2s;
-    }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.85rem 1.75rem; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
     .btn-ghost:hover { border-color: var(--accent2); color: var(--accent2); }
 
-    /* hero right stat grid */
-    .hero-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-    }
-    .stat-card {
-      background: var(--surface);
-      padding: 2rem;
-      transition: background 0.2s;
-    }
+    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .stat-card { background: var(--surface); padding: 2rem; transition: background 0.2s; }
     .stat-card:hover { background: var(--surface2); }
-    .stat-icon {
-      font-size: 0.6rem;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-    }
-    .stat-num {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--accent);
-      line-height: 1;
-      margin-bottom: 0.3rem;
-    }
-    .stat-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-    .stat-sub {
-      font-size: 0.78rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
+    .stat-icon { font-size: 0.6rem; color: var(--accent); margin-bottom: 0.75rem; }
+    .stat-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-label { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); margin-bottom: 0.4rem; }
+    .stat-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
 
-    /* ---- SECTION SHARED ---- */
     section { padding: 5rem 3rem; }
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      gap: 1.5rem;
-      margin-bottom: 3.5rem;
-    }
-    .section-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent2);
-      white-space: nowrap;
-    }
-    .section-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      color: var(--white);
-    }
-    .section-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3.5rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3vw, 2.8rem); color: var(--white); }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
 
-    /* ---- ABOUT ---- */
     #about { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .about-grid {
-      display: grid;
-      grid-template-columns: 220px 1fr 240px;
-      gap: 3.5rem;
-      align-items: start;
-    }
-    .about-portrait-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .about-portrait {
-      width: 200px;
-      position: relative;
-    }
-    .about-portrait img {
-      width: 100%;
-      aspect-ratio: 3/4;
-      object-fit: cover;
-      object-position: center top;
-      display: block;
-      border: 1px solid var(--border);
-      filter: saturate(0.9) contrast(1.02);
-    }
-    .about-portrait::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border: 1px solid var(--accent);
-      opacity: 0.25;
-      pointer-events: none;
-      z-index: 1;
-    }
-    .portrait-caption {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted2);
-      text-align: center;
-      margin-top: 0.75rem;
-      line-height: 1.5;
-    }
-    .about-body p {
-      font-size: 1.05rem;
-      color: var(--muted);
-      line-height: 1.8;
-      margin-bottom: 1.2rem;
-    }
+    .about-grid { display: grid; grid-template-columns: 220px 1fr 240px; gap: 3.5rem; align-items: start; }
+    .about-portrait-wrap { display: flex; flex-direction: column; align-items: center; }
+    .about-portrait { width: 200px; position: relative; }
+    .about-portrait img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: center top; display: block; border: 1px solid var(--border); filter: saturate(0.9) contrast(1.02); }
+    .about-portrait::before { content: ''; position: absolute; inset: -4px; border: 1px solid var(--accent); opacity: 0.25; pointer-events: none; z-index: 1; }
+    .portrait-caption { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
+    .about-body p { font-size: 1.05rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.2rem; }
     .about-body p strong { color: var(--text); font-weight: 500; }
-    .about-sidebar {}
-    .sidebar-block {
-      border-left: 2px solid var(--accent);
-      padding-left: 1.25rem;
-      margin-bottom: 2rem;
-    }
-    .sidebar-block-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-    }
-    .sidebar-block p {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .sidebar-block { border-left: 2px solid var(--accent); padding-left: 1.25rem; margin-bottom: 2rem; }
+    .sidebar-block-title { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .sidebar-block p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
 
-    /* ---- PERFORMANCE BADGES ---- */
     .perf-badges { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 2rem; }
-    .perf-badge {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.8rem 1rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent2);
-    }
-    .perf-year {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--accent2);
-      white-space: nowrap;
-    }
-    .perf-rating {
-      font-size: 0.85rem;
-      color: var(--text);
-    }
+    .perf-badge { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem; background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent2); }
+    .perf-year { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+    .perf-rating { font-size: 0.85rem; color: var(--text); }
 
-    /* ---- PROJECTS ---- */
     #projects { background: var(--bg); }
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-    }
-    .project-card {
-      background: var(--surface);
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      transition: background 0.2s;
-      cursor: default;
-    }
+    .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+    .project-card { background: var(--surface); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; transition: background 0.2s; cursor: default; }
     .project-card:hover { background: var(--surface2); }
-    .project-card.featured {
-      grid-column: span 2;
-      background: var(--surface2);
-      border-left: 3px solid var(--accent);
-    }
+    .project-card.featured { grid-column: span 2; background: var(--surface2); border-left: 3px solid var(--accent); }
     .project-card.featured:hover { background: #1f2230; }
-    .project-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .status-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-    }
+    .project-status { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
     .status-active .status-dot { background: #5dbf8a; box-shadow: 0 0 6px #5dbf8a; }
     .status-active { color: #5dbf8a; }
     .status-complete .status-dot { background: var(--accent2); }
     .status-complete { color: var(--accent2); }
     .status-prod .status-dot { background: var(--accent); }
     .status-prod { color: var(--accent); }
-    .project-num {
-      font-family: 'DM Serif Display', serif;
-      font-size: 3rem;
-      color: var(--muted2);
-      line-height: 1;
-    }
-    .project-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.25rem;
-      color: var(--white);
-      line-height: 1.25;
-    }
+    .project-num { font-family: 'DM Serif Display', serif; font-size: 3rem; color: var(--muted2); line-height: 1; }
+    .project-title { font-family: 'DM Serif Display', serif; font-size: 1.25rem; color: var(--white); line-height: 1.25; }
     .project-card.featured .project-title { font-size: 1.5rem; }
-    .project-desc {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.65;
-      flex: 1;
-    }
-    .project-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-    .tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.25rem 0.6rem;
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
+    .project-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; flex: 1; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
     .tag-accent { border-color: var(--accent2); color: var(--accent2); }
-    .project-link {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--accent);
-      text-decoration: none;
-      letter-spacing: 0.06em;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: gap 0.2s;
-    }
+    .project-link { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent); text-decoration: none; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 0.4rem; transition: gap 0.2s; }
     .project-link:hover { gap: 0.8rem; }
 
-    /* ---- SKILLS ---- */
     #skills { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .skills-layout {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-    }
-    .skill-group {}
-    .skill-group-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
+    .skills-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+    .skill-group-title { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
     .skill-list { list-style: none; }
-    .skill-list li {
-      font-size: 0.88rem;
-      color: var(--muted);
-      padding: 0.35rem 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .skill-list li::before {
-      content: '›';
-      color: var(--accent2);
-      font-weight: bold;
-    }
+    .skill-list li { font-size: 0.88rem; color: var(--muted); padding: 0.35rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; }
+    .skill-list li::before { content: '›'; color: var(--accent2); font-weight: bold; }
 
-    /* ---- EXPERIENCE ---- */
     #experience { background: var(--bg); }
-    .exp-entry {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 3rem;
-      padding: 2.5rem 0;
-      border-bottom: 1px solid var(--border);
-      align-items: start;
-    }
+    .exp-entry { display: grid; grid-template-columns: 200px 1fr; gap: 3rem; padding: 2.5rem 0; border-bottom: 1px solid var(--border); align-items: start; }
     .exp-entry:first-of-type { border-top: 1px solid var(--border); }
-    .exp-meta {}
-    .exp-date {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      color: var(--accent2);
-      margin-bottom: 0.3rem;
-    }
-    .exp-org {
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    .exp-content {}
-    .exp-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.4rem;
-      color: var(--white);
-      margin-bottom: 0.75rem;
-    }
-    .exp-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-    .exp-highlights {
-      margin-top: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .exp-highlight {
-      font-size: 0.85rem;
-      color: var(--muted);
-      padding-left: 1rem;
-      border-left: 2px solid var(--accent2);
-      line-height: 1.5;
-    }
+    .exp-date { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--accent2); margin-bottom: 0.3rem; }
+    .exp-org { font-size: 0.82rem; color: var(--muted); }
+    .exp-title { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--white); margin-bottom: 0.75rem; }
+    .exp-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+    .exp-highlights { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .exp-highlight { font-size: 0.85rem; color: var(--muted); padding-left: 1rem; border-left: 2px solid var(--accent2); line-height: 1.5; }
     .exp-highlight strong { color: var(--text); font-weight: 500; }
 
-    /* ---- QUOTES ---- */
     #recognition { background: var(--surface2); border-top: 1px solid var(--border); }
-    .quotes-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-    }
-    .quote-card {
-      background: var(--surface);
-      padding: 2rem;
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--accent);
-    }
-    .quote-text {
-      font-family: 'DM Serif Display', serif;
-      font-style: italic;
-      font-size: 1rem;
-      color: var(--text);
-      line-height: 1.7;
-      margin-bottom: 1.25rem;
-    }
+    .quotes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .quote-card { background: var(--surface); padding: 2rem; border: 1px solid var(--border); border-top: 3px solid var(--accent); }
+    .quote-text { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 1rem; color: var(--text); line-height: 1.7; margin-bottom: 1.25rem; }
     .quote-text::before { content: '"'; color: var(--accent); }
     .quote-text::after { content: '"'; color: var(--accent); }
-    .quote-attribution {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+    .quote-attribution { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
-    /* ---- EDUCATION ---- */
     #education { background: var(--bg); }
     .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .edu-card {
-      padding: 2rem;
-      border: 1px solid var(--border);
-      background: var(--surface);
-    }
-    .edu-degree {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.15rem;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-    }
-    .edu-school {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      color: var(--accent2);
-      margin-bottom: 0.5rem;
-    }
+    .edu-card { padding: 2rem; border: 1px solid var(--border); background: var(--surface); }
+    .edu-degree { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--white); margin-bottom: 0.4rem; }
+    .edu-school { font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.06em; color: var(--accent2); margin-bottom: 0.5rem; }
     .edu-note { font-size: 0.85rem; color: var(--muted); }
 
-    /* ---- CONTACT ---- */
-    #contact {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      text-align: center;
-      padding: 6rem 3rem;
-    }
+    #contact { background: var(--surface); border-top: 1px solid var(--border); text-align: center; padding: 6rem 3rem; }
     #contact .section-header { justify-content: center; }
-    .contact-tagline {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 50ch;
-      margin: 0 auto 2.5rem;
-    }
+    .contact-tagline { font-size: 1.05rem; color: var(--muted); max-width: 50ch; margin: 0 auto 2.5rem; }
     .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
-    .contact-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 0.75rem 1.5rem;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s, color 0.2s;
-    }
+    .contact-link { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid var(--border); transition: border-color 0.2s, color 0.2s; }
     .contact-link:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ---- FOOTER ---- */
-    footer {
-      padding: 1.5rem 3rem;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    footer p {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.06em;
-      color: var(--muted2);
-    }
+    footer { padding: 1.5rem 3rem; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    footer p { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--muted2); }
 
-    /* ---- ANIMATIONS ---- */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .hero-eyebrow { animation: fadeUp 0.6s ease 0.1s both; }
     .hero h1 { animation: fadeUp 0.6s ease 0.25s both; }
     .hero-desc { animation: fadeUp 0.6s ease 0.4s both; }
     .hero-ctas { animation: fadeUp 0.6s ease 0.55s both; }
     .hero-stats { animation: fadeUp 0.6s ease 0.4s both; }
 
-    /* ---- RESPONSIVE ---- */
     @media (max-width: 900px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
@@ -638,7 +190,6 @@
 </head>
 <body>
 
-  <!-- NAV -->
   <nav>
     <a href="#" class="nav-logo">T.Erbe</a>
     <ul class="nav-links">
@@ -651,7 +202,6 @@
     </ul>
   </nav>
 
-  <!-- HERO -->
   <section class="hero" id="home">
     <div class="hero-left">
       <div class="hero-eyebrow">Senior Data Scientist · AI Solutions · Applied AI/ML</div>
@@ -665,93 +215,41 @@
       </div>
     </div>
     <div class="hero-stats">
-      <div class="stat-card">
-        <div class="stat-icon">&#9670;</div>
-        <div class="stat-num">End-to-End</div>
-        <div class="stat-label">AI Platform Architecture</div>
-        <div class="stat-sub">Ingest · Model · Deploy · Monitor</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">&#9670;</div>
-        <div class="stat-num">Production</div>
-        <div class="stat-label">AI/ML in the Enterprise</div>
-        <div class="stat-sub">Live on Azure · Cron-scheduled · Oracle-connected</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">&#9670;</div>
-        <div class="stat-num">Applied LLMs</div>
-        <div class="stat-label">RAG · NLP · Multimodal</div>
-        <div class="stat-sub">LLaMA · LLaVA · GPT-4.1 · Presidio</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">&#9670;</div>
-        <div class="stat-num">Stakeholder</div>
-        <div class="stat-label">Executive-Level Delivery</div>
-        <div class="stat-sub">AVPs · Chancellors · Governance Committees</div>
-      </div>
+      <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">End-to-End</div><div class="stat-label">AI Platform Architecture</div><div class="stat-sub">Ingest · Model · Deploy · Monitor</div></div>
+      <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">Production</div><div class="stat-label">AI/ML in the Enterprise</div><div class="stat-sub">Live on Azure · Cron-scheduled · Oracle-connected</div></div>
+      <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">Applied LLMs</div><div class="stat-label">RAG · NLP · Multimodal</div><div class="stat-sub">LLaMA · LLaVA · GPT-4.1 · Presidio</div></div>
+      <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">Stakeholder</div><div class="stat-label">Executive-Level Delivery</div><div class="stat-sub">AVPs · Chancellors · Governance Committees</div></div>
     </div>
   </section>
 
-  <!-- ABOUT -->
   <section id="about">
-    <div class="section-header">
-      <span class="section-tag">01 / About</span>
-      <h2 class="section-title">Who I Am</h2>
-      <div class="section-line"></div>
-    </div>
+    <div class="section-header"><span class="section-tag">01 / About</span><h2 class="section-title">Who I Am</h2><div class="section-line"></div></div>
     <div class="about-grid">
       <div class="about-portrait-wrap">
-        <div class="about-portrait">
-          <img src="portrait.png" alt="Tayler Erbe" />
-          <div class="portrait-caption">Senior Data Scientist · AI Solutions, AITS</div>
-        </div>
+        <div class="about-portrait"><img src="portrait.png" alt="Tayler Erbe" /><div class="portrait-caption">Senior Data Scientist · AI Solutions, AITS</div></div>
       </div>
       <div class="about-body">
         <p>I'm a <strong>Senior Data Scientist</strong> at Administrative Information Technology Services (AITS), University of Illinois System, where I've served as the sole Advanced Analytics and Decision Support lead for nearly three years, owning the full lifecycle of analytics strategy, AI infrastructure, and stakeholder delivery across a complex, highly regulated enterprise.</p>
         <p>My work spans the entire stack: from architecting <strong>Linux-based analytics execution environments</strong> to deploying <strong>RAG-powered legislative intelligence platforms</strong> live on Azure. I've built systems that process 79,000+ archival emails, classify research proposals in real time via 11-step NLP pipelines, and enable natural-language search across legacy institutional file archives.</p>
         <p>I believe in independently defining ambiguous problems, designing solutions from scratch, and sustaining delivery continuity through organizational change. I've presented to executive leadership, governance committees, and the Enterprise Architecture Committee, and I've made it a point to translate complex AI into narratives that non-technical stakeholders can act on.</p>
         <div class="perf-badges">
-          <div class="perf-badge">
-            <span class="perf-year">2022–2023</span>
-            <span class="perf-rating">Very Successful / Effective</span>
-          </div>
-          <div class="perf-badge">
-            <span class="perf-year">2023–2024</span>
-            <span class="perf-rating">Extraordinary / Distinguished · AITS Excellence Award Finalist</span>
-          </div>
-          <div class="perf-badge">
-            <span class="perf-year">2024–2025</span>
-            <span class="perf-rating">Very Successful / Effective</span>
-          </div>
+          <div class="perf-badge"><span class="perf-year">2022–2023</span><span class="perf-rating">Very Successful / Effective</span></div>
+          <div class="perf-badge"><span class="perf-year">2023–2024</span><span class="perf-rating">Extraordinary / Distinguished · AITS Excellence Award Finalist</span></div>
+          <div class="perf-badge"><span class="perf-year">2024–2025</span><span class="perf-rating">Very Successful / Effective</span></div>
         </div>
       </div>
       <div class="about-sidebar">
-        <div class="sidebar-block">
-          <div class="sidebar-block-title">Current Role</div>
-          <p>Senior Data Scientist AI Solutions Team<br>AITS, University of Illinois System<br>Oct 2024 – Present<br><br><span style="color:var(--muted2); font-size:0.8rem;">Previously: Data Scientist · Advanced Analytics (2023–2024)<br>Data Engineer · Advanced Analytics (2022–2023)</span></p>
-        </div>
-        <div class="sidebar-block">
-          <div class="sidebar-block-title">Education</div>
-          <p>B.S. Cognitive Science, ML &amp; Neural Computation<br>UC San Diego (2021)</p>
-        </div>
-        <div class="sidebar-block">
-          <div class="sidebar-block-title">Live Deployment</div>
-          <p>Legislative Trends Dashboard on Azure App Service <a href="https://legislationtrends2026-fgh8dvf0a4edhqc3.northcentralus-01.azurewebsites.net" target="_blank" style="color: var(--accent2);">live beta ↗</a></p>
-        </div>
+        <div class="sidebar-block"><div class="sidebar-block-title">Current Role</div><p>Senior Data Scientist AI Solutions Team<br>AITS, University of Illinois System<br>Oct 2024 – Present<br><br><span style="color:var(--muted2); font-size:0.8rem;">Previously: Data Scientist · Advanced Analytics (2023–2024)<br>Data Engineer · Advanced Analytics (2022–2023)</span></p></div>
+        <div class="sidebar-block"><div class="sidebar-block-title">Education</div><p>B.S. Cognitive Science, ML &amp; Neural Computation<br>UC San Diego (2021)</p></div>
+        <div class="sidebar-block"><div class="sidebar-block-title">Live Deployment</div><p>Legislative Trends Dashboard on Azure App Service <a href="https://legislationtrends2026-fgh8dvf0a4edhqc3.northcentralus-01.azurewebsites.net" target="_blank" style="color: var(--accent2);">live beta ↗</a></p></div>
       </div>
     </div>
   </section>
 
-  <!-- PROJECTS -->
   <section id="projects">
-    <div class="section-header">
-      <span class="section-tag">02 / Projects</span>
-      <h2 class="section-title">Selected Work</h2>
-      <div class="section-line"></div>
-    </div>
+    <div class="section-header"><span class="section-tag">02 / Projects</span><h2 class="section-title">Selected Work</h2><div class="section-line"></div></div>
     <div class="projects-grid">
 
-      <!-- 01 Featured: Legislative Platform -->
       <div class="project-card featured">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active Azure Live Beta</span>
@@ -764,18 +262,10 @@
         <div class="project-title">Legislative Analytics & Policy Intelligence Platform</div>
         <p class="project-desc">End-to-end AI platform that ingests, classifies, and semantically queries Illinois state and federal legislation. Extracts 12+ structured intelligence signals per bill via LLaMA, builds hybrid FAISS vector search, powers a GPT-4.1 Copilot chatbot with citation-backed responses, and deploys a live Streamlit dashboard to Azure with Z-score anomaly detection, TF-IDF trend analysis, and subcategory momentum modeling. Stakeholders include AVP Academic Affairs, IGPA, and AVP External & State Relations.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">LLaMA / LLM</span>
-          <span class="tag tag-accent">RAG</span>
-          <span class="tag tag-accent">Azure App Service</span>
-          <span class="tag">FAISS</span>
-          <span class="tag">Streamlit</span>
-          <span class="tag">NLP</span>
-          <span class="tag">GPT-4.1</span>
-          <span class="tag">Anomaly Detection</span>
+          <span class="tag tag-accent">LLaMA / LLM</span><span class="tag tag-accent">RAG</span><span class="tag tag-accent">Azure App Service</span><span class="tag">FAISS</span><span class="tag">Streamlit</span><span class="tag">NLP</span><span class="tag">GPT-4.1</span><span class="tag">Anomaly Detection</span>
         </div>
       </div>
 
-      <!-- 02 UIC Enrollment -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-complete"><span class="status-dot"></span>Delivered · UIC</span>
@@ -788,14 +278,10 @@
         <div class="project-title">Student Enrollment Classification & Forecasting (UIC)</div>
         <p class="project-desc">Predictive ML system identifying students at risk of discontinuing enrollment, with ~82% classification accuracy. Random Forest, Tree Ensemble, and ARIMA models with 10-year enrollment projections by department and college. Full lifecycle ownership from feature engineering to executive presentation to UIC leadership.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Random Forest</span>
-          <span class="tag">ARIMA</span>
-          <span class="tag">82% Accuracy</span>
-          <span class="tag">Feature Engineering</span>
+          <span class="tag tag-accent">Random Forest</span><span class="tag">ARIMA</span><span class="tag">82% Accuracy</span><span class="tag">Feature Engineering</span>
         </div>
       </div>
 
-      <!-- 03 Email Archiving -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>R&D · Prototype Delivered</span>
@@ -808,15 +294,10 @@
         <div class="project-title">Email Archiving, E-Discovery & Privacy-Preserving NLP</div>
         <p class="project-desc">Processed 79,676 historical .eml records from a 20-year institutional archive. PII detection and anonymization via Microsoft Presidio (5 strategies), LLaMA de-identified summarization, LDA + LLM-labeled topic modeling. Scalability analysis documented the production path. Built in partnership with RIMS and the University Library.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Presidio PII</span>
-          <span class="tag">LLaMA</span>
-          <span class="tag">E-Discovery</span>
-          <span class="tag">Topic Modeling</span>
-          <span class="tag">RIMS / Library</span>
+          <span class="tag tag-accent">Presidio PII</span><span class="tag">LLaMA</span><span class="tag">E-Discovery</span><span class="tag">Topic Modeling</span><span class="tag">RIMS / Library</span>
         </div>
       </div>
 
-      <!-- 04 Archival Image Classification -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active POC · RIMS Partnership</span>
@@ -829,16 +310,10 @@
         <div class="project-title">Archival Image Classification & Digital Preservation</div>
         <p class="project-desc">Multimodal image moderation POC for large-scale historical collections, scaled to 12,125 images. Compared semantic similarity-based classification against LLaVA multimodal LLM at scale. Developed domain-specific sensitive content taxonomy for archival and legal risk. Inference throughput later re-engineered for a <strong>6.22× speedup</strong> on the same NVIDIA L4 GPU — see Project 09. Active collaboration with the RIMS Committee at UIUC and the University Library cataloguing program.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">LLaVA</span>
-          <span class="tag tag-accent">12,125 Images</span>
-          <span class="tag tag-accent">vLLM Throughput</span>
-          <span class="tag">Semantic Similarity</span>
-          <span class="tag">Dublin Core</span>
-          <span class="tag">RIMS / Library</span>
+          <span class="tag tag-accent">LLaVA</span><span class="tag tag-accent">12,125 Images</span><span class="tag tag-accent">vLLM Throughput</span><span class="tag">Semantic Similarity</span><span class="tag">Dublin Core</span><span class="tag">RIMS / Library</span>
         </div>
       </div>
 
-      <!-- 05 Legacy File Archive -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active · ERP Modernization</span>
@@ -851,15 +326,10 @@
         <div class="project-title">Legacy File Archive Intelligence & Semantic Search</div>
         <p class="project-desc">15+ file-type extraction pipeline (PDF, Word, Excel, PowerPoint, images, code, HTML) with LLaVA visual intelligence and LLaMA text summarization. FAISS vector search returns Box file paths from natural-language queries, making decades of legacy institutional content discoverable for the first time. Includes image querying via LLaVA descriptions.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">LLaVA</span>
-          <span class="tag">FAISS</span>
-          <span class="tag">Box API</span>
-          <span class="tag">Multimodal</span>
-          <span class="tag">Semantic Search</span>
+          <span class="tag tag-accent">LLaVA</span><span class="tag">FAISS</span><span class="tag">Box API</span><span class="tag">Multimodal</span><span class="tag">Semantic Search</span>
         </div>
       </div>
 
-      <!-- 06 HR Analytics -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active · POC Complete · Under Review</span>
@@ -870,14 +340,10 @@
         <div class="project-title">HR Workforce Analytics Intelligence Platform</div>
         <p class="project-desc">Predictive workforce analytics platform designed to transform EDW HR and payroll data into forward-looking strategic intelligence. Three completed POC workstreams cover internal mobility modeling, succession readiness prediction, and workforce growth forecasting. Uses Markov chain career simulation, Random Forest promotion prediction, graph-based career community detection, and O*NET-enriched skill matching. Developed in partnership with Luanne Mayorga, Assistant Chancellor for Illinois HR.</p>
         <div class="project-tags">
-          <span class="tag">Attrition Modeling</span>
-          <span class="tag">Forecasting</span>
-          <span class="tag">HR Analytics</span>
-          <span class="tag">ERP Strategy</span>
+          <span class="tag">Attrition Modeling</span><span class="tag">Forecasting</span><span class="tag">HR Analytics</span><span class="tag">ERP Strategy</span>
         </div>
       </div>
 
-      <!-- 07 Job Execution Monitoring -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-prod"><span class="status-dot"></span>Production · Built from Scratch</span>
@@ -887,14 +353,10 @@
         <div class="project-title">Job Execution Monitoring Application</div>
         <p class="project-desc">Custom-designed centralized health-checking and alerting system for all scheduled analytics workflows. Detects failures, cascade errors, and silent pipelines, and generates diagnostic alert emails via Linux sendmail with full traceback detail. Runs every 30–60 min with zero manual intervention.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Observability</span>
-          <span class="tag">Parquet Logging</span>
-          <span class="tag">Python</span>
-          <span class="tag">Linux</span>
+          <span class="tag tag-accent">Observability</span><span class="tag">Parquet Logging</span><span class="tag">Python</span><span class="tag">Linux</span>
         </div>
       </div>
 
-      <!-- 08 Research Proposals NLP -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-prod"><span class="status-dot"></span>Production · Cron Scheduled</span>
@@ -907,16 +369,10 @@
         <div class="project-title">Research Proposals NLP Pipeline</div>
         <p class="project-desc">Full-stack production pipeline connecting live Oracle databases through 11-step NLP processing (TF-IDF + KeyBERT + LDA fusion, HERDS classification) to structured Oracle writeback, running unattended on an automated schedule. Processes all SPA research proposals and awards system-wide across UIUC and UIC — foundation for the emerging Research Proposal Intelligence platform supporting the System's ~$517M annual research portfolio.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Oracle ETL</span>
-          <span class="tag tag-accent">KeyBERT</span>
-          <span class="tag">LDA</span>
-          <span class="tag">HERDS Classification</span>
-          <span class="tag">SentenceTransformer</span>
-          <span class="tag">Python</span>
+          <span class="tag tag-accent">Oracle ETL</span><span class="tag tag-accent">KeyBERT</span><span class="tag">LDA</span><span class="tag">HERDS Classification</span><span class="tag">SentenceTransformer</span><span class="tag">Python</span>
         </div>
       </div>
 
-      <!-- 09 vLLM Throughput Engineering -->
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-complete"><span class="status-dot"></span>Evaluation Complete · Migration Planned</span>
@@ -929,16 +385,26 @@
         <div class="project-title">vLLM vs Ollama Inference Throughput Evaluation</div>
         <p class="project-desc">Performance engineering case study on a single NVIDIA L4 GPU. Controlled benchmark methodology isolated request serialization in the production Ollama serving layer as the throughput bottleneck — not the hardware or model. Migration to vLLM continuous batching delivered a <strong>6.22× speedup at C=8</strong> on the same hardware and same model class, taking the 12,125-image archival corpus from 22 hours to 3.7 hours with GPU utilization rising from 28% to 97%.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">vLLM</span>
-          <span class="tag tag-accent">LLaVA</span>
-          <span class="tag tag-accent">NVIDIA L4</span>
-          <span class="tag">Continuous Batching</span>
-          <span class="tag">GPU Profiling</span>
-          <span class="tag">Performance Engineering</span>
+          <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">LLaVA</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">GPU Profiling</span><span class="tag">Performance Engineering</span>
         </div>
       </div>
 
-      <!-- PERSONAL 01 Featured: Legacy Memory Vault -->
+      <div class="project-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
+          <span class="project-status status-complete"><span class="status-dot"></span>Complete · Production Decision Defended</span>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="vllm-inference-throughput-evaluation.html" class="project-link">Case Study ↗</a>
+            <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="project-num">10</div>
+        <div class="project-title">vLLM Multi-Model Sweep · Legislation Pipeline</div>
+        <p class="project-desc">Controlled 54-cell benchmark across three open-weight 7-8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="https://terbe2022.github.io/uiuc-legislative-intelligence-hub/" target="_blank" style="color:var(--accent2);">Legislative Intelligence Platform</a>. Production concurrency=4, six chunk sizes, three repeats, full per-request telemetry (TTFT, ITL p99, decode/prefill throughput) and server-side GPU sampling. <strong>8h 34m unattended runtime, 0 alarms fired, 4,586 per-chunk samples.</strong> Identified Llama 3.1 8B AWQ as the production winner with 89.5-92.5% parse OK across all 15 extraction fields versus 56-72% on the incumbent Mistral. Methodology ports to any future GPU upgrade as the comparison baseline.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Llama 3.1 8B AWQ</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">AWQ Quantization</span><span class="tag">GPU Telemetry</span><span class="tag">Performance Engineering</span><span class="tag">Production Decision</span>
+        </div>
+      </div>
+
       <div class="project-card featured" style="border-color: rgba(224,122,61,0.3); background: linear-gradient(135deg, var(--surface) 0%, rgba(224,122,61,0.03) 100%); border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
           <span class="project-status" style="background: rgba(224,122,61,0.1); color: #e07a3d; border: 1px solid rgba(224,122,61,0.25); padding: 0.3rem 0.6rem; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">
@@ -954,18 +420,10 @@
         <div class="project-title">Legacy, A Memory Vault for Later</div>
         <p class="project-desc">A private memory-vault PWA that pairs photos with voice recordings and written stories, eventually feeding a personal AI that can keep speaking in your own voice to the people you leave behind. Built iPhone-first as an installable Progressive Web App with an offline-first IndexedDB architecture that is multi-tenant-ready for public launch. Stage 1 live, with backend and AI layers in progress as a side venture.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Personal Project</span>
-          <span class="tag tag-accent">PWA iOS Installable</span>
-          <span class="tag">IndexedDB</span>
-          <span class="tag">Offline First</span>
-          <span class="tag">FastAPI (Planned)</span>
-          <span class="tag">Cloudflare R2</span>
-          <span class="tag">Claude / GPT-4 RAG</span>
-          <span class="tag">Whisper Transcription</span>
+          <span class="tag tag-accent">Personal Project</span><span class="tag tag-accent">PWA iOS Installable</span><span class="tag">IndexedDB</span><span class="tag">Offline First</span><span class="tag">FastAPI (Planned)</span><span class="tag">Cloudflare R2</span><span class="tag">Claude / GPT-4 RAG</span><span class="tag">Whisper Transcription</span>
         </div>
       </div>
 
-      <!-- PERSONAL 02 AI Chatbot That Mimics Me -->
       <div class="project-card" style="border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal · In Development</span>
@@ -975,15 +433,10 @@
         <div class="project-title">Personal AI Chatbot That Mimics Me</div>
         <p class="project-desc">A helpful little professional chatbot that acts as a conversational introduction to me — answering questions about my background, projects, and working style using my resume, case studies, and portfolio content as its grounding corpus. Retrieval-augmented so answers stay factual; voiced in my own cadence so it feels like reading something I actually wrote. Intended to live on this portfolio site as an alternative to scrolling.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">RAG</span>
-          <span class="tag tag-accent">LLM Agents</span>
-          <span class="tag">Vector Search</span>
-          <span class="tag">Persona Grounding</span>
-          <span class="tag">FastAPI</span>
+          <span class="tag tag-accent">RAG</span><span class="tag tag-accent">LLM Agents</span><span class="tag">Vector Search</span><span class="tag">Persona Grounding</span><span class="tag">FastAPI</span>
         </div>
       </div>
 
-      <!-- PERSONAL 03 Adaptive Narrative Engine -->
       <div class="project-card" style="border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal · In Development</span>
@@ -993,98 +446,40 @@
         <div class="project-title">Adaptive Narrative Engine Psychologically Driven RPG</div>
         <p class="project-desc">A personal project exploring the intersection of psychology, game design, and AI. An adaptive storytelling system where NPCs and narrative branches respond dynamically to a player's personality, inferred from dialogue choices mapped to the Big Five (OCEAN) framework. LLM-generated dialogue serves dual purpose: advancing story and extracting personality signals. Includes a Jungian archetype NPC system, FAISS-backed memory, and a healing/safety layer. Built modularly with FastAPI backend, vector memory, and a React chat-style UI.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Big Five / OCEAN</span>
-          <span class="tag tag-accent">LLM Agents</span>
-          <span class="tag">Jungian Archetypes</span>
-          <span class="tag">FAISS Memory</span>
-          <span class="tag">FastAPI</span>
-          <span class="tag">Adaptive Narrative</span>
-          <span class="tag">React</span>
+          <span class="tag tag-accent">Big Five / OCEAN</span><span class="tag tag-accent">LLM Agents</span><span class="tag">Jungian Archetypes</span><span class="tag">FAISS Memory</span><span class="tag">FastAPI</span><span class="tag">Adaptive Narrative</span><span class="tag">React</span>
         </div>
       </div>
 
     </div>
-
   </section>
 
-  <!-- SKILLS -->
   <section id="skills">
-    <div class="section-header">
-      <span class="section-tag">03 / Skills</span>
-      <h2 class="section-title">Technology Stack</h2>
-      <div class="section-line"></div>
-    </div>
+    <div class="section-header"><span class="section-tag">03 / Skills</span><h2 class="section-title">Technology Stack</h2><div class="section-line"></div></div>
     <div class="skills-layout">
       <div class="skill-group">
         <div class="skill-group-title">Languages & Modeling</div>
-        <ul class="skill-list">
-          <li>Python</li>
-          <li>SQL</li>
-          <li>R</li>
-          <li>scikit-learn</li>
-          <li>Random Forest / Tree Ensemble</li>
-          <li>ARIMA with exponential smoothing</li>
-          <li>Feature engineering & validation</li>
-        </ul>
+        <ul class="skill-list"><li>Python</li><li>SQL</li><li>R</li><li>scikit-learn</li><li>Random Forest / Tree Ensemble</li><li>ARIMA with exponential smoothing</li><li>Feature engineering & validation</li></ul>
       </div>
       <div class="skill-group">
         <div class="skill-group-title">NLP & LLM / AI</div>
-        <ul class="skill-list">
-          <li>LLaMA (Ollama local inference)</li>
-          <li>LLaVA multimodal models</li>
-          <li>vLLM continuous batching</li>
-          <li>GPT-4.1 (Copilot AI Agent)</li>
-          <li>spaCy · NLTK · KeyBERT</li>
-          <li>LDA topic modeling</li>
-          <li>RAG architectures</li>
-          <li>Prompt engineering</li>
-          <li>Microsoft Presidio (PII)</li>
-        </ul>
+        <ul class="skill-list"><li>LLaMA (Ollama local inference)</li><li>LLaVA multimodal models</li><li>vLLM continuous batching</li><li>GPT-4.1 (Copilot AI Agent)</li><li>spaCy · NLTK · KeyBERT</li><li>LDA topic modeling</li><li>RAG architectures</li><li>Prompt engineering</li><li>Microsoft Presidio (PII)</li></ul>
       </div>
       <div class="skill-group">
         <div class="skill-group-title">Vector Search & Data</div>
-        <ul class="skill-list">
-          <li>FAISS vector indexing</li>
-          <li>MiniLM / BERT embeddings</li>
-          <li>Sentence-Transformers</li>
-          <li>pandas / numpy / pyarrow</li>
-          <li>Parquet / batch pipelines</li>
-          <li>Oracle (cx_Oracle)</li>
-          <li>TF-IDF / hybrid retrieval</li>
-        </ul>
+        <ul class="skill-list"><li>FAISS vector indexing</li><li>MiniLM / BERT embeddings</li><li>Sentence-Transformers</li><li>pandas / numpy / pyarrow</li><li>Parquet / batch pipelines</li><li>Oracle (cx_Oracle)</li><li>TF-IDF / hybrid retrieval</li></ul>
       </div>
       <div class="skill-group">
         <div class="skill-group-title">Infrastructure & Cloud</div>
-        <ul class="skill-list">
-          <li>Azure App Service (live)</li>
-          <li>Azure Blob Storage</li>
-          <li>Linux analytics servers</li>
-          <li>NVIDIA L4 GPU / CUDA</li>
-          <li>GPU profiling &amp; benchmarking</li>
-          <li>GitHub Actions</li>
-          <li>Streamlit dashboards</li>
-          <li>Box API</li>
-          <li>Cron scheduling</li>
-          <li>KNIME → Python migration</li>
-        </ul>
+        <ul class="skill-list"><li>Azure App Service (live)</li><li>Azure Blob Storage</li><li>Linux analytics servers</li><li>NVIDIA L4 GPU / CUDA</li><li>GPU profiling &amp; benchmarking</li><li>GitHub Actions</li><li>Streamlit dashboards</li><li>Box API</li><li>Cron scheduling</li><li>KNIME → Python migration</li></ul>
       </div>
     </div>
   </section>
 
-  <!-- EXPERIENCE -->
   <section id="experience">
-    <div class="section-header">
-      <span class="section-tag">04 / Experience</span>
-      <h2 class="section-title">Where I've Worked</h2>
-      <div class="section-line"></div>
-    </div>
+    <div class="section-header"><span class="section-tag">04 / Experience</span><h2 class="section-title">Where I've Worked</h2><div class="section-line"></div></div>
 
-    <!-- Role 3: Current -->
     <div class="exp-entry">
-      <div class="exp-meta">
-        <div class="exp-date">Oct 2024 – Present</div>
-        <div class="exp-org">AITS · AI Solutions Team<br>University of Illinois System</div>
-      </div>
+      <div class="exp-meta"><div class="exp-date">Oct 2024 – Present</div><div class="exp-org">AITS · AI Solutions Team<br>University of Illinois System</div></div>
       <div class="exp-content">
         <div class="exp-title">Senior Data Scientist AI Solutions</div>
         <p class="exp-desc">Moved into the newly formed AI Solutions Team, bringing institutional AI expertise into a dedicated platform focused on expanding generative AI and applied machine learning across the University of Illinois System. Continuing to own flagship AI platforms while contributing to team-wide AI strategy and cross-campus partnerships.</p>
@@ -1096,12 +491,8 @@
       </div>
     </div>
 
-    <!-- Role 2: Data Scientist -->
     <div class="exp-entry">
-      <div class="exp-meta">
-        <div class="exp-date">Late 2023 – Oct 2024</div>
-        <div class="exp-org">AITS · Advanced Analytics Team<br>University of Illinois System</div>
-      </div>
+      <div class="exp-meta"><div class="exp-date">Late 2023 – Oct 2024</div><div class="exp-org">AITS · Advanced Analytics Team<br>University of Illinois System</div></div>
       <div class="exp-content">
         <div class="exp-title">Data Scientist Advanced Analytics (Decision Support)</div>
         <p class="exp-desc">Reclassified to Data Scientist and functionally assumed team lead responsibilities following major organizational restructuring. Served as sole Advanced Analytics and Decision Support lead, owning strategy, delivery, and stakeholder engagement across HR, enrollment, payroll, policy, governance, and archival domains.</p>
@@ -1114,12 +505,8 @@
       </div>
     </div>
 
-    <!-- Role 1: Data Engineer -->
     <div class="exp-entry">
-      <div class="exp-meta">
-        <div class="exp-date">May 2022 – Late 2023</div>
-        <div class="exp-org">AITS · Advanced Analytics Team<br>University of Illinois System</div>
-      </div>
+      <div class="exp-meta"><div class="exp-date">May 2022 – Late 2023</div><div class="exp-org">AITS · Advanced Analytics Team<br>University of Illinois System</div></div>
       <div class="exp-content">
         <div class="exp-title">Data Engineer Advanced Analytics</div>
         <p class="exp-desc">Joined AITS as a Data Engineer on the Advanced Analytics team. Quickly took initiative beyond the role's scope researching new techniques, developing project plans, and delivering innovative solutions independently. Assumed functional team lead responsibilities in early 2023 before formal reclassification.</p>
@@ -1132,59 +519,25 @@
     </div>
   </section>
 
-  <!-- RECOGNITION -->
   <section id="recognition">
-    <div class="section-header">
-      <span class="section-tag">05 / Recognition</span>
-      <h2 class="section-title">What Colleagues Have Said</h2>
-      <div class="section-line"></div>
-    </div>
+    <div class="section-header"><span class="section-tag">05 / Recognition</span><h2 class="section-title">What Colleagues Have Said</h2><div class="section-line"></div></div>
     <div class="quotes-grid">
-
-      <div class="quote-card">
-        <p class="quote-text">She has an incredible ability to turn complex analytical goals into clear, actionable plans, whether it's designing NLP workflows, building large-scale data pipelines, or guiding our use of tools like Azure and KNIME. She approaches every challenge with both strategic insight and technical precision, helping the team meet goals while understanding the "why" behind every solution.</p>
-        <div class="quote-attribution">Tejasri Joshi · Data & BI Analyst · Direct Report at AITS</div>
-      </div>
-
-      <div class="quote-card">
-        <p class="quote-text">Tayler led all of our projects, but most notably our Legislative project. She came up with many different ways to collect and process data regarding future legislation in Illinois to create a model that predicts whether legislation would pass or not. She showed the team how to use unconventional tools like Pinecone and Azure for NLP analysis; her vision and dedication to pushing boundaries led to strong progress.</p>
-        <div class="quote-attribution">Azaan Barlas · AI Data Scientist · Direct Report at AITS</div>
-      </div>
-
-      <div class="quote-card">
-        <p class="quote-text">Tayler also challenges us to think beyond conventional solutions, helping sharpen our problem-solving skills and encouraging creative, critical thinking. Her guidance brings a strong sense of direction to every project, and her ability to balance strategic oversight with hands-on support has made a lasting impact on my growth.</p>
-        <div class="quote-attribution">Ruchita Alate · Data Science Analyst · Direct Report at AITS</div>
-      </div>
-
-      <div class="quote-card">
-        <p class="quote-text">She encouraged me to explore innovative solutions to the problems we tackled, providing me with the opportunity to learn new concepts and tools. Her strong technical skills motivated the team to learn and grow. Tayler's welcoming manner made it easy to approach her with any questions or concerns, and she ensured that the team had everything we needed and advocated for better resources.</p>
-        <div class="quote-attribution">Riya Saini · Data Science, Nationwide Children's Hospital · Direct Report at AITS</div>
-      </div>
-
+      <div class="quote-card"><p class="quote-text">She has an incredible ability to turn complex analytical goals into clear, actionable plans, whether it's designing NLP workflows, building large-scale data pipelines, or guiding our use of tools like Azure and KNIME. She approaches every challenge with both strategic insight and technical precision, helping the team meet goals while understanding the "why" behind every solution.</p><div class="quote-attribution">Tejasri Joshi · Data & BI Analyst · Direct Report at AITS</div></div>
+      <div class="quote-card"><p class="quote-text">Tayler led all of our projects, but most notably our Legislative project. She came up with many different ways to collect and process data regarding future legislation in Illinois to create a model that predicts whether legislation would pass or not. She showed the team how to use unconventional tools like Pinecone and Azure for NLP analysis; her vision and dedication to pushing boundaries led to strong progress.</p><div class="quote-attribution">Azaan Barlas · AI Data Scientist · Direct Report at AITS</div></div>
+      <div class="quote-card"><p class="quote-text">Tayler also challenges us to think beyond conventional solutions, helping sharpen our problem-solving skills and encouraging creative, critical thinking. Her guidance brings a strong sense of direction to every project, and her ability to balance strategic oversight with hands-on support has made a lasting impact on my growth.</p><div class="quote-attribution">Ruchita Alate · Data Science Analyst · Direct Report at AITS</div></div>
+      <div class="quote-card"><p class="quote-text">She encouraged me to explore innovative solutions to the problems we tackled, providing me with the opportunity to learn new concepts and tools. Her strong technical skills motivated the team to learn and grow. Tayler's welcoming manner made it easy to approach her with any questions or concerns, and she ensured that the team had everything we needed and advocated for better resources.</p><div class="quote-attribution">Riya Saini · Data Science, Nationwide Children's Hospital · Direct Report at AITS</div></div>
     </div>
   </section>
 
-  <!-- EDUCATION -->
   <section id="education">
-    <div class="section-header">
-      <span class="section-tag">06 / Education</span>
-      <h2 class="section-title">Academic Background</h2>
-      <div class="section-line"></div>
-    </div>
+    <div class="section-header"><span class="section-tag">06 / Education</span><h2 class="section-title">Academic Background</h2><div class="section-line"></div></div>
     <div class="edu-grid">
-      <div class="edu-card">
-        <div class="edu-degree">B.S. Cognitive Science, Machine Learning &amp; Neural Computation</div>
-        <div class="edu-school">University of California, San Diego</div>
-        <p class="edu-note">Graduated Spring 2021</p>
-      </div>
+      <div class="edu-card"><div class="edu-degree">B.S. Cognitive Science, Machine Learning &amp; Neural Computation</div><div class="edu-school">University of California, San Diego</div><p class="edu-note">Graduated Spring 2021</p></div>
     </div>
   </section>
 
-  <!-- CONTACT -->
   <section id="contact">
-    <div class="section-header">
-      <span class="section-tag">07 / Contact</span>
-    </div>
+    <div class="section-header"><span class="section-tag">07 / Contact</span></div>
     <h2 class="section-title" style="font-family:'DM Serif Display',serif; font-size: clamp(2rem,4vw,3.5rem); color: var(--white); margin-bottom:1rem;">Let's Connect</h2>
     <p class="contact-tagline">Interested in analytics strategy, applied AI, or the work described here? Reach out.</p>
     <div class="contact-links">
@@ -1197,7 +550,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <p>Tayler Erbe · Senior Data Scientist · AI Solutions, University of Illinois System</p>
     <p>Last updated May 2026</p>
