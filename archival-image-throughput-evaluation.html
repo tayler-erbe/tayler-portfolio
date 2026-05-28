@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | Archival Image Pipeline — vLLM vs Ollama Throughput</title>
+  <meta name="description" content="Tayler Erbe, Senior Data Scientist at the University of Illinois System, characterized image classification inference throughput on a single NVIDIA L4 GPU. A migration from Ollama to vLLM delivered a 6.22x speedup on the same hardware and same model, taking a 12,125-image archival corpus from 22 hours to 3.7 hours." />
+  <meta name="keywords" content="Tayler Erbe, performance engineering, vLLM, Ollama, LLaVA, NVIDIA L4, GPU inference, continuous batching, throughput, image classification, University of Illinois" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/archival-image-throughput-evaluation.html" />
+  <meta property="og:title" content="Tayler Erbe | Archival Image Pipeline — vLLM vs Ollama Throughput" />
+  <meta property="og:description" content="Performance engineering case study: diagnosing request serialization in a production image-classification pipeline and recovering 6.22x throughput by migrating from Ollama to vLLM on a single NVIDIA L4 GPU." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://terbe2022.github.io/tayler-portfolio/archival-image-throughput-evaluation.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tayler Erbe | Archival Image Throughput Evaluation" />
+  <meta name="twitter:description" content="Diagnosing request serialization and recovering 6.22x throughput on a single NVIDIA L4 GPU for a production image-classification pipeline." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Archival Image Pipeline — vLLM vs Ollama Inference Throughput Evaluation",
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://terbe2022.github.io/tayler-portfolio/" },
+    "description": "Performance engineering case study by Tayler Erbe diagnosing request serialization in an LLaVA image-classification pipeline and recovering 6.22x throughput via vLLM continuous batching on a single NVIDIA L4 GPU.",
+    "keywords": "Tayler Erbe, performance engineering, vLLM, Ollama, LLaVA, NVIDIA L4, throughput, continuous batching"
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --accent-dim: rgba(91,200,220,0.12);
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-back:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      padding: 9rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -30%; right: -5%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1.0; color: var(--white);
+      letter-spacing: 0.01em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
+
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem; }
+    .meta-item {}
+    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+
+    /* STAT STRIP */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-item { background: var(--surface); padding: 1.75rem 2rem; transition: background 0.2s; }
+    .stat-item:hover { background: var(--surface2); }
+    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* SECTIONS */
+    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* PROSE */
+    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p strong { color: var(--text); font-weight: 500; }
+
+    /* LAYOUTS */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+
+    /* CALLOUT */
+    .callout {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
+      margin-top: 1.5rem;
+    }
+    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .callout p strong { color: var(--text); font-weight: 500; }
+
+    /* PIPELINE STEPS */
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.5rem; padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .pipeline-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
+    }
+    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .step-body strong { color: var(--text); font-weight: 500; }
+
+    /* TAG CHIPS */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+    .chip-warm { border-color: var(--accent3); color: var(--accent3); }
+
+    /* METHOD COMPARISON CARDS */
+    .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .method-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
+    .method-card.winner { border-color: var(--accent); border-top: 3px solid var(--accent); }
+    .method-card.challenger { border-top: 3px solid var(--accent3); }
+    .method-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
+    .method-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--white); text-transform: uppercase; }
+    .method-badge {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem;
+    }
+    .badge-green { background: rgba(93,191,138,0.12); color: #5dbf8a; border: 1px solid #5dbf8a; }
+    .badge-warn { background: rgba(192,122,110,0.12); color: var(--accent3); border: 1px solid var(--accent3); }
+    .badge-blue { background: rgba(91,200,220,0.12); color: var(--accent); border: 1px solid var(--accent); }
+    .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 0.82rem; color: var(--muted); }
+    .metric-value { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
+    .metric-value.good { color: var(--accent); }
+    .metric-value.warn { color: var(--accent3); }
+    .metric-value.neutral { color: var(--text); }
+
+    /* DATA TABLE */
+    .cat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .cat-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .cat-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; vertical-align: top; }
+    .cat-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+    .cat-table td:last-child { font-family: 'DM Mono', monospace; }
+    .cat-table tr:last-child td { border-bottom: none; }
+
+    /* RESULTS STRIP */
+    .results-strip {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--border); margin-top: 2rem;
+    }
+    .result-cell { background: var(--surface2); padding: 1.5rem; }
+    .result-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: 0.25rem; }
+    .result-label { font-family: 'DM Mono', monospace; font-size: 0.67rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* INSIGHT BOXES */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+    .insight-box p strong { color: var(--text); font-weight: 500; }
+
+    /* TAKEAWAY STRIP */
+    .takeaway { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--surface2); border-left: 3px solid var(--accent); padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .takeaway::before { content: '→'; color: var(--accent); font-family: 'DM Mono', monospace; flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem; }
+    .takeaway strong { color: var(--text); }
+
+    /* CHART CONTAINER */
+    .chart-wrap {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .chart-wrap img,
+    .chart-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .chart-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-top: 0.75rem;
+    }
+
+    /* BACK */
+    .back-section { padding: 3rem; text-align: center; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); padding: 0.85rem 2rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* INLINE CODE */
+    code.inline {
+      font-family: 'DM Mono', monospace;
+      color: var(--accent2);
+      font-size: 0.85em;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-eyebrow { animation: fadeUp 0.5s ease 0.1s both; }
+    .hero h1 { animation: fadeUp 0.5s ease 0.22s both; }
+    .hero-desc { animation: fadeUp 0.5s ease 0.36s both; }
+    .hero-meta { animation: fadeUp 0.5s ease 0.48s both; }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 3rem 1.5rem; }
+      .stat-strip { grid-template-columns: 1fr 1fr; }
+      .two-col, .three-col, .method-grid, .insight-grid, .results-strip { grid-template-columns: 1fr; }
+      .back-section { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <a href="index.html" class="nav-back">&#8592; Back to Portfolio</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe · Performance Engineering Case Study · 2026</div>
+    <h1>Archival Image Pipeline<br>vLLM vs Ollama<br>&amp; <span>Backend Selection</span></h1>
+    <p class="hero-desc">
+      A controlled performance characterization of a production image-classification pipeline on a single
+      NVIDIA L4 GPU. Diagnosing request serialization in Ollama, then migrating to vLLM continuous batching
+      delivered a <strong>6.22× throughput improvement</strong> on the same hardware and same model —
+      taking a 12,125-image archival corpus from 22 hours to 3.7 hours.
+    </p>
+
+    <div style="margin-top: 1.75rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+      <a href="https://github.com/tayler-erbe/llava-vision-inference-backend-throughput-evaluation"
+         target="_blank"
+         style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none; transition: all 0.2s ease;"
+         onmouseover="this.style.background='rgba(91,200,220,0.1)'"
+         onmouseout="this.style.background='transparent'">
+         View Code &amp; Full Report on GitHub →
+      </a>
+      <a href="archival-image-intelligence.html"
+         style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--muted2); color:var(--muted); text-decoration:none; transition: all 0.2s ease;"
+         onmouseover="this.style.borderColor='var(--accent2)'; this.style.color='var(--accent2)'"
+         onmouseout="this.style.borderColor='var(--muted2)'; this.style.color='var(--muted)'">
+         ← Related: Archival Image Intelligence
+      </a>
+    </div>
+
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Workload</div>
+        <div class="meta-value">LLaVA Multimodal Classification</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Hardware</div>
+        <div class="meta-value">NVIDIA L4 (23 GB VRAM, 72W)</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-value">Evaluation Complete · Production Migration Planned</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Role</div>
+        <div class="meta-value">Senior Data Scientist · Lead Engineer</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Code</div>
+        <div class="meta-value">
+          <a href="https://github.com/tayler-erbe/llava-vision-inference-backend-throughput-evaluation" target="_blank" style="color:var(--accent); text-decoration:none;">GitHub Repository →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-item">
+      <div class="stat-big">6.22×</div>
+      <div class="stat-desc">Throughput Speedup at C=8</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">22h → 3.7h</div>
+      <div class="stat-desc">Corpus Processing Time</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">97%</div>
+      <div class="stat-desc">vLLM GPU Utilization</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">12,125</div>
+      <div class="stat-desc">Images in Production Corpus</div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW / PROBLEM -->
+  <section id="overview">
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">The Problem</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>A production LLaVA image-classification pipeline at the University of Illinois System was running at <strong>9 images per minute</strong> on a dedicated NVIDIA L4 GPU. At that rate, the full 12,125-image archival corpus required <strong>roughly 22 hours per pass</strong> — a constraint on iteration speed for prompt design, taxonomy refinement, and any operational re-run.</p>
+        <p>The pipeline was using Ollama 0.3.14 to serve <code class="inline">llava-llama3</code>, called sequentially from a Python orchestrator. The question driving this work was: <strong>is the bottleneck the hardware, the model, or the serving stack?</strong> The answer dictates radically different responses — hardware upgrade, model substitution, or backend migration.</p>
+        <p>This case study documents the controlled benchmark methodology used to isolate the bottleneck and the engineering choices that recovered the unused capacity.</p>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-label">Baseline Observation</div>
+          <p>At production settings the L4 was at <strong>28–31% GPU utilization</strong> with <strong>6.1 GB of 23 GB VRAM</strong> in use — and pulling 27W of its 72W TDP. The hardware was idle the majority of the time. A faster GPU would not have helped.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--accent2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--accent2);">Investigation Framework</div>
+          <p><strong>Three controlled experiments</strong> were designed to separate three independent variables: prompt design (call structure, output schema), client concurrency (1 / 2 / 4 / 8 in-flight requests), and serving stack (Ollama vs vLLM with the same model class). Holding two variables fixed while sweeping the third isolates the cause of any observed difference.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--muted2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--muted);">Constraints</div>
+          <p>Single dedicated L4 (no horizontal scaling option). On-prem environment with TLS-level block on HuggingFace (model artifacts pre-staged). Sole engineer. Production pipeline could not be paused during evaluation, requiring a parallel sandbox.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section id="methodology">
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">Methodology</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2rem;">
+      <p>Three experiments were run against the same image corpus and recorded with sub-percent precision. Each experiment isolates one variable; the benchmark harness sampled GPU utilization, VRAM, and power at one-second intervals concurrently with the inference run so that throughput and resource numbers come from the <strong>same window of clock time</strong>, not separate runs averaged after the fact.</p>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Experiment 1 — Prompt Design (C-v4)</div>
+          <div class="step-body">Compared a <strong>three-call split prompt</strong> (offensive flag, category/reason, description) against a <strong>single combined prompt</strong> with structured JSON output across all six fields. The combined prompt (C-v4) delivered <strong>1.61× speedup</strong> (6.86s vs 11.05s per image, median) while holding parse rate at 100% on offensive/category/reason/confidence/description and 94% on title. Locked C-v4 as production prompt before any backend work began — controlling for prompt cost in subsequent experiments.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Experiment 2 — Ollama Concurrency Sweep</div>
+          <div class="step-body">With C-v4 locked and <code class="inline">llava-llama3</code> serving on Ollama, ran the same 50-image batch at client concurrency <strong>C = 1, 2, 4, 8</strong>. Recorded p50/p95 latency, end-to-end throughput, GPU utilization, VRAM, and wall power for each setting. Set <code class="inline">OLLAMA_NUM_PARALLEL=4</code> to rule out a default-config explanation.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Experiment 3 — vLLM Concurrency Sweep</div>
+          <div class="step-body">Built a parallel sandbox with vLLM 0.6.6 serving <code class="inline">llava-1.5-7b</code> in FP16. Repeated the C = 1, 2, 4, 8 sweep with the same image batch, the same prompt, and the same orchestrator code path. The only thing that changed between Experiment 2 and 3 was the inference server URL.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Apples-to-Apples Confirmation</div>
+          <div class="step-body">To remove model-family as a confound, also re-ran the Ollama sweep with <code class="inline">llava:7b</code> — the same architecture vLLM was serving. This isolates the serving architecture as the sole variable, confirming the speedup is not attributable to a model swap.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIAGNOSIS -->
+  <section id="diagnosis">
+    <div class="section-header">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">The Diagnosis — Request Serialization</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 1rem;">
+      <p>The Ollama concurrency sweep produced a signature pattern: <strong>throughput stayed flat at ~9 images per minute across all concurrency levels</strong> while p50 latency inflated by 8.18× from C=1 to C=8. GPU utilization held at 28–31% throughout. VRAM was constant. Power was flat at 27W.</p>
+      <p>This is the unmistakable fingerprint of <strong>request serialization at the serving layer</strong>: the daemon was accepting concurrent connections but processing them one at a time, so additional in-flight requests simply queued and inflated latency without producing any extra throughput. The hardware was never the bottleneck.</p>
+    </div>
+
+    <div class="chart-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-label="Throughput scaling: both Ollama backends flat near 9 and 15 images per minute regardless of concurrency. vLLM scales from 13 to 55.4 images per minute as concurrency rises from 1 to 8.">
+<rect width="960" height="540" fill="#161c24"/>
+<text x="480.0" y="36" text-anchor="middle" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="22" letter-spacing="0.5">THROUGHPUT VS CONCURRENCY</text>
+<text x="480.0" y="56" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1">OLLAMA SERIALIZES · vLLM BATCHES</text>
+<line x1="80" y1="460.0" x2="850" y2="460.0" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="464.0" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">0</text>
+<line x1="80" y1="400.8" x2="850" y2="400.8" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="404.8" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">10</text>
+<line x1="80" y1="341.5" x2="850" y2="341.5" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="345.5" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">20</text>
+<line x1="80" y1="282.3" x2="850" y2="282.3" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="286.3" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">30</text>
+<line x1="80" y1="223.1" x2="850" y2="223.1" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="227.1" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">40</text>
+<line x1="80" y1="163.8" x2="850" y2="163.8" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="167.8" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">50</text>
+<line x1="80" y1="104.6" x2="850" y2="104.6" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="108.6" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">60</text>
+<text x="22" y="270.0" transform="rotate(-90 22 270.0)" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" letter-spacing="1">IMAGES / MINUTE</text>
+<line x1="80" y1="460" x2="850" y2="460" stroke="#3a4556" stroke-width="1.5"/>
+<text x="80.0" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 1</text>
+<text x="336.7" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 2</text>
+<text x="593.3" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 4</text>
+<text x="850.0" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 8</text>
+<text x="465.0" y="520" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" letter-spacing="1">CLIENT CONCURRENCY (PARALLEL IN-FLIGHT REQUESTS)</text>
+<polyline points="80.0,406.1 336.7,409.1 593.3,409.7 850.0,407.3" fill="none" stroke="#c07a6e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="80.0" cy="406.1" r="6" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<circle cx="336.7" cy="409.1" r="6" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<circle cx="593.3" cy="409.7" r="6" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<circle cx="850.0" cy="407.3" r="6" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<polyline points="80.0,371.7 336.7,370.0 593.3,368.8 850.0,369.4" fill="none" stroke="#8a9ab0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="80.0" cy="371.7" r="6" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<circle cx="336.7" cy="370.0" r="6" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<circle cx="593.3" cy="368.8" r="6" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<circle cx="850.0" cy="369.4" r="6" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<polyline points="80.0,383.0 336.7,327.3 593.3,238.5 850.0,131.9" fill="none" stroke="#5bc8dc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="80.0" cy="383.0" r="6" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<circle cx="336.7" cy="327.3" r="6" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<circle cx="593.3" cy="238.5" r="6" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<circle cx="850.0" cy="131.9" r="6" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<text x="864.0" y="137.9" fill="#5bc8dc" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="22">55.4</text>
+<text x="864.0" y="374.4" fill="#8a9ab0" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="18">15.3</text>
+<text x="864.0" y="412.3" fill="#c07a6e" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="18">8.9</text>
+<rect x="86" y="73" width="270" height="84" fill="#161c24" stroke="#1e2530" stroke-width="1" rx="2"/>
+<circle cx="104" cy="93" r="5" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<line x1="94" y1="93" x2="114" y2="93" stroke="#5bc8dc" stroke-width="2.5"/>
+<text x="126" y="97" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">vLLM · llava-1.5-7b (FP16)</text>
+<circle cx="104" cy="115" r="5" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<line x1="94" y1="115" x2="114" y2="115" stroke="#8a9ab0" stroke-width="2.5"/>
+<text x="126" y="119" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Ollama · llava:7b (Q4_0)</text>
+<circle cx="104" cy="137" r="5" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<line x1="94" y1="137" x2="114" y2="137" stroke="#c07a6e" stroke-width="2.5"/>
+<text x="126" y="141" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Ollama · llava-llama3 (Q4_0)</text>
+</svg>
+      <div class="chart-caption">Fig. 01 — Throughput scaling with client concurrency. Ollama flat at C=1..8 regardless of model.</div>
+    </div>
+
+    <div class="insight-grid" style="margin-top: 2rem;">
+      <div class="insight-box">
+        <div class="insight-box-title">Why It Was Plausibly Misread as a Hardware Limit</div>
+        <p>An L4 with 23 GB VRAM running a 7B-parameter multimodal model can <em>look</em> reasonable at 9 img/min if you only look at end-to-end throughput. Without sampling utilization concurrently, an operator could spend a quarter on a faster GPU and recover none of the unused capacity, because the bottleneck is not on the GPU at all.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Apples-to-Apples Control</div>
+        <p>Re-running Ollama with <strong>the same model architecture vLLM was serving</strong> (<code class="inline">llava:7b</code>) produced 15.3 img/min — flat across concurrency, 54% GPU. A 3.6× delta versus vLLM <em>on identical model + identical hardware</em> isolates the serving stack as the cause.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION -->
+  <section id="solution">
+    <div class="section-header">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">The Solution — vLLM Continuous Batching</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>vLLM 0.6.6 implements <strong>continuous batching</strong>: at each forward pass the scheduler can swap completed sequences out and queued sequences in, keeping the GPU saturated regardless of which token any given request is currently emitting. For a workload with variable-length outputs and many in-flight requests — exactly the shape of this image-classification pipeline — this is the right serving primitive.</p>
+        <p>With vLLM as the serving stack and no other change, throughput scaled cleanly with concurrency: <strong>13.0 → 22.4 → 37.4 → 55.4 images per minute</strong> at C = 1, 2, 4, 8. GPU utilization rose to <strong>96–97%</strong>. VRAM moved into the 19–20 GB range — the GPU was finally being used as intended. Wall power climbed to <strong>71–72W</strong>, indicating real computational work rather than idle wait.</p>
+        <p>At C=8 the speedup over the original production configuration is <strong>6.22×</strong>; the same-model speedup (eliminating any model-family contribution) is <strong>3.6×</strong>. The 3.6× is the pure serving-architecture effect; the additional 1.7× comes from running a model that better fits the L4's compute profile.</p>
+      </div>
+      <div>
+        <table class="cat-table">
+          <thead>
+            <tr>
+              <th>Backend / Model</th>
+              <th>C=1</th>
+              <th>C=8</th>
+              <th>GPU%</th>
+              <th>VRAM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ollama llava-llama3</td>
+              <td>9.1</td>
+              <td>8.9</td>
+              <td>28–31%</td>
+              <td>6.1 GB</td>
+            </tr>
+            <tr>
+              <td>Ollama llava:7b</td>
+              <td>14.9</td>
+              <td>15.3</td>
+              <td>54%</td>
+              <td>5.2 GB</td>
+            </tr>
+            <tr>
+              <td>vLLM llava-1.5-7b</td>
+              <td>13.0</td>
+              <td>55.4</td>
+              <td>96–97%</td>
+              <td>19–20 GB</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="takeaway" style="margin-top: 1.25rem;">
+          <strong>Read the rightmost column.</strong> Ollama's VRAM is essentially the same regardless of concurrency. vLLM's VRAM grows because it is actually batching multiple sequences in parallel. That is the architectural difference, made visible in resource numbers.
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-label="Wall-clock hours to process the full 12,125-image corpus: Ollama llava-llama3 22.2 hours, Ollama llava-1.5-7b 13.1 hours, vLLM llava-1.5-7b 3.7 hours.">
+<rect width="960" height="440" fill="#161c24"/>
+<text x="480.0" y="36" text-anchor="middle" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="22" letter-spacing="0.5">WALL-CLOCK TIME · FULL 12,125-IMAGE CORPUS</text>
+<text x="480.0" y="56" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1">CONTINUOUS INFERENCE · BEST CONCURRENCY PER BACKEND</text>
+<line x1="280.0" y1="80" x2="280.0" y2="370" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="280.0" y="390" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">0h</text>
+<line x1="390.0" y1="80" x2="390.0" y2="370" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="390.0" y="390" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">5h</text>
+<line x1="500.0" y1="80" x2="500.0" y2="370" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="500.0" y="390" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">10h</text>
+<line x1="610.0" y1="80" x2="610.0" y2="370" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="610.0" y="390" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">15h</text>
+<line x1="720.0" y1="80" x2="720.0" y2="370" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="720.0" y="390" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">20h</text>
+<line x1="830.0" y1="80" x2="830.0" y2="370" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="830.0" y="390" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">25h</text>
+<text x="555.0" y="425" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" letter-spacing="1">WALL-CLOCK HOURS</text>
+<rect x="280" y="100" width="488.4" height="50" fill="#c07a6e" rx="1"/>
+<text x="268" y="130.0" text-anchor="end" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Ollama · llava-llama3 (Q4_0)</text>
+<text x="778.4" y="123.0" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="20">22.2 hrs</text>
+<text x="778.4" y="141.0" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">9.1 img/min</text>
+<rect x="280" y="180" width="288.2" height="50" fill="#8a9ab0" rx="1"/>
+<text x="268" y="210.0" text-anchor="end" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Ollama · llava:7b (Q4_0)</text>
+<text x="578.2" y="203.0" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="20">13.1 hrs</text>
+<text x="578.2" y="221.0" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">15.4 img/min</text>
+<rect x="280" y="260" width="81.4" height="50" fill="#5bc8dc" rx="1"/>
+<text x="268" y="290.0" text-anchor="end" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">vLLM · llava-1.5-7b (FP16)</text>
+<text x="371.4" y="283.0" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="20">3.7 hrs</text>
+<text x="371.4" y="301.0" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">55.4 img/min</text>
+<line x1="280" y1="80" x2="280" y2="370" stroke="#3a4556" stroke-width="1.5"/>
+<line x1="280" y1="370" x2="830" y2="370" stroke="#3a4556" stroke-width="1.5"/>
+</svg>
+      <div class="chart-caption">Fig. 02 — Wall time to process the 12,125-image archival corpus at production concurrency.</div>
+    </div>
+  </section>
+
+  <!-- VALIDATION -->
+  <section id="validation">
+    <div class="section-header">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">Production Validation</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="method-grid">
+      <div class="method-card winner">
+        <div class="method-header">
+          <div class="method-name">vLLM — Output Quality</div>
+          <span class="method-badge badge-green">Validated</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Offensive Flag — Parse Rate</span>
+          <span class="metric-value good">100%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Category — Parse Rate</span>
+          <span class="metric-value good">100%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Reason — Parse Rate</span>
+          <span class="metric-value good">100%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Confidence — Parse Rate</span>
+          <span class="metric-value good">100%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Description — Parse Rate</span>
+          <span class="metric-value good">100%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Title — Parse Rate</span>
+          <span class="metric-value neutral">94%</span>
+        </div>
+        <div style="margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.65;">
+          Parse rates were measured on the same C-v4 prompt that ran in production. A two-line schema cleanup brought all six fields to production-acceptable rates. Spot-checks against the original Ollama outputs confirmed equivalent factual quality — and on at least one hero example (image 0000003, Memorial Stadium 1924), vLLM was <em>more</em> conservative, refusing to hallucinate a location the Ollama variant invented as "University of Texas."
+        </div>
+        <div class="tag-row">
+          <span class="chip chip-accent">vLLM 0.6.6</span>
+          <span class="chip chip-accent">llava-1.5-7b FP16</span>
+          <span class="chip">Continuous Batching</span>
+        </div>
+      </div>
+
+      <div class="method-card">
+        <div class="method-header">
+          <div class="method-name">Same-Model Control</div>
+          <span class="method-badge badge-blue">Confound Removed</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Ollama Model</span>
+          <span class="metric-value neutral">llava:7b</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">vLLM Model</span>
+          <span class="metric-value neutral">llava-1.5-7b</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Architecture</span>
+          <span class="metric-value neutral">Same</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Hardware</span>
+          <span class="metric-value neutral">Same L4</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Speedup vLLM vs Ollama</span>
+          <span class="metric-value good">3.6×</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Attributable Cause</span>
+          <span class="metric-value good">Serving Stack</span>
+        </div>
+        <div style="margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.65;">
+          The model-architecture confound is a common objection to backend benchmarks. Re-running Ollama with the same model architecture vLLM was serving eliminates it: the 3.6× delta is purely the serving stack. The remaining 1.7× (3.6× → 6.22×) is the production model swap from <code class="inline">llava-llama3</code> to <code class="inline">llava-1.5-7b</code>, which fits the L4 better.
+        </div>
+        <div class="tag-row">
+          <span class="chip">Ollama 0.3.14</span>
+          <span class="chip">llava:7b</span>
+          <span class="chip chip-warm">Daemon Property</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-strip">
+      <div class="result-cell">
+        <div class="result-num">6.22×</div>
+        <div class="result-label">Production Speedup at C=8</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-num">3.6×</div>
+        <div class="result-label">Same-Model Backend Speedup</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-num">1.86×</div>
+        <div class="result-label">vLLM Latency Inflation at C=8</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENGINEERING TAKEAWAYS -->
+  <section id="takeaways">
+    <div class="section-header">
+      <span class="section-tag">06</span>
+      <h2 class="section-title">Engineering Takeaways</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 1.5rem;">
+      <p>The methodology choices that made the diagnosis possible are as important as the result itself. The relevant principles, in order of impact:</p>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Sample resource metrics concurrently with the inference run</div>
+          <div class="step-body">GPU utilization, VRAM, and power must come from the <strong>same window of wall-clock time</strong> as throughput and latency. Averaging post-hoc across separate runs hides the serialization signature entirely — high latency with low GPU is the diagnostic pattern, and it only appears if both are sampled in the same window.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Sweep concurrency, not just total request count</div>
+          <div class="step-body">A flat throughput curve across C = 1, 2, 4, 8 with rising latency is a binary diagnostic for request serialization. Without the sweep, the single data point at the production concurrency setting looks like a hardware limit — and is almost always misread as one.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Remove confounds before claiming attribution</div>
+          <div class="step-body">"vLLM is 6.22× faster than Ollama" is an unfalsifiable claim if the model also changed. The same-model rerun (<code class="inline">llava:7b</code> on Ollama vs <code class="inline">llava-1.5-7b</code> on vLLM, same architecture) decomposes the result into attributable components: 3.6× from serving stack, 1.7× from model fit.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Validate output quality before declaring a win</div>
+          <div class="step-body">A throughput speedup that breaks downstream parsers or hallucinates new fields is a regression, not a win. Parse-rate measurement on the same C-v4 prompt — and spot-check comparisons against the production baseline — were required gates for the migration recommendation.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">Cheaper experiments first, then commit</div>
+          <div class="step-body">The prompt-design experiment (Experiment 1) was completed before any backend work began. A 1.61× speedup that costs zero infrastructure migration is the highest-ROI win available on most LLM workloads — and it controls for prompt cost in subsequent backend tests.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section id="tech">
+    <div class="section-header">
+      <span class="section-tag">07</span>
+      <h2 class="section-title">Technology Stack</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="three-col">
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Inference Stack</div>
+        <ul style="list-style:none; font-size:0.85rem; color:var(--muted); line-height:2.1;">
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> vLLM 0.6.6 (winner)</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> Ollama 0.3.14 (baseline)</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> LLaVA-1.5-7B FP16</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> llava-llama3, llava:7b</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Hardware &amp; Environment</div>
+        <ul style="list-style:none; font-size:0.85rem; color:var(--muted); line-height:2.1;">
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> NVIDIA L4 (23 GB VRAM)</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> CUDA 12.4 · 72W TDP</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> 4 vCPU · 62 GB RAM</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> On-prem Linux server</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Benchmark Harness</div>
+        <ul style="list-style:none; font-size:0.85rem; color:var(--muted); line-height:2.1;">
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> Python · asyncio</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> nvidia-smi sampling</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> pandas / pyarrow</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> matplotlib</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tag-row" style="margin-top: 2rem;">
+      <span class="chip chip-accent">vLLM</span>
+      <span class="chip chip-accent">Continuous Batching</span>
+      <span class="chip chip-accent">LLaVA</span>
+      <span class="chip">NVIDIA L4</span>
+      <span class="chip">GPU Profiling</span>
+      <span class="chip">Performance Engineering</span>
+      <span class="chip">Throughput Characterization</span>
+      <span class="chip">Apples-to-Apples Benchmarking</span>
+      <span class="chip">Python · asyncio</span>
+    </div>
+  </section>
+
+  <!-- BACK -->
+  <div class="back-section">
+    <a href="index.html" class="back-link">← Back to Portfolio</a>
+  </div>
+
+  <footer style="padding:1.5rem 3rem; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+    <p style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; color:var(--muted2);">Tayler Erbe · Senior Data Scientist · AI Solutions, University of Illinois System</p>
+    <p style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; color:var(--muted2);">Performance Engineering Case Study · 2026</p>
+  </footer>
+
+</body>
+</html>
