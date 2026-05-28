@@ -509,6 +509,64 @@
       <div class="chart-caption">Fig. 01 — Throughput scaling with client concurrency. Ollama flat at C=1..8 regardless of model.</div>
     </div>
 
+    <div class="chart-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img" aria-label="GPU utilization: vLLM saturates the L4 at 96-97 percent across all concurrency levels; Ollama llava-llama3 idles at 26-31 percent; Ollama llava-1.5-7b at 54 percent.">
+<rect width="960" height="620" fill="#161c24"/>
+<text x="480.0" y="36" text-anchor="middle" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="22" letter-spacing="0.5">GPU UTILIZATION BY BACKEND</text>
+<text x="480.0" y="56" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1">vLLM SATURATES THE L4 · OLLAMA LEAVES IT IDLE</text>
+<line x1="80" y1="470.0" x2="900" y2="470.0" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="474.0" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">0%</text>
+<line x1="80" y1="401.8" x2="900" y2="401.8" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="405.8" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">20%</text>
+<line x1="80" y1="333.6" x2="900" y2="333.6" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="337.6" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">40%</text>
+<line x1="80" y1="265.5" x2="900" y2="265.5" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="269.5" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">60%</text>
+<line x1="80" y1="197.3" x2="900" y2="197.3" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="201.3" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">80%</text>
+<line x1="80" y1="129.1" x2="900" y2="129.1" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="133.1" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">100%</text>
+<text x="22" y="282.5" transform="rotate(-90 22 282.5)" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" letter-spacing="1">MEDIAN GPU UTILIZATION</text>
+<line x1="80" y1="470" x2="900" y2="470" stroke="#3a4556" stroke-width="1.5"/>
+<rect x="110.3" y="374.5" width="45.1" height="95.5" fill="#c07a6e" rx="1"/>
+<text x="132.9" y="366.5" text-anchor="middle" fill="#c07a6e" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">28%</text>
+<rect x="159.9" y="285.9" width="45.1" height="184.1" fill="#8a9ab0" rx="1"/>
+<text x="182.5" y="277.9" text-anchor="middle" fill="#8a9ab0" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">54%</text>
+<rect x="209.6" y="142.7" width="45.1" height="327.3" fill="#5bc8dc" rx="1"/>
+<text x="232.1" y="134.7" text-anchor="middle" fill="#5bc8dc" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">96%</text>
+<text x="182.5" y="492" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 1</text>
+<rect x="315.3" y="381.4" width="45.1" height="88.6" fill="#c07a6e" rx="1"/>
+<text x="337.9" y="373.4" text-anchor="middle" fill="#c07a6e" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">26%</text>
+<rect x="364.9" y="285.9" width="45.1" height="184.1" fill="#8a9ab0" rx="1"/>
+<text x="387.5" y="277.9" text-anchor="middle" fill="#8a9ab0" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">54%</text>
+<rect x="414.6" y="142.7" width="45.1" height="327.3" fill="#5bc8dc" rx="1"/>
+<text x="437.1" y="134.7" text-anchor="middle" fill="#5bc8dc" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">96%</text>
+<text x="387.5" y="492" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 2</text>
+<rect x="520.3" y="378.0" width="45.1" height="92.0" fill="#c07a6e" rx="1"/>
+<text x="542.9" y="370.0" text-anchor="middle" fill="#c07a6e" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">27%</text>
+<rect x="570.0" y="285.9" width="45.1" height="184.1" fill="#8a9ab0" rx="1"/>
+<text x="592.5" y="277.9" text-anchor="middle" fill="#8a9ab0" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">54%</text>
+<rect x="619.6" y="139.3" width="45.1" height="330.7" fill="#5bc8dc" rx="1"/>
+<text x="642.1" y="131.3" text-anchor="middle" fill="#5bc8dc" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">97%</text>
+<text x="592.5" y="492" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 4</text>
+<rect x="725.3" y="364.3" width="45.1" height="105.7" fill="#c07a6e" rx="1"/>
+<text x="747.9" y="356.3" text-anchor="middle" fill="#c07a6e" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">31%</text>
+<rect x="775.0" y="285.9" width="45.1" height="184.1" fill="#8a9ab0" rx="1"/>
+<text x="797.5" y="277.9" text-anchor="middle" fill="#8a9ab0" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">54%</text>
+<rect x="824.6" y="139.3" width="45.1" height="330.7" fill="#5bc8dc" rx="1"/>
+<text x="847.1" y="131.3" text-anchor="middle" fill="#5bc8dc" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="15">97%</text>
+<text x="797.5" y="492" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 8</text>
+<text x="490.0" y="515" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" letter-spacing="1">CLIENT CONCURRENCY</text>
+<rect x="57.0" y="553" width="14" height="14" fill="#5bc8dc" rx="2"/>
+<text x="79.0" y="564" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">vLLM · llava-1.5-7b (FP16)</text>
+<rect x="347.0" y="553" width="14" height="14" fill="#8a9ab0" rx="2"/>
+<text x="369.0" y="564" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Ollama · llava:7b (Q4_0)</text>
+<rect x="637.0" y="553" width="14" height="14" fill="#c07a6e" rx="2"/>
+<text x="659.0" y="564" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Ollama · llava-llama3 (Q4_0)</text>
+</svg>
+      <div class="chart-caption">Fig. 02 — Steady-state GPU utilization by backend. 70 percentage points of idle compute on production.</div>
+    </div>
+
     <div class="insight-grid" style="margin-top: 2rem;">
       <div class="insight-box">
         <div class="insight-box-title">Why It Was Plausibly Misread as a Hardware Limit</div>
@@ -576,6 +634,64 @@
     </div>
 
     <div class="chart-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-label="Per-request latency: linear queueing on Ollama reaches 52.5 seconds at concurrency 8; near-flat on vLLM at 8.2 seconds.">
+<rect width="960" height="540" fill="#161c24"/>
+<text x="480.0" y="36" text-anchor="middle" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="22" letter-spacing="0.5">PER-REQUEST LATENCY VS CONCURRENCY</text>
+<text x="480.0" y="56" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1">LINEAR QUEUEING ON OLLAMA · NEAR-FLAT ON vLLM</text>
+<line x1="80" y1="460.0" x2="850" y2="460.0" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="464.0" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">0s</text>
+<line x1="80" y1="395.8" x2="850" y2="395.8" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="399.8" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">10s</text>
+<line x1="80" y1="331.7" x2="850" y2="331.7" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="335.7" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">20s</text>
+<line x1="80" y1="267.5" x2="850" y2="267.5" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="271.5" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">30s</text>
+<line x1="80" y1="203.3" x2="850" y2="203.3" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="207.3" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">40s</text>
+<line x1="80" y1="139.2" x2="850" y2="139.2" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="143.2" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">50s</text>
+<line x1="80" y1="75.0" x2="850" y2="75.0" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="79.0" text-anchor="end" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">60s</text>
+<text x="22" y="270.0" transform="rotate(-90 22 270.0)" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" letter-spacing="1">MEDIAN REQUEST LATENCY (SECONDS)</text>
+<line x1="80" y1="460" x2="850" y2="460" stroke="#3a4556" stroke-width="1.5"/>
+<text x="80.0" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 1</text>
+<text x="336.7" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 2</text>
+<text x="593.3" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 4</text>
+<text x="850.0" y="482" text-anchor="middle" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">C = 8</text>
+<text x="465.0" y="520" text-anchor="middle" fill="#6b7c91" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" letter-spacing="1">CLIENT CONCURRENCY</text>
+<polyline points="80.0,418.9 336.7,370.2 593.3,282.9 850.0,123.1" fill="none" stroke="#c07a6e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="80.0" cy="418.9" r="5" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<circle cx="336.7" cy="370.2" r="5" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<circle cx="593.3" cy="282.9" r="5" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<circle cx="850.0" cy="123.1" r="5" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<polyline points="80.0,435.0 336.7,411.2 593.3,361.2 850.0,259.8" fill="none" stroke="#8a9ab0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="80.0" cy="435.0" r="5" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<circle cx="336.7" cy="411.2" r="5" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<circle cx="593.3" cy="361.2" r="5" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<circle cx="850.0" cy="259.8" r="5" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<polyline points="80.0,431.8 336.7,427.9 593.3,421.5 850.0,407.4" fill="none" stroke="#5bc8dc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="80.0" cy="431.8" r="5" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<circle cx="336.7" cy="427.9" r="5" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<circle cx="593.3" cy="421.5" r="5" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<circle cx="850.0" cy="407.4" r="5" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<text x="864.0" y="129.1" fill="#c07a6e" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="20">52.5s</text>
+<text x="864.0" y="264.8" fill="#8a9ab0" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="18">31.2s</text>
+<text x="864.0" y="412.4" fill="#5bc8dc" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="20">8.2s</text>
+<rect x="86" y="73" width="270" height="84" fill="#161c24" stroke="#1e2530" stroke-width="1" rx="2"/>
+<circle cx="104" cy="93" r="5" fill="#161c24" stroke="#c07a6e" stroke-width="2.5"/>
+<line x1="94" y1="93" x2="114" y2="93" stroke="#c07a6e" stroke-width="2.5"/>
+<text x="126" y="97" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Ollama · llava-llama3 (Q4_0)</text>
+<circle cx="104" cy="115" r="5" fill="#161c24" stroke="#8a9ab0" stroke-width="2.5"/>
+<line x1="94" y1="115" x2="114" y2="115" stroke="#8a9ab0" stroke-width="2.5"/>
+<text x="126" y="119" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">Ollama · llava:7b (Q4_0)</text>
+<circle cx="104" cy="137" r="5" fill="#161c24" stroke="#5bc8dc" stroke-width="2.5"/>
+<line x1="94" y1="137" x2="114" y2="137" stroke="#5bc8dc" stroke-width="2.5"/>
+<text x="126" y="141" fill="#d8e2ed" font-family="'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">vLLM · llava-1.5-7b (FP16)</text>
+</svg>
+      <div class="chart-caption">Fig. 03 — p50 latency vs concurrency. Ollama: 8.18× inflation. vLLM: 1.86× inflation. Same hardware.</div>
+    </div>
+
+    <div class="chart-wrap">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-label="Wall-clock hours to process the full 12,125-image corpus: Ollama llava-llama3 22.2 hours, Ollama llava-1.5-7b 13.1 hours, vLLM llava-1.5-7b 3.7 hours.">
 <rect width="960" height="440" fill="#161c24"/>
 <text x="480.0" y="36" text-anchor="middle" fill="#eef3f8" font-family="'Barlow Condensed', sans-serif" font-weight="800" font-size="22" letter-spacing="0.5">WALL-CLOCK TIME · FULL 12,125-IMAGE CORPUS</text>
@@ -608,7 +724,7 @@
 <line x1="280" y1="80" x2="280" y2="370" stroke="#3a4556" stroke-width="1.5"/>
 <line x1="280" y1="370" x2="830" y2="370" stroke="#3a4556" stroke-width="1.5"/>
 </svg>
-      <div class="chart-caption">Fig. 02 — Wall time to process the 12,125-image archival corpus at production concurrency.</div>
+      <div class="chart-caption">Fig. 04 — Wall time to process the 12,125-image archival corpus at production concurrency.</div>
     </div>
   </section>
 
