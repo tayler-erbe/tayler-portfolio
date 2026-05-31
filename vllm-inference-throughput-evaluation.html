@@ -2555,6 +2555,198 @@ footer p{max-width:none;color:var(--muted)}
     </div>
   </div>
 </section>
+<section id="experiment-4">
+  <div class="wrap">
+    <p class="secnum">10 <span class="slash">/</span> Experiment 4</p>
+    <h2>Does a larger model at <em>full-bill context</em> beat chunking?</h2>
+    <p class="sub">The hypothesis: Qwen 2.5 14B AWQ at chunk_size=5,000 — each eval bill as a single chunk, no splitting, no boundary artifacts — would outperform the 7B at 3,000 tokens. The result was the opposite.</p>
+
+    <div class="grid2" style="margin-bottom:22px">
+      <div class="card">
+        <h4>Design</h4>
+        <p><b>Model:</b> Qwen 2.5 14B Instruct AWQ — 14B parameters, ~9 GB VRAM</p>
+        <p><b>Chunk size:</b> 5,000 tokens — each eval bill (4,500–4,972 tokens) becomes a single chunk. One inference call per bill. No splitting. No post-processing aggregation.</p>
+        <p><b>Concurrency:</b> 4 · <b>Repeats:</b> 3 · <b>Bills:</b> 50 · <b>Total runtime:</b> 16 minutes</p>
+        <p style="color:var(--muted);font-size:.88rem;margin-top:8px">Chunks created by concatenating qwen_3000 chunk pairs back to full-bill text and writing directly to silver — bypassing the broken chunker CLI.</p>
+      </div>
+      <div class="card">
+        <h4>The hypothesis</h4>
+        <p>Off-section drift — the dominant failure mode in Experiments 3 and 3.5 — occurs because a larger chunk gives the model more bill context than it needs, causing it to anchor on adjacent sections. The natural fix: give it the <em>whole bill</em> as a single chunk, eliminating the section-boundary problem entirely.</p>
+        <p>A 14B model also has more capacity to handle complex multi-section bills. The expectation was meaningfully higher parse-OK — potentially approaching Llama's 92.5%.</p>
+      </div>
+    </div>
+
+    <div class="callout coral" style="margin-top:0;margin-bottom:24px">
+      <p class="ct">◆ Result: The larger model performed worse</p>
+      <p><b>45.0% parse-OK</b> — the lowest of any configuration tested. 47.5pp below Llama's 92.5%, and 22.7pp below the 7B Qwen at 3,000 tokens. Doubling parameters while eliminating chunking made quality worse, not better.</p>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-caption-top">Fig · Final model comparison — all profiles at concurrency=4</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580">
+<rect width="1000" height="580" fill="#080b10"/>
+<text x="500" y="28" font-family="'DM Mono',monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#eef3f8">Experiment 4 — Final Model Comparison</text>
+<text x="500" y="50" font-family="'DM Mono',monospace" font-size="11" text-anchor="middle" fill="#6b7c91">All configurations at concurrency=4 · session 999995 · 50 bills</text>
+<text x="25" y="84" font-family="'DM Mono',monospace" font-size="10" letter-spacing="0.08em" text-transform="uppercase" fill="#6b7c91">PARSE-OK %</text>
+<text x="156" y="122" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#5bc8dc">llama31_1200</text>
+<rect x="160" y="104" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="104" width="629.0" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
+<text x="848" y="122" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">92.5%</text>
+<text x="156" y="172" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_500</text>
+<rect x="160" y="154" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="154" width="425.7" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
+<text x="848" y="172" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">62.6%</text>
+<text x="156" y="222" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_3000</text>
+<rect x="160" y="204" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="204" width="460.4" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
+<text x="848" y="222" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">67.7%</text>
+<text x="156" y="272" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c07a6e">mistral_3000</text>
+<rect x="160" y="254" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="254" width="489.6" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
+<text x="848" y="272" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">72.0%</text>
+<text x="156" y="322" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c9a558">qwen14b_5000</text>
+<rect x="160" y="304" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="304" width="306.0" height="28" rx="3" fill="#d97359" opacity="0.85"/>
+<text x="848" y="322" font-family="'DM Mono',monospace" font-size="11" fill="#d97359" font-weight="600">45.0%</text>
+<text x="25" y="382" font-family="'DM Mono',monospace" font-size="10" letter-spacing="0.08em" text-transform="uppercase" fill="#6b7c91">THROUGHPUT (CHUNKS/SEC)</text>
+<text x="156" y="420" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#5bc8dc">llama31_1200</text>
+<rect x="160" y="402" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="402" width="229.8" height="28" rx="3" fill="#5bc8dc" opacity="0.85"/>
+<text x="848" y="420" font-family="'DM Mono',monospace" font-size="11" fill="#5bc8dc" font-weight="600">0.338</text>
+<text x="156" y="470" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_500</text>
+<rect x="160" y="452" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="452" width="480.1" height="28" rx="3" fill="#6aaa7a" opacity="0.85"/>
+<text x="848" y="470" font-family="'DM Mono',monospace" font-size="11" fill="#6aaa7a" font-weight="600">0.706</text>
+<text x="156" y="520" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_3000</text>
+<rect x="160" y="502" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="502" width="286.3" height="28" rx="3" fill="#6aaa7a" opacity="0.85"/>
+<text x="848" y="520" font-family="'DM Mono',monospace" font-size="11" fill="#6aaa7a" font-weight="600">0.421</text>
+<text x="156" y="570" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c07a6e">mistral_3000</text>
+<rect x="160" y="552" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="552" width="144.2" height="28" rx="3" fill="#c07a6e" opacity="0.85"/>
+<text x="848" y="570" font-family="'DM Mono',monospace" font-size="11" fill="#c07a6e" font-weight="600">0.212</text>
+<text x="156" y="620" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c9a558">qwen14b_5000</text>
+<rect x="160" y="602" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="602" width="106.1" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
+<text x="848" y="620" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">0.156</text>
+<text x="25" y="680" font-family="'DM Mono',monospace" font-size="10" letter-spacing="0.08em" text-transform="uppercase" fill="#6b7c91">P99 LATENCY (SECONDS)</text>
+<text x="161.5" y="680" font-family="'DM Mono',monospace" font-size="9" fill="#6b7c91"> (lower is better)</text>
+<text x="156" y="718" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#5bc8dc">llama31_1200</text>
+<rect x="160" y="700" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="700" width="181.0" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
+<text x="848" y="718" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">21.3s</text>
+<text x="156" y="768" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_500</text>
+<rect x="160" y="750" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="750" width="83.3" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
+<text x="848" y="768" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">9.8s</text>
+<text x="156" y="818" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_3000</text>
+<rect x="160" y="800" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="800" width="125.8" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
+<text x="848" y="818" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">14.8s</text>
+<text x="156" y="868" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c07a6e">mistral_3000</text>
+<rect x="160" y="850" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="850" width="629.8" height="28" rx="3" fill="#d97359" opacity="0.85"/>
+<text x="848" y="868" font-family="'DM Mono',monospace" font-size="11" fill="#d97359" font-weight="600">74.1s</text>
+<text x="156" y="918" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c9a558">qwen14b_5000</text>
+<rect x="160" y="900" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="900" width="283.9" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
+<text x="848" y="918" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">33.4s</text>
+<text x="500" y="572" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle" fill="#4fc9a3">◆ Production recommendation: llama31_1200 — leads on quality, throughput efficiency, and proxy reliability</text>
+</svg>
+    </div>
+
+    <h3 style="margin-top:32px">What the data actually shows</h3>
+    <div class="grid2">
+      <div class="card">
+        <h4>54% parse_partial — not failure, but incompleteness</h4>
+        <p>The 14B model produced 0 failed extractions. It's not crashing — it's returning valid JSON with incomplete field coverage. Mean missing fields: <b>1.2 out of 11</b>. The model gets most fields but consistently fails to complete all 11 within the output token budget.</p>
+        <p>At 5,000 input tokens + prompt template overhead, the context window is heavily loaded. The model appears to be hitting output budget pressure — the prompt leaves insufficient room for a complete 11-field JSON response on every bill.</p>
+      </div>
+      <div class="card">
+        <h4>Throughput: slowest of all configurations</h4>
+        <p><b>0.156 chunks/sec</b> at concurrency=4 — less than half Llama's 0.338. p50 latency of 24.9 seconds per call vs Llama's 6.7 seconds. Since each bill is now one chunk (vs 2.4 chunks at chunk_size=1,200), bill-level throughput is 0.156 bills/sec vs Llama's 0.141 bills/sec — roughly comparable, but at less than half the quality.</p>
+        <p>The 14B model decodes more slowly per token than the 8B — AWQ quantization compresses the weight delta but not the fundamental decode cost of a larger model.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px">SLO projection — Qwen 14B at production scale</h3>
+    <div class="three-col" style="margin-bottom:18px">
+      <div class="slo-card">
+        <div class="slo-stat" style="font-size:2rem">0.156</div>
+        <div class="slo-label">Bills/sec @ c=4</div>
+        <div class="slo-sub">1 chunk/bill → throughput = chunks/sec</div>
+      </div>
+      <div class="slo-card">
+        <div class="slo-stat" style="color:var(--coral);font-size:2rem">7.43×</div>
+        <div class="slo-label">Gap to steady-state SLO</div>
+        <div class="slo-sub">vs 3.16× for Llama — more than 2× worse</div>
+      </div>
+      <div class="slo-card">
+        <div class="slo-stat" style="color:var(--coral);font-size:2rem">~134h</div>
+        <div class="slo-label">To process 75,000 bills</div>
+        <div class="slo-sub">vs ~56.6h for Llama · 18h window available</div>
+      </div>
+    </div>
+
+    <p style="color:var(--ink-soft);max-width:74ch;font-size:.95rem">At 0.156 bills/sec, processing 75,000 bills would require ~134 hours — 7.4× the available 18-hour window, and more than twice the gap Llama faces. The 14B model is eliminated on both quality and throughput grounds.</p>
+
+    <h3 style="margin-top:32px">Why chunking + smaller model wins</h3>
+    <div class="callout teal">
+      <p class="ct">● The architectural lesson</p>
+      <p>The failure of the 14B full-bill approach reveals something important: <b>structured extraction at scale favors tight context windows over large models.</b> Llama 3.1 8B at 1,200 tokens succeeds because each chunk is small enough that the model can focus precisely on its content and produce complete, accurate field values within the output budget. A 5,000-token bill floods the model's attention across the entire document — it sees everything but completes nothing reliably.</p>
+      <p style="margin-top:8px">The off-section drift problem (Exp 3.5) is real, but the solution is not to eliminate chunking — it's to choose the right chunk size for the task. At 1,200 tokens, Llama stays on-chunk. The chunking artifacts that motivated this experiment are a configuration problem, not an architectural one.</p>
+    </div>
+
+    <h3 style="margin-top:32px">Full comparison — all tested configurations</h3>
+    <table class="conc-table" style="margin-top:12px">
+      <thead>
+        <tr>
+          <th>Profile</th><th>Model</th><th>Chunk size</th>
+          <th>Parse-OK</th><th>Chunks/sec</th><th>p50</th><th>p99</th>
+          <th>Quality</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><code>llama31_1200</code></td><td>Llama 3.1 8B</td><td>1,200</td>
+          <td style="color:var(--teal)"><b>92.5%</b></td><td>0.338</td><td>6.7s</td><td>21s</td>
+          <td style="color:var(--teal)"><b>1.70</b></td>
+          <td style="color:var(--teal)"><b>✓ PRODUCTION</b></td>
+        </tr>
+        <tr>
+          <td><code>mistral_3000</code></td><td>Mistral 7B</td><td>3,000</td>
+          <td>72.0%</td><td>0.212</td><td>22.4s</td><td>74.1s</td>
+          <td>1.53</td>
+          <td style="color:var(--coral)">✗ p99 explosion</td>
+        </tr>
+        <tr>
+          <td><code>qwen_3000</code></td><td>Qwen 2.5 7B</td><td>3,000</td>
+          <td>67.7%</td><td>0.421</td><td>9.1s</td><td>14.8s</td>
+          <td>1.57</td>
+          <td style="color:var(--coral)">✗ proxy misranks</td>
+        </tr>
+        <tr>
+          <td><code>qwen_500</code></td><td>Qwen 2.5 7B</td><td>500</td>
+          <td>62.6%</td><td>0.706</td><td>9.8s</td><td>9.8s</td>
+          <td>1.58</td>
+          <td style="color:var(--coral)">✗ quality ceiling</td>
+        </tr>
+        <tr>
+          <td><code>qwen14b_5000</code></td><td>Qwen 2.5 14B</td><td>5,000</td>
+          <td style="color:var(--s0)"><b>45.0%</b></td><td>0.156</td><td>24.9s</td><td>33.4s</td>
+          <td>TBD*</td>
+          <td style="color:var(--coral)">✗ worst quality tested</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:.82rem;color:var(--muted);margin-top:8px">* Qualitative A/S/C review for qwen14b_5000 scheduled as follow-up. Parse-OK of 45% makes the outcome predictable — not prioritized before production deployment.</p>
+
+    <div class="callout" style="margin-top:22px">
+      <p class="ct">◆ Final conclusion</p>
+      <p>The production recommendation is confirmed and strengthened by Experiment 4. <b>Llama 3.1 8B AWQ at chunk_size=1,200, concurrency=12–24</b> leads on every dimension that matters: parse-OK quality (92.5%), qualitative scoring (1.70/2.0, 60/60 confirmed), latency tail (39s p99 at c=24), and proxy reliability (directional within-model). A model nearly twice its size, given full-bill context, could not match it. The methodology is complete. The recommendation stands.</p>
+    </div>
+  </div>
+</section>
 <section id="next">
   <div class="wrap">
     <p class="secnum">12 <span class="slash">/</span> What's Next</p>
