@@ -367,12 +367,12 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
           <span class="project-status status-complete"><span class="status-dot"></span>Evaluation Complete · Migration Planned</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-            <a href="archival-image-throughput-evaluation.html" class="project-link">Case Study ↗</a>
+            <a href="vllm-inference-throughput-evaluation.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/llava-vision-inference-backend-throughput-evaluation" target="_blank" class="project-link">GitHub ↗</a>
           </div>
         </div>
         <div class="project-num">09</div>
-        <div class="project-title">vLLM Throughput Migration · Archival Image Pipeline</div>
+        <div class="project-title">vLLM vs Ollama Inference Throughput Evaluation</div>
         <p class="project-desc">Performance engineering case study on a single NVIDIA L4 GPU. Controlled benchmark methodology isolated request serialization in the production Ollama serving layer as the throughput bottleneck — not the hardware or model. Migration to vLLM continuous batching delivered a <strong>6.22× speedup at C=8</strong> on the same hardware and same model class, taking the 12,125-image archival corpus from 22 hours to 3.7 hours with GPU utilization rising from 28% to 97%.</p>
         <div class="project-tags">
           <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">LLaVA</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">GPU Profiling</span><span class="tag">Performance Engineering</span>
@@ -384,14 +384,15 @@
           <span class="project-status status-complete"><span class="status-dot"></span>Complete · Production Decision Defended</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <a href="vllm-inference-throughput-evaluation.html" class="project-link">Case Study ↗</a>
+            <a href="vllm-qualitative-review.html" class="project-link">Quality Review ↗</a>
             <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
           </div>
         </div>
         <div class="project-num">10</div>
         <div class="project-title">vLLM Multi-Model Sweep · Legislation Pipeline</div>
-        <p class="project-desc">Controlled 54-cell benchmark across three open-weight 7-8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="https://terbe2022.github.io/uiuc-legislative-intelligence-hub/" target="_blank" style="color:var(--accent2);">Legislative Intelligence Platform</a>. Production concurrency=4, six chunk sizes, three repeats, full per-request telemetry (TTFT, ITL p99, decode/prefill throughput) and server-side GPU sampling. <strong>8h 34m unattended runtime, 0 alarms fired, 4,586 per-chunk samples.</strong> Identified Llama 3.1 8B AWQ as the production winner with 89.5-92.5% parse OK across all 15 extraction fields versus 56-72% on the incumbent Mistral. Methodology ports to any future GPU upgrade as the comparison baseline.</p>
+        <p class="project-desc">Six-stage experimental funnel benchmarking three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="https://terbe2022.github.io/uiuc-legislative-intelligence-hub/" target="_blank" style="color:var(--accent2);">Legislative Intelligence Platform</a>. Covers chunk-size sweep (66 cells), cross-model quality validation, concurrency scaling, per-request telemetry decomposition, SLO gate analysis, and a two-round human-graded qualitative review (Experiments 3 & 3.5). <strong>Production recommendation: Llama 3.1 8B AWQ at chunk_size=1200, concurrency=12–24</strong> — 20+ percentage-point parse-OK lead over all tested alternatives, quality invariant under concurrency (&lt;0.6pp across c=1→24), and the only model clearing 80% parse-OK at every tested chunk size. Exp 3.5 characterized parse-OK's within-model reliability: directional for Llama, reversed for Qwen and Mistral.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Llama 3.1 8B AWQ</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">AWQ Quantization</span><span class="tag">GPU Telemetry</span><span class="tag">Performance Engineering</span><span class="tag">Production Decision</span>
+          <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Llama 3.1 8B AWQ</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">AWQ Quantization</span><span class="tag">GPU Telemetry</span><span class="tag">Performance Engineering</span><span class="tag">Human-Graded QA</span><span class="tag">Production Decision</span>
         </div>
       </div>
 
