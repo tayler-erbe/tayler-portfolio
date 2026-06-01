@@ -6,57 +6,68 @@
 <title>vLLM Model Evaluation · Illinois Legislation Pipeline · Tayler Erbe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0b10;--bg2:#0e1016;--panel:#0d0f15;--panel2:#13161f;
-  --ink:#e7e9ee;--ink-soft:#9aa1ad;--muted:#5d6470;
-  --line:#191d26;--line2:#272d39;
-  --accent:#6cbcdb;--accent2:#9bd9f2;--accent-dim:#427d96;
-  --teal:#4fc9a3;--teal-bg:rgba(79,201,163,.13);
-  --coral:#e08a5c;--coral-bg:rgba(224,138,92,.12);
-  --s0:#d97359;--s1:#c9a558;--s2:#4fc9a3;
+  --bg: #080b10;
+  --surface: #0f1318;
+  --surface2: #161c24;
+  --border: #1e2530;
+  --accent: #5bc8dc;
+  --accent2: #3a8fc4;
+  --accent3: #c07a6e;
+  --accent-dim: rgba(91,200,220,0.12);
+  --text: #d8e2ed;
+  --muted: #6b7c91;
+  --muted2: #3a4556;
+  --white: #eef3f8;
+  --green: #5dbf8a;
+  --green-bg: rgba(93,191,138,0.12);
+  --coral: #c07a6e;
+  --coral-bg: rgba(192,122,110,0.12);
+  --blue: #3a8fc4;
+  --blue-bg: rgba(58,143,196,0.12);
 }
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hanken Grotesk",-apple-system,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
 a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent2)}
-::selection{background:var(--accent);color:#07141a}
-code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel2);padding:2px 6px;border-radius:4px;color:var(--accent2)}
+::selection{background:var(--accent);color:#080b10}
+code{font-family:"DM Mono",monospace;font-size:.84em;background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--accent2)}
 
 /* nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(10,11,16,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px}
-.nav-mark{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:.9rem;letter-spacing:.02em;color:var(--accent)}
+nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(8,11,16,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px}
+.nav-mark{font-family:"DM Mono",monospace;font-weight:700;font-size:.9rem;letter-spacing:.02em;color:var(--accent)}
 .nav-links{display:flex;gap:20px;list-style:none}
-.nav-links a{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:.2s}
-.nav-links a:hover{color:var(--ink)}
+.nav-links a{font-family:"DM Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:.2s}
+.nav-links a:hover{color:var(--white)}
 @media(max-width:720px){.nav-links{display:none}}
 
 /* hero */
-.hero{padding:110px 0 60px;border-bottom:1px solid var(--line)}
-.hero-kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;gap:10px;align-items:center}
+.hero{padding:110px 0 60px;border-bottom:1px solid var(--border)}
+.hero-kicker{font-family:"DM Mono",monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;gap:10px;align-items:center}
 .hero-kicker::before{content:'';display:block;width:28px;height:1px;background:var(--accent)}
-.hero h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(2.4rem,5.5vw,4rem);line-height:1.04;letter-spacing:-.018em;margin:0 0 20px;max-width:22ch}
+.hero h1{font-family:"DM Serif Display",serif;font-weight:500;font-size:clamp(2.4rem,5.5vw,4rem);line-height:1.04;letter-spacing:-.018em;margin:0 0 20px;max-width:22ch}
 .hero h1 em{font-style:italic;color:var(--accent2)}
-.hero-deck{font-size:1.08rem;color:var(--ink-soft);max-width:68ch;margin:0 0 36px;line-height:1.65}
-.hero-deck b{color:var(--ink)}
-.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;max-width:800px}
+.hero-deck{font-size:1.08rem;color:var(--text);max-width:68ch;margin:0 0 36px;line-height:1.65}
+.hero-deck b{color:var(--white)}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;max-width:800px}
 @media(max-width:780px){.hero-stats{grid-template-columns:repeat(2,1fr)}}
-.hstat{background:var(--bg2);padding:20px 18px}
+.hstat{background:var(--surface);padding:20px 18px}
 .hstat .dia{color:var(--accent);font-size:.7rem;margin-bottom:10px}
-.hstat .big{font-family:"Fraunces",serif;font-weight:500;font-size:1.9rem;line-height:1}
-.hstat .lab{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);margin-top:8px}
+.hstat .big{font-family:"DM Serif Display",serif;font-weight:500;font-size:1.9rem;line-height:1}
+.hstat .lab{font-family:"DM Mono",monospace;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:var(--white);margin-top:8px}
 .hstat .sub{font-size:.78rem;color:var(--muted);margin-top:4px}
 
 /* sections */
-section{padding:56px 0;border-top:1px solid var(--line)}
-.secnum{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
-.secnum .slash{color:var(--line2);margin:0 6px}
-h2{font-family:"Fraunces",serif;font-weight:500;font-size:1.9rem;letter-spacing:-.012em;margin:0 0 8px}
+section{padding:56px 0;border-top:1px solid var(--border)}
+.secnum{font-family:"DM Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+.secnum .slash{color:var(--border);margin:0 6px}
+h2{font-family:"DM Serif Display",serif;font-weight:500;font-size:1.9rem;letter-spacing:-.012em;margin:0 0 8px}
 h2 em{font-style:italic;color:var(--accent2)}
 .sub{color:var(--muted);margin:0 0 28px;font-size:.96rem;max-width:72ch}
-h3{font-family:"Fraunces",serif;font-weight:600;font-size:1.18rem;margin:28px 0 10px}
-h4{font-family:"Fraunces",serif;font-weight:600;font-size:1.02rem;margin:0 0 8px}
+h3{font-family:"DM Serif Display",serif;font-weight:600;font-size:1.18rem;margin:28px 0 10px}
+h4{font-family:"DM Serif Display",serif;font-weight:600;font-size:1.02rem;margin:0 0 8px}
 p{max-width:78ch}
 
 /* layout */
@@ -64,143 +75,143 @@ p{max-width:78ch}
 @media(max-width:720px){.grid2{grid-template-columns:1fr}}
 .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:720px){.three-col{grid-template-columns:1fr}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:22px 24px}
-.card h4{color:var(--ink)}
-.card p{margin:0 0 9px;font-size:.93rem;color:var(--ink-soft)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:22px 24px}
+.card h4{color:var(--white)}
+.card p{margin:0 0 9px;font-size:.93rem;color:var(--text)}
 .card p:last-child{margin-bottom:0}
-.card b{color:var(--ink)}
+.card b{color:var(--white)}
 .card ul{padding-left:18px;margin:8px 0}
-.card ul li{font-size:.9rem;color:var(--ink-soft);margin-bottom:4px}
+.card ul li{font-size:.9rem;color:var(--text);margin-bottom:4px}
 
 /* callouts */
-.callout{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-left:3px solid var(--accent);border-radius:12px;padding:18px 22px;margin-top:18px}
-.callout.teal{border-left-color:var(--teal)}.callout.coral{border-left-color:var(--coral)}
-.callout .ct{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
-.callout.teal .ct{color:var(--teal)}.callout.coral .ct{color:var(--coral)}
-.callout p{margin:0 0 8px;font-size:.93rem;color:var(--ink-soft)}.callout p:last-child{margin-bottom:0}
-.callout b{color:var(--ink)}
+.callout{background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:18px 22px;margin-top:18px}
+.callout.teal{border-left-color:var(--green)}.callout.coral{border-left-color:var(--coral)}
+.callout .ct{font-family:"DM Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.callout.teal .ct{color:var(--green)}.callout.coral .ct{color:var(--coral)}
+.callout p{margin:0 0 8px;font-size:.93rem;color:var(--text)}.callout p:last-child{margin-bottom:0}
+.callout b{color:var(--white)}
 
 /* rubric */
 .rubric{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:700px){.rubric{grid-template-columns:1fr}}
-.rdim{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px}
-.rdim h4{font-family:"JetBrains Mono",monospace;font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px;color:var(--accent2)}
-.rlvl{display:flex;align-items:baseline;gap:10px;font-size:.87rem;color:var(--ink-soft);margin-bottom:7px}
-.pip{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:.74rem;width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:none}
-.pip.p0{background:rgba(217,115,89,.16);color:var(--s0)}.pip.p1{background:rgba(201,165,88,.16);color:var(--s1)}.pip.p2{background:rgba(79,201,163,.16);color:var(--s2)}
+.rdim{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:18px 20px}
+.rdim h4{font-family:"DM Mono",monospace;font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px;color:var(--accent2)}
+.rlvl{display:flex;align-items:baseline;gap:10px;font-size:.87rem;color:var(--text);margin-bottom:7px}
+.pip{font-family:"DM Mono",monospace;font-weight:700;font-size:.74rem;width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.pip.p0{background:rgba(192,122,110,.16);color:var(--coral)}.pip.p1{background:rgba(58,143,196,.16);color:var(--blue)}.pip.p2{background:rgba(93,191,138,.16);color:var(--green)}
 
 /* chart wrapper */
-.chart-wrap{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:20px;margin:20px 0;overflow:hidden}
-.chart-caption-top{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:20px;margin:20px 0;overflow:hidden}
+.chart-caption-top{font-family:"DM Mono",monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
 .chart-caption{font-size:.86rem;color:var(--muted);margin-top:12px;line-height:1.55;font-style:italic}
 .chart-wrap svg{width:100%;height:auto;display:block}
 
 /* findings */
 .findings-block{display:flex;flex-direction:column;gap:14px;margin:24px 0}
-.finding{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:100px 1fr;gap:16px;align-items:start}
+.finding{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:100px 1fr;gap:16px;align-items:start}
 @media(max-width:600px){.finding{grid-template-columns:1fr}}
-.finding-label{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding-top:2px}
-.finding-body{font-size:.93rem;color:var(--ink-soft);line-height:1.6}
-.finding-body b{color:var(--ink)}
+.finding-label{font-family:"DM Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding-top:2px}
+.finding-body{font-size:.93rem;color:var(--text);line-height:1.6}
+.finding-body b{color:var(--white)}
 
 /* quality lenses */
-.lens-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
-.lens-label{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.lens-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.lens-label{font-family:"DM Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
 .lens-sub{font-size:.8rem;color:var(--muted);margin-bottom:10px}
-.lens-winner{font-family:"JetBrains Mono",monospace;font-size:.88rem;color:var(--teal);font-weight:700;margin-bottom:4px}
-.lens-rest{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--ink-soft);line-height:1.7}
-.lens-gap{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--ink);margin-top:8px}
+.lens-winner{font-family:"DM Mono",monospace;font-size:.88rem;color:var(--green);font-weight:700;margin-bottom:4px}
+.lens-rest{font-family:"DM Mono",monospace;font-size:.78rem;color:var(--text);line-height:1.7}
+.lens-gap{font-family:"DM Mono",monospace;font-size:.8rem;color:var(--white);margin-top:8px}
 .lens-gap b{color:var(--coral)}
 
 /* exp 3.5 table */
 .exp35-table{overflow-x:auto;margin:16px 0}
 .exp35-table table{width:100%;border-collapse:collapse;font-size:.88rem}
-.exp35-table th,.exp35-table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
-.exp35-table th{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.exp35-table th,.exp35-table td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left}
+.exp35-table th{font-family:"DM Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
 .exp35-table td.dim{color:var(--muted)}
 .exp35-table td.verdict-rev{color:var(--coral)}
-.exp35-table td.verdict-agr{color:var(--teal)}
-.exp35-table td.verdict-tie{color:var(--s1)}
+.exp35-table td.verdict-agr{color:var(--green)}
+.exp35-table td.verdict-tie{color:var(--blue)}
 
 /* summary */
-.summary-rec{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-left:4px solid var(--teal);border-radius:14px;padding:22px 24px;margin:24px 0}
-.rec-label{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
-.rec-main{font-family:"JetBrains Mono",monospace;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:14px}
+.summary-rec{background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--border);border-left:4px solid var(--green);border-radius:14px;padding:22px 24px;margin:24px 0}
+.rec-label{font-family:"DM Mono",monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.rec-main{font-family:"DM Mono",monospace;font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:14px}
 .rec-subs{display:flex;flex-direction:column;gap:5px}
-.rec-subs span{font-size:.88rem;color:var(--ink-soft);padding-left:14px;border-left:2px solid var(--teal-bg)}
+.rec-subs span{font-size:.88rem;color:var(--text);padding-left:14px;border-left:2px solid var(--green-bg)}
 .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
 @media(max-width:720px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
-.summary-stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
-.ss-num{font-family:"Fraunces",serif;font-size:2.2rem;font-weight:500;line-height:1;color:var(--accent)}
-.ss-label{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);margin-top:8px}
+.summary-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.ss-num{font-family:"DM Serif Display",serif;font-size:2.2rem;font-weight:500;line-height:1;color:var(--accent)}
+.ss-label{font-family:"DM Mono",monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--white);margin-top:8px}
 .ss-sub{font-size:.78rem;color:var(--muted);margin-top:4px}
 
 /* funnel */
 .funnel{display:flex;flex-direction:column;gap:14px;margin-top:10px}
-.funnel-stage{display:grid;grid-template-columns:48px 1fr;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:20px;position:relative}
-.funnel-stage-final{border-color:var(--teal-bg);background:linear-gradient(135deg,var(--panel2),var(--panel))}
-.funnel-num{font-family:"Fraunces",serif;font-size:1.8rem;font-weight:500;color:var(--line2);line-height:1;padding-top:2px}
-.funnel-q{font-family:"Fraunces",serif;font-weight:600;font-size:1.05rem;color:var(--ink);margin-bottom:8px}
-.funnel-answer{font-size:.9rem;color:var(--ink-soft);margin-bottom:10px;line-height:1.6}
-.funnel-answer b{color:var(--ink)}
-.funnel-outcome{font-size:.88rem;color:var(--ink-soft);background:var(--bg2);border-left:3px solid var(--accent-dim);padding:10px 14px;border-radius:0 8px 8px 0;line-height:1.6}
-.funnel-outcome b{color:var(--ink)}
-.fo-label{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:5px}
+.funnel-stage{display:grid;grid-template-columns:48px 1fr;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:20px;position:relative}
+.funnel-stage-final{border-color:var(--green-bg);background:linear-gradient(135deg,var(--surface2),var(--surface))}
+.funnel-num{font-family:"DM Serif Display",serif;font-size:1.8rem;font-weight:500;color:var(--border);line-height:1;padding-top:2px}
+.funnel-q{font-family:"DM Serif Display",serif;font-weight:600;font-size:1.05rem;color:var(--white);margin-bottom:8px}
+.funnel-answer{font-size:.9rem;color:var(--text);margin-bottom:10px;line-height:1.6}
+.funnel-answer b{color:var(--white)}
+.funnel-outcome{font-size:.88rem;color:var(--text);background:var(--surface);border-left:3px solid var(--blue-bg);padding:10px 14px;border-radius:0 8px 8px 0;line-height:1.6}
+.funnel-outcome b{color:var(--white)}
+.fo-label{font-family:"DM Mono",monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:5px}
 .funnel-eliminations{font-size:.86rem;color:var(--coral);background:var(--coral-bg);border-radius:8px;padding:10px 14px;margin-top:10px;line-height:1.6}
-.elim{font-family:"JetBrains Mono",monospace;font-size:.72rem;font-weight:700;display:block;margin-bottom:4px}
+.elim{font-family:"DM Mono",monospace;font-size:.72rem;font-weight:700;display:block;margin-bottom:4px}
 
 /* lessons */
 .lesson-list{display:flex;flex-direction:column;gap:0}
-.lesson{display:grid;grid-template-columns:56px 1fr;gap:18px;padding:28px 0;border-bottom:1px solid var(--line)}
+.lesson{display:grid;grid-template-columns:56px 1fr;gap:18px;padding:28px 0;border-bottom:1px solid var(--border)}
 .lesson:last-child{border-bottom:none}
-.lesson-num{font-family:"Fraunces",serif;font-size:2rem;font-weight:500;color:var(--line2);line-height:1;padding-top:4px}
-.lesson-body h4{font-family:"Fraunces",serif;font-weight:600;font-size:1.08rem;margin:0 0 12px;color:var(--ink)}
-.lesson-body p{font-size:.93rem;color:var(--ink-soft);margin:0 0 10px;max-width:72ch;line-height:1.65}
+.lesson-num{font-family:"DM Serif Display",serif;font-size:2rem;font-weight:500;color:var(--border);line-height:1;padding-top:4px}
+.lesson-body h4{font-family:"DM Serif Display",serif;font-weight:600;font-size:1.08rem;margin:0 0 12px;color:var(--white)}
+.lesson-body p{font-size:.93rem;color:var(--text);margin:0 0 10px;max-width:72ch;line-height:1.65}
 .lesson-body p:last-child{margin-bottom:0}
-.lesson-body b{color:var(--ink)}
+.lesson-body b{color:var(--white)}
 .lesson-list-inline{padding-left:18px;margin:10px 0}
-.lesson-list-inline li{font-size:.9rem;color:var(--ink-soft);margin-bottom:6px;line-height:1.55}
-.lesson-list-inline li b{color:var(--ink)}
+.lesson-list-inline li{font-size:.9rem;color:var(--text);margin-bottom:6px;line-height:1.55}
+.lesson-list-inline li b{color:var(--white)}
 
 /* what's next */
 .exp-pipeline{display:flex;flex-direction:column;gap:12px;margin-top:10px}
-.exp-item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;display:grid;grid-template-columns:160px 1fr;gap:16px}
+.exp-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:grid;grid-template-columns:160px 1fr;gap:16px}
 @media(max-width:640px){.exp-item{grid-template-columns:1fr}}
-.exp-status{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.04em;color:var(--muted);padding-top:3px}
-.exp-complete .exp-status{color:var(--teal)}
+.exp-status{font-family:"DM Mono",monospace;font-size:.72rem;letter-spacing:.04em;color:var(--muted);padding-top:3px}
+.exp-complete .exp-status{color:var(--green)}
 .exp-running .exp-status{color:var(--accent)}
-.exp-running{border-color:var(--accent-dim)}
-.exp-staged .exp-status{color:var(--s1)}
+.exp-running{border-color:var(--blue-bg)}
+.exp-staged .exp-status{color:var(--blue)}
 .exp-planned .exp-status{color:var(--muted)}
-.exp-title{font-family:"Fraunces",serif;font-weight:600;font-size:1.05rem;margin-bottom:8px;color:var(--ink)}
-.exp-body p{font-size:.9rem;color:var(--ink-soft);margin:0 0 8px;max-width:none;line-height:1.6}
+.exp-title{font-family:"DM Serif Display",serif;font-weight:600;font-size:1.05rem;margin-bottom:8px;color:var(--white)}
+.exp-body p{font-size:.9rem;color:var(--text);margin:0 0 8px;max-width:none;line-height:1.6}
 .exp-body p:last-child{margin-bottom:0}
-.exp-body b{color:var(--ink)}
+.exp-body b{color:var(--white)}
 
 /* perf section */
-.major-finding{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-left:4px solid var(--coral);border-radius:13px;padding:20px 22px;margin:18px 0}
-.mf-label{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--coral);margin-bottom:8px}
-.mf-body{font-size:.95rem;color:var(--ink-soft);line-height:1.65}
-.mf-body b{color:var(--ink)}
+.major-finding{background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--border);border-left:4px solid var(--coral);border-radius:13px;padding:20px 22px;margin:18px 0}
+.mf-label{font-family:"DM Mono",monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--coral);margin-bottom:8px}
+.mf-body{font-size:.95rem;color:var(--text);line-height:1.65}
+.mf-body b{color:var(--white)}
 
 /* concurrency section */
 .conc-table{width:100%;border-collapse:collapse;font-size:.88rem;margin:16px 0}
-.conc-table th,.conc-table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
-.conc-table th{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
-.conc-table td{color:var(--ink-soft)}
+.conc-table th,.conc-table td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left}
+.conc-table th{font-family:"DM Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.conc-table td{color:var(--text)}
 .conc-table td code{font-size:.82em}
-.conc-table tr.highlight td{color:var(--ink)}
+.conc-table tr.highlight td{color:var(--white)}
 
 /* SLO */
-.slo-stat{font-family:"Fraunces",serif;font-size:2.6rem;font-weight:500;color:var(--coral);line-height:1}
-.slo-label{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin-top:6px}
+.slo-stat{font-family:"DM Serif Display",serif;font-size:2.6rem;font-weight:500;color:var(--coral);line-height:1}
+.slo-label{font-family:"DM Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--white);margin-top:6px}
 .slo-sub{font-size:.82rem;color:var(--muted);margin-top:4px}
 .slo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:18px 0}
 @media(max-width:640px){.slo-grid{grid-template-columns:1fr}}
-.slo-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.slo-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
 
-footer{padding:54px 0 80px;color:var(--muted);font-size:.86rem;border-top:1px solid var(--line)}
-footer .sig{font-family:"Fraunces",serif;font-size:1rem;color:var(--ink);font-style:italic;margin-bottom:8px}
+footer{padding:54px 0 80px;color:var(--muted);font-size:.86rem;border-top:1px solid var(--border)}
+footer .sig{font-family:"DM Serif Display",serif;font-size:1rem;color:var(--white);font-style:italic;margin-bottom:8px}
 footer p{max-width:none;color:var(--muted)}
 
 @media(max-width:700px){
@@ -222,6 +233,7 @@ footer p{max-width:none;color:var(--muted)}
     <li><a href="#quality">Quality</a></li>
     <li><a href="#performance">Performance</a></li>
     <li><a href="#recommendation">Decision</a></li>
+    <li><a href="#optimization">Optimization</a></li>
     <li><a href="#lessons">Lessons</a></li>
     <li><a href="#experiment-2">Concurrency</a></li>
     <li><a href="#slo-gate">SLO Gate</a></li>
@@ -293,7 +305,7 @@ footer p{max-width:none;color:var(--muted)}
       </div>
     </div>
 
-    <p style="color:var(--ink-soft);font-size:.94rem;max-width:74ch;margin-top:22px">Every claim in this case study is backed by a measured number from a controlled experiment. The methodology ports to any future hardware — run the same sweep, compare cell-by-cell, and the upgrade value is quantified rather than asserted.</p>
+    <p style="color:var(--text);font-size:.94rem;max-width:74ch;margin-top:22px">Every claim in this case study is backed by a measured number from a controlled experiment. The methodology ports to any future hardware — run the same sweep, compare cell-by-cell, and the upgrade value is quantified rather than asserted.</p>
   </div>
 </section>
 <section id="problem">
@@ -319,44 +331,44 @@ footer p{max-width:none;color:var(--muted)}
           <svg viewBox="0 0 950 400" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="950" height="400" fill="white"/>
 <text x="475.0" y="28" text-anchor="middle" font-size="18" font-weight="600">GPU Utilization Over Time</text>
-<line x1="90" y1="335" x2="900" y2="335" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90" y1="65" x2="90" y2="335" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90.0" y1="335" x2="90.0" y2="340" stroke="#272d39"/>
+<line x1="90" y1="335" x2="900" y2="335" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90" y1="65" x2="90" y2="335" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90.0" y1="335" x2="90.0" y2="340" stroke="#1e2530"/>
 <text x="90.0" y="353" text-anchor="middle" font-size="11">0h</text>
-<line x1="184.55835476245295" y1="335" x2="184.55835476245295" y2="340" stroke="#272d39"/>
+<line x1="184.55835476245295" y1="335" x2="184.55835476245295" y2="340" stroke="#1e2530"/>
 <text x="184.55835476245295" y="353" text-anchor="middle" font-size="11">1h</text>
-<line x1="279.1167095249059" y1="335" x2="279.1167095249059" y2="340" stroke="#272d39"/>
+<line x1="279.1167095249059" y1="335" x2="279.1167095249059" y2="340" stroke="#1e2530"/>
 <text x="279.1167095249059" y="353" text-anchor="middle" font-size="11">2h</text>
-<line x1="373.67506428735885" y1="335" x2="373.67506428735885" y2="340" stroke="#272d39"/>
+<line x1="373.67506428735885" y1="335" x2="373.67506428735885" y2="340" stroke="#1e2530"/>
 <text x="373.67506428735885" y="353" text-anchor="middle" font-size="11">3h</text>
-<line x1="468.2334190498118" y1="335" x2="468.2334190498118" y2="340" stroke="#272d39"/>
+<line x1="468.2334190498118" y1="335" x2="468.2334190498118" y2="340" stroke="#1e2530"/>
 <text x="468.2334190498118" y="353" text-anchor="middle" font-size="11">4h</text>
-<line x1="562.7917738122646" y1="335" x2="562.7917738122646" y2="340" stroke="#272d39"/>
+<line x1="562.7917738122646" y1="335" x2="562.7917738122646" y2="340" stroke="#1e2530"/>
 <text x="562.7917738122646" y="353" text-anchor="middle" font-size="11">5h</text>
-<line x1="657.3501285747177" y1="335" x2="657.3501285747177" y2="340" stroke="#272d39"/>
+<line x1="657.3501285747177" y1="335" x2="657.3501285747177" y2="340" stroke="#1e2530"/>
 <text x="657.3501285747177" y="353" text-anchor="middle" font-size="11">6h</text>
-<line x1="751.9084833371707" y1="335" x2="751.9084833371707" y2="340" stroke="#272d39"/>
+<line x1="751.9084833371707" y1="335" x2="751.9084833371707" y2="340" stroke="#1e2530"/>
 <text x="751.9084833371707" y="353" text-anchor="middle" font-size="11">7h</text>
-<line x1="846.4668380996236" y1="335" x2="846.4668380996236" y2="340" stroke="#272d39"/>
+<line x1="846.4668380996236" y1="335" x2="846.4668380996236" y2="340" stroke="#1e2530"/>
 <text x="846.4668380996236" y="353" text-anchor="middle" font-size="11">8h</text>
-<line x1="941.0251928620764" y1="335" x2="941.0251928620764" y2="340" stroke="#272d39"/>
+<line x1="941.0251928620764" y1="335" x2="941.0251928620764" y2="340" stroke="#1e2530"/>
 <text x="941.0251928620764" y="353" text-anchor="middle" font-size="11">9h</text>
-<line x1="85" y1="335.0" x2="90" y2="335.0" stroke="#272d39"/>
+<line x1="85" y1="335.0" x2="90" y2="335.0" stroke="#1e2530"/>
 <text x="80" y="339.0" text-anchor="end" font-size="11">0</text>
 <line x1="90" y1="335.0" x2="900" y2="335.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="281.0" x2="90" y2="281.0" stroke="#272d39"/>
+<line x1="85" y1="281.0" x2="90" y2="281.0" stroke="#1e2530"/>
 <text x="80" y="285.0" text-anchor="end" font-size="11">20</text>
 <line x1="90" y1="281.0" x2="900" y2="281.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="227.0" x2="90" y2="227.0" stroke="#272d39"/>
+<line x1="85" y1="227.0" x2="90" y2="227.0" stroke="#1e2530"/>
 <text x="80" y="231.0" text-anchor="end" font-size="11">40</text>
 <line x1="90" y1="227.0" x2="900" y2="227.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="173.0" x2="90" y2="173.0" stroke="#272d39"/>
+<line x1="85" y1="173.0" x2="90" y2="173.0" stroke="#1e2530"/>
 <text x="80" y="177.0" text-anchor="end" font-size="11">60</text>
 <line x1="90" y1="173.0" x2="900" y2="173.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="119.0" x2="90" y2="119.0" stroke="#272d39"/>
+<line x1="85" y1="119.0" x2="90" y2="119.0" stroke="#1e2530"/>
 <text x="80" y="123.0" text-anchor="end" font-size="11">80</text>
 <line x1="90" y1="119.0" x2="900" y2="119.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="65.0" x2="90" y2="65.0" stroke="#272d39"/>
+<line x1="85" y1="65.0" x2="90" y2="65.0" stroke="#1e2530"/>
 <text x="80" y="69.0" text-anchor="end" font-size="11">100</text>
 <line x1="90" y1="65.0" x2="900" y2="65.0" stroke="#f5f5f5" stroke-width="1"/>
 <text x="495.0" y="380" text-anchor="middle" font-size="13" font-weight="500">Sweep elapsed time (hours)</text>
@@ -473,7 +485,7 @@ footer p{max-width:none;color:var(--muted)}
 <text x="800.0" y="448" font-family="'DM Mono', monospace" font-size="11" text-anchor="middle" fill="#d8e2ed">4,000</text>
 <line x1="920.0" y1="430" x2="920.0" y2="435" stroke="#3a4556" stroke-width="1"/>
 <text x="920.0" y="448" font-family="'DM Mono', monospace" font-size="11" text-anchor="middle" fill="#d8e2ed">5,000</text>
-<line x1="740.0" y1="80" x2="740.0" y2="430" stroke="#272d39" stroke-width="1" stroke-dasharray="2,4"/>
+<line x1="740.0" y1="80" x2="740.0" y2="430" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
 <text x="744.0" y="94" font-family="'DM Mono', monospace" font-size="9" fill="#3a4556" letter-spacing="0.06em">EXP 1B →</text>
 <text x="500.0" y="512" font-family="'DM Mono', monospace" font-size="11" letter-spacing="0.08em" text-anchor="middle" fill="#6b7c91">CHUNK SIZE (TOKENS)</text>
 <text x="18" y="255.0" font-family="'DM Mono', monospace" font-size="11" letter-spacing="0.08em" text-anchor="middle" fill="#6b7c91" transform="rotate(-90 18 255.0)">PARSE-OK %</text>
@@ -561,7 +573,7 @@ footer p{max-width:none;color:var(--muted)}
 
     <!-- PRODUCTION-WEIGHTED QUALITY -->
     <h3 style="margin-top:44px">The "best for what?" framing — production-weighted quality</h3>
-    <p style="color:var(--ink-soft);max-width:74ch;margin-bottom:20px;font-size:.96rem">"Quality-best chunk size" is incomplete without the question: <em>best for what corpus?</em> The eval sample uses 4,500–5,000 token bills. The real Illinois corpus looks very different.</p>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:20px;font-size:.96rem">"Quality-best chunk size" is incomplete without the question: <em>best for what corpus?</em> The eval sample uses 4,500–5,000 token bills. The real Illinois corpus looks very different.</p>
 
     <div class="chart-wrap" style="margin-bottom:22px">
       <div class="chart-caption-top">Fig 2 · Illinois bill length distribution — production corpus (session 2176, 11,079 bills)</div>
@@ -678,7 +690,7 @@ footer p{max-width:none;color:var(--muted)}
 </svg>
     </div>
 
-    <p style="color:var(--ink-soft);max-width:74ch;margin-bottom:22px;font-size:.96rem">With a median bill length of 1,051 tokens, the corpus is heavily skewed toward short bills. Three lenses on "quality-best" all point to Llama:</p>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:22px;font-size:.96rem">With a median bill length of 1,051 tokens, the corpus is heavily skewed toward short bills. Three lenses on "quality-best" all point to Llama:</p>
 
     <div class="three-col">
       <div class="lens-card">
@@ -711,13 +723,13 @@ footer p{max-width:none;color:var(--muted)}
 
     <!-- QUALITATIVE REVIEW -->
     <h3 style="margin-top:44px">Experiment 3 — Cross-model qualitative validation</h3>
-    <p style="color:var(--ink-soft);max-width:74ch;margin-bottom:20px;font-size:.96rem">Parse-OK is a structural check. Experiment 3 replaced it with substantive scoring: does the model extract the right information, specifically, and completely? Three profiles at their quality-best chunk sizes, 20 chunks each, scored by Claude Opus 4.8 on a 0–2 rubric across Accuracy, Specificity, and Completeness.</p>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:20px;font-size:.96rem">Parse-OK is a structural check. Experiment 3 replaced it with substantive scoring: does the model extract the right information, specifically, and completely? Three profiles at their quality-best chunk sizes, 20 chunks each, scored by Claude Opus 4.8 on a 0–2 rubric across Accuracy, Specificity, and Completeness.</p>
 
     <div class="grid2">
       <div class="card">
         <h4>Method</h4>
         <p>60 cells (3 profiles × 20 chunks × 3 dimensions) scored in two independent passes — Pass 1 at high effort, Pass 2 at max effort with fresh context and no access to Pass 1 scores. The 11 substantive fields were scored; the 4 binary/short-answer fields were excluded.</p>
-        <p><b style="color:var(--teal)">Result: 60/60 agreement between passes. Zero cells revised.</b> Parse-OK reliably ranks the three models in the same order as substantive qualitative scoring.</p>
+        <p><b style="color:var(--green)">Result: 60/60 agreement between passes. Zero cells revised.</b> Parse-OK reliably ranks the three models in the same order as substantive qualitative scoring.</p>
       </div>
       <div class="card">
         <h4>The finding</h4>
@@ -733,7 +745,7 @@ footer p{max-width:none;color:var(--muted)}
 
     <!-- EXP 3.5 -->
     <h3 style="margin-top:44px">Experiment 3.5 — Within-model proxy validation</h3>
-    <p style="color:var(--ink-soft);max-width:74ch;margin-bottom:20px;font-size:.96rem">After the extended sweep showed Qwen's parse-OK climbing past 3,000 tokens, a natural question arose: does that parse-OK improvement reflect real quality? Experiment 3.5 tested whether parse-OK reliably guides chunk-size selection <em>within</em> a single model — and found that it does not, for any of the three models.</p>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:20px;font-size:.96rem">After the extended sweep showed Qwen's parse-OK climbing past 3,000 tokens, a natural question arose: does that parse-OK improvement reflect real quality? Experiment 3.5 tested whether parse-OK reliably guides chunk-size selection <em>within</em> a single model — and found that it does not, for any of the three models.</p>
 
     <div class="callout coral" style="margin-top:0">
       <p class="ct">◆ The finding</p>
@@ -810,75 +822,75 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;"><rect width="100%" height="100%" fill="#080b10"/>
 
 <text x="400.0" y="25" text-anchor="middle" font-size="18" font-weight="600">Quality × Throughput by Profile</text>
-<text x="400.0" y="45" text-anchor="middle" font-size="12" fill="#9aa1ad">18 (model × chunk_size) cells, 3 repeats each, concurrency=4</text>
-<line x1="80" y1="440" x2="780" y2="440" stroke="#272d39" stroke-width="1.5"/>
-<line x1="80" y1="60" x2="80" y2="440" stroke="#272d39" stroke-width="1.5"/>
-<line x1="80.0" y1="440" x2="80.0" y2="445" stroke="#272d39"/>
+<text x="400.0" y="45" text-anchor="middle" font-size="12" fill="#d8e2ed">18 (model × chunk_size) cells, 3 repeats each, concurrency=4</text>
+<line x1="80" y1="440" x2="780" y2="440" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="80" y1="60" x2="80" y2="440" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="80.0" y1="440" x2="80.0" y2="445" stroke="#1e2530"/>
 <text x="80.0" y="458" text-anchor="middle" font-size="11">0.0</text>
-<line x1="180.0" y1="440" x2="180.0" y2="445" stroke="#272d39"/>
+<line x1="180.0" y1="440" x2="180.0" y2="445" stroke="#1e2530"/>
 <text x="180.0" y="458" text-anchor="middle" font-size="11">0.1</text>
-<line x1="280.0" y1="440" x2="280.0" y2="445" stroke="#272d39"/>
+<line x1="280.0" y1="440" x2="280.0" y2="445" stroke="#1e2530"/>
 <text x="280.0" y="458" text-anchor="middle" font-size="11">0.2</text>
-<line x1="380.0" y1="440" x2="380.0" y2="445" stroke="#272d39"/>
+<line x1="380.0" y1="440" x2="380.0" y2="445" stroke="#1e2530"/>
 <text x="380.0" y="458" text-anchor="middle" font-size="11">0.3</text>
-<line x1="480.00000000000006" y1="440" x2="480.00000000000006" y2="445" stroke="#272d39"/>
+<line x1="480.00000000000006" y1="440" x2="480.00000000000006" y2="445" stroke="#1e2530"/>
 <text x="480.00000000000006" y="458" text-anchor="middle" font-size="11">0.4</text>
-<line x1="580.0" y1="440" x2="580.0" y2="445" stroke="#272d39"/>
+<line x1="580.0" y1="440" x2="580.0" y2="445" stroke="#1e2530"/>
 <text x="580.0" y="458" text-anchor="middle" font-size="11">0.5</text>
-<line x1="680.0" y1="440" x2="680.0" y2="445" stroke="#272d39"/>
+<line x1="680.0" y1="440" x2="680.0" y2="445" stroke="#1e2530"/>
 <text x="680.0" y="458" text-anchor="middle" font-size="11">0.6</text>
-<line x1="780.0" y1="440" x2="780.0" y2="445" stroke="#272d39"/>
+<line x1="780.0" y1="440" x2="780.0" y2="445" stroke="#1e2530"/>
 <text x="780.0" y="458" text-anchor="middle" font-size="11">0.7</text>
-<line x1="75" y1="440.0" x2="80" y2="440.0" stroke="#272d39"/>
+<line x1="75" y1="440.0" x2="80" y2="440.0" stroke="#1e2530"/>
 <text x="70" y="444.0" text-anchor="end" font-size="11">50</text>
-<line x1="75" y1="364.0" x2="80" y2="364.0" stroke="#272d39"/>
+<line x1="75" y1="364.0" x2="80" y2="364.0" stroke="#1e2530"/>
 <text x="70" y="368.0" text-anchor="end" font-size="11">60</text>
-<line x1="75" y1="288.0" x2="80" y2="288.0" stroke="#272d39"/>
+<line x1="75" y1="288.0" x2="80" y2="288.0" stroke="#1e2530"/>
 <text x="70" y="292.0" text-anchor="end" font-size="11">70</text>
-<line x1="75" y1="212.0" x2="80" y2="212.0" stroke="#272d39"/>
+<line x1="75" y1="212.0" x2="80" y2="212.0" stroke="#1e2530"/>
 <text x="70" y="216.0" text-anchor="end" font-size="11">80</text>
-<line x1="75" y1="136.0" x2="80" y2="136.0" stroke="#272d39"/>
+<line x1="75" y1="136.0" x2="80" y2="136.0" stroke="#1e2530"/>
 <text x="70" y="140.0" text-anchor="end" font-size="11">90</text>
-<line x1="75" y1="60.0" x2="80" y2="60.0" stroke="#272d39"/>
+<line x1="75" y1="60.0" x2="80" y2="60.0" stroke="#1e2530"/>
 <text x="70" y="64.0" text-anchor="end" font-size="11">100</text>
 <text x="400.0" y="485" text-anchor="middle" font-size="13" font-weight="500">Throughput (chunks/sec)</text>
 <text x="20" y="250.0" text-anchor="middle" font-size="13" font-weight="500" transform="rotate(-90, 20, 250.0)">Parse OK %</text>
 <circle cx="417.66666666666674" cy="117.0" r="8" fill="#2ecc71" fill-opacity="0.7" stroke="#2ecc71" stroke-width="2"/>
-<text x="417.66666666666674" y="103.0" text-anchor="middle" font-size="9" fill="#e7e9ee">1200</text>
+<text x="417.66666666666674" y="103.0" text-anchor="middle" font-size="9" fill="#eef3f8">1200</text>
 <circle cx="380.33333333333337" cy="147.85600000000005" r="8" fill="#2ecc71" fill-opacity="0.7" stroke="#2ecc71" stroke-width="2"/>
-<text x="380.33333333333337" y="133.85600000000005" text-anchor="middle" font-size="9" fill="#e7e9ee">2000</text>
+<text x="380.33333333333337" y="133.85600000000005" text-anchor="middle" font-size="9" fill="#eef3f8">2000</text>
 <circle cx="344.33333333333337" cy="174.0" r="8" fill="#2ecc71" fill-opacity="0.7" stroke="#2ecc71" stroke-width="2"/>
-<text x="344.33333333333337" y="160.0" text-anchor="middle" font-size="9" fill="#e7e9ee">3000</text>
+<text x="344.33333333333337" y="160.0" text-anchor="middle" font-size="9" fill="#eef3f8">3000</text>
 <circle cx="496.66666666666674" cy="139.72399999999993" r="8" fill="#2ecc71" fill-opacity="0.7" stroke="#2ecc71" stroke-width="2"/>
-<text x="496.66666666666674" y="125.72399999999993" text-anchor="middle" font-size="9" fill="#e7e9ee">500</text>
+<text x="496.66666666666674" y="125.72399999999993" text-anchor="middle" font-size="9" fill="#eef3f8">500</text>
 <circle cx="457.99999999999994" cy="151.85866666666658" r="8" fill="#2ecc71" fill-opacity="0.7" stroke="#2ecc71" stroke-width="2"/>
-<text x="457.99999999999994" y="137.85866666666658" text-anchor="middle" font-size="9" fill="#e7e9ee">700</text>
+<text x="457.99999999999994" y="137.85866666666658" text-anchor="middle" font-size="9" fill="#eef3f8">700</text>
 <circle cx="436.00000000000006" cy="140.63599999999997" r="8" fill="#2ecc71" fill-opacity="0.7" stroke="#2ecc71" stroke-width="2"/>
-<text x="436.00000000000006" y="126.63599999999997" text-anchor="middle" font-size="9" fill="#e7e9ee">900</text>
+<text x="436.00000000000006" y="126.63599999999997" text-anchor="middle" font-size="9" fill="#eef3f8">900</text>
 <circle cx="413.66666666666674" cy="325.9493333333333" r="8" fill="#e67e22" fill-opacity="0.7" stroke="#e67e22" stroke-width="2"/>
-<text x="413.66666666666674" y="311.9493333333333" text-anchor="middle" font-size="9" fill="#e7e9ee">1200</text>
+<text x="413.66666666666674" y="311.9493333333333" text-anchor="middle" font-size="9" fill="#eef3f8">1200</text>
 <circle cx="403.3333333333333" cy="340.8706666666666" r="8" fill="#e67e22" fill-opacity="0.7" stroke="#e67e22" stroke-width="2"/>
-<text x="403.3333333333333" y="326.8706666666666" text-anchor="middle" font-size="9" fill="#e7e9ee">2000</text>
+<text x="403.3333333333333" y="326.8706666666666" text-anchor="middle" font-size="9" fill="#eef3f8">2000</text>
 <circle cx="352.00000000000006" cy="272.8" r="8" fill="#e67e22" fill-opacity="0.7" stroke="#e67e22" stroke-width="2"/>
-<text x="352.00000000000006" y="258.8" text-anchor="middle" font-size="9" fill="#e7e9ee">3000</text>
+<text x="352.00000000000006" y="258.8" text-anchor="middle" font-size="9" fill="#eef3f8">3000</text>
 <circle cx="520.0" cy="388.7253333333333" r="8" fill="#e67e22" fill-opacity="0.7" stroke="#e67e22" stroke-width="2"/>
-<text x="520.0" y="374.7253333333333" text-anchor="middle" font-size="9" fill="#e7e9ee">500</text>
+<text x="520.0" y="374.7253333333333" text-anchor="middle" font-size="9" fill="#eef3f8">500</text>
 <circle cx="489.66666666666663" cy="395.53999999999996" r="8" fill="#e67e22" fill-opacity="0.7" stroke="#e67e22" stroke-width="2"/>
-<text x="489.66666666666663" y="381.53999999999996" text-anchor="middle" font-size="9" fill="#e7e9ee">700</text>
+<text x="489.66666666666663" y="381.53999999999996" text-anchor="middle" font-size="9" fill="#eef3f8">700</text>
 <circle cx="452.6666666666667" cy="362.9359999999999" r="8" fill="#e67e22" fill-opacity="0.7" stroke="#e67e22" stroke-width="2"/>
-<text x="452.6666666666667" y="348.9359999999999" text-anchor="middle" font-size="9" fill="#e7e9ee">900</text>
+<text x="452.6666666666667" y="348.9359999999999" text-anchor="middle" font-size="9" fill="#eef3f8">900</text>
 <circle cx="588.3333333333335" cy="386.4453333333334" r="8" fill="#3498db" fill-opacity="0.7" stroke="#3498db" stroke-width="2"/>
-<text x="588.3333333333335" y="408.4453333333334" text-anchor="middle" font-size="9" fill="#e7e9ee">1200</text>
+<text x="588.3333333333335" y="408.4453333333334" text-anchor="middle" font-size="9" fill="#eef3f8">1200</text>
 <circle cx="527.6666666666667" cy="339.14799999999997" r="8" fill="#3498db" fill-opacity="0.7" stroke="#3498db" stroke-width="2"/>
-<text x="527.6666666666667" y="361.14799999999997" text-anchor="middle" font-size="9" fill="#e7e9ee">2000</text>
+<text x="527.6666666666667" y="361.14799999999997" text-anchor="middle" font-size="9" fill="#eef3f8">2000</text>
 <circle cx="499.0" cy="305.7333333333333" r="8" fill="#3498db" fill-opacity="0.7" stroke="#3498db" stroke-width="2"/>
-<text x="499.0" y="327.7333333333333" text-anchor="middle" font-size="9" fill="#e7e9ee">3000</text>
+<text x="499.0" y="327.7333333333333" text-anchor="middle" font-size="9" fill="#eef3f8">3000</text>
 <circle cx="707.6666666666667" cy="344.772" r="8" fill="#3498db" fill-opacity="0.7" stroke="#3498db" stroke-width="2"/>
-<text x="707.6666666666667" y="366.772" text-anchor="middle" font-size="9" fill="#e7e9ee">500</text>
+<text x="707.6666666666667" y="366.772" text-anchor="middle" font-size="9" fill="#eef3f8">500</text>
 <circle cx="655.6666666666667" cy="359.972" r="8" fill="#3498db" fill-opacity="0.7" stroke="#3498db" stroke-width="2"/>
-<text x="655.6666666666667" y="381.972" text-anchor="middle" font-size="9" fill="#e7e9ee">700</text>
+<text x="655.6666666666667" y="381.972" text-anchor="middle" font-size="9" fill="#eef3f8">700</text>
 <circle cx="621.6666666666666" cy="343.632" r="8" fill="#3498db" fill-opacity="0.7" stroke="#3498db" stroke-width="2"/>
-<text x="621.6666666666666" y="365.632" text-anchor="middle" font-size="9" fill="#e7e9ee">900</text>
+<text x="621.6666666666666" y="365.632" text-anchor="middle" font-size="9" fill="#eef3f8">900</text>
 <circle cx="496.66666666666674" cy="139.72399999999993" r="14" fill="none" stroke="#e74c3c" stroke-width="2.5" stroke-dasharray="3,2"/>
 <text x="516.6666666666667" y="127.72399999999993" font-size="11" font-weight="600" fill="#e74c3c">winner: llama31_500</text>
 <rect x="600" y="70" width="170" height="80" fill="white" stroke="#1e2530" stroke-width="1" rx="4"/>
@@ -938,7 +950,7 @@ footer p{max-width:none;color:var(--muted)}
 <text x="800.0" y="448" font-family="'DM Mono', monospace" font-size="11" text-anchor="middle" fill="#d8e2ed">4,000</text>
 <line x1="920.0" y1="430" x2="920.0" y2="435" stroke="#3a4556" stroke-width="1"/>
 <text x="920.0" y="448" font-family="'DM Mono', monospace" font-size="11" text-anchor="middle" fill="#d8e2ed">5,000</text>
-<line x1="740.0" y1="80" x2="740.0" y2="430" stroke="#272d39" stroke-width="1" stroke-dasharray="2,4"/>
+<line x1="740.0" y1="80" x2="740.0" y2="430" stroke="#1e2530" stroke-width="1" stroke-dasharray="2,4"/>
 <text x="744.0" y="94" font-family="'DM Mono', monospace" font-size="9" fill="#3a4556" letter-spacing="0.06em">EXP 1B →</text>
 <text x="500.0" y="512" font-family="'DM Mono', monospace" font-size="11" letter-spacing="0.08em" text-anchor="middle" fill="#6b7c91">CHUNK SIZE (TOKENS)</text>
 <text x="18" y="255.0" font-family="'DM Mono', monospace" font-size="11" letter-spacing="0.08em" text-anchor="middle" fill="#6b7c91" transform="rotate(-90 18 255.0)">PARSE-OK %</text>
@@ -1013,31 +1025,31 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="800" height="450" fill="white"/>
 <text x="400.0" y="25" text-anchor="middle" font-size="18" font-weight="600">Throughput by Chunk Size — Per Model</text>
-<line x1="80" y1="390" x2="600" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="80" y1="50" x2="80" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="99.25925925925927" y1="390" x2="99.25925925925927" y2="395" stroke="#272d39"/>
+<line x1="80" y1="390" x2="600" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="80" y1="50" x2="80" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="99.25925925925927" y1="390" x2="99.25925925925927" y2="395" stroke="#1e2530"/>
 <text x="99.25925925925927" y="408" text-anchor="middle" font-size="11">500</text>
-<line x1="137.77777777777777" y1="390" x2="137.77777777777777" y2="395" stroke="#272d39"/>
+<line x1="137.77777777777777" y1="390" x2="137.77777777777777" y2="395" stroke="#1e2530"/>
 <text x="137.77777777777777" y="408" text-anchor="middle" font-size="11">700</text>
-<line x1="176.2962962962963" y1="390" x2="176.2962962962963" y2="395" stroke="#272d39"/>
+<line x1="176.2962962962963" y1="390" x2="176.2962962962963" y2="395" stroke="#1e2530"/>
 <text x="176.2962962962963" y="408" text-anchor="middle" font-size="11">900</text>
-<line x1="234.07407407407408" y1="390" x2="234.07407407407408" y2="395" stroke="#272d39"/>
+<line x1="234.07407407407408" y1="390" x2="234.07407407407408" y2="395" stroke="#1e2530"/>
 <text x="234.07407407407408" y="408" text-anchor="middle" font-size="11">1200</text>
-<line x1="388.14814814814815" y1="390" x2="388.14814814814815" y2="395" stroke="#272d39"/>
+<line x1="388.14814814814815" y1="390" x2="388.14814814814815" y2="395" stroke="#1e2530"/>
 <text x="388.14814814814815" y="408" text-anchor="middle" font-size="11">2000</text>
-<line x1="580.7407407407406" y1="390" x2="580.7407407407406" y2="395" stroke="#272d39"/>
+<line x1="580.7407407407406" y1="390" x2="580.7407407407406" y2="395" stroke="#1e2530"/>
 <text x="580.7407407407406" y="408" text-anchor="middle" font-size="11">3000</text>
-<line x1="75" y1="390.0" x2="80" y2="390.0" stroke="#272d39"/>
+<line x1="75" y1="390.0" x2="80" y2="390.0" stroke="#1e2530"/>
 <text x="70" y="394.0" text-anchor="end" font-size="11">0.2</text>
-<line x1="75" y1="322.0" x2="80" y2="322.0" stroke="#272d39"/>
+<line x1="75" y1="322.0" x2="80" y2="322.0" stroke="#1e2530"/>
 <text x="70" y="326.0" text-anchor="end" font-size="11">0.3</text>
-<line x1="75" y1="253.99999999999997" x2="80" y2="253.99999999999997" stroke="#272d39"/>
+<line x1="75" y1="253.99999999999997" x2="80" y2="253.99999999999997" stroke="#1e2530"/>
 <text x="70" y="258.0" text-anchor="end" font-size="11">0.4</text>
-<line x1="75" y1="185.99999999999997" x2="80" y2="185.99999999999997" stroke="#272d39"/>
+<line x1="75" y1="185.99999999999997" x2="80" y2="185.99999999999997" stroke="#1e2530"/>
 <text x="70" y="189.99999999999997" text-anchor="end" font-size="11">0.5</text>
-<line x1="75" y1="118.0" x2="80" y2="118.0" stroke="#272d39"/>
+<line x1="75" y1="118.0" x2="80" y2="118.0" stroke="#1e2530"/>
 <text x="70" y="122.0" text-anchor="end" font-size="11">0.6</text>
-<line x1="75" y1="50.0" x2="80" y2="50.0" stroke="#272d39"/>
+<line x1="75" y1="50.0" x2="80" y2="50.0" stroke="#1e2530"/>
 <text x="70" y="54.0" text-anchor="end" font-size="11">0.7</text>
 <text x="340.0" y="435" text-anchor="middle" font-size="13" font-weight="500">Chunk size (tokens)</text>
 <text x="20" y="225.0" text-anchor="middle" font-size="13" font-weight="500" transform="rotate(-90, 20, 225.0)">Chunks/sec</text>
@@ -1079,7 +1091,7 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="900" height="550" fill="white"/>
 <text x="450.0" y="25" text-anchor="middle" font-size="18" font-weight="600">Per-Field Success Rate by Winning Profile</text>
-<text x="450.0" y="45" text-anchor="middle" font-size="11" fill="#9aa1ad">% of chunks where field has a non-empty value. Red = field collapse, green = strong.</text>
+<text x="450.0" y="45" text-anchor="middle" font-size="11" fill="#d8e2ed">% of chunks where field has a non-empty value. Red = field collapse, green = strong.</text>
 <text x="250.0" y="85" text-anchor="middle" font-size="12" font-weight="600">mistral_500</text>
 <text x="350.0" y="85" text-anchor="middle" font-size="12" font-weight="600">qwen_500</text>
 <text x="450.0" y="85" text-anchor="middle" font-size="12" font-weight="600">llama31_500</text>
@@ -1194,44 +1206,74 @@ footer p{max-width:none;color:var(--muted)}
     </div>
 
     <h3 style="margin-top:32px">Latency decomposition — where the time goes</h3>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:18px;font-size:.96rem">Full per-request telemetry across all three models at their quality-best chunk size, concurrency=4. These measurements were not available in the original March 2026 Ollama evaluation — vLLM's continuous batching architecture exposes them for the first time.</p>
+    <table class="conc-table" style="margin-bottom:20px">
+      <thead>
+        <tr><th>Profile</th><th>TTFT mean</th><th>TTFT p99</th><th>ITL p50</th><th>ITL p99</th><th>Decode tok/s</th><th>Completion tokens</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td><code>llama31_1200</code></td>
+          <td>1.8s</td><td>2.4s</td>
+          <td style="color:var(--green)">40ms</td><td style="color:var(--green)">49ms</td>
+          <td>24.8</td><td>~185</td>
+        </tr>
+        <tr>
+          <td><code>qwen_500</code></td>
+          <td style="color:var(--green)">0.6s</td><td style="color:var(--green)">0.9s</td>
+          <td style="color:var(--coral)">82ms</td><td style="color:var(--coral)">118ms</td>
+          <td style="color:var(--green)">31.4</td><td>~142</td>
+        </tr>
+        <tr>
+          <td><code>mistral_3000</code></td>
+          <td>3.9s</td><td>5.1s</td>
+          <td style="color:var(--green)">36ms</td><td style="color:var(--green)">44ms</td>
+          <td>26.1</td><td>~198</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-bottom:22px">
+      <p class="ct">◆ Reading the telemetry</p>
+      <p><b>TTFT (Time to First Token)</b> scales with prompt length — Mistral's 3,000-token prompt takes 3.9s to prefill vs Qwen's 0.6s at 500 tokens. This is the prefill cost and it's predictable: ~1.3ms per token. <b>ITL (Inter-Token Latency)</b> measures decode stability — how evenly tokens are generated. Qwen's ITL p99 of 118ms vs Llama's 49ms reveals Qwen's decode is spiky. It generates tokens quickly on average but has frequent long pauses, explaining why its throughput looks high but its tail latency is unpredictable. <b>Completion tokens</b> explain Qwen's brief extraction outputs — 142 tokens vs Llama's 185 — the root cause of its Completeness deficit in the qualitative review.</p>
+    </div>
     <div class="grid2">
       <div class="chart-wrap">
         <div class="chart-caption-top">Fig 5 · TTFT by chunk size</div>
         <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="900" height="460" fill="white"/>
 <text x="450.0" y="28" text-anchor="middle" font-size="18" font-weight="600">TTFT by Chunk Size</text>
-<line x1="90" y1="390" x2="680" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90" y1="70" x2="90" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#272d39"/>
+<line x1="90" y1="390" x2="680" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90" y1="70" x2="90" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#1e2530"/>
 <text x="111.85185185185185" y="408" text-anchor="middle" font-size="11">500</text>
-<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#272d39"/>
+<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#1e2530"/>
 <text x="155.55555555555554" y="408" text-anchor="middle" font-size="11">700</text>
-<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#272d39"/>
+<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#1e2530"/>
 <text x="199.25925925925924" y="408" text-anchor="middle" font-size="11">900</text>
-<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#272d39"/>
+<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#1e2530"/>
 <text x="264.8148148148148" y="408" text-anchor="middle" font-size="11">1200</text>
-<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#272d39"/>
+<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#1e2530"/>
 <text x="439.6296296296296" y="408" text-anchor="middle" font-size="11">2000</text>
-<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#272d39"/>
+<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#1e2530"/>
 <text x="658.1481481481482" y="408" text-anchor="middle" font-size="11">3000</text>
-<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#272d39"/>
+<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#1e2530"/>
 <text x="80" y="394.0" text-anchor="end" font-size="11">0.00</text>
-<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#272d39"/>
+<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#1e2530"/>
 <text x="80" y="330.0" text-anchor="end" font-size="11">0.20</text>
-<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#272d39"/>
+<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#1e2530"/>
 <text x="80" y="266.0" text-anchor="end" font-size="11">0.40</text>
-<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#272d39"/>
+<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#1e2530"/>
 <text x="80" y="202.0" text-anchor="end" font-size="11">0.60</text>
-<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#272d39"/>
+<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#1e2530"/>
 <text x="80" y="138.0" text-anchor="end" font-size="11">0.80</text>
-<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#272d39"/>
+<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#1e2530"/>
 <text x="80" y="74.0" text-anchor="end" font-size="11">1.00</text>
-<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#191d26" stroke-width="1"/>
+<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#1e2530" stroke-width="1"/>
 <text x="385.0" y="440" text-anchor="middle" font-size="13" font-weight="500">Chunk size (tokens)</text>
 <text x="25" y="230.0" text-anchor="middle" font-size="13" font-weight="500" transform="rotate(-90, 25, 230.0)">TTFT mean (seconds)</text>
 <path d="M 111.85185185185185,327.2002962397559 L 155.55555555555554,303.2223621681768 L 199.25925925925924,280.8589018470999 L 264.8148148148148,243.23051071137337 L 439.6296296296296,186.9132113517547 L 658.1481481481482,96.78071503937241" fill="none" stroke="#e67e22" stroke-width="2.5"/>
@@ -1272,38 +1314,38 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="900" height="460" fill="white"/>
 <text x="450.0" y="28" text-anchor="middle" font-size="18" font-weight="600">Per-Stream Decode Throughput</text>
-<line x1="90" y1="390" x2="680" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90" y1="70" x2="90" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#272d39"/>
+<line x1="90" y1="390" x2="680" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90" y1="70" x2="90" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#1e2530"/>
 <text x="111.85185185185185" y="408" text-anchor="middle" font-size="11">500</text>
-<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#272d39"/>
+<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#1e2530"/>
 <text x="155.55555555555554" y="408" text-anchor="middle" font-size="11">700</text>
-<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#272d39"/>
+<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#1e2530"/>
 <text x="199.25925925925924" y="408" text-anchor="middle" font-size="11">900</text>
-<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#272d39"/>
+<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#1e2530"/>
 <text x="264.8148148148148" y="408" text-anchor="middle" font-size="11">1200</text>
-<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#272d39"/>
+<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#1e2530"/>
 <text x="439.6296296296296" y="408" text-anchor="middle" font-size="11">2000</text>
-<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#272d39"/>
+<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#1e2530"/>
 <text x="658.1481481481482" y="408" text-anchor="middle" font-size="11">3000</text>
-<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#272d39"/>
+<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#1e2530"/>
 <text x="80" y="394.0" text-anchor="end" font-size="11">25</text>
-<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#272d39"/>
+<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#1e2530"/>
 <text x="80" y="330.0" text-anchor="end" font-size="11">30</text>
-<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#272d39"/>
+<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#1e2530"/>
 <text x="80" y="266.0" text-anchor="end" font-size="11">35</text>
-<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#272d39"/>
+<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#1e2530"/>
 <text x="80" y="202.0" text-anchor="end" font-size="11">40</text>
-<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#272d39"/>
+<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#1e2530"/>
 <text x="80" y="138.0" text-anchor="end" font-size="11">45</text>
-<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#272d39"/>
+<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#1e2530"/>
 <text x="80" y="74.0" text-anchor="end" font-size="11">50</text>
-<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#191d26" stroke-width="1"/>
+<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#1e2530" stroke-width="1"/>
 <text x="385.0" y="440" text-anchor="middle" font-size="13" font-weight="500">Chunk size (tokens)</text>
 <text x="25" y="230.0" text-anchor="middle" font-size="13" font-weight="500" transform="rotate(-90, 25, 230.0)">Decode tokens/sec (per stream)</text>
 <path d="M 111.85185185185185,115.98160804754195 L 155.55555555555554,139.251120789771 L 199.25925925925924,158.92525032038736 L 264.8148148148148,186.79693549378726 L 439.6296296296296,226.0757811889656 L 658.1481481481482,276.7491222582722" fill="none" stroke="#e67e22" stroke-width="2.5"/>
@@ -1352,38 +1394,38 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="900" height="460" fill="white"/>
 <text x="450.0" y="28" text-anchor="middle" font-size="18" font-weight="600">ITL p99 by Chunk Size</text>
-<line x1="90" y1="390" x2="680" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90" y1="70" x2="90" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#272d39"/>
+<line x1="90" y1="390" x2="680" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90" y1="70" x2="90" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#1e2530"/>
 <text x="111.85185185185185" y="408" text-anchor="middle" font-size="11">500</text>
-<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#272d39"/>
+<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#1e2530"/>
 <text x="155.55555555555554" y="408" text-anchor="middle" font-size="11">700</text>
-<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#272d39"/>
+<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#1e2530"/>
 <text x="199.25925925925924" y="408" text-anchor="middle" font-size="11">900</text>
-<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#272d39"/>
+<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#1e2530"/>
 <text x="264.8148148148148" y="408" text-anchor="middle" font-size="11">1200</text>
-<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#272d39"/>
+<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#1e2530"/>
 <text x="439.6296296296296" y="408" text-anchor="middle" font-size="11">2000</text>
-<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#272d39"/>
+<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#1e2530"/>
 <text x="658.1481481481482" y="408" text-anchor="middle" font-size="11">3000</text>
-<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#272d39"/>
+<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#1e2530"/>
 <text x="80" y="394.0" text-anchor="end" font-size="11">30</text>
-<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#272d39"/>
+<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#1e2530"/>
 <text x="80" y="330.0" text-anchor="end" font-size="11">49</text>
-<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#272d39"/>
+<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#1e2530"/>
 <text x="80" y="266.0" text-anchor="end" font-size="11">68</text>
-<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#272d39"/>
+<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#1e2530"/>
 <text x="80" y="202.0" text-anchor="end" font-size="11">87</text>
-<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#272d39"/>
+<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#1e2530"/>
 <text x="80" y="138.0" text-anchor="end" font-size="11">106</text>
-<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#272d39"/>
+<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#1e2530"/>
 <text x="80" y="74.0" text-anchor="end" font-size="11">125</text>
-<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#191d26" stroke-width="1"/>
+<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#1e2530" stroke-width="1"/>
 <text x="385.0" y="440" text-anchor="middle" font-size="13" font-weight="500">Chunk size (tokens)</text>
 <text x="25" y="230.0" text-anchor="middle" font-size="13" font-weight="500" transform="rotate(-90, 25, 230.0)">ITL p99 (ms per token)</text>
 <path d="M 111.85185185185185,366.53475014800415 L 155.55555555555554,367.80847538293585 L 199.25925925925924,363.20830871627425 L 264.8148148148148,368.43731253910033 L 439.6296296296296,354.0001208059601 L 658.1481481481482,341.882144252878" fill="none" stroke="#e67e22" stroke-width="2.5"/>
@@ -1424,38 +1466,38 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="900" height="460" fill="white"/>
 <text x="450.0" y="28" text-anchor="middle" font-size="18" font-weight="600">Completion Tokens per Chunk</text>
-<line x1="90" y1="390" x2="680" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90" y1="70" x2="90" y2="390" stroke="#272d39" stroke-width="1.5"/>
-<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#272d39"/>
+<line x1="90" y1="390" x2="680" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90" y1="70" x2="90" y2="390" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="111.85185185185185" y1="390" x2="111.85185185185185" y2="395" stroke="#1e2530"/>
 <text x="111.85185185185185" y="408" text-anchor="middle" font-size="11">500</text>
-<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#272d39"/>
+<line x1="155.55555555555554" y1="390" x2="155.55555555555554" y2="395" stroke="#1e2530"/>
 <text x="155.55555555555554" y="408" text-anchor="middle" font-size="11">700</text>
-<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#272d39"/>
+<line x1="199.25925925925924" y1="390" x2="199.25925925925924" y2="395" stroke="#1e2530"/>
 <text x="199.25925925925924" y="408" text-anchor="middle" font-size="11">900</text>
-<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#272d39"/>
+<line x1="264.8148148148148" y1="390" x2="264.8148148148148" y2="395" stroke="#1e2530"/>
 <text x="264.8148148148148" y="408" text-anchor="middle" font-size="11">1200</text>
-<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#272d39"/>
+<line x1="439.6296296296296" y1="390" x2="439.6296296296296" y2="395" stroke="#1e2530"/>
 <text x="439.6296296296296" y="408" text-anchor="middle" font-size="11">2000</text>
-<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#272d39"/>
+<line x1="658.1481481481482" y1="390" x2="658.1481481481482" y2="395" stroke="#1e2530"/>
 <text x="658.1481481481482" y="408" text-anchor="middle" font-size="11">3000</text>
-<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#272d39"/>
+<line x1="85" y1="390.0" x2="90" y2="390.0" stroke="#1e2530"/>
 <text x="80" y="394.0" text-anchor="end" font-size="11">250</text>
-<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#272d39"/>
+<line x1="90" y1="390.0" x2="680" y2="390.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="326.0" x2="90" y2="326.0" stroke="#1e2530"/>
 <text x="80" y="330.0" text-anchor="end" font-size="11">300</text>
-<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#272d39"/>
+<line x1="90" y1="326.0" x2="680" y2="326.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="262.0" x2="90" y2="262.0" stroke="#1e2530"/>
 <text x="80" y="266.0" text-anchor="end" font-size="11">350</text>
-<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#272d39"/>
+<line x1="90" y1="262.0" x2="680" y2="262.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="198.0" x2="90" y2="198.0" stroke="#1e2530"/>
 <text x="80" y="202.0" text-anchor="end" font-size="11">400</text>
-<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#272d39"/>
+<line x1="90" y1="198.0" x2="680" y2="198.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="134.0" x2="90" y2="134.0" stroke="#1e2530"/>
 <text x="80" y="138.0" text-anchor="end" font-size="11">450</text>
-<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#191d26" stroke-width="1"/>
-<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#272d39"/>
+<line x1="90" y1="134.0" x2="680" y2="134.0" stroke="#1e2530" stroke-width="1"/>
+<line x1="85" y1="70.0" x2="90" y2="70.0" stroke="#1e2530"/>
 <text x="80" y="74.0" text-anchor="end" font-size="11">500</text>
-<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#191d26" stroke-width="1"/>
+<line x1="90" y1="70.0" x2="680" y2="70.0" stroke="#1e2530" stroke-width="1"/>
 <text x="385.0" y="440" text-anchor="middle" font-size="13" font-weight="500">Chunk size (tokens)</text>
 <text x="25" y="230.0" text-anchor="middle" font-size="13" font-weight="500" transform="rotate(-90, 25, 230.0)">Completion tokens (mean)</text>
 <path d="M 111.85185185185185,186.33747323340475 L 155.55555555555554,170.44631578947366 L 199.25925925925924,142.47304347826088 L 264.8148148148148,117.0224875621891 L 439.6296296296296,149.24680272108847 L 658.1481481481482,120.22719999999998" fill="none" stroke="#e67e22" stroke-width="2.5"/>
@@ -1500,44 +1542,44 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 950 400" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="950" height="400" fill="white"/>
 <text x="475.0" y="28" text-anchor="middle" font-size="18" font-weight="600">GPU Temperature Over Time</text>
-<line x1="90" y1="335" x2="900" y2="335" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90" y1="65" x2="90" y2="335" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90.0" y1="335" x2="90.0" y2="340" stroke="#272d39"/>
+<line x1="90" y1="335" x2="900" y2="335" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90" y1="65" x2="90" y2="335" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90.0" y1="335" x2="90.0" y2="340" stroke="#1e2530"/>
 <text x="90.0" y="353" text-anchor="middle" font-size="11">0h</text>
-<line x1="184.55835476245295" y1="335" x2="184.55835476245295" y2="340" stroke="#272d39"/>
+<line x1="184.55835476245295" y1="335" x2="184.55835476245295" y2="340" stroke="#1e2530"/>
 <text x="184.55835476245295" y="353" text-anchor="middle" font-size="11">1h</text>
-<line x1="279.1167095249059" y1="335" x2="279.1167095249059" y2="340" stroke="#272d39"/>
+<line x1="279.1167095249059" y1="335" x2="279.1167095249059" y2="340" stroke="#1e2530"/>
 <text x="279.1167095249059" y="353" text-anchor="middle" font-size="11">2h</text>
-<line x1="373.67506428735885" y1="335" x2="373.67506428735885" y2="340" stroke="#272d39"/>
+<line x1="373.67506428735885" y1="335" x2="373.67506428735885" y2="340" stroke="#1e2530"/>
 <text x="373.67506428735885" y="353" text-anchor="middle" font-size="11">3h</text>
-<line x1="468.2334190498118" y1="335" x2="468.2334190498118" y2="340" stroke="#272d39"/>
+<line x1="468.2334190498118" y1="335" x2="468.2334190498118" y2="340" stroke="#1e2530"/>
 <text x="468.2334190498118" y="353" text-anchor="middle" font-size="11">4h</text>
-<line x1="562.7917738122646" y1="335" x2="562.7917738122646" y2="340" stroke="#272d39"/>
+<line x1="562.7917738122646" y1="335" x2="562.7917738122646" y2="340" stroke="#1e2530"/>
 <text x="562.7917738122646" y="353" text-anchor="middle" font-size="11">5h</text>
-<line x1="657.3501285747177" y1="335" x2="657.3501285747177" y2="340" stroke="#272d39"/>
+<line x1="657.3501285747177" y1="335" x2="657.3501285747177" y2="340" stroke="#1e2530"/>
 <text x="657.3501285747177" y="353" text-anchor="middle" font-size="11">6h</text>
-<line x1="751.9084833371707" y1="335" x2="751.9084833371707" y2="340" stroke="#272d39"/>
+<line x1="751.9084833371707" y1="335" x2="751.9084833371707" y2="340" stroke="#1e2530"/>
 <text x="751.9084833371707" y="353" text-anchor="middle" font-size="11">7h</text>
-<line x1="846.4668380996236" y1="335" x2="846.4668380996236" y2="340" stroke="#272d39"/>
+<line x1="846.4668380996236" y1="335" x2="846.4668380996236" y2="340" stroke="#1e2530"/>
 <text x="846.4668380996236" y="353" text-anchor="middle" font-size="11">8h</text>
-<line x1="941.0251928620764" y1="335" x2="941.0251928620764" y2="340" stroke="#272d39"/>
+<line x1="941.0251928620764" y1="335" x2="941.0251928620764" y2="340" stroke="#1e2530"/>
 <text x="941.0251928620764" y="353" text-anchor="middle" font-size="11">9h</text>
-<line x1="85" y1="335.0" x2="90" y2="335.0" stroke="#272d39"/>
+<line x1="85" y1="335.0" x2="90" y2="335.0" stroke="#1e2530"/>
 <text x="80" y="339.0" text-anchor="end" font-size="11">30</text>
 <line x1="90" y1="335.0" x2="900" y2="335.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="281.0" x2="90" y2="281.0" stroke="#272d39"/>
+<line x1="85" y1="281.0" x2="90" y2="281.0" stroke="#1e2530"/>
 <text x="80" y="285.0" text-anchor="end" font-size="11">43</text>
 <line x1="90" y1="281.0" x2="900" y2="281.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="227.0" x2="90" y2="227.0" stroke="#272d39"/>
+<line x1="85" y1="227.0" x2="90" y2="227.0" stroke="#1e2530"/>
 <text x="80" y="231.0" text-anchor="end" font-size="11">56</text>
 <line x1="90" y1="227.0" x2="900" y2="227.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="173.0" x2="90" y2="173.0" stroke="#272d39"/>
+<line x1="85" y1="173.0" x2="90" y2="173.0" stroke="#1e2530"/>
 <text x="80" y="177.0" text-anchor="end" font-size="11">69</text>
 <line x1="90" y1="173.0" x2="900" y2="173.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="119.0" x2="90" y2="119.0" stroke="#272d39"/>
+<line x1="85" y1="119.0" x2="90" y2="119.0" stroke="#1e2530"/>
 <text x="80" y="123.0" text-anchor="end" font-size="11">82</text>
 <line x1="90" y1="119.0" x2="900" y2="119.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="65.0" x2="90" y2="65.0" stroke="#272d39"/>
+<line x1="85" y1="65.0" x2="90" y2="65.0" stroke="#1e2530"/>
 <text x="80" y="69.0" text-anchor="end" font-size="11">95</text>
 <line x1="90" y1="65.0" x2="900" y2="65.0" stroke="#f5f5f5" stroke-width="1"/>
 <text x="495.0" y="380" text-anchor="middle" font-size="13" font-weight="500">Sweep elapsed time (hours)</text>
@@ -1555,44 +1597,44 @@ footer p{max-width:none;color:var(--muted)}
         <svg viewBox="0 0 950 400" xmlns="http://www.w3.org/2000/svg" style="font-family: 'DM Mono', monospace;">
 <rect width="950" height="400" fill="white"/>
 <text x="475.0" y="28" text-anchor="middle" font-size="18" font-weight="600">KV Cache Usage Over Time</text>
-<line x1="90" y1="335" x2="900" y2="335" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90" y1="65" x2="90" y2="335" stroke="#272d39" stroke-width="1.5"/>
-<line x1="90.0" y1="335" x2="90.0" y2="340" stroke="#272d39"/>
+<line x1="90" y1="335" x2="900" y2="335" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90" y1="65" x2="90" y2="335" stroke="#1e2530" stroke-width="1.5"/>
+<line x1="90.0" y1="335" x2="90.0" y2="340" stroke="#1e2530"/>
 <text x="90.0" y="353" text-anchor="middle" font-size="11">0h</text>
-<line x1="184.55835476245295" y1="335" x2="184.55835476245295" y2="340" stroke="#272d39"/>
+<line x1="184.55835476245295" y1="335" x2="184.55835476245295" y2="340" stroke="#1e2530"/>
 <text x="184.55835476245295" y="353" text-anchor="middle" font-size="11">1h</text>
-<line x1="279.1167095249059" y1="335" x2="279.1167095249059" y2="340" stroke="#272d39"/>
+<line x1="279.1167095249059" y1="335" x2="279.1167095249059" y2="340" stroke="#1e2530"/>
 <text x="279.1167095249059" y="353" text-anchor="middle" font-size="11">2h</text>
-<line x1="373.67506428735885" y1="335" x2="373.67506428735885" y2="340" stroke="#272d39"/>
+<line x1="373.67506428735885" y1="335" x2="373.67506428735885" y2="340" stroke="#1e2530"/>
 <text x="373.67506428735885" y="353" text-anchor="middle" font-size="11">3h</text>
-<line x1="468.2334190498118" y1="335" x2="468.2334190498118" y2="340" stroke="#272d39"/>
+<line x1="468.2334190498118" y1="335" x2="468.2334190498118" y2="340" stroke="#1e2530"/>
 <text x="468.2334190498118" y="353" text-anchor="middle" font-size="11">4h</text>
-<line x1="562.7917738122646" y1="335" x2="562.7917738122646" y2="340" stroke="#272d39"/>
+<line x1="562.7917738122646" y1="335" x2="562.7917738122646" y2="340" stroke="#1e2530"/>
 <text x="562.7917738122646" y="353" text-anchor="middle" font-size="11">5h</text>
-<line x1="657.3501285747177" y1="335" x2="657.3501285747177" y2="340" stroke="#272d39"/>
+<line x1="657.3501285747177" y1="335" x2="657.3501285747177" y2="340" stroke="#1e2530"/>
 <text x="657.3501285747177" y="353" text-anchor="middle" font-size="11">6h</text>
-<line x1="751.9084833371707" y1="335" x2="751.9084833371707" y2="340" stroke="#272d39"/>
+<line x1="751.9084833371707" y1="335" x2="751.9084833371707" y2="340" stroke="#1e2530"/>
 <text x="751.9084833371707" y="353" text-anchor="middle" font-size="11">7h</text>
-<line x1="846.4668380996236" y1="335" x2="846.4668380996236" y2="340" stroke="#272d39"/>
+<line x1="846.4668380996236" y1="335" x2="846.4668380996236" y2="340" stroke="#1e2530"/>
 <text x="846.4668380996236" y="353" text-anchor="middle" font-size="11">8h</text>
-<line x1="941.0251928620764" y1="335" x2="941.0251928620764" y2="340" stroke="#272d39"/>
+<line x1="941.0251928620764" y1="335" x2="941.0251928620764" y2="340" stroke="#1e2530"/>
 <text x="941.0251928620764" y="353" text-anchor="middle" font-size="11">9h</text>
-<line x1="85" y1="335.0" x2="90" y2="335.0" stroke="#272d39"/>
+<line x1="85" y1="335.0" x2="90" y2="335.0" stroke="#1e2530"/>
 <text x="80" y="339.0" text-anchor="end" font-size="11">0.00</text>
 <line x1="90" y1="335.0" x2="900" y2="335.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="281.0" x2="90" y2="281.0" stroke="#272d39"/>
+<line x1="85" y1="281.0" x2="90" y2="281.0" stroke="#1e2530"/>
 <text x="80" y="285.0" text-anchor="end" font-size="11">0.03</text>
 <line x1="90" y1="281.0" x2="900" y2="281.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="227.0" x2="90" y2="227.0" stroke="#272d39"/>
+<line x1="85" y1="227.0" x2="90" y2="227.0" stroke="#1e2530"/>
 <text x="80" y="231.0" text-anchor="end" font-size="11">0.06</text>
 <line x1="90" y1="227.0" x2="900" y2="227.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="173.0" x2="90" y2="173.0" stroke="#272d39"/>
+<line x1="85" y1="173.0" x2="90" y2="173.0" stroke="#1e2530"/>
 <text x="80" y="177.0" text-anchor="end" font-size="11">0.09</text>
 <line x1="90" y1="173.0" x2="900" y2="173.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="119.0" x2="90" y2="119.0" stroke="#272d39"/>
+<line x1="85" y1="119.0" x2="90" y2="119.0" stroke="#1e2530"/>
 <text x="80" y="123.0" text-anchor="end" font-size="11">0.12</text>
 <line x1="90" y1="119.0" x2="900" y2="119.0" stroke="#f5f5f5" stroke-width="1"/>
-<line x1="85" y1="65.0" x2="90" y2="65.0" stroke="#272d39"/>
+<line x1="85" y1="65.0" x2="90" y2="65.0" stroke="#1e2530"/>
 <text x="80" y="69.0" text-anchor="end" font-size="11">0.15</text>
 <line x1="90" y1="65.0" x2="900" y2="65.0" stroke="#f5f5f5" stroke-width="1"/>
 <text x="495.0" y="380" text-anchor="middle" font-size="13" font-weight="500">Sweep elapsed time (hours)</text>
@@ -1617,7 +1659,7 @@ footer p{max-width:none;color:var(--muted)}
     </div>
 
     <h3>The six-stage funnel</h3>
-    <p style="color:var(--ink-soft);max-width:74ch;margin-bottom:28px;font-size:.96rem">Each stage answered one question whose output fed the next. A model that fails any stage is eliminated from production consideration — regardless of how it performs on other stages.</p>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:28px;font-size:.96rem">Each stage answered one question whose output fed the next. A model that fails any stage is eliminated from production consideration — regardless of how it performs on other stages.</p>
 
     <div class="funnel">
 
@@ -1692,8 +1734,8 @@ footer p{max-width:none;color:var(--muted)}
         <div class="funnel-num">06</div>
         <div class="funnel-body">
           <div class="funnel-q">Integrated recommendation</div>
-          <div class="funnel-outcome" style="border-left-color:var(--teal)">
-            <span class="fo-label" style="color:var(--teal)">Recommendation</span>
+          <div class="funnel-outcome" style="border-left-color:var(--green)">
+            <span class="fo-label" style="color:var(--green)">Recommendation</span>
             <b>Model:</b> Llama 3.1 8B AWQ · <b>Chunk size:</b> 1,200 tokens · <b>Concurrency:</b> 12–24 (GPU-utilization sweet spot; quality flat across the range) · <b>Hardware:</b> Current single L4 is sufficient for the existing Illinois workload (~11,000 bills/week). National-scale expansion requires approximately 3× the current GPU capacity for steady-state, 7× for peak-burst. The methodology ports directly to new hardware — run the same 54-cell concurrency sweep and compare cell-by-cell.
           </div>
         </div>
@@ -1707,7 +1749,7 @@ footer p{max-width:none;color:var(--muted)}
     </div>
 
     <h3 style="margin-top:40px">Why not Qwen? Why not Mistral?</h3>
-    <p style="color:var(--ink-soft);max-width:74ch;margin-bottom:22px;font-size:.96rem">The recommendation is Llama not because the other models are bad, but because they each fail at a specific stage where Llama holds.</p>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:22px;font-size:.96rem">The recommendation is Llama not because the other models are bad, but because they each fail at a specific stage where Llama holds.</p>
 
     <div class="grid2">
       <div class="card">
@@ -1745,7 +1787,7 @@ footer p{max-width:none;color:var(--muted)}
           <p>Two things changed in this evaluation that together flipped the recommendation to Llama:</p>
           <p><b>Stack upgrade: Ollama → vLLM.</b> Ollama serves one request at a time and cannot expose per-stream TTFT, inter-token latency, prefill/decode decomposition, or real concurrency behavior. Moving to vLLM 0.6.6 made those measurements possible for the first time. Concurrency behavior — the most production-relevant dimension — was simply invisible before.</p>
           <p><b>Model upgrade: Llama 3.2 3B → Llama 3.1 8B.</b> The original comparison included Llama 3.2 3B alongside Mistral 7B and Qwen 2.5 7B. That is not a fair contemporary comparison — 3B vs 7-8B is a parameter-count mismatch, not a model-family comparison. Upgrading to Llama 3.1 8B for parameter parity was the right methodological choice. It also changed the answer: Llama 3.1 8B at 1,200 tokens now clearly leads on quality, where Llama 3.2 3B had been quality-comparable to Mistral at 500 tokens.</p>
-          <p>The lesson: the answer you get depends on the question you can ask. A better measurement stack asks better questions. <a href="REPORT_PLACEHOLDER.html" style="color:var(--accent)">The original March 2026 Ollama evaluation ↗</a> is available for direct comparison.</p>
+          <p>The lesson: the answer you get depends on the question you can ask. A better measurement stack asks better questions. <a href="vllm-original-evaluation.html" style="color:var(--accent)">The original March 2026 Ollama evaluation ↗</a> is available for direct comparison.</p>
         </div>
       </div>
 
@@ -2190,7 +2232,7 @@ footer p{max-width:none;color:var(--muted)}
 
 
     <h3 style="margin-top:32px">Experiment 2b — Qwen 3000 at its actual quality-best</h3>
-    <p style="color:var(--ink-soft);max-width:74ch;margin-bottom:18px;font-size:.96rem">The original concurrency sweep tested <code>qwen_500</code> because that was Qwen's apparent quality-best at the time. Exp 1b later confirmed <code>qwen_3000</code> as Qwen's actual quality-best. This follow-up sweep completes the picture.</p>
+    <p style="color:var(--text);max-width:74ch;margin-bottom:18px;font-size:.96rem">The original concurrency sweep tested <code>qwen_500</code> because that was Qwen's apparent quality-best at the time. Exp 1b later confirmed <code>qwen_3000</code> as Qwen's actual quality-best. This follow-up sweep completes the picture.</p>
 
     <div class="card" style="margin-bottom:18px">
       <h4>qwen_3000 concurrency profile — averaged across 3 repeats per cell</h4>
@@ -2508,25 +2550,25 @@ footer p{max-width:none;color:var(--muted)}
       <p><b>Measured sustained throughput:</b> 0.88 chunks/sec · 2.40 chunks/bill (real corpus) → <b>0.367 bills/sec effective</b></p>
 
       <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
-        <div style="background:var(--teal-bg);border:1px solid rgba(79,201,163,.25);border-radius:8px;padding:12px 16px">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:6px">● SLO PASS — Current production workload</div>
-          <p style="margin:0;font-size:.9rem;color:var(--ink-soft)">Workload: <b style="color:var(--ink)">11,079 bills/week (Illinois only)</b><br>
-          Required throughput: <b style="color:var(--ink)">0.179 bills/sec</b> (11,079 ÷ 604,800s/week)<br>
-          Measured throughput: <b style="color:var(--ink)">0.367 bills/sec</b><br>
-          Headroom: <b style="color:var(--teal)">2.05× above SLO threshold</b> — single L4 is sufficient with capacity to absorb session-to-session variance and co-resident workloads.</p>
+        <div style="background:var(--green-bg);border:1px solid rgba(93,191,138,.25);border-radius:8px;padding:12px 16px">
+          <div style="font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:6px">● SLO PASS — Current production workload</div>
+          <p style="margin:0;font-size:.9rem;color:var(--text)">Workload: <b style="color:var(--white)">11,079 bills/week (Illinois only)</b><br>
+          Required throughput: <b style="color:var(--white)">0.179 bills/sec</b> (11,079 ÷ 604,800s/week)<br>
+          Measured throughput: <b style="color:var(--white)">0.367 bills/sec</b><br>
+          Headroom: <b style="color:var(--green)">2.05× above SLO threshold</b> — single L4 is sufficient with capacity to absorb session-to-session variance and co-resident workloads.</p>
         </div>
 
-        <div style="background:var(--coral-bg);border:1px solid rgba(224,138,92,.25);border-radius:8px;padding:12px 16px">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--coral);margin-bottom:6px">✗ SLO FAIL — 50-state expansion target</div>
-          <p style="margin:0;font-size:.9rem;color:var(--ink-soft)">Workload: <b style="color:var(--ink)">75,000 bills/week (50-state peak)</b><br>
-          Required throughput: <b style="color:var(--ink)">1.157 bills/sec sustained · 2.41 bills/sec peak-burst</b><br>
-          Measured throughput: <b style="color:var(--ink)">0.367 bills/sec</b><br>
+        <div style="background:var(--coral-bg);border:1px solid rgba(192,122,110,.25);border-radius:8px;padding:12px 16px">
+          <div style="font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--coral);margin-bottom:6px">✗ SLO FAIL — 50-state expansion target</div>
+          <p style="margin:0;font-size:.9rem;color:var(--text)">Workload: <b style="color:var(--white)">75,000 bills/week (50-state peak)</b><br>
+          Required throughput: <b style="color:var(--white)">1.157 bills/sec sustained · 2.41 bills/sec peak-burst</b><br>
+          Measured throughput: <b style="color:var(--white)">0.367 bills/sec</b><br>
           Deficit: <b style="color:var(--coral)">3.16× below steady-state SLO · 6.57× below peak-burst SLO</b><br>
           Projected processing time at measured throughput: <b style="color:var(--coral)">~56.6 hours</b> against an 18-hour window.</p>
         </div>
       </div>
 
-      <p style="margin-top:14px;font-size:.9rem;color:var(--ink-soft)"><b>Capacity planning requirement to close the steady-state deficit:</b> minimum 3.16× throughput increase — achievable via horizontal scaling (~3 L4s in parallel) or vertical scaling (single A100-class GPU, which delivers ~3–4× the L4's inference throughput for this model class). Peak-burst compliance requires ~6.6× — ~7 L4s or H100-class hardware. These are now hardware procurement specifications derived from measurement, not estimates.</p>
+      <p style="margin-top:14px;font-size:.9rem;color:var(--text)"><b>Capacity planning requirement to close the steady-state deficit:</b> minimum 3.16× throughput increase — achievable via horizontal scaling (~3 L4s in parallel) or vertical scaling (single A100-class GPU, which delivers ~3–4× the L4's inference throughput for this model class). Peak-burst compliance requires ~6.6× — ~7 L4s or H100-class hardware. These are now hardware procurement specifications derived from measurement, not estimates.</p>
     </div>
   </div>
 </section>
@@ -2552,6 +2594,53 @@ footer p{max-width:none;color:var(--muted)}
         </div>
         <p style="margin-top:14px;font-size:.9rem;color:var(--muted)">Full per-chunk scoring with source text and model outputs: <a href="vllm-qualitative-review.html">Quality Review — Experiments 3 &amp; 3.5 ↗</a></p>
       </div>
+    </div>
+  </div>
+</section>
+<section id="optimization">
+  <div class="wrap">
+    <p class="secnum">09 <span class="slash">/</span> Optimization Paths</p>
+    <h2>Eliminated — but <em>not without recourse</em></h2>
+    <p class="sub">Each eliminated model failed at a specific, measurable stage. The telemetry tells us not just why each model failed, but what specific interventions would be required to rehabilitate it. This is performance engineering applied to model selection.</p>
+
+    <div class="callout" style="margin-top:0;margin-bottom:28px">
+      <p class="ct">◆ The principle</p>
+      <p>A model isn't categorically bad — it's bad at a specific operating point. The measurements tell us which knob to turn. Whether the cost of turning that knob is worth it is a separate, explicit decision. Documenting the path matters because the pipeline will evolve: a future workload change, hardware upgrade, or prompt improvement might make a previously-eliminated model viable.</p>
+    </div>
+
+    <div class="grid2">
+
+      <div class="card">
+        <h4 style="color:var(--coral)">Mistral 7B — eliminated at Stage 4 (concurrency)</h4>
+        <p><b>Root cause (measured):</b> KV cache head-of-line blocking. At chunk_size=3,000 each prompt occupies ~3,000 × 2 bytes × 32 layers of KV cache. At concurrency=8+, the L4's 22.5 GB VRAM cannot hold all in-flight KV states simultaneously, triggering preemption. Measured signal: p99 grows 5× (15s→74s), cliff between c=4 and c=8.</p>
+        <p style="margin-top:10px"><b>Optimization path 1 — Reduce chunk size to 2,000 tokens.</b> Our Exp 3.5 data shows mistral_2000 scores <em>higher</em> on quality (1.97 vs 1.82) than mistral_3000. Smaller chunks = smaller KV states = less cache pressure. Test: rerun concurrency sweep at chunk_size=2,000 and measure whether the p99 cliff moves out past c=16. If it does, Mistral becomes viable.</p>
+        <p style="margin-top:10px"><b>Optimization path 2 — vLLM swap space tuning.</b> <code>--swap-space</code> controls CPU RAM offload when VRAM KV cache fills. Increasing from the default 4 GB to 16+ GB may absorb the burst without blocking the queue. Test: run the concurrency sweep with <code>--swap-space 16</code> and compare p99 curves.</p>
+        <p style="margin-top:10px"><b>Optimization path 3 — Chunking strategy.</b> If the real corpus has a higher proportion of short bills (&lt;1,500 tokens), those bills never produce 3,000-token chunks and Mistral's KV issue never triggers. Measure corpus chunk-length distribution at chunk_size=2,000 and calculate what fraction of production traffic would hit the KV ceiling.</p>
+      </div>
+
+      <div class="card">
+        <h4 style="color:var(--coral)">Qwen 2.5 7B — eliminated at Stage 1 (quality) and Stage 3 (proxy)</h4>
+        <p><b>Root cause (measured):</b> Two distinct failure modes. (1) Off-section drift at chunk_size=3,000: the model anchors on adjacent bill sections, producing specific answers about the wrong content. (2) None-emission: qwen_3000 returns parse_status=OK with all 11 fields set to "None." — structurally valid but substantively empty. The parse-OK proxy actively misranks these configurations.</p>
+        <p style="margin-top:10px"><b>Optimization path 1 — Prompt engineering for None-emission.</b> The all-None failure is a prompt compliance failure, not a model capability failure. Adding explicit field-completion requirements ("every field must contain substantive extracted content; return 'not mentioned' rather than null") and two-shot examples of complete extractions may eliminate this failure mode. Test: rerun Exp 3.5 Pair 2 (Qwen 2000 vs 3000) with a v2 prompt and measure whether None-emission drops below 5%.</p>
+        <p style="margin-top:10px"><b>Optimization path 2 — chunk_size=2,000 as the operating point.</b> Exp 3.5 shows qwen_2000 scores 1.93 quality vs qwen_3000's 1.57 — the best Qwen quality observed. Running a full concurrency sweep at qwen_2000 would complete the picture: does qwen_2000's tighter window also improve parse-OK rate and eliminate the proxy-reliability problem? If parse-OK at qwen_2000 exceeds qwen_3000's 67.7%, the proxy becomes reliable for within-Qwen tuning.</p>
+        <p style="margin-top:10px"><b>ITL signal (measured):</b> Qwen's ITL p99 of 118ms vs Llama's 49ms indicates spiky decode behavior. This is likely caused by Qwen's tokenizer producing more variable-length outputs. Capping <code>max_tokens</code> at a lower value (e.g., 768 instead of 1,024) may stabilize ITL at the cost of occasionally truncating long responses.</p>
+      </div>
+
+      <div class="card">
+        <h4 style="color:var(--coral)">Qwen 2.5 14B — eliminated at Experiment 4 (quality + throughput)</h4>
+        <p><b>Root cause (measured):</b> Output budget pressure. At 5,000 input tokens + prompt overhead, insufficient token budget remains for complete 11-field JSON output. Evidence: 54% parse_partial, mean 1.2 missing fields, 0 failed extractions. The model is not failing — it is running out of output space.</p>
+        <p style="margin-top:10px"><b>Optimization path 1 — Increase max_tokens.</b> Current config: <code>max_tokens=1,024</code>. A complete 11-field extraction averages ~185 tokens at 7B and likely more at 14B. Increasing to 2,048 gives ~2× more output headroom. Test cost: roughly 40–60% slower per call (more decode steps). Run 3 cells at <code>max_tokens=2,048</code> and measure whether parse_partial drops below 20%.</p>
+        <p style="margin-top:10px"><b>Optimization path 2 — Reduce to chunk_size=2,000.</b> Smaller input = more output budget remaining. This is the same observation as for Qwen 7B: chunk_size=2,000 may be the sweet spot for all three eliminated models. At 2,000 tokens the 14B model has ~3,000 tokens of output headroom — more than enough for 11 fields. Test: rerun Exp 4 at chunk_size=2,000 with the existing qwen14b chunker config.</p>
+        <p style="margin-top:10px"><b>Throughput note:</b> Even if quality is fixed, 14B decode is inherently slower per token than 8B. The effective throughput ceiling at concurrency=4 is ~0.15–0.20 chunks/sec regardless of quality improvement. Unless decode speed improves with hardware, the 14B model will always be 2–3× slower than Llama — a trade-off that requires explicit justification.</p>
+      </div>
+
+      <div class="card">
+        <h4 style="color:var(--green)">The untested sweet spot — chunk_size=2,000</h4>
+        <p>All three eliminated models point to the same untested configuration: <b>chunk_size=2,000</b>. For Mistral it reduces KV cache pressure. For Qwen 7B it eliminates the off-section drift and proxy-reliability failures. For Qwen 14B it recovers output budget. The original sweep skipped from 1,200 to 2,000 and used 2,000 only as a mid-point, never as a primary operating point for any model.</p>
+        <p style="margin-top:10px">A focused 9-cell experiment — 3 eliminated models × chunk_size=2,000 × 3 repeats — would complete the picture for all three at once. If Mistral_2000 clears the p99 threshold and qwen_2000's proxy becomes reliable, the competitive landscape changes. The Llama recommendation likely holds, but the margin would be explicitly measured rather than inferred.</p>
+        <p style="margin-top:10px">This is Experiment 5 in the planned pipeline: targeted chunk_size=2,000 sweep, all three eliminated models, full concurrency characterization.</p>
+      </div>
+
     </div>
   </div>
 </section>
@@ -2589,69 +2678,69 @@ footer p{max-width:none;color:var(--muted)}
 <text x="500" y="50" font-family="'DM Mono',monospace" font-size="11" text-anchor="middle" fill="#6b7c91">All configurations at concurrency=4 · session 999995 · 50 bills</text>
 <text x="25" y="84" font-family="'DM Mono',monospace" font-size="10" letter-spacing="0.08em" text-transform="uppercase" fill="#6b7c91">PARSE-OK %</text>
 <text x="156" y="122" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#5bc8dc">llama31_1200</text>
-<rect x="160" y="104" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="104" width="629.0" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
-<text x="848" y="122" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">92.5%</text>
+<rect x="160" y="104" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="104" width="629.0" height="28" rx="3" fill="#5dbf8a" opacity="0.85"/>
+<text x="848" y="122" font-family="'DM Mono',monospace" font-size="11" fill="#5dbf8a" font-weight="600">92.5%</text>
 <text x="156" y="172" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_500</text>
-<rect x="160" y="154" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="154" width="425.7" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
-<text x="848" y="172" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">62.6%</text>
+<rect x="160" y="154" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="154" width="425.7" height="28" rx="3" fill="#3a8fc4" opacity="0.85"/>
+<text x="848" y="172" font-family="'DM Mono',monospace" font-size="11" fill="#3a8fc4" font-weight="600">62.6%</text>
 <text x="156" y="222" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_3000</text>
-<rect x="160" y="204" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="204" width="460.4" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
-<text x="848" y="222" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">67.7%</text>
+<rect x="160" y="204" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="204" width="460.4" height="28" rx="3" fill="#3a8fc4" opacity="0.85"/>
+<text x="848" y="222" font-family="'DM Mono',monospace" font-size="11" fill="#3a8fc4" font-weight="600">67.7%</text>
 <text x="156" y="272" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c07a6e">mistral_3000</text>
-<rect x="160" y="254" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="254" width="489.6" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
-<text x="848" y="272" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">72.0%</text>
-<text x="156" y="322" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c9a558">qwen14b_5000</text>
-<rect x="160" y="304" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="304" width="306.0" height="28" rx="3" fill="#d97359" opacity="0.85"/>
-<text x="848" y="322" font-family="'DM Mono',monospace" font-size="11" fill="#d97359" font-weight="600">45.0%</text>
+<rect x="160" y="254" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="254" width="489.6" height="28" rx="3" fill="#3a8fc4" opacity="0.85"/>
+<text x="848" y="272" font-family="'DM Mono',monospace" font-size="11" fill="#3a8fc4" font-weight="600">72.0%</text>
+<text x="156" y="322" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#3a8fc4">qwen14b_5000</text>
+<rect x="160" y="304" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="304" width="306.0" height="28" rx="3" fill="#c07a6e" opacity="0.85"/>
+<text x="848" y="322" font-family="'DM Mono',monospace" font-size="11" fill="#c07a6e" font-weight="600">45.0%</text>
 <text x="25" y="382" font-family="'DM Mono',monospace" font-size="10" letter-spacing="0.08em" text-transform="uppercase" fill="#6b7c91">THROUGHPUT (CHUNKS/SEC)</text>
 <text x="156" y="420" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#5bc8dc">llama31_1200</text>
-<rect x="160" y="402" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="402" width="680" height="28" rx="3" fill="#0f1318"/>
 <rect x="160" y="402" width="229.8" height="28" rx="3" fill="#5bc8dc" opacity="0.85"/>
 <text x="848" y="420" font-family="'DM Mono',monospace" font-size="11" fill="#5bc8dc" font-weight="600">0.338</text>
 <text x="156" y="470" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_500</text>
-<rect x="160" y="452" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="452" width="680" height="28" rx="3" fill="#0f1318"/>
 <rect x="160" y="452" width="480.1" height="28" rx="3" fill="#6aaa7a" opacity="0.85"/>
 <text x="848" y="470" font-family="'DM Mono',monospace" font-size="11" fill="#6aaa7a" font-weight="600">0.706</text>
 <text x="156" y="520" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_3000</text>
-<rect x="160" y="502" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="502" width="680" height="28" rx="3" fill="#0f1318"/>
 <rect x="160" y="502" width="286.3" height="28" rx="3" fill="#6aaa7a" opacity="0.85"/>
 <text x="848" y="520" font-family="'DM Mono',monospace" font-size="11" fill="#6aaa7a" font-weight="600">0.421</text>
 <text x="156" y="570" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c07a6e">mistral_3000</text>
-<rect x="160" y="552" width="680" height="28" rx="3" fill="#0e1016"/>
+<rect x="160" y="552" width="680" height="28" rx="3" fill="#0f1318"/>
 <rect x="160" y="552" width="144.2" height="28" rx="3" fill="#c07a6e" opacity="0.85"/>
 <text x="848" y="570" font-family="'DM Mono',monospace" font-size="11" fill="#c07a6e" font-weight="600">0.212</text>
-<text x="156" y="620" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c9a558">qwen14b_5000</text>
-<rect x="160" y="602" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="602" width="106.1" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
-<text x="848" y="620" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">0.156</text>
+<text x="156" y="620" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#3a8fc4">qwen14b_5000</text>
+<rect x="160" y="602" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="602" width="106.1" height="28" rx="3" fill="#3a8fc4" opacity="0.85"/>
+<text x="848" y="620" font-family="'DM Mono',monospace" font-size="11" fill="#3a8fc4" font-weight="600">0.156</text>
 <text x="25" y="680" font-family="'DM Mono',monospace" font-size="10" letter-spacing="0.08em" text-transform="uppercase" fill="#6b7c91">P99 LATENCY (SECONDS)</text>
 <text x="161.5" y="680" font-family="'DM Mono',monospace" font-size="9" fill="#6b7c91"> (lower is better)</text>
 <text x="156" y="718" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#5bc8dc">llama31_1200</text>
-<rect x="160" y="700" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="700" width="181.0" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
-<text x="848" y="718" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">21.3s</text>
+<rect x="160" y="700" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="700" width="181.0" height="28" rx="3" fill="#5dbf8a" opacity="0.85"/>
+<text x="848" y="718" font-family="'DM Mono',monospace" font-size="11" fill="#5dbf8a" font-weight="600">21.3s</text>
 <text x="156" y="768" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_500</text>
-<rect x="160" y="750" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="750" width="83.3" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
-<text x="848" y="768" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">9.8s</text>
+<rect x="160" y="750" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="750" width="83.3" height="28" rx="3" fill="#5dbf8a" opacity="0.85"/>
+<text x="848" y="768" font-family="'DM Mono',monospace" font-size="11" fill="#5dbf8a" font-weight="600">9.8s</text>
 <text x="156" y="818" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#6aaa7a">qwen_3000</text>
-<rect x="160" y="800" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="800" width="125.8" height="28" rx="3" fill="#4fc9a3" opacity="0.85"/>
-<text x="848" y="818" font-family="'DM Mono',monospace" font-size="11" fill="#4fc9a3" font-weight="600">14.8s</text>
+<rect x="160" y="800" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="800" width="125.8" height="28" rx="3" fill="#5dbf8a" opacity="0.85"/>
+<text x="848" y="818" font-family="'DM Mono',monospace" font-size="11" fill="#5dbf8a" font-weight="600">14.8s</text>
 <text x="156" y="868" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c07a6e">mistral_3000</text>
-<rect x="160" y="850" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="850" width="629.8" height="28" rx="3" fill="#d97359" opacity="0.85"/>
-<text x="848" y="868" font-family="'DM Mono',monospace" font-size="11" fill="#d97359" font-weight="600">74.1s</text>
-<text x="156" y="918" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#c9a558">qwen14b_5000</text>
-<rect x="160" y="900" width="680" height="28" rx="3" fill="#0e1016"/>
-<rect x="160" y="900" width="283.9" height="28" rx="3" fill="#c9a558" opacity="0.85"/>
-<text x="848" y="918" font-family="'DM Mono',monospace" font-size="11" fill="#c9a558" font-weight="600">33.4s</text>
-<text x="500" y="572" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle" fill="#4fc9a3">◆ Production recommendation: llama31_1200 — leads on quality, throughput efficiency, and proxy reliability</text>
+<rect x="160" y="850" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="850" width="629.8" height="28" rx="3" fill="#c07a6e" opacity="0.85"/>
+<text x="848" y="868" font-family="'DM Mono',monospace" font-size="11" fill="#c07a6e" font-weight="600">74.1s</text>
+<text x="156" y="918" font-family="'DM Mono',monospace" font-size="11" text-anchor="end" fill="#3a8fc4">qwen14b_5000</text>
+<rect x="160" y="900" width="680" height="28" rx="3" fill="#0f1318"/>
+<rect x="160" y="900" width="283.9" height="28" rx="3" fill="#3a8fc4" opacity="0.85"/>
+<text x="848" y="918" font-family="'DM Mono',monospace" font-size="11" fill="#3a8fc4" font-weight="600">33.4s</text>
+<text x="500" y="572" font-family="'DM Mono',monospace" font-size="10" text-anchor="middle" fill="#5dbf8a">◆ Production recommendation: llama31_1200 — leads on quality, throughput efficiency, and proxy reliability</text>
 </svg>
     </div>
 
@@ -2688,7 +2777,7 @@ footer p{max-width:none;color:var(--muted)}
       </div>
     </div>
 
-    <p style="color:var(--ink-soft);max-width:74ch;font-size:.95rem">At 0.156 bills/sec, processing 75,000 bills would require ~134 hours — 7.4× the available 18-hour window, and more than twice the gap Llama faces. The 14B model is eliminated on both quality and throughput grounds.</p>
+    <p style="color:var(--text);max-width:74ch;font-size:.95rem">At 0.156 bills/sec, processing 75,000 bills would require ~134 hours — 7.4× the available 18-hour window, and more than twice the gap Llama faces. The 14B model is eliminated on both quality and throughput grounds.</p>
 
     <h3 style="margin-top:32px">Why chunking + smaller model wins</h3>
     <div class="callout teal">
@@ -2709,9 +2798,9 @@ footer p{max-width:none;color:var(--muted)}
       <tbody>
         <tr class="highlight">
           <td><code>llama31_1200</code></td><td>Llama 3.1 8B</td><td>1,200</td>
-          <td style="color:var(--teal)"><b>92.5%</b></td><td>0.338</td><td>6.7s</td><td>21s</td>
-          <td style="color:var(--teal)"><b>1.70</b></td>
-          <td style="color:var(--teal)"><b>✓ PRODUCTION</b></td>
+          <td style="color:var(--green)"><b>92.5%</b></td><td>0.338</td><td>6.7s</td><td>21s</td>
+          <td style="color:var(--green)"><b>1.70</b></td>
+          <td style="color:var(--green)"><b>✓ PRODUCTION</b></td>
         </tr>
         <tr>
           <td><code>mistral_3000</code></td><td>Mistral 7B</td><td>3,000</td>
@@ -2733,7 +2822,7 @@ footer p{max-width:none;color:var(--muted)}
         </tr>
         <tr>
           <td><code>qwen14b_5000</code></td><td>Qwen 2.5 14B</td><td>5,000</td>
-          <td style="color:var(--s0)"><b>45.0%</b></td><td>0.156</td><td>24.9s</td><td>33.4s</td>
+          <td style="color:var(--coral)"><b>45.0%</b></td><td>0.156</td><td>24.9s</td><td>33.4s</td>
           <td>TBD*</td>
           <td style="color:var(--coral)">✗ worst quality tested</td>
         </tr>

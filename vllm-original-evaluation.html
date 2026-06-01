@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Original Model Selection Evaluation · March 2026 · Tayler Erbe</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b10;
+  --surface: #0f1318;
+  --surface2: #161c24;
+  --border: #1e2530;
+  --accent: #5bc8dc;
+  --accent2: #3a8fc4;
+  --accent3: #c07a6e;
+  --accent-dim: rgba(91,200,220,0.12);
+  --text: #d8e2ed;
+  --muted: #6b7c91;
+  --muted2: #3a4556;
+  --white: #eef3f8;
+  --amber: #3a8fc4;
+  --amber-bg: rgba(58,143,196,0.10);
+  --teal: #5dbf8a;
+  --teal-bg: rgba(93,191,138,0.10);
+  --coral: #c07a6e;
+  --coral-bg: rgba(192,122,110,0.10);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; font-size: 16px; line-height: 1.6; }
+body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; opacity: 0.4; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--white); }
+code { font-family: 'DM Mono', monospace; font-size: .84em; background: var(--surface2); padding: 2px 6px; border-radius: 3px; color: var(--accent); }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; background: rgba(8,11,16,0.90); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+.nav-right { display: flex; align-items: center; gap: 1.5rem; }
+.nav-badge { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber); padding: 0.3rem 0.8rem; }
+.nav-link { font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted); }
+.nav-link:hover { color: var(--text); }
+
+.hero { padding: 7rem 3rem 4rem; background: var(--bg); border-bottom: 1px solid var(--border); }
+.hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+.hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--amber); }
+.hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.0; color: var(--white); letter-spacing: 0.01em; text-transform: uppercase; margin-bottom: 1.25rem; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
+.hero-desc strong { color: var(--text); }
+
+.verdict-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--amber); padding: 1.75rem 2rem; margin-bottom: 2rem; display: flex; gap: 2.5rem; flex-wrap: wrap; align-items: flex-start; }
+.verdict-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.5rem; }
+.verdict-main { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--white); margin-bottom: 0.25rem; }
+.verdict-sub { font-size: 0.88rem; color: var(--muted); max-width: 50ch; line-height: 1.6; }
+
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.stat-card { background: var(--surface); padding: 1.5rem; }
+.stat-icon { font-size: 0.6rem; color: var(--accent); margin-bottom: 0.6rem; }
+.stat-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+.stat-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); margin-bottom: 0.3rem; }
+.stat-sub { font-size: 0.78rem; color: var(--muted); }
+
+section { padding: 4rem 3rem; }
+.section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 2.5rem; }
+.section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+.section-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.6rem, 2.5vw, 2.2rem); color: var(--white); }
+.section-line { flex: 1; height: 1px; background: var(--border); }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+
+.card { background: var(--surface); border: 1px solid var(--border); padding: 1.75rem; }
+.card h4 { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: var(--white); margin-bottom: 0.75rem; }
+.card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; margin-bottom: 0.75rem; }
+.card p:last-child { margin-bottom: 0; }
+.card strong { color: var(--text); }
+
+.callout { padding: 1.25rem 1.5rem; border-left: 3px solid var(--accent); background: var(--surface); margin: 1rem 0; }
+.callout.amber { border-left-color: var(--amber); }
+.callout.teal { border-left-color: var(--teal); }
+.callout.coral { border-left-color: var(--coral); }
+.callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+.callout.amber .callout-label { color: var(--amber); }
+.callout.teal .callout-label { color: var(--teal); }
+.callout.coral .callout-label { color: var(--coral); }
+.callout p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; margin: 0; }
+.callout strong { color: var(--text); }
+
+.escalation { display: flex; flex-direction: column; gap: 0; }
+.esc-step { display: grid; grid-template-columns: 3rem 1fr; gap: 1.25rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
+.esc-step:last-child { border-bottom: none; }
+.esc-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.75rem; color: var(--muted2); line-height: 1; padding-top: 2px; }
+.esc-body h4 { font-family: 'DM Mono', monospace; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em; color: var(--white); margin-bottom: 0.3rem; }
+.esc-meta { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--amber); margin-bottom: 0.5rem; }
+.esc-body p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; max-width: none; margin: 0; }
+
+.result-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 1rem 0; }
+.result-table th, .result-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+.result-table th { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: var(--surface); font-weight: 400; }
+.result-table td { color: var(--muted); }
+.result-table tr.winner td { color: var(--text); background: var(--surface2); }
+.td-hi { color: var(--teal) !important; font-weight: 500; }
+.td-lo { color: var(--coral) !important; }
+
+.limitation { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--muted2); padding: 1.5rem; margin-bottom: 1rem; }
+.limitation h4 { font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.6rem; }
+.limitation p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; max-width: none; margin: 0; }
+.limitation strong { color: var(--text); }
+
+.superseded-box { background: var(--coral-bg); border: 1px solid rgba(192,122,110,0.25); padding: 2rem; margin: 1.5rem 0; }
+.sup-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); margin-bottom: 1rem; }
+.sup-body p { font-size: 0.92rem; color: var(--muted); line-height: 1.75; margin-bottom: 1rem; }
+.sup-body p:last-child { margin-bottom: 0; }
+.sup-body strong { color: var(--text); }
+
+footer { padding: 1.5rem 3rem; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+footer p { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--muted2); }
+
+@media(max-width:900px){
+  nav { padding: 1rem 1.5rem; }
+  .hero { padding: 6rem 1.5rem 3rem; }
+  section { padding: 3rem 1.5rem; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  footer { padding: 1rem 1.5rem; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">T.Erbe</a>
+  <div class="nav-right">
+    <span class="nav-badge">Superseded · March 2026</span>
+    <a href="vllm-inference-throughput-evaluation.html" class="nav-link">← Current Evaluation ↗</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Original Evaluation · March 2026 · Superseded by vLLM Re-evaluation May 2026</div>
+  <h1>Legislative Pipeline — <em>Original</em> Model Selection</h1>
+  <p class="hero-desc">The first evidence-based model selection before a 155-hour unattended production run on 11,673 Illinois bills. Ollama backend, single inference stream, three candidate models, five chunk sizes. <strong>This evaluation selected Mistral 7B at 500 tokens.</strong> The May 2026 vLLM re-evaluation later reversed that recommendation — read below for exactly why, and why the original call was correct given what was measurable at the time.</p>
+
+  <div class="verdict-box">
+    <div>
+      <div class="verdict-label">Original decision · March 2026</div>
+      <div class="verdict-main">Mistral 7B · 500-token chunks · Ollama</div>
+    </div>
+    <div class="verdict-sub">Highest parse-OK in the 15-cell grid (54.9%). Most stable cross-configuration variance (±0.10). Zero EMPTY parses at 500 tokens. The correct call given the available measurement stack.</div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">15</div><div class="stat-label">Grid cells</div><div class="stat-sub">3 models × 5 chunk sizes</div></div>
+    <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">~15h</div><div class="stat-label">Sweep runtime</div><div class="stat-sub">Unattended, single GPU</div></div>
+    <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">40</div><div class="stat-label">Chunks scored</div><div class="stat-sub">Blind rubric review</div></div>
+    <div class="stat-card"><div class="stat-icon">◆</div><div class="stat-num">54.9%</div><div class="stat-label">Winning parse-OK</div><div class="stat-sub">Mistral @ 500 tokens</div></div>
+  </div>
+</div>
+
+<section style="background:var(--surface); border-bottom:1px solid var(--border)">
+  <div class="section-header">
+    <span class="section-tag">01 / Context</span>
+    <span class="section-title">A production decision that needed evidence</span>
+    <span class="section-line"></span>
+  </div>
+  <div class="grid2">
+    <div>
+      <p style="font-size:1rem;color:var(--muted);line-height:1.8;margin-bottom:1rem">The production run was estimated at <strong>155 hours of unattended, sequential inference on a single GPU.</strong> A wrong model choice is not a quick re-run — it is a week of compute and a corpus of low-quality extractions. The decision had to be made on evidence, not on a smoke test.</p>
+      <p style="font-size:1rem;color:var(--muted);line-height:1.8;margin-bottom:1.25rem">Three candidate models were evaluated across five chunk sizes (500–2,800 tokens): <strong>Mistral 7B Instruct v0.3</strong>, <strong>Qwen 2.5 7B</strong>, and <strong>Llama 3.2 3B</strong>.</p>
+      <div class="callout amber">
+        <div class="callout-label">◆ The Llama comparison note</div>
+        <p>This evaluation used <strong>Llama 3.2 3B</strong> — a 3-billion parameter model — against 7B-class models. The May 2026 re-evaluation upgraded to <strong>Llama 3.1 8B</strong> for parameter parity. That upgrade, combined with the vLLM migration, changed Llama's ranking from last to first by 20+ percentage points. The original evaluation was not wrong — it was limited by the comparison set available at the time.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h4>System under test</h4>
+      <p><strong>Hardware:</strong> Single NVIDIA L4, 23 GB VRAM. One GPU, one inference process — no horizontal scale-out.</p>
+      <p><strong>Backend:</strong> Ollama — one request at a time, no continuous batching. TTFT and ITL not measurable on Ollama. This became a documented limitation and motivated the vLLM migration.</p>
+      <p><strong>Pipeline:</strong> Bronze (ingest) → Silver (chunk → extract) → Gold (standardize). Each config writes to a profile-isolated Silver path — no shared state between cells.</p>
+      <p><strong>Idempotency:</strong> Extractor flushes in batches and resumes after a kill — a precondition for multi-night unattended runs.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg)">
+  <div class="section-header">
+    <span class="section-tag">02 / Methodology</span>
+    <span class="section-title">Escalating workload characterization</span>
+    <span class="section-line"></span>
+  </div>
+  <p style="font-size:0.95rem;color:var(--muted);max-width:70ch;margin-bottom:2rem">Not one experiment — a deliberate escalation. Each stage scoped to answer a question the previous stage raised. You don't spend a 15-hour run on a question a 10-minute run can answer.</p>
+  <div class="escalation">
+    <div class="esc-step">
+      <div class="esc-num">01</div>
+      <div class="esc-body">
+        <h4>Smoke test — 5 bills</h4>
+        <div class="esc-meta">Confirm harness runs end to end · not a measurement</div>
+        <p>Pointed at Qwen — the result was later overturned by a larger sample. This is why smoke tests don't make model decisions.</p>
+      </div>
+    </div>
+    <div class="esc-step">
+      <div class="esc-num">02</div>
+      <div class="esc-body">
+        <h4>50-bill grid — 3 × 3 cells</h4>
+        <div class="esc-meta">First real workload characterization</div>
+        <p>Model ranking flipped with 10× the sample. Mistral overtook Qwen — a textbook case for why you need a meaningful sample before drawing conclusions.</p>
+      </div>
+    </div>
+    <div class="esc-step">
+      <div class="esc-num">03</div>
+      <div class="esc-body">
+        <h4>Thorough sweep — 15 cells · ~15 hours</h4>
+        <div class="esc-meta">3 models × 5 chunk sizes · 2 repeats · warmup phase</div>
+        <p>Ran unattended over a weekend. Warmup phase excluded cold-start bias. This is the primary dataset for the decision.</p>
+      </div>
+    </div>
+    <div class="esc-step">
+      <div class="esc-num">04</div>
+      <div class="esc-body">
+        <h4>Qualitative review — 40 chunks scored</h4>
+        <div class="esc-meta">Blind rubric · 0–2 on Accuracy / Specificity / Completeness</div>
+        <p>Blind to parse status — a structurally partial parse with strong substance outscores a clean parse with shallow answers. Measures whether the model understood the bill, not just whether it produced valid JSON.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border)">
+  <div class="section-header">
+    <span class="section-tag">03 / Results</span>
+    <span class="section-title">Quantitative and qualitative findings</span>
+    <span class="section-line"></span>
+  </div>
+
+  <h3 style="font-family:'DM Mono',monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem">Parse-OK rate — 15-cell grid</h3>
+  <table class="result-table">
+    <thead><tr><th>Model</th><th>500 tok</th><th>700 tok</th><th>900 tok</th><th>1200 tok</th><th>2800 tok</th><th>Peak</th></tr></thead>
+    <tbody>
+      <tr class="winner">
+        <td><strong>Mistral 7B</strong></td>
+        <td class="td-hi">54.9%</td><td>~48%</td><td>~42%</td><td>~35%</td><td class="td-lo">~8%</td>
+        <td class="td-hi">54.9% @ 500</td>
+      </tr>
+      <tr>
+        <td>Qwen 2.5 7B</td>
+        <td>~38%</td><td>~44%</td><td class="td-hi">~52%</td><td>~35%</td><td class="td-lo">~10%</td>
+        <td>~52% @ 900</td>
+      </tr>
+      <tr>
+        <td>Llama 3.2 3B</td>
+        <td>~28%</td><td>~25%</td><td>~22%</td><td>~18%</td><td class="td-lo">~5%</td>
+        <td>~28% @ 500</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:.8rem;color:var(--muted2);margin-top:.5rem;margin-bottom:1.5rem">Approximate values from evaluation report. The 2,800-token collapse was model-independent — all three lost 10–11 of 15 fields with 60–67% EMPTY parse rates.</p>
+
+  <div class="callout amber" style="margin-bottom:2rem">
+    <div class="callout-label">◆ The chunk-size cliff</div>
+    <p>Every model collapses past ~2,000 tokens. At 2,800 tokens, EMPTY-parse rates hit 60–67% across all models. <strong>Because the degradation is model-independent, the chunk-size decision is separable from the model decision</strong> — a property of 7B-class models on dense legal text at long context, not any one model's quirk.</p>
+  </div>
+
+  <h3 style="font-family:'DM Mono',monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem">Qualitative rubric review</h3>
+  <table class="result-table" style="margin-bottom:1.5rem">
+    <thead><tr><th>Model</th><th>Chunk size</th><th>Overall (0–2)</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Qwen 2.5 7B</td><td>900</td><td class="td-hi">1.87</td><td>Highest single score in review</td></tr>
+      <tr class="winner"><td><strong>Mistral 7B</strong></td><td>500</td><td class="td-hi">1.68</td><td>Winner at 500 tokens; lowest variance — decision basis</td></tr>
+      <tr><td>Mistral 7B</td><td>900</td><td>1.58</td><td>Close second</td></tr>
+      <tr><td>Llama 3.2 3B</td><td>500</td><td class="td-lo">~1.2</td><td>Last; recurring policy-domain mis-tag</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Mistral — stability winner</h4>
+      <p>Cross-configuration variance: <strong>±0.10 between chunk sizes</strong>. No catastrophic failure mode. No saturation signature at any chunk size. For a 155-hour unattended run on a shifting corpus, predictability was weighted above peak score.</p>
+    </div>
+    <div class="card">
+      <h4>Qwen — peak quality, fragile</h4>
+      <p>Peak score 1.87 at chunk_size=900 but cross-configuration variance of <strong>±0.35</strong> — 3.5× more fragile than Mistral. Known "None." failure mode at certain chunk sizes. Retained as a candidate for later revisit.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg)">
+  <div class="section-header">
+    <span class="section-tag">04 / Infrastructure</span>
+    <span class="section-title">USE method — GPU resource analysis</span>
+    <span class="section-line"></span>
+  </div>
+  <p style="font-size:.95rem;color:var(--muted);max-width:70ch;margin-bottom:1.5rem">Utilization, Saturation, Errors applied to the L4 GPU. USE characterizes infrastructure health — not output quality. Separate axes.</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Utilization</h4>
+      <p>L4 ran effectively saturated on a single inference stream. Pre-flight checks confirmed 0% idle utilization before each run. <strong>The concurrency headroom a single stream leaves unmeasured was the primary motivation for the vLLM migration.</strong></p>
+    </div>
+    <div class="card">
+      <h4>Saturation — one textbook case</h4>
+      <p>The <strong>Qwen 2.5 × 1,200-token cell</strong> is a textbook saturation signature: p99 latency 137s vs 13–16s for healthy cells, throughput collapsed 7–9×, 32 of 165 chunks lost. Reproduced three times. p99 detaching from median while throughput collapses = work arriving faster than the resource can drain it.</p>
+    </div>
+    <div class="card">
+      <h4>Errors</h4>
+      <p>Outside the Qwen 1,200-token saturation cell, errors were dominated by parse failures, not crashes. Parse status (OK / PARTIAL / EMPTY) was promoted to a first-class signal so this class of error is counted, not absorbed.</p>
+    </div>
+    <div class="card">
+      <h4>What Ollama could not expose</h4>
+      <p>TTFT, ITL, KV cache utilization, and per-stream decode throughput were not measurable on Ollama's single-stream architecture. These metrics — used extensively in the May 2026 vLLM evaluation — were explicitly flagged as a known limitation at evaluation time.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border)">
+  <div class="section-header">
+    <span class="section-tag">05 / Limitations</span>
+    <span class="section-title">What this evaluation did not establish</span>
+    <span class="section-line"></span>
+  </div>
+  <p style="font-size:.95rem;color:var(--muted);max-width:70ch;margin-bottom:1.5rem">A characterization is only as credible as its statement of what it did not prove.</p>
+  <div class="limitation">
+    <h4>Empty inference fields — uniform across all models</h4>
+    <p>Several fields came back empty for every model at every chunk size. A uniform failure points at the prompt or parser, not any model. <strong>Flagged as the highest-value pre-production action item.</strong> The May 2026 evaluation refined the extraction schema to 15 fields with clearer separation between binary and substantive fields.</p>
+  </div>
+  <div class="limitation">
+    <h4>Single-stream, single-GPU — concurrency never exercised</h4>
+    <p>Throughput numbers from this evaluation are a <strong>valid floor, not a capacity model.</strong> The May 2026 concurrency sweep found that vLLM at c=24 delivers 9× Ollama's throughput — a gain completely invisible here. Mistral's p99 explosion under concurrency (15s → 74s) was also invisible on Ollama.</p>
+  </div>
+  <div class="limitation">
+    <h4>Parameter-count mismatch in the Llama comparison</h4>
+    <p>This evaluation compared Llama 3.2 <strong>3B</strong> against Mistral and Qwen at <strong>7B</strong>. A 3B model finishing behind 7B models is expected and should not be interpreted as a statement about the Llama model family. When May 2026 upgraded to Llama 3.1 <strong>8B</strong> for parameter parity, Llama won by 37+ percentage points.</p>
+  </div>
+  <div class="limitation">
+    <h4>No ground-truth labels</h4>
+    <p>Rubric scores are expert judgments, not measurements against a gold standard. The May 2026 evaluation addressed this with two independent Opus 4.8 passes (high effort then max effort), finding 60/60 agreement and 0 revisions.</p>
+  </div>
+</section>
+
+<section style="background:var(--bg)">
+  <div class="section-header">
+    <span class="section-tag">06 / What Changed</span>
+    <span class="section-title">Why the May 2026 evaluation reversed the recommendation</span>
+    <span class="section-line"></span>
+  </div>
+  <div class="superseded-box">
+    <div class="sup-label">◆ Superseded — May 2026 vLLM Re-evaluation</div>
+    <div class="sup-body">
+      <p><strong>Change 1 — Backend: Ollama → vLLM.</strong> Ollama cannot expose per-stream TTFT, ITL, KV cache utilization, or real concurrency behavior. Moving to vLLM 0.6.6 made those measurements possible for the first time. The most consequential discovery: Mistral's p99 latency grows 5× under concurrency (15s → 74s), driven by KV cache head-of-line blocking from 3,000-token prompts. This disqualifying failure mode was completely invisible to the Ollama evaluation.</p>
+      <p><strong>Change 2 — Model: Llama 3.2 3B → Llama 3.1 8B.</strong> Upgrading to a parameter-parity model changed the answer. Llama 3.1 8B at chunk_size=1,200 achieves 92.5% parse-OK — 37.6pp above Mistral's original winning score of 54.9%. The original evaluation was not wrong to rank Llama last — a 3B model losing to 7B models is expected. It was wrong to draw conclusions about the Llama family from that result.</p>
+      <p>Neither change was a methodology failure — both were resource constraints at evaluation time. The lesson: <strong>the answer you get depends on the question you can ask, and the question you can ask depends on your measurement stack.</strong></p>
+    </div>
+  </div>
+  <div class="callout teal">
+    <div class="callout-label">● Full current evaluation</div>
+    <p>The complete May 2026 vLLM evaluation — six experiments, 126 cells, qualitative review, SLO analysis — is documented in the <a href="vllm-inference-throughput-evaluation.html">main case study ↗</a>. Current recommendation: <strong>Llama 3.1 8B AWQ at chunk_size=1,200, concurrency=12–24.</strong></p>
+  </div>
+</section>
+
+<footer>
+  <p>Tayler Erbe · Data Scientist, Applied AI · AI Solutions, University of Illinois System</p>
+  <p>Original Evaluation · March 2026 · Superseded · <a href="vllm-inference-throughput-evaluation.html" style="color:var(--accent)">Current Evaluation ↗</a></p>
+</footer>
+</body>
+</html>
