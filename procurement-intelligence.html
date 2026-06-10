@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | Cross-Distributor Procurement Intelligence System</title>
+  <meta name="description" content="End-to-end AI system for identifying cost-saving opportunities across multi-vendor purchasing catalogs — 6M rows, FAISS semantic search, LLM equivalence reasoning, and unit-price normalization." />
+  <meta name="keywords" content="Tayler Erbe, data scientist, procurement analytics, FAISS, RAG, LLM, price comparison, multi-vendor, purchasing data, semantic search" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/procurement-intelligence.html" />
+  <meta property="og:title" content="Tayler Erbe | Cross-Distributor Procurement Intelligence System" />
+  <meta property="og:description" content="End-to-end AI system for identifying savings opportunities across 6M catalog rows from four distributors using deterministic matching, FAISS semantic retrieval, and LLM reasoning." />
+  <meta property="og:type" content="article" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --accent-dim: rgba(91,200,220,0.12);
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-back:hover { color: var(--accent); }
+
+    .hero {
+      padding: 9rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -30%; right: -5%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1.0; color: var(--white);
+      letter-spacing: 0.01em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 68ch; line-height: 1.75; margin-bottom: 2rem; }
+
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem; }
+    .meta-item {}
+    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-item { background: var(--surface); padding: 1.75rem 2rem; transition: background 0.2s; }
+    .stat-item:hover { background: var(--surface2); }
+    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p strong { color: var(--text); font-weight: 500; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+
+    .callout {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
+      margin-top: 1.5rem;
+    }
+    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .callout p strong { color: var(--text); font-weight: 500; }
+
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.5rem; padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .pipeline-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
+    }
+    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .step-body strong { color: var(--text); font-weight: 500; }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+    .chip-warm { border-color: var(--accent3); color: var(--accent3); }
+
+    .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+    .method-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
+    .method-card.tier1 { border-top: 3px solid var(--accent); }
+    .method-card.tier2 { border-top: 3px solid var(--accent2); }
+    .method-card.tier3 { border-top: 3px solid #9b8dc4; }
+    .method-header { margin-bottom: 1.25rem; }
+    .method-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--white); text-transform: uppercase; margin-bottom: 0.4rem; }
+    .method-badge {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem; display: inline-block;
+    }
+    .badge-green { background: rgba(93,191,138,0.12); color: #5dbf8a; border: 1px solid #5dbf8a; }
+    .badge-blue { background: rgba(91,200,220,0.12); color: var(--accent); border: 1px solid var(--accent); }
+    .badge-purple { background: rgba(155,141,196,0.12); color: #9b8dc4; border: 1px solid #9b8dc4; }
+    .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 0.82rem; color: var(--muted); }
+    .metric-value { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
+    .metric-value.good { color: var(--accent); }
+    .metric-value.neutral { color: var(--text); }
+    .metric-value.warn { color: var(--accent3); }
+
+    .results-strip {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 1px; background: var(--border); margin-top: 2rem;
+    }
+    .result-cell { background: var(--surface2); padding: 1.5rem; }
+    .result-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: 0.25rem; }
+    .result-label { font-family: 'DM Mono', monospace; font-size: 0.67rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+    .insight-box p strong { color: var(--text); font-weight: 500; }
+
+    .takeaway { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--surface2); border-left: 3px solid var(--accent); padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .takeaway::before { content: '→'; color: var(--accent); font-family: 'DM Mono', monospace; flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem; }
+    .takeaway strong { color: var(--text); }
+
+    .next-table { width: 100%; border-collapse: collapse; }
+    .next-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 2px solid var(--border); text-align: left; }
+    .next-table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--muted); vertical-align: top; }
+    .next-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); white-space: nowrap; }
+    .next-table td:nth-child(2) { color: var(--text); font-weight: 500; }
+    .next-table tr:last-child td { border-bottom: none; }
+
+    blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 1.25rem 1.75rem;
+      background: var(--surface2);
+      margin: 1.5rem 0;
+      font-size: 1rem;
+      color: var(--text);
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .back-section { padding: 3rem; background: var(--surface); border-top: 1px solid var(--border); text-align: center; }
+    .back-section a { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .back-section a:hover { color: var(--accent); }
+
+    footer { padding: 1.5rem 3rem; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    footer p { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--muted2); }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .two-col, .three-col, .method-grid, .insight-grid { grid-template-columns: 1fr; }
+      .stat-strip, .results-strip { grid-template-columns: 1fr 1fr; }
+      section { padding: 3rem 1.5rem; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <a href="index.html" class="nav-back">&#8592; Back to Portfolio</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe · Project Case Study · Procurement Analytics · 2025</div>
+    <h1>Cross-Distributor <span>Procurement</span><br>Intelligence System</h1>
+    <p class="hero-desc">
+      An end-to-end AI system for identifying cost-saving opportunities across multi-vendor purchasing data —
+      combining deterministic exact matching, FAISS semantic retrieval over 5.19 million vectors, and LLM equivalence
+      reasoning with pack-size normalization across six million catalog rows from four distributors.
+    </p>
+
+    <div style="margin-top: 1.75rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+      <a href="https://github.com/tayler-erbe/procurement_intelligence_system_design/tree/main"
+         target="_blank"
+         style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none; transition: all 0.2s ease;"
+         onmouseover="this.style.background='rgba(91,200,220,0.1)'"
+         onmouseout="this.style.background='transparent'">
+         View on GitHub →
+      </a>
+    </div>
+
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Domain</div>
+        <div class="meta-value">Procurement Analytics · Multi-Vendor Data</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-value">Prototype Delivered · Demo-Ready</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Role</div>
+        <div class="meta-value">Data Scientist · Full Lifecycle Ownership</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Scale</div>
+        <div class="meta-value">6,068,888 catalog rows · 4 distributors</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-item">
+      <div class="stat-big">6M+</div>
+      <div class="stat-desc">Catalog Rows Processed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">42,052</div>
+      <div class="stat-desc">Exact-Matched Product Pairs</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">$161K</div>
+      <div class="stat-desc">Defensible Unit-Normalized Savings</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">49.1%</div>
+      <div class="stat-desc">Pack-Size Inflation Removed</div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">The Problem</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Large organizations that purchase from multiple vendors face a structural data problem: vendor A describes a product one way, vendor B describes the same product differently, quantities are in inconsistent units, and pack sizes are buried inside product codes. No common identifier exists to join across sources. Nobody has been systematically comparing prices.</p>
+        <p>The instinct when confronted with this is to reach for a visualization tool or drop everything into an AI assistant and ask it to find patterns. Both approaches fail for the same reason: <strong>the data isn't ready.</strong> You cannot virtualize your way out of a data quality problem.</p>
+        <p>This project was scoped and built to solve that problem end-to-end — from raw multi-vendor exports through a three-tier AI pipeline to a live price comparison tool and spending dashboard, deployable to Azure for use by researchers and procurement staff.</p>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-label">Core Question</div>
+          <p>Which products are the same item sold at different prices by different vendors? And once you know that — what is the cheapest source, per unit, for each product?</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--accent2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--accent2);">The Data Reality</div>
+          <p>Four distributors. Six million catalog rows. Two had prior-year purchase quantities; two were catalog-only. Part numbers sparsely populated. Pack sizes encoded in product descriptions or manufacturer codes. No clean join key across any source.</p>
+        </div>
+        <div class="callout" style="border-left-color: var(--muted2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--muted);">Core Design Principle</div>
+          <p><strong>Lead with what is deterministic.</strong> Do everything you can without AI before using AI. Exact matching is faster, cheaper, and more reliable than inference — and it produces the most defensible savings estimates for building a business case.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE UNIT NORMALIZATION PROBLEM -->
+  <section id="normalization">
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">The Unit Normalization Problem</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>The single biggest data quality challenge in any multi-vendor procurement dataset is <strong>pack size inconsistency.</strong> A product listed at $317 from one vendor and $14 from another looks like a massive savings opportunity. In reality, the $317 listing is for a case of 500 and the $14 listing is for a pack of 50. The per-unit price is nearly identical. Acting on the raw comparison would be wrong — and embarrassing to present to leadership.</p>
+        <p>The naive fix is to parse pack sizes from descriptions using regex. This works for well-formatted descriptions but fails on terse vendor abbreviations, which represent the majority of rows.</p>
+        <p>The real fix came from the source data itself. The procurement platform's export contained a field called <strong>qsu ("quantity sold as")</strong> with values like 1, 50, 100, 500, 1000 — populated for 99.9% of rows (6,068,599 of 6,068,888). Dividing catalog price by qsu produces the true per-unit price for every row.</p>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-label">Impact of Normalization</div>
+          <p>
+            <strong>23% of rows</strong> (1,395,917) required normalization (qsu &gt; 1).<br><br>
+            Raw savings estimate: <strong>$317,583</strong><br>
+            After unit-price normalization: <strong>$161,564</strong><br>
+            Pack-size inflation removed: <strong>$156,019 (49.1%)</strong>
+          </p>
+        </div>
+        <div class="callout" style="border-left-color: var(--accent2); margin-top: 1rem;">
+          <div class="callout-label" style="color: var(--accent2);">The Lesson</div>
+          <p>Before building any comparison logic, find out if your data source has a quantity or pack-size field. It is often there, just not used. In this case, that single field transformed the entire analysis from unreliable to defensible — and changed the headline figure by nearly half.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE-TIER PIPELINE -->
+  <section id="pipeline">
+    <div class="section-header">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">Three-Tier Comparison Pipeline</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="method-grid">
+      <div class="method-card tier1">
+        <div class="method-header">
+          <div class="method-name">Tier 1 — Exact Match</div>
+          <span class="method-badge badge-green">Always runs · No AI</span>
+        </div>
+        <div class="metric-row"><span class="metric-label">Mechanism</span><span class="metric-value neutral">Dict lookup: (mfr, part#)</span></div>
+        <div class="metric-row"><span class="metric-label">Latency</span><span class="metric-value good">&lt; 2ms</span></div>
+        <div class="metric-row"><span class="metric-label">Matched pairs</span><span class="metric-value good">42,052</span></div>
+        <div class="metric-row"><span class="metric-label">Confidence</span><span class="metric-value good">100% — identical by definition</span></div>
+        <div class="metric-row"><span class="metric-label">Requires LLM</span><span class="metric-value good">No</span></div>
+        <p style="margin-top:1rem; font-size:0.83rem; color:var(--muted); line-height:1.6;">Same manufacturer + same part number at a different vendor = identical product. Price difference is pure savings. This tier alone builds the business case — no AI required, no ambiguity.</p>
+      </div>
+      <div class="method-card tier2">
+        <div class="method-header">
+          <div class="method-name">Tier 2 — Semantic Retrieval</div>
+          <span class="method-badge badge-blue">FAISS · bge-small-en-v1.5</span>
+        </div>
+        <div class="metric-row"><span class="metric-label">Mechanism</span><span class="metric-value neutral">Cosine similarity ≥ 0.85</span></div>
+        <div class="metric-row"><span class="metric-label">Latency</span><span class="metric-value neutral">75–110ms</span></div>
+        <div class="metric-row"><span class="metric-label">Index size</span><span class="metric-value neutral">5.19M vectors · 8GB</span></div>
+        <div class="metric-row"><span class="metric-label">Median candidates</span><span class="metric-value neutral">44 per query</span></div>
+        <div class="metric-row"><span class="metric-label">Purpose</span><span class="metric-value neutral">Narrows 6M → ~50</span></div>
+        <p style="margin-top:1rem; font-size:0.83rem; color:var(--muted); line-height:1.6;">The embedding model handles scale; the LLM handles reasoning. You never want AI searching 6M rows. The funnel narrows candidates to ~50 before any inference runs.</p>
+      </div>
+      <div class="method-card tier3">
+        <div class="method-header">
+          <div class="method-name">Tier 3 — LLM Reasoning</div>
+          <span class="method-badge badge-purple">qwen2.5:7b · Ollama</span>
+        </div>
+        <div class="metric-row"><span class="metric-label">Mechanism</span><span class="metric-value neutral">Equivalence + unit norm</span></div>
+        <div class="metric-row"><span class="metric-label">Latency</span><span class="metric-value neutral">5–8 seconds</span></div>
+        <div class="metric-row"><span class="metric-label">Input</span><span class="metric-value neutral">~50 candidates max</span></div>
+        <div class="metric-row"><span class="metric-label">Eval score</span><span class="metric-value good">4/4 correctness</span></div>
+        <div class="metric-row"><span class="metric-label">Degrades gracefully</span><span class="metric-value good">Yes — Tier 1 still runs</span></div>
+        <p style="margin-top:1rem; font-size:0.83rem; color:var(--muted); line-height:1.6;">Extracts baseline unit price, checks product type/size/specs/concentration, normalizes pack sizes, rejects accessories. Returns structured JSON; savings calculated deterministically from output.</p>
+      </div>
+    </div>
+
+    <blockquote style="margin-top: 2.5rem;">
+      The LLM's one job is equivalence judgment — not price comparison. Price comparison is arithmetic. Do it in code after the AI runs. Keep the AI's scope narrow, give it explicit rules, and validate its output with spot checks.
+    </blockquote>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section id="methodology">
+    <div class="section-header">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">Build Sequence & Methodology</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Understand your data sources before writing any code</div>
+          <div class="step-body">Which vendors have purchase history (quantities)? Which are catalog-only? Is there a quantity/pack-size field — anywhere? What is the field completeness per vendor per column? Run value counts on everything. The answers fundamentally change what is possible downstream. In this project, discovering the qsu field changed the headline savings figure by nearly half.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Extract the deterministic signal first</div>
+          <div class="step-body">Build the exact-match lookup on manufacturer + part number. Apply unit normalization using the pack-size field. Count how many matches exist across vendors. Calculate savings on matched pairs with known quantities. <strong>This is your business case. Present it before building anything else.</strong> It is also the trust anchor — if exact matching produces defensible numbers, stakeholders will believe the AI-assisted numbers that follow.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Build the semantic layer offline, once</div>
+          <div class="step-body">Choose an embedding model calibrated for your domain vocabulary. Build the FAISS index offline and reuse it — rebuilding is only necessary if product descriptions change significantly, not just prices. Calibrate the cosine threshold empirically on 20–30 hand-picked queries: enough candidates to find alternatives, not so many the LLM gets confused. This project used cos ≥ 0.85, yielding a median of 44 candidates and max of 137.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Design the LLM prompt for your domain's equivalence rules</div>
+          <div class="step-body">The prompt must be explicit about what makes two products equivalent in your specific context. Include unit normalization logic directly in the prompt: extract pack size, compute unit price, compare unit prices. List explicit rejection criteria — accessories ≠ products, different sizes ≠ equivalent, different concentrations ≠ equivalent. Ask for structured JSON output; parse it deterministically. Cache LLM responses by prompt hash so repeat queries are free.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">Build the user interface around selection, not search</div>
+          <div class="step-body">The hardest UX problem in procurement tools is anchoring savings to a real number. The critical design decision: <strong>make the user select their current product as the baseline before running AI.</strong> This eliminates pack-size ambiguity, produces results the user can defend to their organization, and makes the comparison actionable. Provide three paths: natural language search, browse by category, and browse by manufacturer. Every result should be downloadable as a CSV for independent verification.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">06</div>
+        <div>
+          <div class="step-title">Build the trends layer separately from the comparison tool</div>
+          <div class="step-body">The comparison tool answers "is there a cheaper option for this specific product?" The trends dashboard answers "where should we be looking for savings across all of our purchasing?" These are different questions requiring different interfaces. The trends layer uses the pre-computed unit-normalized savings table — no AI required, fully deterministic, loads instantly. Embed the insight in the dashboard: not just "here are the numbers" but "here is what you should look at first and why."</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+    <div class="section-header">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">Results & Key Metrics</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="results-strip">
+      <div class="result-cell">
+        <div class="result-num">6,068,888</div>
+        <div class="result-label">Catalog rows processed</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-num">42,052</div>
+        <div class="result-label">Exact-matched product pairs</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-num">$161,564</div>
+        <div class="result-label">Unit-normalized savings estimate</div>
+      </div>
+      <div class="result-cell">
+        <div class="result-num">23%</div>
+        <div class="result-label">Rows requiring unit normalization</div>
+      </div>
+    </div>
+
+    <div class="insight-grid" style="margin-top: 2rem;">
+      <div class="insight-box">
+        <div class="insight-box-title">Price Spread Distribution</div>
+        <p>Median unit-price spread across all 42,052 matched pairs: <strong>20.7%</strong>. Mean: <strong>30.1%</strong>. 90th percentile: <strong>95%</strong> — meaning 10% of matched products have a price gap where one distributor charges nearly double the other for the same item.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Savings Methodology</div>
+        <p>The $161,564 figure covers only products where prior-year purchase quantities were available from two of four distributors. An additional <strong>37,535 matched pairs</strong> have confirmed price gaps but unknown purchase volume — the true savings potential is larger and unlocked by obtaining quantity data from the remaining vendors.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">System Performance</div>
+        <p>Exact match: <strong>&lt;2ms</strong>. Semantic retrieval: <strong>75–110ms</strong>. Full AI pipeline: <strong>5–8 seconds</strong>. LLM evaluated at 4/4 correctness and 4/4 consistency on a 30-query hand-curated eval set. Graceful degradation: Tier 1 always runs when LLM is offline.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Raw vs. Defensible Figure</div>
+        <p>Raw savings estimate before normalization: <strong>$317,583</strong>. After applying unit normalization: <strong>$161,564</strong>. The $156,019 difference was entirely pack-size inflation — identical products listed at different pack quantities making cheaper-per-pack options appear more expensive per unit.</p>
+      </div>
+    </div>
+
+    <div class="takeaway" style="margin-top: 1.5rem;">
+      <span><strong>The $161K is the defensible floor, not the ceiling.</strong> The single highest-impact next step is obtaining prior-year purchase quantities from the two catalog-only distributors. That one data request could multiply the confirmed savings figure several times over.</span>
+    </div>
+  </section>
+
+  <!-- KEY LESSONS -->
+  <section id="lessons">
+    <div class="section-header">
+      <span class="section-tag">06</span>
+      <h2 class="section-title">Key Lessons</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <table class="next-table">
+      <thead>
+        <tr>
+          <th>Lesson</th>
+          <th>What it means in practice</th>
+          <th>This project</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Find the qty field first</td>
+          <td>Every multi-vendor dataset has a pack-size or quantity field with high coverage that sits unused. Find it, use it, normalize on it before anything else.</td>
+          <td>qsu field — 99.9% coverage — changed the headline savings figure by 49%</td>
+        </tr>
+        <tr>
+          <td>Funnel architecture is non-negotiable</td>
+          <td>You cannot run LLM inference on 6M rows. You can run it on 50. Design so that by the time a record reaches AI, it has been through at least two filtering steps.</td>
+          <td>FAISS narrows 6M → ~44 median candidates before any LLM call</td>
+        </tr>
+        <tr>
+          <td>Exact matching and semantic matching are complementary</td>
+          <td>Exact matching is fast, reliable, zero AI. Use it first. Semantic matching covers what exact matching misses. Never let semantic replace exact — the false positive rate is too high for a system people will act on.</td>
+          <td>Tier 1 runs in 2ms, always, even when LLM is offline</td>
+        </tr>
+        <tr>
+          <td>Normalize before presenting savings</td>
+          <td>A $300K savings figure that is 49% pack-size inflation is not a savings figure — it is a credibility problem. Document the methodology and show the corrected number.</td>
+          <td>$317K raw → $161K normalized, methodology fully documented</td>
+        </tr>
+        <tr>
+          <td>AI's job is equivalence judgment, not arithmetic</td>
+          <td>Price comparison is arithmetic — do it in code after the AI runs. The LLM's one job: look at ~50 product descriptions and say which ones are truly the same product as the baseline.</td>
+          <td>Savings calculated deterministically from LLM's structured JSON output</td>
+        </tr>
+        <tr>
+          <td>Build for graceful degradation</td>
+          <td>When the LLM is offline, exact-match results should still appear. When the vector index is cold, browse-by-category should still work. A tool that returns nothing when one component fails will not be used.</td>
+          <td>Three independent tiers, each fully functional without the others</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TECH STACK -->
+  <section id="stack">
+    <div class="section-header">
+      <span class="section-tag">07</span>
+      <h2 class="section-title">Technology Stack</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="three-col">
+      <div>
+        <div class="callout" style="margin-top:0;">
+          <div class="callout-label">Data & Search</div>
+          <p>Python · pandas · numpy · pyarrow · Parquet · FAISS IVFFlat · bge-small-en-v1.5 (384-dim embeddings) · Sentence-Transformers</p>
+        </div>
+        <div class="tag-row">
+          <span class="chip chip-accent">FAISS</span>
+          <span class="chip chip-accent">Parquet</span>
+          <span class="chip chip-accent">bge-small-en</span>
+          <span class="chip">pandas</span>
+        </div>
+      </div>
+      <div>
+        <div class="callout" style="margin-top:0;">
+          <div class="callout-label">AI & API</div>
+          <p>qwen2.5:7b via Ollama · FastAPI · Pydantic · uvicorn · JSON-structured LLM output · LLM response caching by prompt hash</p>
+        </div>
+        <div class="tag-row">
+          <span class="chip chip-accent">qwen2.5:7b</span>
+          <span class="chip chip-accent">FastAPI</span>
+          <span class="chip">Ollama</span>
+          <span class="chip">Pydantic</span>
+        </div>
+      </div>
+      <div>
+        <div class="callout" style="margin-top:0;">
+          <div class="callout-label">Client & Deployment</div>
+          <p>Vanilla HTML/JS (no framework dependency) · works as a local file or deployed to Azure App Service B3 · Blob Storage for index files · ~$77/month estimated production cost</p>
+        </div>
+        <div class="tag-row">
+          <span class="chip chip-accent">Azure App Service</span>
+          <span class="chip">Blob Storage</span>
+          <span class="chip">HTML/JS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BACK -->
+  <div class="back-section">
+    <a href="index.html">← Back to Portfolio</a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="https://github.com/tayler-erbe/procurement_intelligence_system_design/tree/main" target="_blank">View on GitHub →</a>
+  </div>
+
+  <footer>
+    <p>Tayler Erbe · Data Scientist · AI Solutions, University of Illinois System</p>
+    <p>Last updated June 2026</p>
+  </footer>
+
+</body>
+</html>
