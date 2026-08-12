@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tayler Erbe | HR Workforce Analytics Intelligence Platform</title>
-  <meta name="description" content="Tayler Erbe, Senior Data Scientist at the University of Illinois System, is leading the design and development of a predictive HR Workforce Analytics Intelligence Platform using EDW data, Markov chain career simulation, graph analytics, and NLP-driven skill enrichment." />
+  <meta name="description" content="Tayler Erbe, Data Scientist at the University of Illinois System, is leading the design and development of a predictive HR Workforce Analytics Intelligence Platform using EDW data, Markov chain career simulation, graph analytics, and NLP-driven skill enrichment." />
   <meta name="keywords" content="Tayler Erbe, data scientist, workforce analytics, HR analytics, succession planning, internal mobility, Markov chain, Random Forest, graph analytics, University of Illinois, AITS" />
   <meta name="author" content="Tayler Erbe" />
   <meta name="robots" content="index, follow" />
@@ -337,7 +337,7 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">HR Stakeholder</div>
-        <div class="meta-value"><a href="https://www.linkedin.com/in/luannemayorga/" target="_blank" style="color:var(--accent); text-decoration:none;">Luanne Mayorga ↗</a><span style="color:var(--muted); font-size:0.85rem;"> · Assistant Chancellor, Illinois HR</span></div>
+        <div class="meta-value">Illinois HR leadership<span style="color:var(--muted); font-size:0.85rem;"> · Executive HR sponsor</span></div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Status</div>
@@ -349,7 +349,7 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">Role</div>
-        <div class="meta-value">Lead Data Scientist · Platform Architect · Full Lifecycle Ownership</div>
+        <div class="meta-value">Data Scientist · Platform Architect · Full Lifecycle Ownership</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Code</div>
@@ -357,7 +357,7 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">Planned Team</div>
-        <div class="meta-value">Lead Data Scientist + 3 Intern Analysts · ~2,460 hrs · 6 months</div>
+        <div class="meta-value">Data Scientist + 3 Intern Analysts · ~2,460 hrs · 6 months</div>
       </div>
     </div>
   </div>
@@ -392,7 +392,7 @@
     <div class="two-col">
       <div class="prose">
         <p>Workforce planning at most universities: including the University of Illinois System: is <strong>largely reactive</strong>. Leadership learns about staffing challenges after they have already materialized: critical roles become vacant with no internal successors ready, departments lose years of institutional knowledge through unexpected attrition, and hiring decisions are made without visibility into internal mobility patterns or future demand.</p>
-        <p>This initiative is designed to change that. Developed in partnership with <a href="https://www.linkedin.com/in/luannemayorga/" target="_blank" style="color:var(--accent); text-decoration:none;">Luanne Mayorga</a>, Assistant Chancellor for Illinois HR, the <strong>HR Workforce Analytics Intelligence Platform</strong> applies predictive modeling, career path simulation, and graph analytics to the university's existing HR and payroll data: no new data collection required: to generate forward-looking intelligence that HR teams and leadership can act on <em>before</em> gaps become crises.</p>
+        <p>This initiative is designed to change that. Developed in partnership with Illinois HR leadership, the <strong>HR Workforce Analytics Intelligence Platform</strong> applies predictive modeling, career path simulation, and graph analytics to the university's existing HR and payroll data: no new data collection required: to generate forward-looking intelligence that HR teams and leadership can act on <em>before</em> gaps become crises.</p>
         <p>The project has already completed three substantial proof-of-concept workstreams covering internal mobility modeling, succession readiness prediction, and workforce growth forecasting. The platform architecture, modeling approach, and feature engineering pipeline are fully designed. The full project build is currently <strong>under review</strong> with the goal of beginning production development soon.</p>
         <p>All POC work was built on a <strong>synthetic dataset mirroring the structure of EDW HR tables</strong>: demonstrating the full analytical pipeline before connecting to production data, which will occur in Phase 1 under appropriate data governance review.</p>
       </div>
@@ -494,7 +494,7 @@
           <div class="step-title">Succession Readiness Prediction</div>
           <div class="step-body">
             <p style="margin-bottom:0.75rem;">Identifies <strong>which internal employees are most ready to step into leadership or specialist roles</strong> before those positions become vacant: and flags roles across the organization that have no viable internal succession pipeline at all.</p>
-            <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;">Two sub-models drive this capability. The first estimates <strong>departure risk</strong>: the probability that a role becomes vacant in the next 6–12 months: using features like tenure slope, proximity to pay band ceiling, department churn rates, and retirement eligibility (SURS) indicators. The second estimates <strong>candidate readiness</strong>, predicting how well a given employee fits a target role based on skill similarity, grade progression, and mobility history.</p>
+            <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;">Two sub-models drive this capability. The first estimates <strong>departure risk</strong>: the probability that a role becomes vacant in the next 6–12 months: using features like tenure slope, proximity to pay band ceiling, department churn rates, and benefits eligibility indicators. The second estimates <strong>candidate readiness</strong>, predicting how well a given employee fits a target role based on skill similarity, grade progression, and mobility history.</p>
             <p style="margin-bottom:0.75rem; font-size:0.88rem; color:var(--muted); line-height:1.65;">These two scores combine into a <strong>Succession Readiness Index (SRI)</strong>: a composite score per (candidate, role) pair that ranks internal candidates and provides interpretable rationale for each recommendation.</p>
             <div class="formula-box">
               SRI = w₁·p_success + w₂·SkillSim + w₃·TenureFit + w₄·ExperienceFit
@@ -581,10 +581,10 @@
         <div class="model-name">Departure Risk Model</div>
         <div class="model-algo purple">XGBoost / Logistic Regression · Supervised</div>
         <div class="model-row"><span class="model-row-label">Purpose</span><span class="model-row-value">Estimate probability a role becomes vacant in the next 6–12 months</span></div>
-        <div class="model-row"><span class="model-row-label">Key Inputs</span><span class="model-row-value">Tenure slope, SURS retirement indicator, department churn rate, role-level attrition history, pay band ceiling proximity</span></div>
+        <div class="model-row"><span class="model-row-label">Key Inputs</span><span class="model-row-value">Tenure slope, benefits eligibility indicator, department churn rate, role-level attrition history, pay band ceiling proximity</span></div>
         <div class="model-row"><span class="model-row-label">Output</span><span class="model-row-value">p_vacancy: vacancy probability score per position</span></div>
         <div class="model-row"><span class="model-row-label">Succession Link</span><span class="model-row-value">p_vacancy feeds directly into SRI matching: high-departure roles are automatically prioritized for succession analysis</span></div>
-        <div class="model-row"><span class="model-row-label">Fallback</span><span class="model-row-value">If model performance is insufficient, heuristic rules based on SURS status and tenure are used</span></div>
+        <div class="model-row"><span class="model-row-label">Fallback</span><span class="model-row-value">If model performance is insufficient, heuristic rules based on eligibility status and tenure are used</span></div>
       </div>
 
     </div>
@@ -649,7 +649,7 @@
       </div>
       <div class="feature-item">
         <div class="feature-name">Departure Risk Signals</div>
-        <div class="feature-desc">SURS retirement eligibility indicator, proximity to pay band ceiling, department-level churn rate (trailing 12 months), tenure slope (rate of tenure accumulation relative to peers in same role class).</div>
+        <div class="feature-desc">benefits eligibility indicator, proximity to pay band ceiling, department-level churn rate (trailing 12 months), tenure slope (rate of tenure accumulation relative to peers in same role class).</div>
       </div>
       <div class="feature-item">
         <div class="feature-name">Mobility Cluster Labels</div>
@@ -687,7 +687,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>T_PERS_HIST</td>
+          <td>Person history</td>
           <td>Biographical and demographic data: person ID, gender, age, hire date</td>
           <td>Person-level joins and identifiers; demographic features for equity audit</td>
         </tr>
@@ -697,17 +697,17 @@
           <td>Filter to active employee population; point-in-time snapshots</td>
         </tr>
         <tr>
-          <td>T_EMPEE_HIST</td>
+          <td>Separation history</td>
           <td>Employment lifecycle: hire date, FTE, job class, current snapshot</td>
           <td>Tenure computation, FTE features, employment continuity, mobility modeling</td>
         </tr>
         <tr>
-          <td>T_EMPEE_HIST_5</td>
-          <td>Termination and SURS retirement details: separation codes, annuitant status</td>
-          <td>Departure risk modeling; retirement eligibility indicator; SURS feature</td>
+          <td>Employment history</td>
+          <td>Termination and separation records and benefits status</td>
+          <td>Departure risk modeling; benefits eligibility signal</td>
         </tr>
         <tr>
-          <td>T_JOB_DETL_HIST</td>
+          <td>Job detail history</td>
           <td>Job-level history: title, pay rate, department, supervisor, effective dates</td>
           <td>Career transition sequences; role similarity; position mapping; pay grade features</td>
         </tr>
@@ -803,8 +803,8 @@
       <div class="scenario-card">
         <div class="scenario-num">01</div>
         <div>
-          <div class="scenario-title">Department Chair Retirement: Succession Without a Pipeline</div>
-          <div class="scenario-body">A senior director's SURS indicator crosses retirement eligibility threshold. The departure risk model flags <strong>p_vacancy = 0.87</strong> for the role within 12 months. The succession model surfaces three internal candidates with ≥80% skill similarity to the role's O*NET profile: two from within the department and one from a related unit identified via graph community detection. HR initiates early mentorship and structured leadership transition planning <strong>eight months before the vacancy occurs</strong>, rather than three weeks after the announcement.</div>
+          <div class="scenario-title">Leadership Turnover: Succession Without a Pipeline</div>
+          <div class="scenario-body">A long-tenured leadership role crosses the eligibility threshold. The departure risk model flags it as <strong>high likelihood of turnover</strong> within 12 months. The succession model surfaces three internal candidates with ≥80% skill similarity to the role's O*NET profile: two from within the department and one from a related unit identified via graph community detection. HR initiates early mentorship and structured leadership transition planning <strong>eight months before the vacancy occurs</strong>, rather than three weeks after the announcement.</div>
         </div>
       </div>
       <div class="scenario-card">
@@ -846,7 +846,7 @@
       <div class="poc-card">
         <div class="poc-icon">◈</div>
         <div class="poc-title">Internal Mobility &amp; Career Path Forecasting</div>
-        <div class="poc-author">Ruchita Alate · Data Science Analyst</div>
+        <div class="poc-author">Data Science Analyst</div>
         <ul class="poc-body">
           <li>Synthetic 500-employee dataset mirroring EDW HR table structure</li>
           <li>Full feature engineering pipeline: tenure buckets, move rate, title embeddings, transition matrix</li>
@@ -861,10 +861,10 @@
       <div class="poc-card">
         <div class="poc-icon">◈</div>
         <div class="poc-title">Succession Readiness Prediction</div>
-        <div class="poc-author">Tejasri Joshi · Data Science Analyst</div>
+        <div class="poc-author">Data Science Analyst</div>
         <ul class="poc-body">
-          <li>EDW schema mapping for succession use case (T_PERS_HIST, T_JOB_DETL_HIST, T_EMPEE_HIST_5)</li>
-          <li>Departure risk model design: XGBoost / Logistic Regression on SURS + churn features</li>
+          <li>EDW schema mapping for succession use case (core HR history tables)</li>
+          <li>Departure risk model design: XGBoost / Logistic Regression on eligibility and churn features</li>
           <li>Candidate readiness model: Gradient Boosting + LambdaMART Learning-to-Rank</li>
           <li>O*NET skill enrichment pipeline with FAISS embedding index</li>
           <li>SRI composite formula: w₁·p_success + w₂·SkillSim + w₃·TenureFit + w₄·ExperienceFit</li>
@@ -875,7 +875,7 @@
       <div class="poc-card">
         <div class="poc-icon">◈</div>
         <div class="poc-title">Workforce Growth Forecasting</div>
-        <div class="poc-author">Tanvi · Data Science Analyst</div>
+        <div class="poc-author">Data Science Analyst</div>
         <ul class="poc-body">
           <li>Headcount forecasting by department and job family</li>
           <li>Hiring demand prediction models</li>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legislative Data &amp; Prediction Pipeline &middot; Technical Documentation &middot; Tayler Erbe</title>
+  <meta name="description" content="End-to-end technical documentation of the legislative bill pipeline: ingestion, LLM feature extraction, model selection, procedural taxonomy, and a three-stage bill passage prediction system running daily in production." />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --accent-dim: rgba(91,200,220,0.12);
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-back:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      padding: 9rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -30%; right: -5%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1.0; color: var(--white);
+      letter-spacing: 0.01em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
+
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem; }
+    .meta-item {}
+    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+
+    /* STAT STRIP */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-item { background: var(--surface); padding: 1.75rem 2rem; transition: background 0.2s; }
+    .stat-item:hover { background: var(--surface2); }
+    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* SECTIONS */
+    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* PROSE */
+    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p strong { color: var(--text); font-weight: 500; }
+
+    /* LAYOUTS */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+
+    /* CALLOUT */
+    .callout {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
+      margin-top: 1.5rem;
+    }
+    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .callout p strong { color: var(--text); font-weight: 500; }
+
+    /* PIPELINE STEPS */
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.5rem; padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .pipeline-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
+    }
+    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .step-body strong { color: var(--text); font-weight: 500; }
+
+    /* TAG CHIPS */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+    .chip-warm { border-color: var(--accent3); color: var(--accent3); }
+
+    /* METHOD COMPARISON CARDS */
+    .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .method-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
+    .method-card.winner { border-color: var(--accent); border-top: 3px solid var(--accent); }
+    .method-card.challenger { border-top: 3px solid var(--accent3); }
+    .method-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
+    .method-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--white); text-transform: uppercase; }
+    .method-badge {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem;
+    }
+    .badge-green { background: rgba(93,191,138,0.12); color: #5dbf8a; border: 1px solid #5dbf8a; }
+    .badge-warn { background: rgba(192,122,110,0.12); color: var(--accent3); border: 1px solid var(--accent3); }
+    .badge-blue { background: rgba(91,200,220,0.12); color: var(--accent); border: 1px solid var(--accent); }
+    .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 0.82rem; color: var(--muted); }
+    .metric-value { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
+    .metric-value.good { color: var(--accent); }
+    .metric-value.warn { color: var(--accent3); }
+    .metric-value.neutral { color: var(--text); }
+
+    /* DATA TABLE */
+    .cat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .cat-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .cat-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; vertical-align: top; }
+    .cat-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+    .cat-table td:last-child { font-family: 'DM Mono', monospace; }
+    .cat-table tr:last-child td { border-bottom: none; }
+
+    /* RESULTS STRIP */
+    .results-strip {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--border); margin-top: 2rem;
+    }
+    .result-cell { background: var(--surface2); padding: 1.5rem; }
+    .result-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: 0.25rem; }
+    .result-label { font-family: 'DM Mono', monospace; font-size: 0.67rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* INSIGHT BOXES */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+    .insight-box p strong { color: var(--text); font-weight: 500; }
+
+    /* TAKEAWAY STRIP */
+    .takeaway { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--surface2); border-left: 3px solid var(--accent); padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .takeaway::before { content: '→'; color: var(--accent); font-family: 'DM Mono', monospace; flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem; }
+    .takeaway strong { color: var(--text); }
+
+    /* CHART CONTAINER */
+    .chart-wrap {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .chart-wrap img,
+    .chart-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .chart-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-top: 0.75rem;
+    }
+
+    /* BACK */
+    .back-section { padding: 3rem; text-align: center; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); padding: 0.85rem 2rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* INLINE CODE */
+    code.inline {
+      font-family: 'DM Mono', monospace;
+      color: var(--accent2);
+      font-size: 0.85em;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-eyebrow { animation: fadeUp 0.5s ease 0.1s both; }
+    .hero h1 { animation: fadeUp 0.5s ease 0.22s both; }
+    .hero-desc { animation: fadeUp 0.5s ease 0.36s both; }
+    .hero-meta { animation: fadeUp 0.5s ease 0.48s both; }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 3rem 1.5rem; }
+      .stat-strip { grid-template-columns: 1fr 1fr; }
+      .two-col, .three-col, .method-grid, .insight-grid, .results-strip { grid-template-columns: 1fr; }
+      .back-section { padding: 2rem 1.5rem; }
+    }
+  
+    /* --- additions for pipeline documentation --- */
+    .toc { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); margin:2rem 0 0; }
+    .toc a { background:var(--surface); padding:1rem 1.1rem; text-decoration:none; display:block; transition:background .2s; }
+    .toc a:hover { background:var(--surface2); }
+    .toc-num { font-family:'DM Mono',monospace; font-size:.65rem; color:var(--accent2); letter-spacing:.1em; display:block; margin-bottom:.35rem; }
+    .toc-name { font-size:.86rem; color:var(--text); }
+    .stage { border:1px solid var(--border); background:var(--surface); margin:1rem 0; }
+    .stage-head { display:flex; align-items:baseline; gap:1rem; padding:1rem 1.25rem; border-bottom:1px solid var(--border); background:var(--surface2); flex-wrap:wrap; }
+    .stage-id { font-family:'DM Mono',monospace; font-size:.7rem; color:var(--accent); letter-spacing:.1em; }
+    .stage-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.15rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; }
+    .stage-body { padding:1.15rem 1.25rem; font-size:.92rem; color:var(--muted); line-height:1.7; }
+    .stage-body strong { color:var(--text); font-weight:500; }
+    .kv { display:grid; grid-template-columns:minmax(160px,220px) 1fr; gap:1px; background:var(--border); border:1px solid var(--border); margin:1.25rem 0; }
+    .kv > div { background:var(--surface); padding:.7rem 1rem; font-size:.86rem; }
+    .kv .k { font-family:'DM Mono',monospace; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .kv .v { color:var(--text); }
+    figure.shot { margin:2rem 0; border:1px solid var(--border); background:var(--surface); }
+    figure.shot img { width:100%; display:block; }
+    figure.shot figcaption { padding:.85rem 1.1rem; font-size:.8rem; color:var(--muted); border-top:1px solid var(--border); font-family:'DM Mono',monospace; letter-spacing:.03em; }
+    .warn { border-left:2px solid var(--accent3); background:rgba(192,122,110,0.06); padding:1rem 1.25rem; margin:1.5rem 0; font-size:.9rem; color:var(--muted); line-height:1.7; }
+    .warn strong { color:var(--accent3); font-weight:500; }
+    code { font-family:'DM Mono',monospace; font-size:.85em; color:var(--accent); background:rgba(91,200,220,0.08); padding:.1rem .35rem; }
+    table.dt { width:100%; border-collapse:collapse; margin:1.25rem 0; font-size:.86rem; }
+    table.dt th { text-align:left; font-family:'DM Mono',monospace; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:.6rem .8rem; border-bottom:1px solid var(--accent2); }
+    table.dt td { padding:.6rem .8rem; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; }
+    table.dt td.num { font-family:'DM Mono',monospace; color:var(--accent); white-space:nowrap; }
+    @media (max-width:760px){ .kv{grid-template-columns:1fr} .kv .k{border-bottom:0} }
+
+    @media (max-width:760px){
+      .toc { grid-template-columns:1fr 1fr; }
+      table.dt { display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .pipeline { flex-wrap:wrap; }
+      .hero-meta { grid-template-columns:1fr; }
+      figure.shot img { min-width:0; }
+    }
+
+  
+    @media (max-width:760px){
+      .section-header { flex-wrap:wrap; gap:.5rem; }
+      .section-header .section-title { flex:1 1 100%; }
+      .section-line { display:none; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <a href="index.html" class="nav-back">&#8592; Back to Portfolio</a>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe &middot; Technical Documentation &middot; Part 1 of 2 &middot; 2026</div>
+    <h1>Legislative Data<br>&amp; <span>Prediction Pipeline</span></h1>
+    <p class="hero-desc">
+      The server-side half of the Legislative Intelligence Platform: how raw bill text becomes structured
+      intelligence and a calibrated floor-vote probability. Ingestion, LLM feature extraction, a formal model
+      selection evaluation, a procedural taxonomy built from nothing, and a three-stage survival model
+      validated at <strong>0.9944 AUC-ROC</strong> across <strong>117,667 bills</strong> &mdash; running
+      unattended every day.
+    </p>
+
+    <div style="margin-top:1.75rem; display:flex; gap:1rem; flex-wrap:wrap;">
+      <a href="legislative-web-application.html"
+         style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none;">
+         Part 2 &mdash; The Web Application &rarr;
+      </a>
+    </div>
+
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Production &middot; delivered to IGPA Aug 2026</div></div>
+      <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">Sole builder &middot; data engineering through production</div></div>
+      <div class="meta-item"><div class="meta-label">Timeline</div><div class="meta-value">Feb 2026 POC &rarr; Aug 2026 production</div></div>
+      <div class="meta-item"><div class="meta-label">Cadence</div><div class="meta-value">Autonomous daily run</div></div>
+    </div>
+
+    <div class="toc">
+      <a href="#ingest"><span class="toc-num">01</span><span class="toc-name">Ingestion &amp; Corpus</span></a>
+      <a href="#modelsel"><span class="toc-num">02</span><span class="toc-name">Model Selection</span></a>
+      <a href="#extract"><span class="toc-num">03</span><span class="toc-name">Feature Extraction</span></a>
+      <a href="#taxonomy"><span class="toc-num">04</span><span class="toc-name">Procedural Taxonomy</span></a>
+      <a href="#model"><span class="toc-num">05</span><span class="toc-name">Prediction System</span></a>
+      <a href="#leakage"><span class="toc-num">06</span><span class="toc-name">Leakage Control</span></a>
+      <a href="#prod"><span class="toc-num">07</span><span class="toc-name">Production Pipeline</span></a>
+      <a href="#defects"><span class="toc-num">08</span><span class="toc-name">Defects &amp; Limits</span></a>
+    </div>
+  </div>
+
+  <!-- 01 INGESTION -->
+  <section id="ingest">
+    <div class="section-header">
+      <div class="section-tag">01 / Ingestion</div>
+      <h2 class="section-title">Getting the corpus, and keeping it current</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Two sources, neither designed for this. LegiScan provides a structured API; the Illinois General
+      Assembly publishes bulk files over FTP. Neither exposes a change feed, so the pipeline computes its own:
+      a content hash per artifact, compared against the last known hash, with download conditional on a
+      mismatch. A daily run that finds nothing new does almost no work.</p>
+
+      <p>Bill text arrives in wildly uneven lengths &mdash; a one-line technical amendment and a 400-page
+      appropriations act enter the same pipeline. Text is normalized and chunked before extraction so the
+      downstream model sees consistent input regardless of source length.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">Corpus, application</div><div class="v">46,074 bills across 4 General Assembly sessions (101st&ndash;104th)</div>
+      <div class="k">Active session</div><div class="v">104th GA (2025&ndash;2026) &middot; 12,022 bills &middot; 9,734 active</div>
+      <div class="k">Corpus, model training</div><div class="v">117,667 bills spanning nine General Assembly sessions, 2009&ndash;2026</div>
+      <div class="k">Ingest sources</div><div class="v">LegiScan API &middot; ILGA FTP bulk</div>
+      <div class="k">Change detection</div><div class="v">Content-hash comparison, conditional download</div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-box-title">Why two different corpus sizes</div>
+      <p>The application serves four sessions because that is the window stakeholders actually reason about.
+      The model trains and validates across nine, because a survival model needs to see enough terminal
+      outcomes across enough political regimes to be trusted. Generative work &mdash; personalized impact
+      scoring, briefings, digests &mdash; runs only against the <strong>current session</strong>, since
+      scoring a closed session against a live role profile produces analysis nobody can act on.</p>
+    </div>
+  </section>
+
+  <!-- 02 MODEL SELECTION -->
+  <section id="modelsel">
+    <div class="section-header">
+      <div class="section-tag">02 / Model Selection</div>
+      <h2 class="section-title">Choosing a model before spending a week of compute</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Extraction across the backfill corpus was an <strong>11,673-bill, roughly 155-hour unattended
+      job</strong>. A wrong model choice there is not a quick re-run; it is a week of GPU time and a corpus of
+      low-quality structured output that everything downstream inherits. So the choice was made as a formal
+      evaluation with the acceptance criteria written down first.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">Design</div><div class="v">15-cell grid &mdash; 3 models &times; 5 chunk sizes, 2 repeats per cell, ~15 hours unattended</div>
+      <div class="k">Service levels</div><div class="v">Declared <em>before</em> execution rather than fitted to results</div>
+      <div class="k">Resource analysis</div><div class="v">USE method applied to the GPU &mdash; utilization, saturation, errors sampled alongside throughput</div>
+      <div class="k">Qualitative review</div><div class="v">Blind three-criterion rubric, authored for this task, with a review-companion tool</div>
+      <div class="k">Deliverables</div><div class="v">Formal decision record, stakeholder deck, consolidated metrics, reproducible artifact bundle</div>
+    </div>
+
+    <div class="prose">
+      <p>Two findings did the real work. First, a reproducible <strong>saturation signature</strong> appeared
+      in one model-and-chunk-size cell &mdash; visible only because resource metrics were sampled concurrently
+      with throughput rather than averaged afterward. Second, output quality degraded past roughly
+      <strong>2,000 tokens regardless of model</strong>. That second finding is what made the decision
+      tractable: chunk size became separable from model choice, so the two could be decided independently
+      instead of as a joint search.</p>
+
+      <p>The original grid selected <strong>Mistral 7B at 500 tokens</strong>, with cross-configuration
+      variance used as the tiebreaker rather than peak score. For an unattended multi-night job, a model that
+      behaves predictably across configurations is worth more than one that wins a single cell and misbehaves
+      elsewhere.</p>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-box-title">Re-evaluated when the serving stack changed</div>
+      <p>The original evaluation ran on the previous inference backend. After the migration to vLLM
+      (documented separately in the <a href="archival-image-throughput-evaluation.html" style="color:var(--accent);">throughput
+      case study</a>), the comparison no longer held &mdash; different batching behaviour, different
+      effective cost per token. Rather than carry forward a stale decision, the evaluation was re-run over the
+      weekend of <strong>17 May 2026</strong> against a contemporary quantized lineup: Mistral 7B v0.3 AWQ,
+      Qwen 2.5 7B AWQ, and Llama 3.1 8B AWQ.</p>
+      <p style="margin-top:.8rem;">Production moved to <strong>Llama 3.1 8B AWQ</strong>, upgrading from the
+      3B-class model the pipeline had been running. The larger model became affordable specifically because
+      the serving migration had recovered the headroom to pay for it.</p>
+    </div>
+  </section>
+
+  <!-- 03 EXTRACTION -->
+  <section id="extract">
+    <div class="section-header">
+      <div class="section-tag">03 / Feature Extraction</div>
+      <h2 class="section-title">From bill text to structured fields</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Each bill is reduced to a set of standardized attributes an analyst can filter, sort, and reason
+      over: what the bill does, who it affects, what it changes, what it expands or contracts, its policy
+      domain, and a university impact assessment. These are the fields every downstream surface reads &mdash;
+      search, categories, impact scoring, and digests all resolve against them.</p>
+
+      <p>Two properties matter more than the field list. <strong>Raw model output is retained alongside the
+      standardized field.</strong> Keyword matching runs against the raw text as ground truth and falls back
+      to the standardized field only when a raw value is absent, so normalization never silently destroys a
+      match. And extraction is <strong>decoupled from scoring</strong>: bill features are computed once per
+      bill, while per-user impact scoring runs separately against each user's own prompts. Adding a user does
+      not re-extract the corpus.</p>
+    </div>
+
+    <figure class="shot">
+      <img src="docs/legis/shot-18.png" alt="Bill detail view showing probability trail and per-action model scores" />
+      <figcaption>A scored bill: extracted summary, university impact assessment, policy domain, the full action history, and the model score after each procedural action.</figcaption>
+    </figure>
+  </section>
+
+  <!-- 04 TAXONOMY -->
+  <section id="taxonomy">
+    <div class="section-header">
+      <div class="section-tag">04 / Procedural Taxonomy</div>
+      <h2 class="section-title">The training data did not exist</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Predicting passage requires knowing where a bill sits procedurally, and legislative action text is
+      free-form. "Placed on Calendar Order of 3rd Reading", "Rule 19(a) / Re-referred to Rules Committee",
+      "Do Pass Licensed Activities; 008-000-000" &mdash; each carries stage, activity type, and semantic
+      meaning, none of it labelled.</p>
+
+      <p>So the labels were built. A <strong>47-category two-tier taxonomy</strong> reaching
+      <strong>99.0% coverage</strong>, applied to <strong>1,388,400 individual action rows</strong> with
+      procedural stage, activity type, and semantic stage at <strong>99.65% coverage</strong>.</p>
+    </div>
+
+    <div class="warn">
+      <strong>An implementation constraint that changed the design.</strong> A row-wise labeler over 1.39M
+      rows was not runnable at this scale within the pipeline's daily window. The labeler was written as a
+      <strong>two-pass vectorized</strong> operation instead &mdash; broad pattern classes first, then
+      refinement within class. This is the difference between a labeling step that completes inside a nightly
+      run and one that does not.
+    </div>
+
+    <div class="kv">
+      <div class="k">Taxonomy</div><div class="v">47 categories, two-tier &middot; 99.0% coverage</div>
+      <div class="k">Action rows labelled</div><div class="v">1,388,400 &middot; 99.65% coverage</div>
+      <div class="k">Labels per row</div><div class="v">Procedural stage, activity type, semantic stage</div>
+      <div class="k">Method</div><div class="v">Two-pass vectorized labeler</div>
+      <div class="k">Retained</div><div class="v">Raw labelled history kept as an audit artifact</div>
+    </div>
+  </section>
+
+  <!-- 05 PREDICTION -->
+  <section id="model">
+    <div class="section-header">
+      <div class="section-tag">05 / Prediction System</div>
+      <h2 class="section-title">A survival problem, not a classification problem</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Most bills die. They die at different procedural stages, for different reasons, and the honest answer
+      to "will this pass" depends entirely on when you ask. A single classifier over final outcomes throws
+      that structure away. The system is staged instead, so each model answers the question that is actually
+      answerable at its point in the lifecycle.</p>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">STAGE 1</span><span class="stage-name">Introduction-time prediction</span></div>
+      <div class="stage-body">Scores a bill at the moment of introduction, before any procedural history
+      exists. The hardest stage and the least certain, because at introduction the only signal is the bill
+      itself &mdash; sponsor, subject, chamber, drafting characteristics.</div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">STAGE 2</span><span class="stage-name">Survival to floor vote &middot; core production model</span></div>
+      <div class="stage-body">The model in production. Given a bill's accumulated procedural history, what is
+      the likelihood it reaches a floor vote? This is the number surfaced throughout the application as
+      <strong>floor-vote likelihood</strong>, and it is rescored after every new action.</div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">STAGE 3</span><span class="stage-name">Per-legislator vote prediction</span></div>
+      <div class="stage-body">Conditional on reaching a vote, how do individual members vote? Built on public
+      roll-call record.</div>
+    </div>
+
+    <h3 style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; margin:2.5rem 0 0;">Stage 2 validation</h3>
+
+    <table class="dt">
+      <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Discrimination (AUC-ROC)</td><td class="num">0.9944</td><td>2025 holdout, never seen during training</td></tr>
+        <tr><td>95% confidence interval</td><td class="num">0.9908 &ndash; 0.9971</td><td>Bootstrap over the holdout</td></tr>
+        <tr><td>Precision @ operating threshold</td><td class="num">0.9602</td><td>Threshold chosen for the production surface</td></tr>
+        <tr><td>Recall @ operating threshold</td><td class="num">0.9659</td><td></td></tr>
+        <tr><td>Year-by-year stability</td><td class="num">0.9961 &plusmn; 0.0018</td><td>Sixteen years, across speaker and rule changes</td></tr>
+        <tr><td>Validation corpus</td><td class="num">117,667 bills</td><td>2009 &ndash; 2026, nine General Assembly sessions</td></tr>
+      </tbody>
+    </table>
+
+    <div class="prose">
+      <p>The stability figure matters more than the headline. A model that scores well on one holdout may
+      simply have learned one legislature's habits. Holding within &plusmn;0.0018 across sixteen years spanning
+      multiple speakers, rule changes, and political transitions says the signal is procedural rather than
+      incidental to a particular regime.</p>
+    </div>
+
+    <figure class="shot">
+      <img src="docs/legis/shot-08.png" alt="Probability trail for a tracked bill showing model score after each legislative action" />
+      <figcaption>The probability trail. Each point is the model score after a specific action &mdash; a bill's forecast as a path rather than a single number, with the action that moved it named alongside.</figcaption>
+    </figure>
+
+    <div class="insight-box">
+      <div class="insight-box-title">Why the trail is exposed, not just the score</div>
+      <p>A stakeholder asked to act on a number will ask why it changed. Showing the score after every action
+      makes the model's reasoning inspectable without requiring anyone to read a model: a bill that jumps from
+      46% to 85% on "Do Pass" is legible. A single current-value display would have been simpler to build and
+      considerably less useful, and it would have concealed the defect described in Section 08.</p>
+    </div>
+
+    <h3 style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; margin:2.5rem 0 0;">Cross-state expansion</h3>
+    <div class="prose">
+      <p>The system was extended to California to test whether the approach generalized past one legislature.
+      The first framing produced a suspiciously easy task &mdash; the target definition was leaking. After
+      correction, Stage 2 validated at <strong>0.8512 AUC across 31,798 California bills</strong>. That is the
+      published number. The flattering pre-correction figure is not reported anywhere, because it was wrong.</p>
+    </div>
+  </section>
+
+  <!-- 06 LEAKAGE -->
+  <section id="leakage">
+    <div class="section-header">
+      <div class="section-tag">06 / Leakage Control</div>
+      <h2 class="section-title">A number this high should invite suspicion</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>0.9944 on passage prediction is the kind of result that should make a reviewer distrust the pipeline
+      before they believe the model, and it made me distrust mine. Procedural history leaks by construction:
+      the actions that <em>record</em> a bill passing live in the same table as the actions that
+      <em>predict</em> it. Without a guard, the model learns to read the answer.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">Guard placement</div><div class="v">Applied at a single point, before aggregation &mdash; one place to inspect, one place to break</div>
+      <div class="k">Split boundary</div><div class="v">Bill level, not row level, so a bill's own history cannot span train and test</div>
+      <div class="k">Terminal outcomes</div><div class="v">Audited across all nine terminal-outcome terms</div>
+      <div class="k">Audit artifact</div><div class="v">Raw labelled history retained so the guard can be inspected rather than trusted</div>
+      <div class="k">Holdout</div><div class="v">Full calendar year (2025) withheld entirely from training</div>
+    </div>
+
+    <div class="prose">
+      <p>The last row is the one I would defend hardest. A leakage guard that cannot be independently checked
+      is a claim, not a control. Keeping the raw labelled history means a reviewer can re-derive what the
+      guard excluded rather than take my word for it.</p>
+    </div>
+  </section>
+
+  <!-- 07 PRODUCTION -->
+  <section id="prod">
+    <div class="section-header">
+      <div class="section-tag">07 / Production Pipeline</div>
+      <h2 class="section-title">One scheduled command, no human in the loop</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>The daily run executes as a single scheduled command on the institutional Linux analytics server.
+      Every stage writes structured logs against the standardized logging contract used across all pipelines
+      on that server, which means this pipeline is visible in the cross-pipeline job execution monitor without
+      any bespoke monitoring code.</p>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipeline-step">Hash check</div>
+      <div class="pipeline-step">Conditional download</div>
+      <div class="pipeline-step">Normalize &amp; chunk</div>
+      <div class="pipeline-step">Relabel actions</div>
+      <div class="pipeline-step">Rescore</div>
+      <div class="pipeline-step">Snapshot</div>
+      <div class="pipeline-step">Cloud upload</div>
+    </div>
+
+    <div class="kv">
+      <div class="k">Cadence</div><div class="v">Daily, unattended</div>
+      <div class="k">Scope</div><div class="v">Nine General Assembly sessions &middot; 50,501 active bills across the full corpus</div>
+      <div class="k">Generative scope</div><div class="v">Impact scoring and briefings run against the current session only</div>
+      <div class="k">Inference</div><div class="v">Hybrid &mdash; on-premises vLLM for bulk scoring, cloud LLM for user-facing generation</div>
+      <div class="k">Observability</div><div class="v">Structured Parquet logs into the shared job execution monitor</div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-box-title">The hybrid split was forced, then made deliberate</div>
+      <p>Database writes worked locally and failed from the deployed application. Not credentials, not
+      permissions &mdash; the campus network was terminating the connection at the <strong>TLS layer</strong>,
+      and only for traffic originating inside the institutional network. Rather than fight the network, the
+      scoring workload was re-architected around it: bulk inference stays on-premises where the constraint
+      lives, user-facing generation runs in the cloud where it does not. The constraint became an
+      architectural decision instead of an outage.</p>
+    </div>
+  </section>
+
+  <!-- 08 DEFECTS -->
+  <section id="defects">
+    <div class="section-header">
+      <div class="section-tag">08 / Defects &amp; Limits</div>
+      <h2 class="section-title">What went wrong, and what the system still cannot do</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Every defect below was found internally, before a stakeholder encountered it. That is the part worth
+      documenting &mdash; not that the system had faults, but which mechanism surfaced each one.</p>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">DEFECT 01</span><span class="stage-name">Join-key failure &middot; ID-space mismatch</span></div>
+      <div class="stage-body">
+        A production join silently failed because two upstream sources used different identifier spaces for
+        what appeared to be the same key. Diagnosed to the mismatch, rebuilt from source, and given a stable
+        secondary key so the join cannot degrade to a partial match again.
+        <br><br><strong>Surfaced by:</strong> row-count validation between stages, which is why the stage
+        boundaries write counts rather than just passing frames along.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">DEFECT 02</span><span class="stage-name">Monotonicity fault in the probability trail</span></div>
+      <div class="stage-body">
+        The per-bill probability trail moved in ways the procedural sequence could not justify &mdash; a bill's
+        score falling on an action that should have raised it. <strong>Aggregate AUC concealed this
+        completely.</strong> A model can order bills near-perfectly while still producing an individually
+        incoherent path, and the headline metric will never say so.
+        <br><br>The model-side fix was specified. A display-layer patch was applied in the interim and
+        <strong>documented as insufficient</strong> rather than allowed to stand in for the real correction.
+        <br><br><strong>Surfaced by:</strong> exposing the trail in the interface. A single current-value
+        display would have hidden this indefinitely.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">DEFECT 03</span><span class="stage-name">Unfalsifiable success signal</span></div>
+      <div class="stage-body">
+        A reliability audit of the pipeline's own health check found it reported success under conditions
+        where it could not have detected failure. It was structurally incapable of returning
+        <em>no</em>. Separately, a six-day repeating alarm traced to a single malformed record.
+        <br><br>The check was rewritten to be falsifiable. Terminology was also standardized after the audit
+        found the prediction being described five different ways across five surfaces.
+        <br><br><strong>Surfaced by:</strong> auditing my own monitoring rather than assuming a green signal
+        meant green.
+      </div>
+    </div>
+
+    <h3 style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; margin:2.5rem 0 0;">Known limitations</h3>
+
+    <div class="warn">
+      <strong>Stage 2 predicts reaching a floor vote, not becoming law.</strong> These are different
+      questions. Bills reach votes and fail; bills pass one chamber and die in the other. The number is
+      labelled <em>floor-vote likelihood</em> throughout the interface for that reason, and the standardization
+      pass that fixed five competing descriptions existed specifically to stop this from being misread.
+    </div>
+
+    <div class="warn">
+      <strong>The advance-warning framework is specified but not live.</strong> The intended validation
+      surface answers a better question than AUC does: how many days before passage did the model first reach
+      certainty? A model that becomes confident the morning of the vote is accurate and useless. That
+      framework requires prospective tracking data the system has not yet accumulated, so the surface exists
+      in the application as a defined destination and is not populated. It is reported here as pending rather
+      than shipped.
+    </div>
+
+    <div class="warn">
+      <strong>Cross-state generalization is demonstrated, not established.</strong> One additional state at
+      0.8512 shows the approach transfers. It does not show it transfers everywhere, and the gap between the
+      Illinois and California figures is itself the interesting result &mdash; procedural signal is
+      legislature-specific in ways a single number cannot capture.
+    </div>
+  </section>
+
+  <!-- CLOSE -->
+  <section>
+    <div class="section-header">
+      <div class="section-tag">&mdash;</div>
+      <h2 class="section-title">The other half</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose">
+      <p>Everything above produces a scored, structured corpus. It becomes useful only when a specific person
+      can ask it a question in their own terms &mdash; which is the subject of Part 2: the authenticated
+      multi-service application, the per-user personalization layer, team deliberation, and the cloud
+      architecture behind it.</p>
+    </div>
+    <div style="margin-top:1.5rem;">
+      <a href="legislative-web-application.html"
+         style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none;">
+         Part 2 &mdash; The Web Application &rarr;
+      </a>
+    </div>
+  </section>
+
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+</body>
+</html>

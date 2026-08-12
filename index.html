@@ -231,7 +231,7 @@
       <div class="about-sidebar">
         <div class="sidebar-block"><div class="sidebar-block-title">Current Role</div><p>Data Scientist · AI Solutions Team<br>AITS, University of Illinois System<br>Nov 2023 – Present <span style="color:var(--muted2); font-size:0.85rem;">(team move to AI Solutions, Nov 2025)</span><br><br><span style="color:var(--muted2); font-size:0.8rem;">Previously: Data Engineer · Advanced Analytics (May 2022 – Nov 2023)</span></p></div>
         <div class="sidebar-block"><div class="sidebar-block-title">Education</div><p>B.S. Cognitive Science, ML &amp; Neural Computation<br>UC San Diego (2021)</p></div>
-        <div class="sidebar-block"><div class="sidebar-block-title">Live Deployment</div><p>Legislative Trends Dashboard on Azure App Service <a href="https://legislationtrends2026-fgh8dvf0a4edhqc3.northcentralus-01.azurewebsites.net" target="_blank" style="color: var(--accent2);">live beta ↗</a></p></div>
+        <div class="sidebar-block"><div class="sidebar-block-title">Flagship Delivery</div><p>Legislative Intelligence Platform, delivered to IGPA August 2026 &mdash; <a href="legislative-pipeline.html" style="color: var(--accent2);">technical documentation ↗</a></p></div>
       </div>
     </div>
   </section>
@@ -244,8 +244,8 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
           <span class="project-status status-active"><span class="status-dot"></span>Active Azure Live Beta</span>
           <div style="display:flex;gap:1rem;">
-            <a href="https://terbe2022.github.io/uiuc-legislative-intelligence-hub/" target="_blank" class="project-link">Landing Page ↗</a>
-            <a href="https://legislationtrends2026-fgh8dvf0a4edhqc3.northcentralus-01.azurewebsites.net" target="_blank" class="project-link">Live Dashboard ↗</a>
+            <a href="legislative-pipeline.html" class="project-link">Pipeline Documentation ↗</a>
+            <a href="legislative-web-application.html" class="project-link">Application Documentation ↗</a>
           </div>
         </div>
         <div class="project-num">01</div>
@@ -328,7 +328,7 @@
         </div>
         <div class="project-num">06</div>
         <div class="project-title">HR Workforce Analytics Intelligence Platform</div>
-        <p class="project-desc">Predictive workforce analytics platform designed to transform EDW HR and payroll data into forward-looking strategic intelligence. Three completed POC workstreams cover internal mobility modeling, succession readiness prediction, and workforce growth forecasting. Uses Markov chain career simulation, Random Forest promotion prediction, graph-based career community detection, and O*NET-enriched skill matching. Developed in partnership with Luanne Mayorga, Assistant Chancellor for Illinois HR.</p>
+        <p class="project-desc">Predictive workforce analytics platform designed to transform EDW HR and payroll data into forward-looking strategic intelligence. Three completed POC workstreams cover internal mobility modeling, succession readiness prediction, and workforce growth forecasting. Uses Markov chain career simulation, Random Forest promotion prediction, graph-based career community detection, and O*NET-enriched skill matching. Developed in partnership with Illinois HR leadership.</p>
         <div class="project-tags">
           <span class="tag">Attrition Modeling</span><span class="tag">Forecasting</span><span class="tag">HR Analytics</span><span class="tag">ERP Strategy</span>
         </div>
@@ -390,7 +390,7 @@
         </div>
         <div class="project-num">10</div>
         <div class="project-title">vLLM Multi-Model Sweep · Legislation Pipeline</div>
-        <p class="project-desc">Six-stage experimental funnel benchmarking three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="https://terbe2022.github.io/uiuc-legislative-intelligence-hub/" target="_blank" style="color:var(--accent2);">Legislative Intelligence Platform</a>. Covers chunk-size sweep (66 cells), cross-model quality validation, concurrency scaling, per-request telemetry decomposition, SLO gate analysis, and a two-round human-graded qualitative review (Experiments 3 & 3.5). <strong>Production recommendation: Llama 3.1 8B AWQ at chunk_size=1200, concurrency=12–24</strong> — 20+ percentage-point parse-OK lead over all tested alternatives, quality invariant under concurrency (&lt;0.6pp across c=1→24), and the only model clearing 80% parse-OK at every tested chunk size. Exp 3.5 characterized parse-OK's within-model reliability: directional for Llama, reversed for Qwen and Mistral.</p>
+        <p class="project-desc">Six-stage experimental funnel benchmarking three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="legislative-pipeline.html" style="color:var(--accent);">Legislative Intelligence Platform</a>. Covers chunk-size sweep (66 cells), cross-model quality validation, concurrency scaling, per-request telemetry decomposition, SLO gate analysis, and a two-round human-graded qualitative review (Experiments 3 & 3.5). <strong>Production recommendation: Llama 3.1 8B AWQ at chunk_size=1200, concurrency=12–24</strong> — 20+ percentage-point parse-OK lead over all tested alternatives, quality invariant under concurrency (&lt;0.6pp across c=1→24), and the only model clearing 80% parse-OK at every tested chunk size. Exp 3.5 characterized parse-OK's within-model reliability: directional for Llama, reversed for Qwen and Mistral.</p>
         <div class="project-tags">
           <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Llama 3.1 8B AWQ</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">AWQ Quantization</span><span class="tag">GPU Telemetry</span><span class="tag">Performance Engineering</span><span class="tag">Human-Graded QA</span><span class="tag">Production Decision</span>
         </div>
@@ -411,6 +411,26 @@
           <span class="tag tag-accent">RAG</span><span class="tag tag-accent">FAISS</span><span class="tag tag-accent">6M Rows</span><span class="tag">FastAPI</span><span class="tag">qwen2.5:7b</span><span class="tag">Procurement Analytics</span><span class="tag">Unit Normalization</span><span class="tag">Semantic Search</span>
         </div>
       </div>
+
+
+      <!-- ===========================================================================
+           PERSONAL PROJECTS - TEMPORARILY HIDDEN (not abandoned)
+           ---------------------------------------------------------------------------
+           P1  Legacy, A Memory Vault for Later
+           P2  Personal AI Chatbot That Mimics Me
+           P3  Adaptive Narrative Engine, Psychologically Driven RPG
+
+           Commented out while these are still early. Keeping the full markup here as a
+           reference so nothing has to be rewritten. Uncomment individual cards as each
+           one is built out far enough to stand next to the production work above.
+
+           Live links still working as of this edit:
+             Legacy case study : legacy-app-about.html
+             Legacy live app   : https://tayler-erbe.github.io/legacy-app/
+             Legacy repo       : https://github.com/tayler-erbe/legacy-app
+      ============================================================================ -->
+
+      <!--
 
       <div class="project-card featured" style="border-color: rgba(224,122,61,0.3); background: linear-gradient(135deg, var(--surface) 0%, rgba(224,122,61,0.03) 100%); border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
@@ -456,6 +476,8 @@
           <span class="tag tag-accent">Big Five / OCEAN</span><span class="tag tag-accent">LLM Agents</span><span class="tag">Jungian Archetypes</span><span class="tag">FAISS Memory</span><span class="tag">FastAPI</span><span class="tag">Adaptive Narrative</span><span class="tag">React</span>
         </div>
       </div>
+      -->
+
 
     </div>
   </section>
@@ -531,8 +553,8 @@
       <a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" class="contact-link">↗ LinkedIn</a>
       <a href="https://instagram.com/tayler_erbe" target="_blank" class="contact-link">↗ Instagram</a>
       <a href="resume.pdf" class="contact-link">↗ Resume / CV</a>
-      <a href="https://terbe2022.github.io/uiuc-legislative-intelligence-hub/" target="_blank" class="contact-link">↗ Legislative Intelligence Platform</a>
-      <a href="https://legislationtrends2026-fgh8dvf0a4edhqc3.northcentralus-01.azurewebsites.net" target="_blank" class="contact-link">↗ Live Azure Dashboard</a>
+      <a href="legislative-pipeline.html" class="contact-link">↗ Legislative Intelligence Platform</a>
+      <a href="legislative-pipeline.html" class="contact-link">↗ Legislative Platform Docs</a>
       <a href="legacy-app-about.html" class="contact-link">↗ Legacy (Personal Project)</a>
     </div>
   </section>
