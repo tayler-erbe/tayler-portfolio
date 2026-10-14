@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skyrule &middot; Personal Project &middot; Tayler Erbe</title>
+  <meta name="description" content="Skyrule, a personal project: a multi-agent AI engineering organization, a self-hosted local LLM stack, and validator-gated content generation with founder-in-the-loop review and dedicated quality and security governance." />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f1318;
+      --surface2: #161c24;
+      --border: #1e2530;
+      --accent: #5bc8dc;
+      --accent2: #3a8fc4;
+      --accent3: #c07a6e;
+      --accent-dim: rgba(91,200,220,0.12);
+      --text: #d8e2ed;
+      --muted: #6b7c91;
+      --muted2: #3a4556;
+      --white: #eef3f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(8,11,16,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
+    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-back:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      padding: 9rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -30%; right: -5%;
+      width: 50vw; height: 50vw;
+      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1.0; color: var(--white);
+      letter-spacing: 0.01em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
+
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem; }
+    .meta-item {}
+    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+
+    /* STAT STRIP */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat-item { background: var(--surface); padding: 1.75rem 2rem; transition: background 0.2s; }
+    .stat-item:hover { background: var(--surface2); }
+    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
+    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* SECTIONS */
+    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* PROSE */
+    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p strong { color: var(--text); font-weight: 500; }
+
+    /* LAYOUTS */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+
+    /* CALLOUT */
+    .callout {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
+      margin-top: 1.5rem;
+    }
+    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .callout p strong { color: var(--text); font-weight: 500; }
+
+    /* PIPELINE STEPS */
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.5rem; padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .pipeline-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
+    }
+    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
+    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .step-body strong { color: var(--text); font-weight: 500; }
+
+    /* TAG CHIPS */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+    .chip-warm { border-color: var(--accent3); color: var(--accent3); }
+
+    /* METHOD COMPARISON CARDS */
+    .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .method-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
+    .method-card.winner { border-color: var(--accent); border-top: 3px solid var(--accent); }
+    .method-card.challenger { border-top: 3px solid var(--accent3); }
+    .method-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
+    .method-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--white); text-transform: uppercase; }
+    .method-badge {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem;
+    }
+    .badge-green { background: rgba(93,191,138,0.12); color: #5dbf8a; border: 1px solid #5dbf8a; }
+    .badge-warn { background: rgba(192,122,110,0.12); color: var(--accent3); border: 1px solid var(--accent3); }
+    .badge-blue { background: rgba(91,200,220,0.12); color: var(--accent); border: 1px solid var(--accent); }
+    .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: 0.82rem; color: var(--muted); }
+    .metric-value { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
+    .metric-value.good { color: var(--accent); }
+    .metric-value.warn { color: var(--accent3); }
+    .metric-value.neutral { color: var(--text); }
+
+    /* DATA TABLE */
+    .cat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .cat-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .cat-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; vertical-align: top; }
+    .cat-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+    .cat-table td:last-child { font-family: 'DM Mono', monospace; }
+    .cat-table tr:last-child td { border-bottom: none; }
+
+    /* RESULTS STRIP */
+    .results-strip {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--border); margin-top: 2rem;
+    }
+    .result-cell { background: var(--surface2); padding: 1.5rem; }
+    .result-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: 0.25rem; }
+    .result-label { font-family: 'DM Mono', monospace; font-size: 0.67rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    /* INSIGHT BOXES */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+    .insight-box p strong { color: var(--text); font-weight: 500; }
+
+    /* TAKEAWAY STRIP */
+    .takeaway { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--surface2); border-left: 3px solid var(--accent); padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .takeaway::before { content: '→'; color: var(--accent); font-family: 'DM Mono', monospace; flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem; }
+    .takeaway strong { color: var(--text); }
+
+    /* CHART CONTAINER */
+    .chart-wrap {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .chart-wrap img,
+    .chart-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .chart-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-top: 0.75rem;
+    }
+
+    /* BACK */
+    .back-section { padding: 3rem; text-align: center; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); padding: 0.85rem 2rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .back-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* INLINE CODE */
+    code.inline {
+      font-family: 'DM Mono', monospace;
+      color: var(--accent2);
+      font-size: 0.85em;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-eyebrow { animation: fadeUp 0.5s ease 0.1s both; }
+    .hero h1 { animation: fadeUp 0.5s ease 0.22s both; }
+    .hero-desc { animation: fadeUp 0.5s ease 0.36s both; }
+    .hero-meta { animation: fadeUp 0.5s ease 0.48s both; }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      nav { padding: 1rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 3rem 1.5rem; }
+      .stat-strip { grid-template-columns: 1fr 1fr; }
+      .two-col, .three-col, .method-grid, .insight-grid, .results-strip { grid-template-columns: 1fr; }
+      .back-section { padding: 2rem 1.5rem; }
+    }
+  
+    /* --- additions for pipeline documentation --- */
+    .toc { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); margin:2rem 0 0; }
+    .toc a { background:var(--surface); padding:1rem 1.1rem; text-decoration:none; display:block; transition:background .2s; }
+    .toc a:hover { background:var(--surface2); }
+    .toc-num { font-family:'DM Mono',monospace; font-size:.65rem; color:var(--accent2); letter-spacing:.1em; display:block; margin-bottom:.35rem; }
+    .toc-name { font-size:.86rem; color:var(--text); }
+    .stage { border:1px solid var(--border); background:var(--surface); margin:1rem 0; }
+    .stage-head { display:flex; align-items:baseline; gap:1rem; padding:1rem 1.25rem; border-bottom:1px solid var(--border); background:var(--surface2); flex-wrap:wrap; }
+    .stage-id { font-family:'DM Mono',monospace; font-size:.7rem; color:var(--accent); letter-spacing:.1em; }
+    .stage-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.15rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; }
+    .stage-body { padding:1.15rem 1.25rem; font-size:.92rem; color:var(--muted); line-height:1.7; }
+    .stage-body strong { color:var(--text); font-weight:500; }
+    .kv { display:grid; grid-template-columns:minmax(160px,220px) 1fr; gap:1px; background:var(--border); border:1px solid var(--border); margin:1.25rem 0; }
+    .kv > div { background:var(--surface); padding:.7rem 1rem; font-size:.86rem; }
+    .kv .k { font-family:'DM Mono',monospace; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .kv .v { color:var(--text); }
+    figure.shot { margin:2rem 0; border:1px solid var(--border); background:var(--surface); }
+    figure.shot img { width:100%; display:block; }
+    figure.shot figcaption { padding:.85rem 1.1rem; font-size:.8rem; color:var(--muted); border-top:1px solid var(--border); font-family:'DM Mono',monospace; letter-spacing:.03em; }
+    .warn { border-left:2px solid var(--accent3); background:rgba(192,122,110,0.06); padding:1rem 1.25rem; margin:1.5rem 0; font-size:.9rem; color:var(--muted); line-height:1.7; }
+    .warn strong { color:var(--accent3); font-weight:500; }
+    code { font-family:'DM Mono',monospace; font-size:.85em; color:var(--accent); background:rgba(91,200,220,0.08); padding:.1rem .35rem; }
+    table.dt { width:100%; border-collapse:collapse; margin:1.25rem 0; font-size:.86rem; }
+    table.dt th { text-align:left; font-family:'DM Mono',monospace; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:.6rem .8rem; border-bottom:1px solid var(--accent2); }
+    table.dt td { padding:.6rem .8rem; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; }
+    table.dt td.num { font-family:'DM Mono',monospace; color:var(--accent); white-space:nowrap; }
+    @media (max-width:760px){ .kv{grid-template-columns:1fr} .kv .k{border-bottom:0} }
+
+    @media (max-width:760px){
+      .toc { grid-template-columns:1fr 1fr; }
+      table.dt { display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .pipeline { flex-wrap:wrap; }
+      .hero-meta { grid-template-columns:1fr; }
+      figure.shot img { min-width:0; }
+    }
+
+  
+    @media (max-width:760px){
+      .section-header { flex-wrap:wrap; gap:.5rem; }
+      .section-header .section-title { flex:1 1 100%; }
+      .section-line { display:none; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <a href="index.html" class="nav-back">&#8592; Back to Portfolio</a>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; Aug 2026 &ndash; Present</div>
+    <h1>Skyrule<br><span>Agentic AI &amp; Local LLMs</span></h1>
+    <p class="hero-desc">
+      A self-funded personal project, built outside my employment: a relational-intelligence product that helps a
+      person understand themselves and the people in their life, and see how those relationships move through
+      time on a calendar and timeline. Astrology is the interpretive lens. The engineering underneath is a
+      sourced-rule inference system, a <strong>15-agent AI engineering organization</strong> that builds it, and a
+      <strong>self-hosted LLM stack</strong> whose output is gated by automated validators, statistical acceptance
+      testing and founder review.
+    </p>
+
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Active build &middot; pre-beta &middot; public launch planned Q1 2027</div></div>
+      <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">Founder, product owner &amp; technical lead</div></div>
+      <div class="meta-item"><div class="meta-label">Timeline</div><div class="meta-value">Started Aug 14, 2026</div></div>
+      <div class="meta-item"><div class="meta-label">Site</div><div class="meta-value"><a href="https://skyrule.io" target="_blank" style="color:var(--accent); text-decoration:none;">skyrule.io &#8599;</a></div></div>
+    </div>
+
+    <div class="toc">
+      <a href="#org"><span class="toc-num">01</span><span class="toc-name">The Agent Organization</span></a>
+      <a href="#orchestration"><span class="toc-num">02</span><span class="toc-name">Orchestration &amp; Model Routing</span></a>
+      <a href="#local"><span class="toc-num">03</span><span class="toc-name">Local LLM Stack</span></a>
+      <a href="#provenance"><span class="toc-num">04</span><span class="toc-name">Provenance-First Knowledge</span></a>
+      <a href="#generation"><span class="toc-num">05</span><span class="toc-name">Validator-Gated Generation</span></a>
+      <a href="#evaluation"><span class="toc-num">06</span><span class="toc-name">Statistical Evaluation</span></a>
+      <a href="#governance"><span class="toc-num">07</span><span class="toc-name">Quality, Security &amp; Data</span></a>
+      <a href="#next"><span class="toc-num">08</span><span class="toc-name">Timeline &amp; Next</span></a>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-item"><div class="stat-big">15</div><div class="stat-desc">AI agents with written charters</div></div>
+    <div class="stat-item"><div class="stat-big">650+</div><div class="stat-desc">Unattended jobs launched by the queue</div></div>
+    <div class="stat-item"><div class="stat-big">1,375</div><div class="stat-desc">Automated tests passing (Oct 12, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">4,256</div><div class="stat-desc">Verified, sourced rules lifted (Oct 6, 2026)</div></div>
+  </div>
+
+  <!-- 01 ORG -->
+  <section id="org">
+    <div class="section-header">
+      <div class="section-tag">01 / Agent Organization</div>
+      <h2 class="section-title">A company made of agents</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>I designed the build team as a <strong>15-agent AI engineering organization</strong>: fourteen departments
+      plus a Principal Architect, modelled on a real company. The departments cover the domain practice, relational
+      science, editorial, product design, platform and data engineering, AI and performance engineering, QA and
+      compliance, data science, brand and marketing, legal and trust, finance and operations, program management,
+      the office of the founder, and security and IP protection.</p>
+
+      <p>Each agent is a Claude Code subagent with a written charter, a scope of work, a handoff protocol,
+      persistent memory and an explicit list of what it does <em>not</em> own. Changes that cross departments
+      route through the Principal Architect for integration review.</p>
+    </div>
+
+    <div class="insight-box" style="margin-top:1.5rem;">
+      <div class="insight-box-title">Lanes enforced by tooling, not by instruction</div>
+      <p>"Agents should stay in their lane" is easy to write in a prompt and easy for a model to ignore. Code
+      ownership is defined in a machine-readable map and <strong>enforced by the tooling</strong>, so an agent
+      cannot change files outside its own scope. Least privilege becomes a control rather than a request.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">Decision continuity</div><div class="v">Founder decisions recorded verbatim in an append-only log; agents read it before asking a question that has already been answered</div>
+      <div class="k">Session continuity</div><div class="v">Mission file, open-threads register, handoff documents and a coordinator brief let any new agent session resume without loss</div>
+      <div class="k">Code review</div><div class="v">29 pull requests from a cloud engineering agent reviewed and integrated: isolated checkout, full test suite and regression controls before any merge is reported</div>
+    </div>
+  </section>
+
+  <!-- 02 ORCHESTRATION -->
+  <section id="orchestration">
+    <div class="section-header">
+      <div class="section-tag">02 / Orchestration</div>
+      <h2 class="section-title">Work that runs while I sleep</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>An <strong>autonomous job queue and GPU scheduler</strong> (Python, on a 15-minute tick) runs the long work:
+      separate lanes for CPU, local-model and cloud-model jobs, priorities, dependencies, start conditions,
+      finish checks, retry limits, a usage-budget guard, and automatic pause-and-resume when a model usage limit
+      is reached. It has launched <strong>650+ unattended jobs</strong> since early October 2026, including
+      overnight GPU extraction runs and parallel multi-agent research batches.</p>
+
+      <p>Each task goes to the cheapest model that meets its quality bar: frontier Claude models for reading,
+      verification, design and audit; local open-weights models on my own GPU for high-volume generation,
+      extraction and grading; small local models for routing and utilities. Every model was measured on the
+      actual hardware before it was given a role, rather than chosen by reputation.</p>
+    </div>
+  </section>
+
+  <!-- 03 LOCAL -->
+  <section id="local">
+    <div class="section-header">
+      <div class="section-tag">03 / Local LLM Stack</div>
+      <h2 class="section-title">A self-hosted inference workstation</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>I designed and commissioned a self-hosted inference workstation (<strong>RTX 5090 32 GB</strong>,
+      Ryzen 9 9950X, 64 GB RAM) running <strong>vLLM in WSL</strong> with AWQ and FP8 quantized models behind
+      OpenAI-compatible endpoints, with hot-switching between two served models and automatic restore.</p>
+    </div>
+
+    <table class="dt">
+      <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Regeneration throughput</td><td class="num">14,200 &ndash; 15,100 / GPU-hr</td><td>Pieces of content per GPU-hour, measured</td></tr>
+        <tr><td>Grading throughput</td><td class="num">576 &rarr; 1,411 / GPU-hr</td><td>Raised by tuning concurrency from 6 to 24 workers</td></tr>
+        <tr><td>Context window</td><td class="num">4,096 &rarr; 16,384 tokens</td><td>Sized with KV-cache arithmetic and a benchmark before adopting</td></tr>
+      </tbody>
+    </table>
+
+    <div class="prose">
+      <p>This is the same discipline as my <a href="archival-image-throughput-evaluation.html" style="color:var(--accent2);">vLLM throughput work</a>
+      at the University of Illinois, applied to my own hardware: measure first, then change one thing.</p>
+    </div>
+  </section>
+
+  <!-- 04 PROVENANCE -->
+  <section id="provenance">
+    <div class="section-header">
+      <div class="section-tag">04 / Provenance</div>
+      <h2 class="section-title">Every number traces to a source</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Underneath the product is a deterministic chart engine written in Python, exposed through a versioned
+      FastAPI layer, with regression controls that must reproduce <strong>279 reference spans</strong> exactly.
+      On top of it sits a sourced-rule pipeline over a <strong>76-title licensed corpus</strong>: whole-chapter
+      extraction, independent verification by a second model, a verbatim-quote gate, page re-checks, quarantine,
+      and staged release into a rule store.</p>
+
+      <p><strong>4,256 verified rules</strong> were released for use on October 6, 2026. Every number in the
+      product traces to a rule, a page and an engine event.</p>
+    </div>
+
+    <div class="insight-box" style="margin-top:1.5rem;">
+      <div class="insight-box-title">An interpretable model with no scoreboard</div>
+      <p>The relationship model is specified as explicit functions, gives one value per goal per kind of
+      relationship, and holds every weight in a ledger with a stated basis, marked provisional until data
+      science calibrates it. A product rule is enforced in code and tests: <strong>no total, ranking or
+      compatibility score</strong>, even internally.</p>
+    </div>
+  </section>
+
+  <!-- 05 GENERATION -->
+  <section id="generation">
+    <div class="section-header">
+      <div class="section-tag">05 / Generation</div>
+      <h2 class="section-title">The model proposes; code checks every claim</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>The content generator is <strong>brief-first</strong>. Code lays out what the inputs support; the local
+      model plans a reading claim by claim; code validates every claim; then the model writes one sentence per
+      approved claim and code checks again. Nothing reaches the library on the model's word alone, and the
+      founder reviews before anything is released.</p>
+
+      <p>I iterated the validator through <strong>seven versions</strong> from my own reviews, adding checks for
+      truncated claims, unsupported causal leaps, attributing a trait to the wrong person, and claims the inputs
+      do not establish. Every new check is tested before use three ways:</p>
+    </div>
+
+    <table class="dt">
+      <thead><tr><th>Test</th><th>Result</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td>Named defects</td><td class="num">8 of 8 caught</td><td>The validator catches the failures I identified in review</td></tr>
+        <tr><td>Previously accepted claims</td><td class="num">false-alarm rate reported</td><td>A stricter check does not silently reject good output</td></tr>
+        <tr><td>Mutation testing</td><td class="num">21 of 21 caught</td><td>Deliberately broken inputs are detected</td></tr>
+      </tbody>
+    </table>
+
+    <div class="prose">
+      <p>An end-to-end pilot on the 32B model ran against <strong>pass conditions set before the run</strong>. It
+      showed that an over-literal check was rejecting acceptable text. Fixing the prompt and the check raised
+      plan acceptance from 6 of 31 to 14 of 31 and usable output from about 690 to about 1,280 pieces per GPU-hour.</p>
+    </div>
+  </section>
+
+  <!-- 06 EVALUATION -->
+  <section id="evaluation">
+    <div class="section-header">
+      <div class="section-tag">06 / Evaluation</div>
+      <h2 class="section-title">Grading 2.6 million pieces honestly</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Grading a 2.6-million-piece library three times over was measured at about 5,600 GPU-hours, which is not
+      feasible. The grading strategy replaces it with <strong>statistical lot acceptance sampling</strong> (exact
+      binomial plans with stated producer and consumer risk), code checks on every piece, brief-level grading
+      before expansion, and a plan for a distilled grader.</p>
+
+      <p>Every quality bar is set before measurement and reported as both a point estimate and a <strong>Wilson
+      95% lower bound</strong>; for example, a precision gate passed at 84 of 96 (87.5%). An independent model
+      labels claims in each batch, its agreement with my verdicts is measured, and the labels become a regression
+      set for the validator.</p>
+    </div>
+  </section>
+
+  <!-- 07 GOVERNANCE -->
+  <section id="governance">
+    <div class="section-header">
+      <div class="section-tag">07 / Governance</div>
+      <h2 class="section-title">Quality, security and data protection</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="kv">
+      <div class="k">Quality governance</div><div class="v">A register of quality bars with proof each was set before measuring, the authority to block on quality with a written reason, a weekly quality review, and re-runnable evidence required for every "done" claim</div>
+      <div class="k">Security &amp; IP</div><div class="v">A dedicated security and IP-protection function with the authority to block any merge or release that weakens a control, and a weekly security review</div>
+      <div class="k">Privacy by design</div><div class="v">Users' personal chart data is never sent to a cloud model and never appears in code, tests, logs or commits; fabricated fixtures only. Consent is the gate for storing anyone else's data</div>
+      <div class="k">Rights</div><div class="v">Licensed book text stays out of the repository, with rights records and a quote-permitted gate</div>
+      <div class="k">Engineering practice</div><div class="v">1,375 automated tests passing on the integration branch (October 12, 2026), known-bad controls that must fail, and a release gate that fails on any unapproved input change</div>
+    </div>
+  </section>
+
+  <!-- 08 NEXT -->
+  <section id="next">
+    <div class="section-header">
+      <div class="section-tag">08 / Timeline</div>
+      <h2 class="section-title">Where it stands</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="kv">
+      <div class="k">Aug 14, 2026</div><div class="v">Repository started: chart engine, test suite and versioned API</div>
+      <div class="k">Aug &ndash; Sep 2026</div><div class="v">Charters, handoff protocol and the multi-agent organization stood up; local-model role map measured</div>
+      <div class="k">Sep 27, 2026</div><div class="v">vLLM generation engine running with quantized models</div>
+      <div class="k">Oct 1 &ndash; 2, 2026</div><div class="v">Inference workstation commissioned; ownership-enforced agent scopes in place</div>
+      <div class="k">Oct 3 &ndash; 6, 2026</div><div class="v">Relationship model specified; rule pipeline run end to end; 4,256 verified rules released; precision gate passed</div>
+      <div class="k">Oct 10, 2026</div><div class="v">Brief-first generator built and piloted</div>
+      <div class="k">Oct 11 &ndash; 12, 2026</div><div class="v">Security and quality-governance functions stood up; validator v7; 1,375 tests passing</div>
+    </div>
+
+    <div class="prose">
+      <p><strong>Next:</strong> regenerate the library on the new generator; validate the automated grader to an
+      85% agreement bar measured at the Wilson 95% lower bound; build consent-gated accounts with deletion and
+      export; open an invited beta of about ten people; then run a pre-registered calibration study so the
+      provisional weights are fitted to real outcomes. Public launch is planned for Q1 2027.</p>
+    </div>
+
+    <div class="tag-row" style="margin-top:1.5rem;">
+      <span class="chip chip-warm">Personal Project</span><span class="chip chip-accent">Claude Code Subagents</span><span class="chip chip-accent">vLLM</span><span class="chip chip-accent">Qwen3-32B AWQ</span><span class="chip">FP8 / AWQ Quantization</span><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">pytest</span><span class="chip">Acceptance Sampling</span><span class="chip">Wilson Intervals</span><span class="chip">Mutation Testing</span><span class="chip">RTX 5090</span>
+    </div>
+  </section>
+
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+</body>
+</html>

@@ -323,9 +323,9 @@
     <p class="hero-desc">
       The server-side half of the Legislative Intelligence Platform: how raw bill text becomes structured
       intelligence and a calibrated floor-vote probability. Ingestion, LLM feature extraction, a formal model
-      selection evaluation, a procedural taxonomy built from nothing, and a three-stage survival model
-      validated at <strong>0.9944 AUC-ROC</strong> across <strong>117,667 bills</strong> &mdash; running
-      unattended every day.
+      selection evaluation, a procedural taxonomy built from nothing, and a three-stage prediction system
+      validated on a held-out General Assembly at <strong>75.1% precision and 76.2% recall</strong>, with a
+      median <strong>21 days&#8217; warning</strong> before the floor vote &mdash; running unattended every day.
     </p>
 
     <div style="margin-top:1.75rem; display:flex; gap:1rem; flex-wrap:wrap;">
@@ -336,9 +336,9 @@
     </div>
 
     <div class="hero-meta">
-      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Production &middot; delivered to IGPA Aug 2026</div></div>
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Production &middot; delivered to IGPA Aug 2026 &middot; validated Sep 2026</div></div>
       <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">Sole builder &middot; data engineering through production</div></div>
-      <div class="meta-item"><div class="meta-label">Timeline</div><div class="meta-value">Feb 2026 POC &rarr; Aug 2026 production</div></div>
+      <div class="meta-item"><div class="meta-label">Timeline</div><div class="meta-value">Feb 2026 POC &rarr; Aug 2026 production &rarr; Sep 2026 held-out validation</div></div>
       <div class="meta-item"><div class="meta-label">Cadence</div><div class="meta-value">Autonomous daily run</div></div>
     </div>
 
@@ -376,7 +376,7 @@
     <div class="kv">
       <div class="k">Corpus, application</div><div class="v">46,074 bills across 4 General Assembly sessions (101st&ndash;104th)</div>
       <div class="k">Active session</div><div class="v">104th GA (2025&ndash;2026) &middot; 12,022 bills &middot; 9,734 active</div>
-      <div class="k">Corpus, model training</div><div class="v">117,667 bills spanning nine General Assembly sessions, 2009&ndash;2026</div>
+      <div class="k">Corpus, model training</div><div class="v">117,722 bills and 1,444,601 action records after the September 2026 corpus rebuild (117,667 bills in the June 2026 build), 2009&ndash;2026</div>
       <div class="k">Ingest sources</div><div class="v">LegiScan API &middot; ILGA FTP bulk</div>
       <div class="k">Change detection</div><div class="v">Content-hash comparison, conditional download</div>
     </div>
@@ -541,7 +541,40 @@
       roll-call record.</div>
     </div>
 
-    <h3 style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; margin:2.5rem 0 0;">Stage 2 validation</h3>
+    <h3 style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; margin:2.5rem 0 0;">Held-out validation &middot; September 2026</h3>
+
+    <div class="prose">
+      <p>The question a stakeholder actually asks is not &ldquo;what is the AUC&rdquo; but &ldquo;when the model
+      calls a bill, how often is it right, and how much warning does it give?&rdquo; I built a validation method
+      that measures exactly that, with safeguards against counting any prediction made after the outcome was
+      known, and deployed it as the platform&#8217;s Validation page. The model was then retrained on a corrected
+      corpus with a full General Assembly held out.</p>
+    </div>
+
+    <table class="dt">
+      <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Precision @ 0.70</td><td class="num">75.1%</td><td>Held-out 103rd General Assembly, never seen in training</td></tr>
+        <tr><td>Recall @ 0.70</td><td class="num">76.2%</td><td>Same held-out Assembly</td></tr>
+        <tr><td>Median warning</td><td class="num">21 days</td><td>Before the floor vote</td></tr>
+        <tr><td>Introduction-time ROC-AUC</td><td class="num">0.561 &rarr; 0.845</td><td>After adding each bill&#8217;s title and synopsis; confirmed by an ablation study and three leakage checks</td></tr>
+        <tr><td>Train/serve parity</td><td class="num">36,028 inputs</td><td>Verified byte-identical after moving training and nightly scoring onto one shared input module</td></tr>
+      </tbody>
+    </table>
+
+    <div class="prose">
+      <p>In plain terms: on a full Assembly it never saw, the model was right about 75% of the bills it flagged,
+      typically three weeks before the vote. These results are published on the live Validation page and
+      supersede the June 2026 figures below.</p>
+    </div>
+
+    <h3 style="font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; color:var(--white); text-transform:uppercase; letter-spacing:.02em; margin:2.5rem 0 0;">Stage 2 validation &middot; June 2026 (superseded)</h3>
+
+    <div class="warn">
+      <strong>Kept for the record, not as the headline.</strong> These figures were computed before the
+      September 2026 corpus correction and retraining described in Section 06. They are superseded by the
+      held-out results above.
+    </div>
 
     <table class="dt">
       <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
@@ -611,6 +644,13 @@
       <p>The last row is the one I would defend hardest. A leakage guard that cannot be independently checked
       is a claim, not a control. Keeping the raw labelled history means a reviewer can re-derive what the
       guard excluded rather than take my word for it.</p>
+
+      <p>The suspicion paid off. A validation pass in August and September 2026 found data problems that would
+      have invalidated the published numbers: a status filter had dropped every resolved bill from the training
+      corpus (rebuilt from 46,815 to 117,722 bills, with passed-bill coverage going from 1.2% to 100%), and
+      resolutions pooled with bills had inflated the apparent success rate to 30.4% from a true 13.2%. I
+      corrected both, retrained with a full General Assembly held out, rewrote the documentation to remove claims
+      the evidence no longer supported, and replaced the June headline with the held-out results in Section 05.</p>
     </div>
   </section>
 
@@ -719,12 +759,11 @@
     </div>
 
     <div class="warn">
-      <strong>The advance-warning framework is specified but not live.</strong> The intended validation
-      surface answers a better question than AUC does: how many days before passage did the model first reach
-      certainty? A model that becomes confident the morning of the vote is accurate and useless. That
-      framework requires prospective tracking data the system has not yet accumulated, so the surface exists
-      in the application as a defined destination and is not populated. It is reported here as pending rather
-      than shipped.
+      <strong>Advance warning is now measured, on one held-out Assembly.</strong> The validation surface
+      answers a better question than AUC does: how many days before the vote did the model first make the call?
+      A model that becomes confident the morning of the vote is accurate and useless. Since September 2026 the
+      Validation page reports this directly (median 21 days at the 0.70 threshold). It is one held-out Assembly,
+      not a long prospective record, and is reported as such.
     </div>
 
     <div class="warn">

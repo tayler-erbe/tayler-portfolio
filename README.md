@@ -2,7 +2,7 @@
 
 Production AI/ML engineering, applied NLP, and inference performance work — built end-to-end across a four-year tenure leading the Advanced Analytics function at the University of Illinois System.
 
-**Live site:** [terbe2022.github.io/tayler-portfolio](https://terbe2022.github.io/tayler-portfolio/)
+**Live site:** [taylererbe.com](https://taylererbe.com) (GitHub Pages mirror: [tayler-erbe.github.io/tayler-portfolio](https://tayler-erbe.github.io/tayler-portfolio/))
 
 ---
 
@@ -16,13 +16,14 @@ Each project links to a dedicated case study with architecture diagrams, methodo
 
 - **vLLM Throughput Migration · Archival Image Pipeline** — Diagnosed request serialization in a production LLaVA pipeline on a single NVIDIA L4. Migrated to vLLM continuous batching for a 6.22× speedup on the same hardware and same model class. 12,125-image corpus from 22 hours to 3.7 hours.
 - **vLLM Multi-Model Sweep · Legislation Pipeline** — Controlled 54-cell benchmark across three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) to defend or replace the production model choice. 8h 34m unattended runtime, 4,586 per-chunk samples. Identified Llama 3.1 8B AWQ as the production winner.
-- **Archival Image Intelligence & Sensitive Content Detection** — Multimodal AI proof-of-concept for automatically detecting culturally significant content in historical image archives. Combines LLaVA visual classification, semantic similarity embeddings, and IPTC-compliant metadata extraction.
-- **Legislative Intelligence Platform** — End-to-end RAG system for executive-level natural-language querying of state and federal legislation. LLM feature extraction, vector retrieval, semantic search, chatbot interface. Live on Azure.
+- **Archival Image Intelligence & Sensitive Content Detection** — Multimodal AI proof-of-concept for automatically detecting culturally significant content in historical image archives. Combines LLaVA visual classification, semantic similarity embeddings, and IPTC-compliant metadata extraction. Now part of the RIMS archival pipeline production build (August 2026 onward), which I lead as technical lead, architect and project manager: three proofs of concept unified into one eight-stage pipeline, with the University Library's engineer mentored toward full ownership.
+- **Legislative Intelligence Platform** — End-to-end RAG system for executive-level natural-language querying of state and federal legislation. LLM feature extraction, vector retrieval, semantic search, chatbot interface. Delivered to IGPA in production on Azure (August 2026). Bill passage prediction validated on a held-out General Assembly: 75.1% precision and 76.2% recall with a median 21 days' warning before the floor vote (introduction-time ROC-AUC 0.845).
 - **Research Proposal Processing Pipeline** — Fully automated NLP pipeline ingesting live Oracle BLOB data, running an 11-step extraction chain, and writing structured results back to institutional databases on a cron schedule.
 - **Email Archiving & PII Anonymization** — Privacy-first multimodal pipeline processing 79,676 messages with Microsoft Presidio anonymization, LLM summarization, and LDA topic modeling.
 - **Legacy File Archive Intelligence** — Semantic search across heterogeneous legacy institutional content (15+ file types, LLaVA for images, LLaMA for text/code/spreadsheets, FAISS retrieval).
-- **HR Workforce Analytics POC** — Predictive models combining Random Forest, Markov chain career simulation, and graph community detection to anticipate workforce risks and surface internal mobility paths.
+- **HR Workforce Analytics POC** — Predictive models combining Random Forest, Markov chain career simulation, and graph community detection to anticipate workforce risks and surface internal mobility paths. Related production work: recovered and rebuilt the quarterly retirement-risk forecasting system end to end in Python after its platform was decommissioned, correcting long-standing statistical defects and returning it to monitored quarterly production.
 - **UIC Enrollment Forecasting** — 10-year departmental enrollment projections combining Random Forest, tree ensemble, and ARIMA approaches.
+- **Skyrule (personal project)** — A self-funded relational-intelligence product built by a 15-agent AI engineering organization I designed, with code ownership enforced by tooling, an autonomous job queue and GPU scheduler (650+ unattended jobs), a self-hosted vLLM stack on an RTX 5090, validator-gated LLM generation with founder review, statistical acceptance testing, and dedicated quality-governance and security functions.
 
 ---
 

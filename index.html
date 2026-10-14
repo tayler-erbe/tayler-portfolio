@@ -242,7 +242,7 @@
 
       <div class="project-card featured">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
-          <span class="project-status status-active"><span class="status-dot"></span>Active Azure Live Beta</span>
+          <span class="project-status status-prod"><span class="status-dot"></span>Production · Delivered to IGPA · Validated</span>
           <div style="display:flex;gap:1rem;">
             <a href="legislative-pipeline.html" class="project-link">Pipeline Documentation ↗</a>
             <a href="legislative-web-application.html" class="project-link">Application Documentation ↗</a>
@@ -250,7 +250,7 @@
         </div>
         <div class="project-num">01</div>
         <div class="project-title">Legislative Analytics & Policy Intelligence Platform</div>
-        <p class="project-desc">End-to-end AI platform that ingests, classifies, and semantically queries Illinois state and federal legislation. Extracts 12+ structured intelligence signals per bill via LLaMA, builds hybrid FAISS vector search, powers a GPT-4.1 Copilot chatbot with citation-backed responses, and deploys a live Streamlit dashboard to Azure with Z-score anomaly detection, TF-IDF trend analysis, and subcategory momentum modeling. Stakeholders include AVP Academic Affairs, IGPA, and AVP External & State Relations.</p>
+        <p class="project-desc">End-to-end AI platform that ingests, classifies, and semantically queries Illinois state and federal legislation. Extracts 12+ structured intelligence signals per bill via LLaMA, builds hybrid FAISS vector search, powers a GPT-4.1 Copilot chatbot with citation-backed responses, and deploys a live Streamlit dashboard to Azure with Z-score anomaly detection, TF-IDF trend analysis, and subcategory momentum modeling. Bill passage prediction validated on a held-out General Assembly the model never saw: <strong>75.1% precision and 76.2% recall</strong> with a <strong>median 21 days&#8217; warning</strong> before the floor vote (introduction-time ROC-AUC 0.845, September 2026). Stakeholders include AVP Academic Affairs, IGPA, and AVP External & State Relations.</p>
         <div class="project-tags">
           <span class="tag tag-accent">LLaMA / LLM</span><span class="tag tag-accent">RAG</span><span class="tag tag-accent">Azure App Service</span><span class="tag">FAISS</span><span class="tag">Streamlit</span><span class="tag">NLP</span><span class="tag">GPT-4.1</span><span class="tag">Anomaly Detection</span>
         </div>
@@ -290,7 +290,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-active"><span class="status-dot"></span>Active POC · RIMS Partnership</span>
+          <span class="project-status status-active"><span class="status-dot"></span>Production Build · Technical Lead · RIMS</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <a href="archival-image-intelligence.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/archival-image-intelligence" target="_blank" class="project-link">GitHub ↗</a>
@@ -298,7 +298,7 @@
         </div>
         <div class="project-num">04</div>
         <div class="project-title">Archival Image Classification & Digital Preservation</div>
-        <p class="project-desc">Multimodal image moderation POC for large-scale historical collections, scaled to 12,125 images. Compared semantic similarity-based classification against LLaVA multimodal LLM at scale. Developed domain-specific sensitive content taxonomy for archival and legal risk. Inference throughput later re-engineered for a <strong>6.22× speedup</strong> on the same NVIDIA L4 GPU — see Project 09. Active collaboration with the RIMS Committee at UIUC and the University Library cataloguing program.</p>
+        <p class="project-desc">Multimodal image moderation POC for large-scale historical collections, scaled to 12,125 images. Compared semantic similarity-based classification against LLaVA multimodal LLM at scale. Developed domain-specific sensitive content taxonomy for archival and legal risk. Inference throughput later re-engineered for a <strong>6.22× speedup</strong> on the same NVIDIA L4 GPU — see Project 09. Since August 2026 I lead the production build as technical lead, architect and project manager, unifying this and the email and legacy-file proofs of concept into one eight-stage archival pipeline and mentoring the University Library&#8217;s engineer toward full ownership. The unified system was demonstrated in September 2026, processing 2,375 real files across three accessions in about 21 seconds.</p>
         <div class="project-tags">
           <span class="tag tag-accent">LLaVA</span><span class="tag tag-accent">12,125 Images</span><span class="tag tag-accent">vLLM Throughput</span><span class="tag">Semantic Similarity</span><span class="tag">Dublin Core</span><span class="tag">RIMS / Library</span>
         </div>
@@ -328,7 +328,7 @@
         </div>
         <div class="project-num">06</div>
         <div class="project-title">HR Workforce Analytics Intelligence Platform</div>
-        <p class="project-desc">Predictive workforce analytics platform designed to transform EDW HR and payroll data into forward-looking strategic intelligence. Three completed POC workstreams cover internal mobility modeling, succession readiness prediction, and workforce growth forecasting. Uses Markov chain career simulation, Random Forest promotion prediction, graph-based career community detection, and O*NET-enriched skill matching. Developed in partnership with Illinois HR leadership.</p>
+        <p class="project-desc">Predictive workforce analytics platform designed to transform EDW HR and payroll data into forward-looking strategic intelligence. Three completed POC workstreams cover internal mobility modeling, succession readiness prediction, and workforce growth forecasting. Uses Markov chain career simulation, Random Forest promotion prediction, graph-based career community detection, and O*NET-enriched skill matching. Developed in partnership with Illinois HR leadership. Related production work: recovered and rebuilt the quarterly retirement-risk forecasting system end to end in Python after its platform was decommissioned, delivering the outstanding report the same day and correcting long-standing statistical defects; it now runs on a monitored quarterly schedule.</p>
         <div class="project-tags">
           <span class="tag">Attrition Modeling</span><span class="tag">Forecasting</span><span class="tag">HR Analytics</span><span class="tag">ERP Strategy</span>
         </div>
@@ -412,6 +412,22 @@
         </div>
       </div>
 
+
+      <div class="project-card featured" style="border-left: 3px solid var(--accent3);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
+          <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal Project · Active Build</span>
+          <div style="display:flex;gap:1rem; flex-wrap: wrap;">
+            <a href="skyrule.html" class="project-link">Case Study &#8599;</a>
+            <a href="https://skyrule.io" target="_blank" class="project-link">Site &#8599;</a>
+          </div>
+        </div>
+        <div class="project-num" style="color: var(--accent3);">&#10022; 12</div>
+        <div class="project-title">Skyrule &middot; Agentic AI Organization &amp; Local LLM Stack</div>
+        <p class="project-desc">A self-funded personal project (August 2026 &ndash; present): a relational-intelligence product built by a <strong>15-agent AI engineering organization</strong> I designed, with code ownership enforced by tooling and an autonomous job queue and GPU scheduler that has launched <strong>650+ unattended jobs</strong>. A self-hosted vLLM stack on an RTX 5090 runs quantized open-weights models; every generated claim passes code validators before founder review, and quality is accepted by statistical sampling with bars set before measurement. Dedicated quality-governance and security functions can block a release. 1,375 automated tests passing.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">Multi-Agent Systems</span><span class="tag tag-accent">Claude Code</span><span class="tag tag-accent">vLLM</span><span class="tag">Qwen3-32B AWQ</span><span class="tag">LLM Validation</span><span class="tag">Acceptance Sampling</span><span class="tag">FastAPI</span><span class="tag">Personal Project</span>
+        </div>
+      </div>
 
       <!-- ===========================================================================
            PERSONAL PROJECTS - TEMPORARILY HIDDEN (not abandoned)
@@ -508,6 +524,14 @@
     <div class="section-header"><span class="section-tag">04 / Experience</span><h2 class="section-title">Where I've Worked</h2><div class="section-line"></div></div>
 
     <div class="exp-entry">
+      <div class="exp-meta"><div class="exp-date">Aug 2026 – Present</div><div class="exp-org">Skyrule<br>Personal project<br>Self-hosted</div></div>
+      <div class="exp-content">
+        <div class="exp-title">Founder &amp; Technical Lead · Personal Project</div>
+        <p class="exp-desc">Outside employment: designed and run a 15-agent AI engineering organization, a self-hosted vLLM inference stack and a validator-gated, founder-in-the-loop LLM content generator, with dedicated quality-governance and security functions. <a href="skyrule.html" style="color: var(--accent2);">Case study ↗</a></p>
+      </div>
+    </div>
+
+    <div class="exp-entry">
       <div class="exp-meta"><div class="exp-date">Nov 2023 – Present</div><div class="exp-org">AITS · AI Solutions Team<br>(formerly Advanced Analytics)<br>University of Illinois System</div></div>
       <div class="exp-content">
         <div class="exp-title">Data Scientist · Applied AI & Advanced Analytics Lead</div>
@@ -520,6 +544,9 @@
           <div class="exp-highlight">Regular presenter to <strong>executive leadership, governance committees, and the Enterprise Architecture Committee</strong>; member, university-wide Generative AI Committee</div>
           <div class="exp-highlight">Architected the <strong>Linux-based AI execution environment</strong> supporting all production AI pipelines; built custom pipeline monitoring and alerting platform (MLflow/Airflow equivalent)</div>
           <div class="exp-highlight">Led production throughput engineering migrating from Ollama to vLLM continuous batching — <strong>6.22× speedup on the same GPU</strong></div>
+          <div class="exp-highlight">Validated bill passage prediction on a held-out General Assembly: <strong>75.1% precision, 76.2% recall, median 21 days&#8217; warning</strong> (September 2026)</div>
+          <div class="exp-highlight">Technical lead, architect and project manager for the <strong>RIMS archival pipeline production build</strong> across AITS and the University Library, mentoring the Library&#8217;s engineer toward full ownership</div>
+          <div class="exp-highlight">Recovered and rebuilt a lost <strong>quarterly retirement-risk forecasting system</strong> end to end in Python, delivering the outstanding report the same day and correcting long-standing statistical defects</div>
         </div>
       </div>
     </div>
@@ -554,7 +581,7 @@
       <a href="https://instagram.com/tayler_erbe" target="_blank" class="contact-link">↗ Instagram</a>
       <a href="resume.pdf" class="contact-link">↗ Resume / CV</a>
       <a href="legislative-pipeline.html" class="contact-link">↗ Legislative Intelligence Platform</a>
-      <a href="legislative-pipeline.html" class="contact-link">↗ Legislative Platform Docs</a>
+      <a href="skyrule.html" class="contact-link">↗ Skyrule (Personal Project)</a>
       <a href="legacy-app-about.html" class="contact-link">↗ Legacy (Personal Project)</a>
     </div>
   </section>
