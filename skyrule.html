@@ -73,10 +73,6 @@
 
     <div class="prose">
       <!-- Qwen draft p22 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I designed the Skyrule team as a <strong>15-agent AI engineering organization</strong>, mirroring a real company with fourteen departments and a Principal Architect. These include the domain practice, relational science, editorial, product design, platform and data engineering, AI and performance engineering, QA and compliance, data science, brand and marketing, legal and trust, finance and operations, program management, the office of the founder, and security and IP protection.</p>
-
-      <!-- TODO(qwen, 14 Oct): original text restored; Qwen drafts used dashes or invented text in four rounds (see skyrule_p23_r4.check.md). --><p>Each agent is a Claude Code subagent with a written charter, a scope of work, a handoff protocol,
-      persistent memory and an explicit list of what it does <em>not</em> own. Changes that cross departments
-      route through the Principal Architect for integration review.</p>
     </div>
 
     <div class="insight-box" style="margin-top:1.5rem;">
@@ -101,11 +97,6 @@
 
     <div class="prose">
       <!-- Qwen draft p34 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built an autonomous job queue and GPU scheduler in Python that runs on a 15-minute tick. It has separate lanes for CPU, local-model, and cloud-model jobs, and handles priorities, dependencies, start conditions, finish checks, and retry limits. It includes a usage-budget guard and will pause and resume automatically when a model usage limit is reached. Since early October 2026, it has launched <strong>650+ unattended jobs</strong>, including overnight GPU extraction runs and parallel multi-agent research batches.</p>
-
-      <!-- TODO(qwen, 14 Oct): original text restored; Qwen drafts used dashes or invented text in four rounds (see skyrule_p35_r4.check.md). --><p>Each task goes to the cheapest model that meets its quality bar: frontier Claude models for reading,
-      verification, design and audit; local open-weights models on my own GPU for high-volume generation,
-      extraction and grading; small local models for routing and utilities. Every model was measured on the
-      actual hardware before it was given a role, rather than chosen by reputation.</p>
     </div>
   </section>
 
@@ -148,14 +139,6 @@
       <!-- Qwen draft p48 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule with a deterministic Python chart engine underneath, exposed through a versioned FastAPI layer. The engine must reproduce <strong>279 reference spans</strong> exactly for regression control. Above it runs a sourced-rule pipeline over a <strong>76-title licensed corpus</strong>. The process starts with whole-chapter extraction, followed by independent verification from a second model, then a verbatim-quote gate, page re-checks, quarantine, and staged release into a rule store.</p>
 
       <!-- Qwen draft p49 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule to trace every number in the product to a rule, a page, and an engine event. On October 6, 2026, I released <strong>4,256 verified rules</strong> for use.</p>
-    </div>
-
-    <div class="insight-box" style="margin-top:1.5rem;">
-      <div class="insight-box-title">An interpretable model with no scoreboard</div>
-      <!-- TODO(qwen, 14 Oct): original text restored; Qwen drafts used dashes or invented text in four rounds (see skyrule_p51_r4.check.md). --><p>The relationship model is specified as explicit functions, gives one value per goal per kind of
-      relationship, and holds every weight in a ledger with a stated basis, marked provisional until data
-      science calibrates it. A product rule is enforced in code and tests: <strong>no total, ranking or
-      compatibility score</strong>, even internally.</p>
     </div>
   </section>
 
