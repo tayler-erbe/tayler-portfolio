@@ -8,11 +8,11 @@
   <meta name="keywords" content="Tayler Erbe, data scientist, research proposal intelligence, NLP pipeline, Kuali Research, HERDS taxonomy, KeyBERT, SentenceTransformer, Oracle, University of Illinois, Sponsored Programs" />
   <meta name="author" content="Tayler Erbe" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/research-proposal-pipeline.html" />
+  <link rel="canonical" href="https://taylererbe.com/research-proposal-processing.html" />
   <meta property="og:title" content="Tayler Erbe | Research Proposal Processing Pipeline" />
   <meta property="og:description" content="End-to-end NLP pipeline for research proposal intelligence at the University of Illinois System. Extracts, classifies, and annotates proposals across a ~$517M research portfolio." />
   <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://terbe2022.github.io/tayler-portfolio/research-proposal-pipeline.html" />
+  <meta property="og:url" content="https://taylererbe.com/research-proposal-processing.html" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Tayler Erbe | Research Proposal Processing Pipeline" />
   <meta name="twitter:description" content="NLP and decision intelligence for sponsored research at the University of Illinois System, built by Tayler Erbe." />
@@ -21,7 +21,7 @@
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": "Research Proposal Processing Pipeline and NLP Intelligence Platform",
-    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://terbe2022.github.io/tayler-portfolio/" },
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://taylererbe.com/" },
     "description": "End-to-end NLP pipeline built by Tayler Erbe for research proposal intelligence at the University of Illinois System, supporting Sponsored Programs Administration across a ~$517M annual research portfolio.",
     "keywords": "Tayler Erbe, data scientist, research proposal intelligence, NLP, KeyBERT, HERDS taxonomy, University of Illinois"
   }
@@ -268,8 +268,8 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="https://terbe2022.github.io/tayler-portfolio/">TAYLER.ERBE</a>
-  <a class="nav-back" href="https://terbe2022.github.io/tayler-portfolio/">← back to portfolio</a>
+  <a class="nav-logo" href="index.html">TAYLER.ERBE</a>
+  <a class="nav-back" href="index.html">← back to portfolio</a>
 </nav>
 
 <!-- HERO -->
@@ -284,7 +284,7 @@
 
   <!-- GitHub CTA Button -->
   <div style="margin-top: 1.75rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-    <a href="https://github.com/tayler-erbe/research-proposal-pipeline"
+    <a href="https://github.com/tayler-erbe/research-proposal-processing"
        target="_blank"
        style="
          display:inline-block;
@@ -325,7 +325,7 @@
     <div class="meta-item">
       <div class="meta-label">Code</div>
       <div class="meta-value">
-        <a href="https://github.com/tayler-erbe/research-proposal-pipeline"
+        <a href="https://github.com/tayler-erbe/research-proposal-processing"
            target="_blank"
            style="color: var(--accent); text-decoration: none;">
            GitHub Repository →
@@ -609,19 +609,19 @@
   </div>
   <ul class="source-list">
     <li class="source-item">
-      <div class="source-name">KUALI.ATTACHMENTS</div>
+      <div class="source-name">Proposal attachments (Kuali Research)</div>
       <div class="source-desc">Proposal BLOBs (primarily PDF, with DOCX stragglers) from the Kuali Research grants management system. The canonical source of proposal content.</div>
     </li>
     <li class="source-item">
-      <div class="source-name">KUALI.PROPOSAL / EPS_PROPOSAL</div>
+      <div class="source-name">Proposal records (Kuali Research)</div>
       <div class="source-desc">Proposal metadata — proposal numbers, submission status, investigator assignments, administrative lineage. Used to rebuild the governance filter that determines which proposals enter the production view.</div>
     </li>
     <li class="source-item">
-      <div class="source-name">KUALI.AWARDS / AWARD_ATTACHMENTS</div>
+      <div class="source-name">Award records and attachments (Kuali Research)</div>
       <div class="source-desc">Funded-award records and their attachments. The success-labeled counterpart to the proposal corpus.</div>
     </li>
     <li class="source-item">
-      <div class="source-name">ANALYTICS staging tables</div>
+      <div class="source-name">Analytics staging tables</div>
       <div class="source-desc">Three pipeline outputs: raw-text staging, NLP-annotated staging, and production-aggregated staging. The production staging table is what analyst dashboards query.</div>
     </li>
     <li class="source-item">
@@ -717,7 +717,7 @@
     <p>The repository contains the production implementation scrubbed of credentials and infrastructure specifics. Source paths, schema names, and service accounts are parameterized through <code>configs/database.yaml</code> (excluded from version control; a <code>.example</code> template is committed).</p>
   </div>
   <div class="code-block">
-<pre><span class="code-keyword">research-proposal-pipeline/</span>
+<pre><span class="code-keyword">research-proposal-processing/</span>
 ├── configs/              <span class="code-comment"># YAML configuration + loader (database.yaml gitignored)</span>
 ├── ingestion/            <span class="code-comment"># Oracle connection, BLOB fetch, change detection</span>
 ├── orchestration/        <span class="code-comment"># Pipeline controllers — proposals, awards, NLP</span>
@@ -749,7 +749,7 @@
 
 <!-- BACK -->
 <div class="back-section">
-  <a class="back-link" href="https://terbe2022.github.io/tayler-portfolio/">← back to portfolio</a>
+  <a class="back-link" href="index.html">← back to portfolio</a>
 </div>
 
 </body>

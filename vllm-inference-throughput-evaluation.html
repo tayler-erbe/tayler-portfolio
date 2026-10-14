@@ -2872,7 +2872,7 @@ footer p{max-width:none;color:var(--muted)}
         <div class="exp-status">◈ Staged · Ready to run</div>
         <div class="exp-body">
           <div class="exp-title">Experiment 4 — Qwen 2.5 14B AWQ</div>
-          <p>Model downloaded and staged on the current L4 (<code>C:\models\Qwen2.5-14B-Instruct-AWQ\</code>, 9.29 GB across 3 shards). This is the natural "start small, scale up" next step: double the parameter count within a single-GPU deployable form factor and measure whether quality improves meaningfully.</p>
+          <p>Model downloaded and staged on the current L4 (in a local model directory, 9.29 GB across 3 shards). This is the natural "start small, scale up" next step: double the parameter count within a single-GPU deployable form factor and measure whether quality improves meaningfully.</p>
           <p>The specific hypothesis: at 14B parameters, does the model handle more of the real corpus without chunking? The production corpus has a long right tail — 12% of bills exceed 10,000 tokens, and the longest bill is over 1 million tokens. If a 14B model with a larger native context window handles mid-length bills (say, 3,000–10,000 tokens) as single-chunk extractions rather than requiring splits, it may improve both quality (no chunk-boundary artifacts) and throughput (fewer inference calls per bill).</p>
           <p>Design: same eval sample, same chunk-size sweep structure, same telemetry stack. Adds one concurrency-sweep cell at the quality-best chunk size found. Results compared cell-by-cell to the 7-8B baseline established here.</p>
           <p>Note: throughput will be lower than the 7-8B models — a 14B model decodes slower and demands more KV cache. The interesting question is whether the quality gain justifies the throughput cost, and whether the effective throughput (quality-adjusted chunks/sec) still favors the smaller model.</p>
@@ -2920,7 +2920,7 @@ footer p{max-width:none;color:var(--muted)}
   <div class="wrap">
     <div class="sig">Tayler Erbe · Data Scientist · Applied AI · AI Solutions, University of Illinois System</div>
     <p>Project 10 · vLLM Model Evaluation · Illinois Legislation Pipeline · May 2026</p>
-    <p style="margin-top:6px">Hardware: NVIDIA L4 · 22.5 GB VRAM · 72W TDP · urbadvanalytics1.admin.uillinois.edu</p>
+    <p style="margin-top:6px">Hardware: NVIDIA L4 · 22.5 GB VRAM · 72W TDP · the institution's air-gapped GPU server</p>
     <p style="margin-top:6px"><a href="vllm-qualitative-review.html">Quality Review (Exp 3 &amp; 3.5) ↗</a> &nbsp;·&nbsp; <a href="index.html">Portfolio ↗</a></p>
   </div>
 </footer>

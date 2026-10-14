@@ -8,11 +8,11 @@
   <meta name="keywords" content="Tayler Erbe, data scientist, machine learning, student enrollment prediction, UIC, University of Illinois, ARIMA, H2O, random forest, retention risk, predictive analytics" />
   <meta name="author" content="Tayler Erbe" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://terbe2022.github.io/tayler-portfolio/uic-enrollment.html" />
+  <link rel="canonical" href="https://taylererbe.com/uic-enrollment.html" />
   <meta property="og:title" content="Tayler Erbe | UIC Student Enrollment Prediction Platform" />
   <meta property="og:description" content="Tayler Erbe built an ML-powered enrollment prediction platform for the University of Illinois Chicago identifying at-risk students and forecasting 10-year enrollment across 14 colleges." />
   <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://terbe2022.github.io/tayler-portfolio/uic-enrollment.html" />
+  <meta property="og:url" content="https://taylererbe.com/uic-enrollment.html" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Tayler Erbe | UIC Student Enrollment Prediction" />
   <meta name="twitter:description" content="ML classification and ARIMA forecasting platform for student retention risk and enrollment planning at UIC, built by Tayler Erbe." />
@@ -21,7 +21,7 @@
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": "UIC Student Enrollment Prediction and Classification Platform",
-    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://terbe2022.github.io/tayler-portfolio/" },
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://taylererbe.com/" },
     "description": "End-to-end ML platform built by Tayler Erbe for predicting student retention risk and forecasting enrollment at the University of Illinois Chicago.",
     "keywords": "Tayler Erbe, data scientist, student enrollment prediction, machine learning, ARIMA, random forest, UIC"
   }
@@ -405,7 +405,7 @@
     <div class="two-col">
       <div>
         <div class="prose">
-          <p>All data was sourced from the university's Enterprise Data Warehouse (EDW), specifically the Oracle database DSPROD01. The wrangling workflow was built in KNIME, connecting to live Oracle tables and assembling the final dataset through a cascading series of left-joins anchored to a student base file.</p>
+          <p>All data was sourced from the university's Enterprise Data Warehouse (EDW), held in the institutional Oracle database. The wrangling workflow was built in KNIME, connecting to live Oracle tables and assembling the final dataset through a cascading series of left-joins anchored to a student base file.</p>
           <p>The dataset spans Fall 2013 through Summer 2023, with term codes controlled via KNIME flow variables. The final combined dataset covered <strong>189,516 graduate student rows</strong> (114 columns) and <strong>429,121 undergraduate rows</strong> (110 columns). Each row represents a single student per term at the Census snapshot date.</p>
         </div>
         <div class="tag-row" style="margin-top: 1.25rem;">
@@ -424,7 +424,7 @@
             <div class="step-num">01</div>
             <div class="step-content">
               <div class="step-title">Oracle Connection &amp; Flow Variables</div>
-              <div class="step-body">Established live Oracle connection to DSPROD01 with KNIME flow variable nodes controlling the term code range (Fall 2013 to Summer 2023). Flow variables propagated through all subsequent query nodes.</div>
+              <div class="step-body">Established a live connection to the institutional Oracle database with KNIME flow variable nodes controlling the term code range (Fall 2013 to Summer 2023). Flow variables propagated through all subsequent query nodes.</div>
             </div>
           </div>
           <div class="pipeline-step">
@@ -1090,7 +1090,7 @@
       <div class="viz-label">02 — SMOTE Pipeline: Undergraduate per-Semester Branching</div>
       <p class="viz-desc">
         After reading <strong>UNDERGRADUATE_TARGET_BY_YEAR.parquet</strong>, the pipeline applies two column
-        filters (feature selection, then removing the identifier <strong>edw_pers_id</strong>), excludes
+        filters (feature selection, then removing the person identifier), excludes
         the current year (2223) from training via a row filter, then fans out into three parallel
         semester-specific branches — each performing 70/30 partitioning, SMOTE oversampling on
         the minority (discontinued) class, and independent Tree Ensemble training.
@@ -1151,11 +1151,11 @@
         <text x="170" y="156" class="pn-t" fill="#d8e2ed" font-weight="700">Filter</text>
         <text x="170" y="170" class="pn-s2" fill="#d8e2ed">Feature Selection</text>
 
-        <!-- Col Filter 2: remove edw_pers_id -->
+        <!-- Col Filter 2: remove person identifier -->
         <rect x="240" y="128" width="90" height="36" class="pn" rx="3"/>
         <text x="285" y="143" class="pn-t" fill="#d8e2ed" font-weight="700">Column</text>
         <text x="285" y="156" class="pn-t" fill="#d8e2ed" font-weight="700">Filter</text>
-        <text x="285" y="170" class="pn-s2" fill="#d8e2ed">remove edw_pers_id</text>
+        <text x="285" y="170" class="pn-s2" fill="#d8e2ed">remove person ID</text>
 
         <!-- Row Filter: exclude 2223 -->
         <rect x="355" y="128" width="90" height="36" class="pn" rx="3"/>
@@ -1781,7 +1781,7 @@
       </div>
       <div>
         <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Individual Risk Scoring Output</div>
-        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Beyond aggregate projections, the classification model produced individual student-level risk scores, confidence measures, and probability estimates. Students were binned into high, medium, and low risk tiers for advisor use. All outputs were keyed to EDW_PERS_ID for operational integration into institutional advising systems.</p>
+        <p style="font-size:0.85rem; color:var(--muted); line-height:1.65;">Beyond aggregate projections, the classification model produced individual student-level risk scores, confidence measures, and probability estimates. Students were binned into high, medium, and low risk tiers for advisor use. All outputs were keyed to the warehouse's person identifier for operational integration into institutional advising systems.</p>
       </div>
       <div>
         <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">Documented Future Recommendations</div>
@@ -1802,7 +1802,7 @@
         <div style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); padding-bottom:0.5rem; border-bottom:1px solid var(--border); margin-bottom:0.75rem;">Data &amp; Wrangling</div>
         <div class="tag-row" style="margin:0; flex-direction:column; gap:0.35rem;">
           <span style="font-size:0.83rem; color:var(--muted);">KNIME (Oracle integration, ARIMA workflows)</span>
-          <span style="font-size:0.83rem; color:var(--muted);">Oracle Database (DSPROD01 / EDW schema)</span>
+          <span style="font-size:0.83rem; color:var(--muted);">Oracle Database (the institutional Oracle database / EDW)</span>
           <span style="font-size:0.83rem; color:var(--muted);">Python / pandas (feature engineering)</span>
           <span style="font-size:0.83rem; color:var(--muted);">Parquet (intermediate storage)</span>
           <span style="font-size:0.83rem; color:var(--muted);">cx_Oracle (direct Python-Oracle connection)</span>
