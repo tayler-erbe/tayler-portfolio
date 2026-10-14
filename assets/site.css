@@ -108,6 +108,7 @@
   --gutter-mobile: 1.25rem;       /* page side padding, phones */
   --nav-h: 4.25rem;
   --content-max: 1080px;          /* reading width for .wrap pages */
+  --measure: 60ch;                /* body-text line length: about 75 characters of DM Sans (measured median 74) */
 
   /* Radii: the look is square-cornered */
   --radius: 0;                    /* cards, tiles, buttons, tables */
@@ -280,6 +281,8 @@ section:last-of-type { border-bottom: none; }
 .subhead { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; margin: var(--space-6) 0 var(--space-3); }
 
 /* ---------- 7. Prose ---------------------------------------------------- */
+/* Body text never runs wider than --measure; tables, charts, code and grids keep their full width. */
+section p, section li, .hero p, .step-body, .stage-body, .warn, .takeaway { max-width: var(--measure); }
 .prose p { font-size: var(--text-base); color: var(--muted); line-height: var(--leading-prose); margin-bottom: var(--space-4); }
 .prose p:last-child { margin-bottom: 0; }
 .prose p strong, .prose p b { color: var(--text); font-weight: 500; }

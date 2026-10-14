@@ -51,7 +51,7 @@ The look is the home page's: a dark theme, a cyan accent, square corners, Barlow
 | `--font-display` | Barlow Condensed | Page titles, section titles, big figures; usually uppercase, weight 700-800 |
 | `--font-body` | DM Sans | Paragraphs and UI text |
 | `--font-mono` | DM Mono | Labels, eyebrows, tags, tables' first column, code, data |
-| `--font-heading` | = `--font-display` | Card and entry titles (project cards, experience entries, chart titles). One switch: set it to a serif here to change all of them at once |
+| `--font-heading` | = `--font-display` | Card and entry titles (project cards, experience entries, chart titles) and the former serif accents (Legacy's italic lines). Barlow Condensed by Founder decision, 14 Oct |
 | `--text-2xs` .. `--text-2xl` | 0.65rem .. clamp(2.8rem, 5vw, 5rem) | Tags and meta labels (2xs), mono labels (xs), card body (sm), prose (base), hero description (md), card titles (lg), section titles (xl), page title (2xl) |
 | `--leading-tight / -normal / -prose` | 1.0 / 1.6 / 1.8 | Display type / UI / paragraphs |
 | `--tracking-label`, `--tracking-eyebrow` | 0.08em / 0.15em | Mono uppercase labels / hero eyebrow |
@@ -64,6 +64,7 @@ The look is the home page's: a dark theme, a cyan accent, square corners, Barlow
 | `--gutter` | 3rem, 1.5rem under 860px, 1.25rem under 480px | Page side padding |
 | `--nav-h` | 4.25rem (3.5rem on phones) | Fixed nav height; page headers clear it |
 | `--content-max` | 1080px | Reading width for `.wrap` pages |
+| `--measure` | 60ch | Longest line of body text, about 75 characters (Founder, 14 Oct). Applies to paragraphs and list items in sections and headers, step and stage bodies, cautions and takeaways. Tables, charts, code, key-value lists and grids stay full width |
 | `--radius` | 0 | Cards, tiles, buttons, tables: the look is square |
 | `--radius-sm` | 2px | Inline code, small pills |
 | `--radius-round` | 50% | Dots and avatars only |
@@ -79,7 +80,7 @@ The look is the home page's: a dark theme, a cyan accent, square corners, Barlow
 | **Sub-nav** | `nav.subnav > ul > li > a` or `div.subnav` | Under the site nav, sticky: in-page section links or a page status (badge plus link). Long evaluation pages only |
 | **Page header** | `.hero > .hero-eyebrow + h1 (span/em = accent line) + p.hero-desc + .hero-meta > .meta-item > .meta-label + .meta-value` | Top of every project page. Optional `.toc` (`a > .toc-num + .toc-name`) and `.hero-stats` under it. The home page adds `.hero-home` for its two-column layout |
 | **Section** | `section > .section-header > .section-tag + h2.section-title + .section-line`, optional `p.section-lede` | Every content section. Tag reads `NN / Name`; title is display type, uppercase; `em` or `span` in the title takes the accent |
-| **Prose** | `.prose > p` | Running text: muted, 1.8 leading; `strong` lifts to `--text`; links underline |
+| **Prose** | `.prose > p` | Running text: muted, 1.8 leading, capped at `--measure`; `strong` lifts to `--text`; links underline |
 | **Stat strip** | `.stat-strip > .stat-item > .stat-big + .stat-desc` | Full-width row of 4 figures under a page header (`.stat-strip-5` for five) |
 | **Stat cards** | `.hero-stats > .stat-card > .stat-icon + .stat-num + .stat-label + .stat-sub` | Labelled tiles. Add `.hero-stats-4` for four across and `.hero-stats-figures` when the values are numbers |
 | **Results strip** | `.results-strip > .result-cell > .result-num + .result-label` | Figures inside a section (`.results-strip-4` for four) |
