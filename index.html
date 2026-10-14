@@ -5,167 +5,82 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tayler Erbe · Data Scientist & Applied AI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
   <style>
-    :root {
-      --bg: #080b10;
-      --surface: #0f1318;
-      --surface2: #161c24;
-      --border: #1e2530;
-      --accent: #5bc8dc;
-      --accent2: #3a8fc4;
-      --accent3: #c07a6e;
-      --accent-dim: rgba(91,200,220,0.12);
-      --text: #d8e2ed;
-      --muted: #6b7c91;
-      --muted2: #3a4556;
-      --white: #eef3f8;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.4;
-    }
-
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; background: rgba(11,12,15,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
-    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--text); }
-
-    .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 8rem 3rem 4rem; gap: 4rem; position: relative; overflow: hidden; }
-    .hero::after { content: ''; position: absolute; top: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(ellipse at center, rgba(91,200,220,0.05) 0%, transparent 65%); pointer-events: none; }
-    .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
-    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
-    .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(3rem, 5.5vw, 5rem); line-height: 1.0; color: var(--white); letter-spacing: 0.01em; text-transform: uppercase; margin-bottom: 1.5rem; }
-    .hero h1 em { font-style: normal; color: var(--accent); }
-    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 46ch; line-height: 1.75; margin-bottom: 2.5rem; }
-    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent); color: #0b0c0f; font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.85rem 1.75rem; text-decoration: none; transition: background 0.2s, transform 0.15s; font-weight: 500; }
-    .btn-primary:hover { background: #82d9e8; transform: translateY(-1px); }
-    .btn-ghost { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.85rem 1.75rem; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
-    .btn-ghost:hover { border-color: var(--accent2); color: var(--accent2); }
-
-    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
-    .stat-card { background: var(--surface); padding: 2rem; transition: background 0.2s; }
-    .stat-card:hover { background: var(--surface2); }
-    .stat-icon { font-size: 0.6rem; color: var(--accent); margin-bottom: 0.75rem; }
-    .stat-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
-    .stat-label { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); margin-bottom: 0.4rem; }
-    .stat-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
-
-    section { padding: 5rem 3rem; }
-    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3.5rem; }
-    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
-    .section-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3vw, 2.8rem); color: var(--white); }
-    .section-line { flex: 1; height: 1px; background: var(--border); }
-
-    #about { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .hero-home { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 8rem 3rem 4rem; gap: 4rem; position: relative; overflow: hidden; }
+    .hero-home::after { content: ''; position: absolute; top: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(ellipse at center, rgba(91,200,220,0.05) 0%, transparent 65%); pointer-events: none; }
+    .hero-home h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 5.5vw, 5rem); line-height: 1.0; color: var(--white); letter-spacing: 0.01em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .hero-home h1 em { font-style: normal; color: var(--accent); }
+    #about { background: var(--surface); }
     .about-grid { display: grid; grid-template-columns: 220px 1fr 240px; gap: 3.5rem; align-items: start; }
     .about-portrait-wrap { display: flex; flex-direction: column; align-items: center; }
     .about-portrait { width: 200px; position: relative; }
     .about-portrait img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: center top; display: block; border: 1px solid var(--border); filter: saturate(0.9) contrast(1.02); }
     .about-portrait::before { content: ''; position: absolute; inset: -4px; border: 1px solid var(--accent); opacity: 0.25; pointer-events: none; z-index: 1; }
-    .portrait-caption { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
+    .portrait-caption { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
     .about-body p { font-size: 1.05rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.2rem; }
     .about-body p strong { color: var(--text); font-weight: 500; }
     .sidebar-block { border-left: 2px solid var(--accent); padding-left: 1.25rem; margin-bottom: 2rem; }
-    .sidebar-block-title { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .sidebar-block-title { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
     .sidebar-block p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
-
     .perf-badges { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 2rem; }
     .perf-badge { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem; background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent2); }
-    .perf-year { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
+    .perf-year { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
     .perf-rating { font-size: 0.85rem; color: var(--text); }
-
     #projects { background: var(--bg); }
     .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
     .project-card { background: var(--surface); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; transition: background 0.2s; cursor: default; }
     .project-card:hover { background: var(--surface2); }
     .project-card.featured { grid-column: span 2; background: var(--surface2); border-left: 3px solid var(--accent); }
-    .project-card.featured:hover { background: #1f2230; }
-    .project-status { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
-    .status-active .status-dot { background: #5dbf8a; box-shadow: 0 0 6px #5dbf8a; }
-    .status-active { color: #5dbf8a; }
+    .project-card.featured:hover { background: var(--surface3); }
+    .project-status { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .status-active .status-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .status-active { color: var(--green); }
     .status-complete .status-dot { background: var(--accent2); }
     .status-complete { color: var(--accent2); }
     .status-prod .status-dot { background: var(--accent); }
     .status-prod { color: var(--accent); }
-    .project-num { font-family: 'DM Serif Display', serif; font-size: 3rem; color: var(--muted2); line-height: 1; }
-    .project-title { font-family: 'DM Serif Display', serif; font-size: 1.25rem; color: var(--white); line-height: 1.25; }
+    .project-num { font-family: var(--font-heading); font-size: 3rem; color: var(--muted2); line-height: 1; }
+    .project-title { font-family: var(--font-heading); font-size: 1.25rem; color: var(--white); line-height: 1.25; }
     .project-card.featured .project-title { font-size: 1.5rem; }
     .project-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; flex: 1; }
     .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .tag { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
-    .tag-accent { border-color: var(--accent2); color: var(--accent2); }
-    .project-link { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent); text-decoration: none; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 0.4rem; transition: gap 0.2s; }
+    .project-link { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); text-decoration: none; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 0.4rem; transition: gap 0.2s; }
     .project-link:hover { gap: 0.8rem; }
-
-    #skills { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    #skills { background: var(--surface); }
     .skills-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
-    .skill-group-title { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    .skill-group-title { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
     .skill-list { list-style: none; }
     .skill-list li { font-size: 0.88rem; color: var(--muted); padding: 0.35rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; }
     .skill-list li::before { content: '›'; color: var(--accent2); font-weight: bold; }
-
     #experience { background: var(--bg); }
     .exp-entry { display: grid; grid-template-columns: 200px 1fr; gap: 3rem; padding: 2.5rem 0; border-bottom: 1px solid var(--border); align-items: start; }
     .exp-entry:first-of-type { border-top: 1px solid var(--border); }
-    .exp-date { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--accent2); margin-bottom: 0.3rem; }
+    .exp-date { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; color: var(--accent2); margin-bottom: 0.3rem; }
     .exp-org { font-size: 0.82rem; color: var(--muted); }
-    .exp-title { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--white); margin-bottom: 0.75rem; }
+    .exp-title { font-family: var(--font-heading); font-size: 1.4rem; color: var(--white); margin-bottom: 0.75rem; }
     .exp-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
     .exp-highlights { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
     .exp-highlight { font-size: 0.85rem; color: var(--muted); padding-left: 1rem; border-left: 2px solid var(--accent2); line-height: 1.5; }
     .exp-highlight strong { color: var(--text); font-weight: 500; }
-
     #education { background: var(--bg); }
     .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
     .edu-card { padding: 2rem; border: 1px solid var(--border); background: var(--surface); }
-    .edu-degree { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--white); margin-bottom: 0.4rem; }
-    .edu-school { font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.06em; color: var(--accent2); margin-bottom: 0.5rem; }
+    .edu-degree { font-family: var(--font-heading); font-size: 1.15rem; color: var(--white); margin-bottom: 0.4rem; }
+    .edu-school { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--accent2); margin-bottom: 0.5rem; }
     .edu-note { font-size: 0.85rem; color: var(--muted); }
-
-    #contact { background: var(--surface); border-top: 1px solid var(--border); text-align: center; padding: 6rem 3rem; }
+    #contact { background: var(--surface);  text-align: center; padding: 6rem 3rem; }
     #contact .section-header { justify-content: center; }
     .contact-tagline { font-size: 1.05rem; color: var(--muted); max-width: 50ch; margin: 0 auto 2.5rem; }
     .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
-    .contact-link { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid var(--border); transition: border-color 0.2s, color 0.2s; }
+    .contact-link { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em; color: var(--muted); text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid var(--border); transition: border-color 0.2s, color 0.2s; }
     .contact-link:hover { border-color: var(--accent); color: var(--accent); }
-
-    footer { padding: 1.5rem 3rem; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    footer p { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--muted2); }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .hero-eyebrow { animation: fadeUp 0.6s ease 0.1s both; }
-    .hero h1 { animation: fadeUp 0.6s ease 0.25s both; }
-    .hero-desc { animation: fadeUp 0.6s ease 0.4s both; }
-    .hero-ctas { animation: fadeUp 0.6s ease 0.55s both; }
-    .hero-stats { animation: fadeUp 0.6s ease 0.4s both; }
-
+    .hero-home h1 { animation: fadeUp 0.6s ease 0.25s both; }
     @media (max-width: 900px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { display: none; }
-      .hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; gap: 3rem; }
+      .hero-home { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; gap: 3rem; }
       .about-grid { grid-template-columns: 1fr; gap: 2rem; }
       .about-portrait { width: 160px; }
       .about-portrait-wrap { align-items: flex-start; }
@@ -174,25 +89,27 @@
       .skills-layout { grid-template-columns: 1fr 1fr; }
       .edu-grid { grid-template-columns: 1fr; }
       .exp-entry { grid-template-columns: 1fr; gap: 0.75rem; }
-      section { padding: 4rem 1.5rem; }
-      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
     }
+    .hero-home .hero-desc { max-width: 46ch; margin-bottom: 2.5rem; }
+    @media (max-width: 900px) { .hero-home { padding-left: var(--gutter); padding-right: var(--gutter); } }
   </style>
 </head>
 <body>
 
-  <nav>
-    <a href="#" class="nav-logo">T.Erbe</a>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
+  <nav class="site-nav" aria-label="Site">
+    <a href="#top" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="#about">About</a></li>
       <li><a href="#projects">Projects</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li class="nav-secondary"><a href="#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
-  <section class="hero" id="home">
+  <section class="hero hero-home" id="home">
     <div class="hero-left">
       <div class="hero-eyebrow">Data Scientist · Applied AI / LLM Systems · Production NLP & RAG</div>
       <h1>Building <em>intelligent</em> systems for complex institutions</h1>
@@ -231,7 +148,7 @@
       <div class="about-sidebar">
         <div class="sidebar-block"><div class="sidebar-block-title">Current Role</div><p>Data Scientist · AI Solutions Team<br>AITS, University of Illinois System<br>Nov 2023 – Present <span style="color:var(--muted2); font-size:0.85rem;">(team move to AI Solutions, Nov 2025)</span><br><br><span style="color:var(--muted2); font-size:0.8rem;">Previously: Data Engineer · Advanced Analytics (May 2022 – Nov 2023)</span></p></div>
         <div class="sidebar-block"><div class="sidebar-block-title">Education</div><p>B.S. Cognitive Science, ML &amp; Neural Computation<br>UC San Diego (2021)</p></div>
-        <div class="sidebar-block"><div class="sidebar-block-title">Flagship Delivery</div><p>Legislative Intelligence Platform, delivered to IGPA August 2026 &mdash; <a href="legislative-pipeline.html" style="color: var(--accent2);">technical documentation ↗</a></p></div>
+        <div class="sidebar-block"><div class="sidebar-block-title">Flagship Delivery</div><p>Legislative Intelligence Platform, delivered to IGPA August 2026 &mdash; <a href="legislative-pipeline.html" class="link">technical documentation ↗</a></p></div>
       </div>
     </div>
   </section>
@@ -242,7 +159,7 @@
 
       <div class="project-card featured">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
-          <span class="project-status status-prod"><span class="status-dot"></span>Production · Delivered to IGPA · Validated</span>
+          <span class="project-status status status-prod"><span class="status-dot"></span>Production · Delivered to IGPA · Validated</span>
           <div style="display:flex;gap:1rem;">
             <a href="legislative-pipeline.html" class="project-link">Pipeline Documentation ↗</a>
             <a href="legislative-web-application.html" class="project-link">Application Documentation ↗</a>
@@ -258,7 +175,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-complete"><span class="status-dot"></span>Delivered · UIC</span>
+          <span class="project-status status status-complete"><span class="status-dot"></span>Delivered · UIC</span>
           <div style="display:flex;gap:1rem;">
             <a href="uic-enrollment.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/student-enrollment-ml-forecasting" target="_blank" class="project-link">GitHub ↗</a>
@@ -274,7 +191,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-active"><span class="status-dot"></span>R&D · Prototype Delivered</span>
+          <span class="project-status status status-active"><span class="status-dot"></span>R&D · Prototype Delivered</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <a href="email-archiving.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/email-archiving-ai-pipeline" target="_blank" class="project-link">GitHub ↗</a>
@@ -290,7 +207,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-active"><span class="status-dot"></span>Production Build · Technical Lead · RIMS</span>
+          <span class="project-status status status-active"><span class="status-dot"></span>Production Build · Technical Lead · RIMS</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <a href="archival-image-intelligence.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/archival-image-intelligence" target="_blank" class="project-link">GitHub ↗</a>
@@ -306,7 +223,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-active"><span class="status-dot"></span>Active · ERP Modernization</span>
+          <span class="project-status status status-active"><span class="status-dot"></span>Active · ERP Modernization</span>
           <div style="display:flex;gap:1rem;">
             <a href="file-archiving-smart-search.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/legacy-archive-intelligence" target="_blank" class="project-link">GitHub ↗</a>
@@ -322,7 +239,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-active"><span class="status-dot"></span>Active · POC Complete · Under Review</span>
+          <span class="project-status status status-active"><span class="status-dot"></span>Active · POC Complete · Under Review</span>
           <a href="hr-workforce-analytics.html" class="project-link">Case Study ↗</a>
           <a href="https://github.com/tayler-erbe/hr-analytics-intelligence-platform" target="_blank" class="project-link">GitHub ↗</a>
         </div>
@@ -336,7 +253,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-prod"><span class="status-dot"></span>Production · Built from Scratch</span>
+          <span class="project-status status status-prod"><span class="status-dot"></span>Production · Built from Scratch</span>
           <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
         </div>
         <div class="project-num">07</div>
@@ -349,7 +266,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-prod"><span class="status-dot"></span>Production · Cron Scheduled</span>
+          <span class="project-status status status-prod"><span class="status-dot"></span>Production · Cron Scheduled</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <a href="research-proposal-processing.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/research-proposal-processing" target="_blank" class="project-link">GitHub ↗</a>
@@ -365,7 +282,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-complete"><span class="status-dot"></span>Evaluation Complete · vLLM Migration Complete</span>
+          <span class="project-status status status-complete"><span class="status-dot"></span>Evaluation Complete · vLLM Migration Complete</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <a href="archival-image-throughput-evaluation.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/llava-vision-inference-backend-throughput-evaluation" target="_blank" class="project-link">GitHub ↗</a>
@@ -381,7 +298,7 @@
 
       <div class="project-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status status-complete"><span class="status-dot"></span>Complete · Production Decision Defended</span>
+          <span class="project-status status status-complete"><span class="status-dot"></span>Complete · Production Decision Defended</span>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
             <a href="vllm-inference-throughput-evaluation.html" class="project-link">Case Study ↗</a>
             <a href="vllm-qualitative-review.html" class="project-link">Quality Review ↗</a>
@@ -390,7 +307,7 @@
         </div>
         <div class="project-num">10</div>
         <div class="project-title">vLLM Multi-Model Sweep · Legislation Pipeline</div>
-        <p class="project-desc">Six-stage experimental funnel benchmarking three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="legislative-pipeline.html" style="color:var(--accent);">Legislative Intelligence Platform</a>. Covers chunk-size sweep (66 cells), cross-model quality validation, concurrency scaling, per-request telemetry decomposition, SLO gate analysis, and a two-round human-graded qualitative review (Experiments 3 & 3.5). <strong>Production recommendation: Llama 3.1 8B AWQ at chunk_size=1200, concurrency=12–24</strong> — 20+ percentage-point parse-OK lead over all tested alternatives, quality invariant under concurrency (&lt;0.6pp across c=1→24), and the only model clearing 80% parse-OK at every tested chunk size. Exp 3.5 characterized parse-OK's within-model reliability: directional for Llama, reversed for Qwen and Mistral.</p>
+        <p class="project-desc">Six-stage experimental funnel benchmarking three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="legislative-pipeline.html" class="link">Legislative Intelligence Platform</a>. Covers chunk-size sweep (66 cells), cross-model quality validation, concurrency scaling, per-request telemetry decomposition, SLO gate analysis, and a two-round human-graded qualitative review (Experiments 3 & 3.5). <strong>Production recommendation: Llama 3.1 8B AWQ at chunk_size=1200, concurrency=12–24</strong> — 20+ percentage-point parse-OK lead over all tested alternatives, quality invariant under concurrency (&lt;0.6pp across c=1→24), and the only model clearing 80% parse-OK at every tested chunk size. Exp 3.5 characterized parse-OK's within-model reliability: directional for Llama, reversed for Qwen and Mistral.</p>
         <div class="project-tags">
           <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Llama 3.1 8B AWQ</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">AWQ Quantization</span><span class="tag">GPU Telemetry</span><span class="tag">Performance Engineering</span><span class="tag">Human-Graded QA</span><span class="tag">Production Decision</span>
         </div>
@@ -398,7 +315,7 @@
 
       <div class="project-card featured">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
-          <span class="project-status status-complete"><span class="status-dot"></span>Prototype Delivered · Procurement</span>
+          <span class="project-status status status-complete"><span class="status-dot"></span>Prototype Delivered · Procurement</span>
           <div style="display:flex;gap:1rem; flex-wrap:wrap;">
             <a href="procurement-intelligence.html" class="project-link">Case Study ↗</a>
             <a href="https://github.com/tayler-erbe/procurement_intelligence_system_design/tree/main" target="_blank" class="project-link">GitHub ↗</a>
@@ -415,7 +332,7 @@
 
       <div class="project-card featured" style="border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
-          <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal Project · Active Build</span>
+          <span class="project-status" style="color:var(--accent3);"><span class="status-dot" style="background:var(--accent3); box-shadow: 0 0 6px var(--accent3);"></span>Personal Project · Active Build</span>
           <div style="display:flex;gap:1rem; flex-wrap: wrap;">
             <a href="skyrule.html" class="project-link">Case Study &#8599;</a>
             <a href="https://skyrule.io" target="_blank" class="project-link">Site &#8599;</a>
@@ -450,8 +367,8 @@
 
       <div class="project-card featured" style="border-color: rgba(224,122,61,0.3); background: linear-gradient(135deg, var(--surface) 0%, rgba(224,122,61,0.03) 100%); border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
-          <span class="project-status" style="background: rgba(224,122,61,0.1); color: #e07a3d; border: 1px solid rgba(224,122,61,0.25); padding: 0.3rem 0.6rem; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">
-            <span class="status-dot" style="background: #e07a3d;"></span>Personal Venture · Live MVP
+          <span class="project-status" style="background: rgba(224,122,61,0.1); color: var(--warm); border: 1px solid rgba(224,122,61,0.25); padding: 0.3rem 0.6rem; border-radius:var(--radius-sm); font-family:var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">
+            <span class="status-dot" style="background: var(--warm);"></span>Personal Venture · Live MVP
           </span>
           <div style="display:flex;gap:1rem; flex-wrap: wrap;">
             <a href="legacy-app-about.html" class="project-link">Case Study &#8599;</a>
@@ -469,7 +386,7 @@
 
       <div class="project-card" style="border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal · In Development</span>
+          <span class="project-status" style="color:var(--accent3);"><span class="status-dot" style="background:var(--accent3); box-shadow: 0 0 6px var(--accent3);"></span>Personal · In Development</span>
           <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
         </div>
         <div class="project-num" style="color: var(--accent3);">✦ P2</div>
@@ -482,7 +399,7 @@
 
       <div class="project-card" style="border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
-          <span class="project-status" style="color:#c07a6e;"><span class="status-dot" style="background:#c07a6e; box-shadow: 0 0 6px #c07a6e;"></span>Personal · In Development</span>
+          <span class="project-status" style="color:var(--accent3);"><span class="status-dot" style="background:var(--accent3); box-shadow: 0 0 6px var(--accent3);"></span>Personal · In Development</span>
           <a href="https://github.com/tayler-erbe" target="_blank" class="project-link">GitHub ↗</a>
         </div>
         <div class="project-num" style="color: var(--accent3);">✦ P3</div>
@@ -527,7 +444,7 @@
       <div class="exp-meta"><div class="exp-date">Aug 2026 – Present</div><div class="exp-org">Skyrule<br>Personal project<br>Self-hosted</div></div>
       <div class="exp-content">
         <div class="exp-title">Founder &amp; Technical Lead · Personal Project</div>
-        <p class="exp-desc">Outside employment: designed and run a 15-agent AI engineering organization, a self-hosted vLLM inference stack and a validator-gated, founder-in-the-loop LLM content generator, with dedicated quality-governance and security functions. <a href="skyrule.html" style="color: var(--accent2);">Case study ↗</a></p>
+        <p class="exp-desc">Outside employment: designed and run a 15-agent AI engineering organization, a self-hosted vLLM inference stack and a validator-gated, founder-in-the-loop LLM content generator, with dedicated quality-governance and security functions. <a href="skyrule.html" class="link">Case study ↗</a></p>
       </div>
     </div>
 
@@ -574,7 +491,7 @@
 
   <section id="contact">
     <div class="section-header"><span class="section-tag">06 / Contact</span></div>
-    <h2 class="section-title" style="font-family:'DM Serif Display',serif; font-size: clamp(2rem,4vw,3.5rem); color: var(--white); margin-bottom:1rem;">Let's Connect</h2>
+    <h2 class="section-title" style="font-family:var(--font-heading); font-size: clamp(2rem,4vw,3.5rem); color: var(--white); margin-bottom:1rem;">Let's Connect</h2>
     <p class="contact-tagline">Interested in analytics strategy, applied AI, or the work described here? Reach out.</p>
     <div class="contact-links">
       <a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" class="contact-link">↗ LinkedIn</a>
@@ -586,9 +503,18 @@
     </div>
   </section>
 
-  <footer>
-    <p>Tayler Erbe · Data Scientist · AI Solutions, University of Illinois System</p>
-    <p>Last updated May 2026</p>
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe · Data Scientist · AI Solutions, University of Illinois System</p>
+      <p>Last updated May 2026</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
   </footer>
 
 </body>

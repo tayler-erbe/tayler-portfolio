@@ -26,251 +26,68 @@
     "keywords": "Tayler Erbe, data scientist, research proposal intelligence, NLP, KeyBERT, HERDS taxonomy, University of Illinois"
   }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
   <style>
-    :root {
-      --bg: #080b10;
-      --surface: #0f1318;
-      --surface2: #161c24;
-      --border: #1e2530;
-      --accent: #5bc8dc;
-      --accent2: #3a8fc4;
-      --accent3: #c07a6e;
-      --text: #d8e2ed;
-      --muted: #6b7c91;
-      --muted2: #3a4556;
-      --white: #eef3f8;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.4;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 3rem;
-      background: rgba(8,11,16,0.88);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
-    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
-    .nav-back:hover { color: var(--accent); }
-
-    /* HERO */
-    .hero {
-      padding: 9rem 3rem 5rem;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::after {
-      content: '';
-      position: absolute; top: -30%; right: -5%;
-      width: 50vw; height: 50vw;
-      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--accent2); margin-bottom: 1.25rem;
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
-    .hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
-      line-height: 1.0; color: var(--white);
-      letter-spacing: 0.01em; text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 68ch; line-height: 1.75; margin-bottom: 2rem; }
-
-    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; }
-    .meta-item {}
-    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
-    .meta-value { font-size: 0.9rem; color: var(--text); }
-
-    /* STAT STRIP */
-    .stat-strip {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 1px; background: var(--border);
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    }
-    .stat-item { background: var(--surface); padding: 1.75rem 2rem; }
-    .stat-item:hover { background: var(--surface2); }
-    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
-    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-
-    /* SECTIONS */
-    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
-    section:last-of-type { border-bottom: none; }
-
-    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
-    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
-    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
-    .section-line { flex: 1; height: 1px; background: var(--border); }
-
-    /* PROSE */
-    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
-    .prose p:last-child { margin-bottom: 0; }
-    .prose p strong { color: var(--text); font-weight: 500; }
-
-    /* TWO-COL */
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
-
-    /* CALLOUT CARD */
-    .callout {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
-      margin-top: 1.5rem;
-    }
-    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
-    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
-
-    /* PIPELINE STEPS */
-    .pipeline { display: flex; flex-direction: column; gap: 0; }
-    .pipeline-step {
-      display: grid; grid-template-columns: 48px 1fr;
-      gap: 1.5rem; padding: 1.5rem 0;
-      border-bottom: 1px solid var(--border); align-items: start;
-    }
-    .pipeline-step:last-child { border-bottom: none; }
-    .step-num {
-      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
-      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
-    }
-    .step-content {}
-    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
-    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
-    .step-body strong { color: var(--text); font-weight: 500; }
-
-    /* TAG CHIPS */
-    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
-    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .meta-item {  }
+    .step-content {  }
+    .chip { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
     .chip-accent { border-color: var(--accent2); color: var(--accent2); }
-
-    /* COMPONENT CARDS */
     .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
     .comp-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; border-top: 3px solid var(--accent2); }
     .comp-card.primary { border-top-color: var(--accent); }
     .comp-header { margin-bottom: 1.25rem; }
-    .comp-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--white); text-transform: uppercase; margin-bottom: 0.3rem; }
-    .comp-sub { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent2); }
+    .comp-name { font-family: var(--font-display); font-weight: 800; font-size: 1.4rem; color: var(--white); text-transform: uppercase; margin-bottom: 0.3rem; }
+    .comp-sub { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent2); }
     .comp-body p { font-size: 0.87rem; color: var(--muted); line-height: 1.65; margin-bottom: 0.8rem; }
     .comp-body p:last-child { margin-bottom: 0; }
     .comp-body strong { color: var(--text); font-weight: 500; }
-
-    /* DETAIL LIST (techniques, design decisions) */
     .detail-list { display: flex; flex-direction: column; gap: 0; }
-    .detail-item {
-      display: grid; grid-template-columns: 200px 1fr;
+    .detail-item { display: grid; grid-template-columns: 200px 1fr;
       gap: 1.5rem; padding: 1rem 0;
-      border-bottom: 1px solid var(--border);
-    }
+      border-bottom: 1px solid var(--border); }
     .detail-item:last-child { border-bottom: none; }
-    .detail-label { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--accent2); text-transform: uppercase; padding-top: 0.15rem; }
+    .detail-label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; color: var(--accent2); text-transform: uppercase; padding-top: 0.15rem; }
     .detail-body { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
     .detail-body strong { color: var(--text); font-weight: 500; }
-    .detail-body code {
-      font-family: 'DM Mono', monospace; font-size: 0.8rem;
+    .detail-body code { font-family: var(--font-mono); font-size: 0.8rem;
       color: var(--accent); background: var(--surface2);
-      padding: 0.1rem 0.4rem; border: 1px solid var(--border);
-    }
-
-    /* SOURCE LIST */
+      padding: 0.1rem 0.4rem; border: 1px solid var(--border); }
     .source-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
     .source-item { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; align-items: start; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
     .source-item:last-child { border-bottom: none; }
-    .source-name { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); letter-spacing: 0.04em; }
+    .source-name { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent2); letter-spacing: 0.04em; }
     .source-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
-
-    /* INSIGHT BOXES */
-    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
-    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
-    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
-    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
-
-    /* TAXONOMY GRID */
-    .taxo-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 0.5rem; margin-top: 1rem;
-    }
-    .taxo-item {
-      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    .taxo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.5rem; margin-top: 1rem; }
+    .taxo-item { font-family: var(--font-mono); font-size: 0.72rem;
       padding: 0.55rem 0.75rem; border: 1px solid var(--border);
-      color: var(--muted); background: var(--surface);
-    }
+      color: var(--muted); background: var(--surface); }
     .taxo-item:hover { border-color: var(--accent2); color: var(--text); }
-
-    /* CODE BLOCK */
-    .code-block {
-      background: var(--surface); border: 1px solid var(--border);
-      border-left: 3px solid var(--accent2);
-      padding: 1.25rem 1.5rem; margin-top: 1.25rem;
-      overflow-x: auto;
-    }
-    .code-block pre {
-      font-family: 'DM Mono', monospace; font-size: 0.78rem;
-      color: var(--text); line-height: 1.6;
-    }
-    .code-comment { color: var(--muted2); }
-    .code-keyword { color: var(--accent); }
     .code-string { color: var(--accent3); }
-
-    /* BACK LINK */
-    .back-section { padding: 3rem; text-align: center; }
-    .back-link {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
-      text-transform: uppercase; color: var(--muted); text-decoration: none;
-      border: 1px solid var(--border); padding: 0.85rem 2rem;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .back-link:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* RESPONSIVE */
     @media (max-width: 860px) {
-      nav { padding: 1rem 1.5rem; }
-      .hero { padding: 7rem 1.5rem 3rem; }
-      section { padding: 3rem 1.5rem; }
-      .stat-strip { grid-template-columns: 1fr 1fr; }
-      .two-col, .three-col, .comp-grid, .insight-grid { grid-template-columns: 1fr; }
+      .comp-grid { grid-template-columns: 1fr; }
       .source-item, .detail-item { grid-template-columns: 1fr; gap: 0.25rem; }
-      .back-section { padding: 2rem 1.5rem; }
     }
   </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <a class="nav-logo" href="index.html">TAYLER.ERBE</a>
-  <a class="nav-back" href="index.html">← back to portfolio</a>
-</nav>
+<nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
 
 <!-- HERO -->
 <div class="hero">
@@ -288,7 +105,7 @@
        target="_blank"
        style="
          display:inline-block;
-         font-family:'DM Mono', monospace;
+         font-family:var(--font-mono);
          font-size:0.75rem;
          letter-spacing:0.08em;
          text-transform:uppercase;
@@ -326,8 +143,7 @@
       <div class="meta-label">Code</div>
       <div class="meta-value">
         <a href="https://github.com/tayler-erbe/research-proposal-processing"
-           target="_blank"
-           style="color: var(--accent); text-decoration: none;">
+           target="_blank" class="link">
            GitHub Repository →
         </a>
       </div>
@@ -369,7 +185,7 @@
       <p>I scoped, designed, and built the pipeline end-to-end: Oracle integration across two security zones, PDF text extraction with format validation, a three-way keyword extraction ensemble, a sentence-transformer-based classifier, and the three-stage staging-table design that makes the output queryable by analysts without exposing the intermediate text.</p>
       <blockquote style="border-left:3px solid var(--accent); padding-left:1.25rem; margin:1.5rem 0 0;">
         <p style="font-style:italic; color:var(--text); font-size:0.92rem; line-height:1.7;">This pipeline represents the first phase of a broader Research Proposal Intelligence partnership — moving from descriptive reporting of what was funded toward predictive understanding of <em>why</em>, so strategy decisions can be informed by the full text of what researchers actually proposed.</p>
-        <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-top:0.6rem;">Project framing · AITS / SPA partnership, 2025</p>
+        <p style="font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-top:0.6rem;">Project framing · AITS / SPA partnership, 2025</p>
       </blockquote>
     </div>
     <div>
@@ -646,34 +462,34 @@
     <div>
       <div class="callout-label" style="color: var(--accent); margin-bottom: 0.75rem;">Data &amp; Storage</div>
       <div class="tag-row" style="margin-top: 0;">
-        <span class="chip chip-accent">Oracle</span>
-        <span class="chip chip-accent">python-oracledb</span>
-        <span class="chip chip-accent">SQL</span>
-        <span class="chip chip-accent">Parquet</span>
-        <span class="chip chip-accent">Pandas</span>
+        <span class="tag tag-accent">Oracle</span>
+        <span class="tag tag-accent">python-oracledb</span>
+        <span class="tag tag-accent">SQL</span>
+        <span class="tag tag-accent">Parquet</span>
+        <span class="tag tag-accent">Pandas</span>
       </div>
     </div>
     <div>
       <div class="callout-label" style="color: var(--accent); margin-bottom: 0.75rem;">NLP &amp; ML</div>
       <div class="tag-row" style="margin-top: 0;">
-        <span class="chip chip-accent">sentence-transformers</span>
-        <span class="chip chip-accent">KeyBERT</span>
-        <span class="chip chip-accent">scikit-learn</span>
-        <span class="chip chip-accent">gensim (LDA)</span>
-        <span class="chip chip-accent">spaCy</span>
-        <span class="chip chip-accent">NLTK</span>
-        <span class="chip chip-accent">wordfreq</span>
-        <span class="chip chip-accent">all-MiniLM-L6-v2</span>
+        <span class="tag tag-accent">sentence-transformers</span>
+        <span class="tag tag-accent">KeyBERT</span>
+        <span class="tag tag-accent">scikit-learn</span>
+        <span class="tag tag-accent">gensim (LDA)</span>
+        <span class="tag tag-accent">spaCy</span>
+        <span class="tag tag-accent">NLTK</span>
+        <span class="tag tag-accent">wordfreq</span>
+        <span class="tag tag-accent">all-MiniLM-L6-v2</span>
       </div>
     </div>
     <div>
       <div class="callout-label" style="color: var(--accent); margin-bottom: 0.75rem;">Infrastructure</div>
       <div class="tag-row" style="margin-top: 0;">
-        <span class="chip chip-accent">Python 3.12</span>
-        <span class="chip chip-accent">PyMuPDF</span>
-        <span class="chip chip-accent">PyYAML</span>
-        <span class="chip chip-accent">Jupyter</span>
-        <span class="chip chip-accent">Linux</span>
+        <span class="tag tag-accent">Python 3.12</span>
+        <span class="tag tag-accent">PyMuPDF</span>
+        <span class="tag tag-accent">PyYAML</span>
+        <span class="tag tag-accent">Jupyter</span>
+        <span class="tag tag-accent">Linux</span>
       </div>
     </div>
   </div>
@@ -749,8 +565,21 @@
 
 <!-- BACK -->
 <div class="back-section">
-  <a class="back-link" href="index.html">← back to portfolio</a>
+  <a class="back-link" href="index.html">&#8592; Back to Portfolio</a>
 </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
 
 </body>
 </html>

@@ -26,264 +26,44 @@
     "keywords": "Tayler Erbe, data scientist, LLaVA, archival image classification, sensitive content, semantic similarity"
   }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
   <style>
-    :root {
-      --bg: #080b10;
-      --surface: #0f1318;
-      --surface2: #161c24;
-      --border: #1e2530;
-      --accent: #5bc8dc;
-      --accent2: #3a8fc4;
-      --accent3: #c07a6e;
-      --accent-dim: rgba(91,200,220,0.12);
-      --text: #d8e2ed;
-      --muted: #6b7c91;
-      --muted2: #3a4556;
-      --white: #eef3f8;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.4;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 3rem;
-      background: rgba(8,11,16,0.88);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; }
-    .nav-back { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
-    .nav-back:hover { color: var(--accent); }
-
-    /* HERO */
-    .hero {
-      padding: 9rem 3rem 5rem;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::after {
-      content: '';
-      position: absolute; top: -30%; right: -5%;
-      width: 50vw; height: 50vw;
-      background: radial-gradient(ellipse at center, rgba(91,200,220,0.04) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--accent2); margin-bottom: 1.25rem;
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    .hero-eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--accent2); }
-    .hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800; font-size: clamp(2.8rem, 5vw, 5rem);
-      line-height: 1.0; color: var(--white);
-      letter-spacing: 0.01em; text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 64ch; line-height: 1.75; margin-bottom: 2rem; }
-
-    .hero-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem; }
-    .meta-item {}
-    .meta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.3rem; }
-    .meta-value { font-size: 0.9rem; color: var(--text); }
-
-    /* STAT STRIP */
-    .stat-strip {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 1px; background: var(--border);
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    }
-    .stat-item { background: var(--surface); padding: 1.75rem 2rem; transition: background 0.2s; }
-    .stat-item:hover { background: var(--surface2); }
-    .stat-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; color: var(--accent); line-height: 1; margin-bottom: 0.3rem; }
-    .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-
-    /* SECTIONS */
-    section { padding: 4.5rem 3rem; border-bottom: 1px solid var(--border); }
-    section:last-of-type { border-bottom: none; }
-
-    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3rem; }
-    .section-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); white-space: nowrap; }
-    .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 2.5vw, 2.4rem); color: var(--white); text-transform: uppercase; letter-spacing: 0.02em; }
-    .section-line { flex: 1; height: 1px; background: var(--border); }
-
-    /* PROSE */
-    .prose p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
-    .prose p:last-child { margin-bottom: 0; }
-    .prose p strong { color: var(--text); font-weight: 500; }
-
-    /* LAYOUTS */
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
-
-    /* CALLOUT */
-    .callout {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-left: 3px solid var(--accent); padding: 1.5rem 1.75rem;
-      margin-top: 1.5rem;
-    }
-    .callout-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
-    .callout p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
-    .callout p strong { color: var(--text); font-weight: 500; }
-
-    /* PIPELINE STEPS */
-    .pipeline { display: flex; flex-direction: column; gap: 0; }
-    .pipeline-step {
-      display: grid; grid-template-columns: 48px 1fr;
-      gap: 1.5rem; padding: 1.5rem 0;
-      border-bottom: 1px solid var(--border); align-items: start;
-    }
-    .pipeline-step:last-child { border-bottom: none; }
-    .step-num {
-      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
-      font-size: 1.8rem; color: var(--muted2); line-height: 1; padding-top: 0.1rem;
-    }
-    .step-title { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.4rem; }
-    .step-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
-    .step-body strong { color: var(--text); font-weight: 500; }
-
-    /* TAG CHIPS */
-    .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
-    .chip { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .meta-item {  }
+    .chip { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
     .chip-accent { border-color: var(--accent2); color: var(--accent2); }
     .chip-warm { border-color: var(--accent3); color: var(--accent3); }
-
-    /* METHOD COMPARISON CARDS */
-    .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .method-card { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
-    .method-card.winner { border-color: var(--accent); border-top: 3px solid var(--accent); }
-    .method-card.challenger { border-top: 3px solid var(--accent3); }
-    .method-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
-    .method-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--white); text-transform: uppercase; }
-    .method-badge {
-      font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
-      text-transform: uppercase; padding: 0.2rem 0.6rem;
-    }
-    .badge-green { background: rgba(93,191,138,0.12); color: #5dbf8a; border: 1px solid #5dbf8a; }
-    .badge-warn { background: rgba(192,122,110,0.12); color: var(--accent3); border: 1px solid var(--accent3); }
-    .badge-blue { background: rgba(91,200,220,0.12); color: var(--accent); border: 1px solid var(--accent); }
-    .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
-    .metric-row:last-child { border-bottom: none; }
-    .metric-label { font-size: 0.82rem; color: var(--muted); }
-    .metric-value { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
-    .metric-value.good { color: var(--accent); }
-    .metric-value.warn { color: var(--accent3); }
-    .metric-value.neutral { color: var(--text); }
-
-    /* CATEGORY TABLE */
-    .cat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .cat-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
-    .cat-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; vertical-align: top; }
-    .cat-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
-    .cat-table tr:last-child td { border-bottom: none; }
-
-    /* RESULTS TABLE */
-    .results-strip {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 1px; background: var(--border); margin-top: 2rem;
-    }
-    .result-cell { background: var(--surface2); padding: 1.5rem; }
-    .result-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: 0.25rem; }
-    .result-label { font-family: 'DM Mono', monospace; font-size: 0.67rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-
-    /* INSIGHT BOXES */
-    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
-    .insight-box { background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
-    .insight-box-title { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
-    .insight-box p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
-    .insight-box p strong { color: var(--text); font-weight: 500; }
-
-    /* TAKEAWAY STRIP */
-    .takeaway { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--surface2); border-left: 3px solid var(--accent); padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
-    .takeaway::before { content: '→'; color: var(--accent); font-family: 'DM Mono', monospace; flex-shrink: 0; font-size: 0.9rem; margin-top: 0.05rem; }
-    .takeaway strong { color: var(--text); }
-
-    /* NEXT STEPS TABLE */
     .next-table { width: 100%; border-collapse: collapse; }
-    .next-table th { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 2px solid var(--border); text-align: left; }
+    .next-table th { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 2px solid var(--border); text-align: left; }
     .next-table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--muted); vertical-align: top; }
-    .next-table td:first-child { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); white-space: nowrap; }
+    .next-table td:first-child { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); white-space: nowrap; }
     .next-table td:nth-child(2) { color: var(--text); font-weight: 500; }
     .next-table tr:last-child td { border-bottom: none; }
-
-    /* PERFORMANCE BAR */
     .perf-bar-wrap { height: 5px; background: var(--surface2); margin-top: 0.35rem; }
     .perf-bar { height: 5px; background: var(--accent); }
     .perf-bar.warm { background: var(--accent3); }
-
-    /* BLOCKQUOTE */
-    blockquote {
-      border-left: 3px solid var(--accent);
+    blockquote { border-left: 3px solid var(--accent);
       padding-left: 1.25rem;
-      margin: 1.5rem 0 0;
-    }
+      margin: 1.5rem 0 0; }
     blockquote p { font-style: italic; color: var(--text); font-size: 0.92rem; line-height: 1.7; }
-    blockquote cite { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; display: block; }
-
-    /* BACK */
-    .back-section { padding: 3rem; text-align: center; }
-    .back-link {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
-      text-transform: uppercase; color: var(--muted); text-decoration: none;
-      border: 1px solid var(--border); padding: 0.85rem 2rem;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .back-link:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ANIMATIONS */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .hero-eyebrow { animation: fadeUp 0.5s ease 0.1s both; }
-    .hero h1 { animation: fadeUp 0.5s ease 0.22s both; }
-    .hero-desc { animation: fadeUp 0.5s ease 0.36s both; }
-    .hero-meta { animation: fadeUp 0.5s ease 0.48s both; }
-
-    /* RESPONSIVE */
-    @media (max-width: 860px) {
-      nav { padding: 1rem 1.5rem; }
-      .hero { padding: 7rem 1.5rem 3rem; }
-      section { padding: 3rem 1.5rem; }
-      .stat-strip { grid-template-columns: 1fr 1fr; }
-      .two-col, .three-col, .method-grid, .insight-grid, .results-strip { grid-template-columns: 1fr; }
-      .back-section { padding: 2rem 1.5rem; }
-    }
+    blockquote cite { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; display: block; }
   </style>
 </head>
 <body>
 
-  <nav>
+  <nav class="site-nav" aria-label="Site">
     <a href="index.html" class="nav-logo">T.Erbe</a>
-    <a href="index.html" class="nav-back">&#8592; Back to Portfolio</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
   </nav>
 
   <!-- HERO -->
@@ -299,13 +79,13 @@
     <div style="margin-top: 1.75rem; display: flex; gap: 1rem; flex-wrap: wrap;">
       <a href="https://github.com/tayler-erbe/archival-image-intelligence"
          target="_blank"
-         style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none; transition: all 0.2s ease;"
+         style="display:inline-block; font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none; transition: all 0.2s ease;"
          onmouseover="this.style.background='rgba(91,200,220,0.1)'"
          onmouseout="this.style.background='transparent'">
          View Code on GitHub →
       </a>
       <a href="archival-image-throughput-evaluation.html"
-         style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent2); color:var(--accent2); text-decoration:none; transition: all 0.2s ease;"
+         style="display:inline-block; font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent2); color:var(--accent2); text-decoration:none; transition: all 0.2s ease;"
          onmouseover="this.style.background='rgba(58,143,196,0.1)'"
          onmouseout="this.style.background='transparent'">
          See also: Performance Engineering Deep-Dive →
@@ -332,7 +112,7 @@
       <div class="meta-item">
         <div class="meta-label">Code</div>
         <div class="meta-value">
-          <a href="https://github.com/tayler-erbe/archival-image-intelligence" target="_blank" style="color:var(--accent); text-decoration:none;">GitHub Repository →</a>
+          <a href="https://github.com/tayler-erbe/archival-image-intelligence" target="_blank" class="link">GitHub Repository →</a>
         </div>
       </div>
     </div>
@@ -479,7 +259,7 @@
     </div>
     <div class="two-col" style="align-items: start;">
       <div>
-        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1.5rem;">Method 1 — Semantic Similarity</div>
+        <div style="font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1.5rem;">Method 1 — Semantic Similarity</div>
         <div class="pipeline">
           <div class="pipeline-step">
             <div class="step-num">01</div>
@@ -492,7 +272,7 @@
             <div class="step-num">02</div>
             <div>
               <div class="step-title">Description Generation — Natural Prompt</div>
-              <div class="step-body">LLaVA (<code style="font-family:'DM Mono',monospace; color:var(--accent2);">llava-llama3</code> via Ollama) is prompted: <em>"Only describe what you actually see. Don't guess names or locations."</em> Generates a full natural-language description per image.</div>
+              <div class="step-body">LLaVA (<code style="font-family:var(--font-mono); color:var(--accent2);">llava-llama3</code> via Ollama) is prompted: <em>"Only describe what you actually see. Don't guess names or locations."</em> Generates a full natural-language description per image.</div>
             </div>
           </div>
           <div class="pipeline-step">
@@ -506,7 +286,7 @@
             <div class="step-num">04</div>
             <div>
               <div class="step-title">Semantic Embedding</div>
-              <div class="step-body">Taxonomy keywords and combined image descriptions are embedded using <strong>SentenceTransformer</strong> (<code style="font-family:'DM Mono',monospace; color:var(--accent2);">all-mpnet-base-v2</code>). Cosine similarity is computed between description and keyword embedding vectors.</div>
+              <div class="step-body">Taxonomy keywords and combined image descriptions are embedded using <strong>SentenceTransformer</strong> (<code style="font-family:var(--font-mono); color:var(--accent2);">all-mpnet-base-v2</code>). Cosine similarity is computed between description and keyword embedding vectors.</div>
             </div>
           </div>
           <div class="pipeline-step">
@@ -519,7 +299,7 @@
         </div>
       </div>
       <div>
-        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent3); margin-bottom:1.5rem;">Method 2 — LLaVA Direct Classification</div>
+        <div style="font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent3); margin-bottom:1.5rem;">Method 2 — LLaVA Direct Classification</div>
         <div class="pipeline">
           <div class="pipeline-step">
             <div class="step-num">01</div>
@@ -532,14 +312,14 @@
             <div class="step-num">02</div>
             <div>
               <div class="step-title">Structured Moderation Prompt</div>
-              <div class="step-body">Each image is sent to LLaVA with a strict classification prompt listing all 9 taxonomy categories. The model is asked to respond in <strong>JSON only</strong>: <code style="font-family:'DM Mono',monospace; color:var(--accent2);">{"offensive": true/false, "category": "...", "rationale": "..."}</code></div>
+              <div class="step-body">Each image is sent to LLaVA with a strict classification prompt listing all 9 taxonomy categories. The model is asked to respond in <strong>JSON only</strong>: <code style="font-family:var(--font-mono); color:var(--accent2);">{"offensive": true/false, "category": "...", "rationale": "..."}</code></div>
             </div>
           </div>
           <div class="pipeline-step">
             <div class="step-num">03</div>
             <div>
               <div class="step-title">JSON Parsing & Fallback</div>
-              <div class="step-body">Responses are parsed via <code style="font-family:'DM Mono',monospace; color:var(--accent2);">json.loads()</code>. Non-JSON outputs (model hallucination) are stored in the rationale field for manual review rather than discarded.</div>
+              <div class="step-body">Responses are parsed via <code style="font-family:var(--font-mono); color:var(--accent2);">json.loads()</code>. Non-JSON outputs (model hallucination) are stored in the rationale field for manual review rather than discarded.</div>
             </div>
           </div>
           <div class="pipeline-step">
@@ -553,7 +333,7 @@
 
         <div class="callout" style="margin-top:2rem; border-left-color: var(--muted2);">
           <div class="callout-label" style="color:var(--muted);">Metadata Pipeline (Parallel)</div>
-          <p>A third parallel pipeline extracts <strong>File, EXIF/TIFF, and IPTC metadata</strong> from all archival images using <code style="font-family:'DM Mono',monospace; color:var(--accent2);">tifffile</code>, <code style="font-family:'DM Mono',monospace; color:var(--accent2);">PIL</code>, and <code style="font-family:'DM Mono',monospace; color:var(--accent2);">iptcinfo3</code>. Output is a structured CSV aligned with Dublin Core and IPTC standards, enabling cataloguing interoperability with library management systems.</p>
+          <p>A third parallel pipeline extracts <strong>File, EXIF/TIFF, and IPTC metadata</strong> from all archival images using <code style="font-family:var(--font-mono); color:var(--accent2);">tifffile</code>, <code style="font-family:var(--font-mono); color:var(--accent2);">PIL</code>, and <code style="font-family:var(--font-mono); color:var(--accent2);">iptcinfo3</code>. Output is a structured CSV aligned with Dublin Core and IPTC standards, enabling cataloguing interoperability with library management systems.</p>
         </div>
       </div>
     </div>
@@ -600,10 +380,10 @@
           Captures nuanced semantic meaning. Fast at scale. False positives often stem from semantic overlap between unrelated categories (e.g., medieval ceremonial dress flagging as Native American imagery). Threshold tuning can improve precision.
         </div>
         <div class="tag-row">
-          <span class="chip chip-accent">SentenceTransformer</span>
-          <span class="chip chip-accent">all-mpnet-base-v2</span>
-          <span class="chip">Cosine Similarity</span>
-          <span class="chip">LLaVA Descriptions</span>
+          <span class="tag tag-accent">SentenceTransformer</span>
+          <span class="tag tag-accent">all-mpnet-base-v2</span>
+          <span class="tag">Cosine Similarity</span>
+          <span class="tag">LLaVA Descriptions</span>
         </div>
       </div>
 
@@ -637,12 +417,12 @@
           <span class="metric-value warn">Serving stack — see throughput section</span>
         </div>
         <div style="margin-top:1rem; font-size:0.82rem; color:var(--muted); line-height:1.65;">
-          Strong visual reasoning capability but failed to flag any content as offensive in this dataset. Model appears calibrated for contemporary content moderation and may require domain-specific fine-tuning for historical archival material. Notable: model correctly described racialized content in rationale text while still returning <code style="font-family:'DM Mono',monospace; color:var(--accent2);">offensive: false</code>.
+          Strong visual reasoning capability but failed to flag any content as offensive in this dataset. Model appears calibrated for contemporary content moderation and may require domain-specific fine-tuning for historical archival material. Notable: model correctly described racialized content in rationale text while still returning <code style="font-family:var(--font-mono); color:var(--accent2);">offensive: false</code>.
         </div>
         <div class="tag-row">
-          <span class="chip chip-warm">LLaVA-LLaMA3</span>
-          <span class="chip">Ollama</span>
-          <span class="chip">Structured JSON Output</span>
+          <span class="tag tag-warm">LLaVA-LLaMA3</span>
+          <span class="tag">Ollama</span>
+          <span class="tag">Structured JSON Output</span>
         </div>
       </div>
     </div>
@@ -694,9 +474,9 @@
             <img src="docs/examples/0000207_true_positive_skull.jpg"
                  alt="Archival photograph 0000207 — a man in a white coat examining a sculpted bust with a partial skull face, correctly flagged as Human Remains"
                  style="width:100%; max-width:340px; display:block; border:1px solid var(--border); filter:saturate(0.7) contrast(1.05);" />
-            <div style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted2); margin-top:0.4rem;">0000207 — flagged: Human Remains · correct</div>
+            <div style="font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted2); margin-top:0.4rem;">0000207 — flagged: Human Remains · correct</div>
           </div>
-          <p><strong>Strict description:</strong> "A man is holding up a skull to the face of a dummy head for display purposes."<br><br>Matched keyword: <code style="font-family:'DM Mono',monospace; color:var(--accent2);">skull</code> → Category: Human Remains. Clean, unambiguous match.</p>
+          <p><strong>Strict description:</strong> "A man is holding up a skull to the face of a dummy head for display purposes."<br><br>Matched keyword: <code style="font-family:var(--font-mono); color:var(--accent2);">skull</code> → Category: Human Remains. Clean, unambiguous match.</p>
         </div>
         <div class="callout" style="border-left-color: var(--accent3); margin-top: 1rem;">
           <div class="callout-label" style="color: var(--accent3);">Example: False Positive (Native American Imagery) — Image 0000700</div>
@@ -704,7 +484,7 @@
             <img src="docs/examples/0000700_false_positive_costume.jpg"
                  alt="Archival photograph 0000700 — a man and a woman in period theatrical costume, incorrectly flagged as Native American imagery"
                  style="width:100%; max-width:340px; display:block; border:1px solid var(--border); filter:saturate(0.7) contrast(1.05);" />
-            <div style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted2); margin-top:0.4rem;">0000700 — flagged: Native American Imagery · false positive</div>
+            <div style="font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted2); margin-top:0.4rem;">0000700 — flagged: Native American Imagery · false positive</div>
           </div>
           <p><strong>LLaVA description:</strong> "Two women wearing medieval outfits stand side by side with a man."<br><br>The photograph actually shows <strong>one man and one woman</strong> in period theatrical costume — a separate model perception error worth noting. Flagged as Native American imagery due to semantic overlap between "ceremonial" and "medieval costume." Both the count error and the false-positive category illustrate the challenge of using general-purpose multimodal descriptions as inputs to a moderation classifier.</p>
         </div>
@@ -722,12 +502,12 @@
     <div class="two-col">
       <div class="prose">
         <p>The metadata extraction pipeline is a standalone contribution of this project, independent of content classification. For archival collections, <strong>structured, standards-aligned metadata</strong> is as important as content moderation — enabling discovery, cataloguing, long-term preservation, and integration with library management systems.</p>
-        <p>Using <code style="font-family:'DM Mono',monospace; color:var(--accent2);">tifffile</code>, <code style="font-family:'DM Mono',monospace; color:var(--accent2);">Pillow (PIL)</code>, and <code style="font-family:'DM Mono',monospace; color:var(--accent2);">iptcinfo3</code>, the pipeline extracts metadata across three levels for every archival image in the collection. All output fields are mapped to <strong>IPTC Core</strong> and <strong>Dublin Core</strong> schemas to ensure interoperability with the University Library's cataloguing systems.</p>
+        <p>Using <code style="font-family:var(--font-mono); color:var(--accent2);">tifffile</code>, <code style="font-family:var(--font-mono); color:var(--accent2);">Pillow (PIL)</code>, and <code style="font-family:var(--font-mono); color:var(--accent2);">iptcinfo3</code>, the pipeline extracts metadata across three levels for every archival image in the collection. All output fields are mapped to <strong>IPTC Core</strong> and <strong>Dublin Core</strong> schemas to ensure interoperability with the University Library's cataloguing systems.</p>
       </div>
       <div>
         <div class="three-col">
           <div style="background: var(--surface2); border: 1px solid var(--border); border-top: 2px solid var(--accent); padding: 1.25rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">File-Level</div>
+            <div style="font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">File-Level</div>
             <ul style="list-style:none; font-size:0.8rem; color:var(--muted); line-height:2;">
               <li>› Filename</li>
               <li>› File size</li>
@@ -736,7 +516,7 @@
             </ul>
           </div>
           <div style="background: var(--surface2); border: 1px solid var(--border); border-top: 2px solid var(--accent2); padding: 1.25rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">EXIF / TIFF</div>
+            <div style="font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.75rem;">EXIF / TIFF</div>
             <ul style="list-style:none; font-size:0.8rem; color:var(--muted); line-height:2;">
               <li>› Dimensions</li>
               <li>› Resolution (DPI)</li>
@@ -746,7 +526,7 @@
             </ul>
           </div>
           <div style="background: var(--surface2); border: 1px solid var(--border); border-top: 2px solid var(--muted2); padding: 1.25rem;">
-            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.75rem;">IPTC</div>
+            <div style="font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.75rem;">IPTC</div>
             <ul style="list-style:none; font-size:0.8rem; color:var(--muted); line-height:2;">
               <li>› Object name</li>
               <li>› Caption / abstract</li>
@@ -796,7 +576,7 @@
         </div>
         <div style="margin-top: 1.5rem;">
           <a href="archival-image-throughput-evaluation.html"
-             style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none; transition: all 0.2s ease;"
+             style="display:inline-block; font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.75rem 1.5rem; border:1px solid var(--accent); color:var(--accent); text-decoration:none; transition: all 0.2s ease;"
              onmouseover="this.style.background='rgba(91,200,220,0.1)'"
              onmouseout="this.style.background='transparent'">
              Full Performance Engineering Case Study →
@@ -814,7 +594,7 @@
       <div class="section-line"></div>
     </div>
     <div class="prose">
-      <p>The throughput work removed the constraint that made production infeasible. Since August 2026 I have led the <strong>RIMS archival pipeline production build</strong> as technical lead, architect and project manager across a two-organization team spanning AITS and the University Library. It unifies three completed proofs of concept, this image work plus the <a href="email-archiving.html" style="color:var(--accent2);">email</a> and <a href="file-archiving-smart-search.html" style="color:var(--accent2);">legacy-file</a> pipelines, into a single <strong>eight-stage pipeline</strong> built against one shared manifest, so a mixed accession can be processed end to end.</p>
+      <p>The throughput work removed the constraint that made production infeasible. Since August 2026 I have led the <strong>RIMS archival pipeline production build</strong> as technical lead, architect and project manager across a two-organization team spanning AITS and the University Library. It unifies three completed proofs of concept, this image work plus the <a href="email-archiving.html" class="link">email</a> and <a href="file-archiving-smart-search.html" class="link">legacy-file</a> pipelines, into a single <strong>eight-stage pipeline</strong> built against one shared manifest, so a mixed accession can be processed end to end.</p>
       <p>The engagement is structured as a capability transfer: I am mentoring the University Library&#8217;s incoming engineer toward full ownership, so the Library ends up operating the system rather than depending on AITS. The unified system was demonstrated in September 2026 to the University Archives, Library IT and AITS information governance, processing <strong>2,375 real files across three accessions in about 21 seconds</strong>, with the archivist&#8217;s review interface on top. Its governance position is built into the code: sensitivity outranks ranking, nothing is deleted, and machine proposals are visibly distinguished from human judgements.</p>
     </div>
   </section>
@@ -888,7 +668,7 @@
     </div>
     <div class="three-col">
       <div>
-        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Vision &amp; Language Models</div>
+        <div style="font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Vision &amp; Language Models</div>
         <ul style="list-style:none; font-size:0.85rem; color:var(--muted); line-height:2.1;">
           <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> LLaVA-LLaMA3 (Ollama)</li>
           <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> LLaVA-1.5-7B (vLLM)</li>
@@ -898,7 +678,7 @@
         </ul>
       </div>
       <div>
-        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Image Processing &amp; Serving</div>
+        <div style="font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Image Processing &amp; Serving</div>
         <ul style="list-style:none; font-size:0.85rem; color:var(--muted); line-height:2.1;">
           <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> Pillow (PIL)</li>
           <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> tifffile</li>
@@ -908,7 +688,7 @@
         </ul>
       </div>
       <div>
-        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Data &amp; Infrastructure</div>
+        <div style="font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);">Data &amp; Infrastructure</div>
         <ul style="list-style:none; font-size:0.85rem; color:var(--muted); line-height:2.1;">
           <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> pandas / numpy / pyarrow</li>
           <li style="display:flex;align-items:center;gap:0.5rem;"><span style="color:var(--accent2);">›</span> Python / Jupyter</li>
@@ -919,17 +699,17 @@
       </div>
     </div>
     <div class="tag-row" style="margin-top: 2rem;">
-      <span class="chip chip-accent">LLaVA</span>
-      <span class="chip chip-accent">Multimodal AI</span>
-      <span class="chip chip-accent">Semantic Similarity</span>
-      <span class="chip chip-accent">vLLM</span>
-      <span class="chip">SentenceTransformer</span>
-      <span class="chip">TIFF / IPTC</span>
-      <span class="chip">Dublin Core</span>
-      <span class="chip">PIL</span>
-      <span class="chip">Ollama</span>
-      <span class="chip">Python</span>
-      <span class="chip">RIMS / Library Partnership</span>
+      <span class="tag tag-accent">LLaVA</span>
+      <span class="tag tag-accent">Multimodal AI</span>
+      <span class="tag tag-accent">Semantic Similarity</span>
+      <span class="tag tag-accent">vLLM</span>
+      <span class="tag">SentenceTransformer</span>
+      <span class="tag">TIFF / IPTC</span>
+      <span class="tag">Dublin Core</span>
+      <span class="tag">PIL</span>
+      <span class="tag">Ollama</span>
+      <span class="tag">Python</span>
+      <span class="tag">RIMS / Library Partnership</span>
     </div>
   </section>
 
@@ -938,9 +718,18 @@
     <a href="index.html" class="back-link">← Back to Portfolio</a>
   </div>
 
-  <footer style="padding:1.5rem 3rem; background:var(--bg); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-    <p style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; color:var(--muted2);">Tayler Erbe · Data Scientist · Applied AI &amp; Solutions Engineering, University of Illinois System</p>
-    <p style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.06em; color:var(--muted2);">Last updated May 2026</p>
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe · Data Scientist · Applied AI &amp; Solutions Engineering, University of Illinois System</p>
+      <p>Last updated May 2026</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
   </footer>
 
 </body>
