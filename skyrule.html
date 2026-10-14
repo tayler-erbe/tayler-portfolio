@@ -33,7 +33,7 @@
   </nav>
 
   <div class="hero">
-    <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; Aug 2026 &ndash; Present</div>
+    <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; Aug 2026 to Present</div>
     <h1>Skyrule<br><span>Agentic AI &amp; Local LLMs</span></h1>
     <!-- Qwen draft p02 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p class="hero-desc">Skyrule is a personal project I built outside my employment, designed to help people understand themselves and the relationships in their lives. Using astrology as its interpretive lens, it visualizes how those connections shift over time through calendar views and timelines. The engineering underpinning is a rule-based inference system, supported by a 15-agent AI team. Content is generated via a <strong>self-hosted LLM stack</strong> and is validated through automated checks, statistical testing, and final review by me.</p>
 
@@ -74,7 +74,9 @@
     <div class="prose">
       <!-- Qwen draft p22 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I designed the Skyrule team as a <strong>15-agent AI engineering organization</strong>, mirroring a real company with fourteen departments and a Principal Architect. These include the domain practice, relational science, editorial, product design, platform and data engineering, AI and performance engineering, QA and compliance, data science, brand and marketing, legal and trust, finance and operations, program management, the office of the founder, and security and IP protection.</p>
 
-      <!-- Qwen draft p23 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule using Claude Code subagents&mdash;each with a charter, scope, memory, and clear boundaries. They handle specific tasks and pass work along with defined protocols. When changes affect multiple areas, they go through the Principal Architect for integration review.</p>
+      <!-- TODO(qwen, 14 Oct): original text restored; Qwen drafts used dashes or invented text in four rounds (see skyrule_p23_r4.check.md). --><p>Each agent is a Claude Code subagent with a written charter, a scope of work, a handoff protocol,
+      persistent memory and an explicit list of what it does <em>not</em> own. Changes that cross departments
+      route through the Principal Architect for integration review.</p>
     </div>
 
     <div class="insight-box" style="margin-top:1.5rem;">
@@ -100,7 +102,10 @@
     <div class="prose">
       <!-- Qwen draft p34 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built an autonomous job queue and GPU scheduler in Python that runs on a 15-minute tick. It has separate lanes for CPU, local-model, and cloud-model jobs, and handles priorities, dependencies, start conditions, finish checks, and retry limits. It includes a usage-budget guard and will pause and resume automatically when a model usage limit is reached. Since early October 2026, it has launched <strong>650+ unattended jobs</strong>, including overnight GPU extraction runs and parallel multi-agent research batches.</p>
 
-      <!-- Qwen draft p35 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I measured every model on the hardware it would run before assigning tasks&mdash;no reputations, just results. Frontier Claude models in the cloud handle reading, verification, design, and audit, while my own GPU runs local open-weights models for high-volume generation, extraction, and grading. Small local models manage routing and utilities. Each task goes to the cheapest model that hits its quality bar.</p>
+      <!-- TODO(qwen, 14 Oct): original text restored; Qwen drafts used dashes or invented text in four rounds (see skyrule_p35_r4.check.md). --><p>Each task goes to the cheapest model that meets its quality bar: frontier Claude models for reading,
+      verification, design and audit; local open-weights models on my own GPU for high-volume generation,
+      extraction and grading; small local models for routing and utilities. Every model was measured on the
+      actual hardware before it was given a role, rather than chosen by reputation.</p>
     </div>
   </section>
 
@@ -119,7 +124,7 @@
     <table class="dt">
       <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
       <tbody>
-        <tr><td>Regeneration throughput</td><td class="num">14,200 &ndash; 15,100 / GPU-hr</td><td>Pieces of content per GPU-hour, measured</td></tr>
+        <tr><td>Regeneration throughput</td><td class="num">14,200 to 15,100 / GPU-hr</td><td>Pieces of content per GPU-hour, measured</td></tr>
         <tr><td>Grading throughput</td><td class="num">576 &rarr; 1,411 / GPU-hr</td><td>Raised by tuning concurrency from 6 to 24 workers</td></tr>
         <tr><td>Context window</td><td class="num">4,096 &rarr; 16,384 tokens</td><td>Sized with KV-cache arithmetic and a benchmark before adopting</td></tr>
       </tbody>
@@ -147,7 +152,10 @@
 
     <div class="insight-box" style="margin-top:1.5rem;">
       <div class="insight-box-title">An interpretable model with no scoreboard</div>
-      <!-- Qwen draft p51 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built the relationship model using explicit functions, assigning one value per goal for each type of relationship. Each weight is tracked in a ledger with a documented basis and marked provisional until calibrated. I enforced a rule&mdash;no total score, no ranking, no compatibility metric, even internally.</p>
+      <!-- TODO(qwen, 14 Oct): original text restored; Qwen drafts used dashes or invented text in four rounds (see skyrule_p51_r4.check.md). --><p>The relationship model is specified as explicit functions, gives one value per goal per kind of
+      relationship, and holds every weight in a ledger with a stated basis, marked provisional until data
+      science calibrates it. A product rule is enforced in code and tests: <strong>no total, ranking or
+      compatibility score</strong>, even internally.</p>
     </div>
   </section>
 
@@ -177,7 +185,7 @@
     </table>
 
     <div class="prose">
-      <!-- Qwen draft p62 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I ran a pilot on the 32B model with pre-set success criteria and found the validation step was too rigid&mdash;rejecting otherwise valid outputs. I revised the prompt and adjusted the check, which increased plan acceptance from 6 of 31 to 14 of 31 and boosted usable output from about 690 to about 1,280 per GPU-hour.</p>
+      <!-- Qwen draft p62_r4 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>A pilot on the 32B model showed that an over-literal check was rejecting acceptable text. I adjusted both the prompt and the check, which improved plan acceptance from 6 of 31 to 14 of 31. Usable output increased from about 690 to about 1,280 pieces per GPU-hour.</p>
     </div>
   </section>
 
@@ -223,16 +231,16 @@
 
     <div class="kv">
       <div class="k">Aug 14, 2026</div><div class="v">Repository started: chart engine, test suite and versioned API</div>
-      <div class="k">Aug &ndash; Sep 2026</div><div class="v">Charters, handoff protocol and the multi-agent organization stood up; local-model role map measured</div>
+      <div class="k">Aug to Sep 2026</div><div class="v">Charters, handoff protocol and the multi-agent organization stood up; local-model role map measured</div>
       <div class="k">Sep 27, 2026</div><div class="v">vLLM generation engine running with quantized models</div>
-      <div class="k">Oct 1 &ndash; 2, 2026</div><div class="v">Inference workstation commissioned; ownership-enforced agent scopes in place</div>
-      <div class="k">Oct 3 &ndash; 6, 2026</div><div class="v">Relationship model specified; rule pipeline run end to end; 4,256 verified rules released; precision gate passed</div>
+      <div class="k">Oct 1 to 2, 2026</div><div class="v">Inference workstation commissioned; ownership-enforced agent scopes in place</div>
+      <div class="k">Oct 3 to 6, 2026</div><div class="v">Relationship model specified; rule pipeline run end to end; 4,256 verified rules released; precision gate passed</div>
       <div class="k">Oct 10, 2026</div><div class="v">Brief-first generator built and piloted</div>
-      <div class="k">Oct 11 &ndash; 12, 2026</div><div class="v">Security and quality-governance functions stood up; validator v7; 1,375 tests passing</div>
+      <div class="k">Oct 11 to 12, 2026</div><div class="v">Security and quality-governance functions stood up; validator v7; 1,375 tests passing</div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p95_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p><strong>Next:</strong> I will regenerate the library using the new generator before validating the automated grader against an 85% agreement threshold at the <strong>Wilson 95% lower bound</strong>. I will build consent-gated accounts with full deletion and export capabilities and open an invited beta with about ten participants. I will then run a pre-registered calibration study to fit provisional weights to real outcomes. A public launch is planned for Q1 2027.</p>
+      <!-- Qwen draft p95_r4 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p><strong>Next:</strong> The plan is to regenerate the library on the new generator, validate the automated grader to an 85% agreement bar measured at the <strong>Wilson 95% lower bound</strong>, and build consent-gated accounts with deletion and export. An invited beta of about ten people will open, followed by a pre-registered calibration study to fit the provisional weights to real outcomes. A public launch is planned for Q1 2027.</p>
     </div>
 
     <div class="tag-row" style="margin-top:1.5rem;">
