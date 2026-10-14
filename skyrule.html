@@ -35,14 +35,7 @@
   <div class="hero">
     <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; Aug 2026 &ndash; Present</div>
     <h1>Skyrule<br><span>Agentic AI &amp; Local LLMs</span></h1>
-    <p class="hero-desc">
-      A self-funded personal project, built outside my employment: a relational-intelligence product that helps a
-      person understand themselves and the people in their life, and see how those relationships move through
-      time on a calendar and timeline. Astrology is the interpretive lens. The engineering underneath is a
-      sourced-rule inference system, a <strong>15-agent AI engineering organization</strong> that builds it, and a
-      <strong>self-hosted LLM stack</strong> whose output is gated by automated validators, statistical acceptance
-      testing and founder review.
-    </p>
+    <!-- Qwen draft p02 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p class="hero-desc">Skyrule is a personal project I built outside my employment, designed to help people understand themselves and the relationships in their lives. Using astrology as its interpretive lens, it visualizes how those connections shift over time through calendar views and timelines. The engineering underpinning is a rule-based inference system, supported by a 15-agent AI team. Content is generated via a <strong>self-hosted LLM stack</strong> and is validated through automated checks, statistical testing, and final review by me.</p>
 
     <div class="hero-meta">
       <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Active build &middot; pre-beta &middot; public launch planned Q1 2027</div></div>
@@ -79,28 +72,20 @@
     </div>
 
     <div class="prose">
-      <p>I designed the build team as a <strong>15-agent AI engineering organization</strong>: fourteen departments
-      plus a Principal Architect, modelled on a real company. The departments cover the domain practice, relational
-      science, editorial, product design, platform and data engineering, AI and performance engineering, QA and
-      compliance, data science, brand and marketing, legal and trust, finance and operations, program management,
-      the office of the founder, and security and IP protection.</p>
+      <!-- Qwen draft p22 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I designed the Skyrule team as a <strong>15-agent AI engineering organization</strong>, mirroring a real company with fourteen departments and a Principal Architect. These include the domain practice, relational science, editorial, product design, platform and data engineering, AI and performance engineering, QA and compliance, data science, brand and marketing, legal and trust, finance and operations, program management, the office of the founder, and security and IP protection.</p>
 
-      <p>Each agent is a Claude Code subagent with a written charter, a scope of work, a handoff protocol,
-      persistent memory and an explicit list of what it does <em>not</em> own. Changes that cross departments
-      route through the Principal Architect for integration review.</p>
+      <!-- Qwen draft p23 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule using Claude Code subagents&mdash;each with a charter, scope, memory, and clear boundaries. They handle specific tasks and pass work along with defined protocols. When changes affect multiple areas, they go through the Principal Architect for integration review.</p>
     </div>
 
     <div class="insight-box" style="margin-top:1.5rem;">
       <div class="insight-box-title">Lanes enforced by tooling, not by instruction</div>
-      <p>"Agents should stay in their lane" is easy to write in a prompt and easy for a model to ignore. Code
-      ownership is defined in a machine-readable map and <strong>enforced by the tooling</strong>, so an agent
-      cannot change files outside its own scope. Least privilege becomes a control rather than a request.</p>
+      <!-- Qwen draft p25_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a system where code ownership is defined in a machine-readable map and enforced by tooling, so agents cannot change files outside their scope. This turns least privilege from a request into an enforced control.</p>
     </div>
 
     <div class="kv">
-      <div class="k">Decision continuity</div><div class="v">Founder decisions recorded verbatim in an append-only log; agents read it before asking a question that has already been answered</div>
-      <div class="k">Session continuity</div><div class="v">Mission file, open-threads register, handoff documents and a coordinator brief let any new agent session resume without loss</div>
-      <div class="k">Code review</div><div class="v">29 pull requests from a cloud engineering agent reviewed and integrated: isolated checkout, full test suite and regression controls before any merge is reported</div>
+      <div class="k">Decision continuity</div><!-- Qwen draft p27_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built an append-only log to record founder decisions verbatim. Agents reference this log before asking previously answered questions.</div>
+      <div class="k">Session continuity</div><!-- Qwen draft p29_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built a mission file, open-threads register, handoff documents, and coordinator brief to ensure any new agent session could resume without loss.</div>
+      <div class="k">Code review</div><!-- Qwen draft p31 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I reviewed and integrated 29 pull requests from a cloud engineering agent. Before merging, I ran an isolated checkout with the full test suite and regression controls.</div>
     </div>
   </section>
 
@@ -113,16 +98,9 @@
     </div>
 
     <div class="prose">
-      <p>An <strong>autonomous job queue and GPU scheduler</strong> (Python, on a 15-minute tick) runs the long work:
-      separate lanes for CPU, local-model and cloud-model jobs, priorities, dependencies, start conditions,
-      finish checks, retry limits, a usage-budget guard, and automatic pause-and-resume when a model usage limit
-      is reached. It has launched <strong>650+ unattended jobs</strong> since early October 2026, including
-      overnight GPU extraction runs and parallel multi-agent research batches.</p>
+      <!-- Qwen draft p34 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built an autonomous job queue and GPU scheduler in Python that runs on a 15-minute tick. It has separate lanes for CPU, local-model, and cloud-model jobs, and handles priorities, dependencies, start conditions, finish checks, and retry limits. It includes a usage-budget guard and will pause and resume automatically when a model usage limit is reached. Since early October 2026, it has launched <strong>650+ unattended jobs</strong>, including overnight GPU extraction runs and parallel multi-agent research batches.</p>
 
-      <p>Each task goes to the cheapest model that meets its quality bar: frontier Claude models for reading,
-      verification, design and audit; local open-weights models on my own GPU for high-volume generation,
-      extraction and grading; small local models for routing and utilities. Every model was measured on the
-      actual hardware before it was given a role, rather than chosen by reputation.</p>
+      <!-- Qwen draft p35 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I measured every model on the hardware it would run before assigning tasks&mdash;no reputations, just results. Frontier Claude models in the cloud handle reading, verification, design, and audit, while my own GPU runs local open-weights models for high-volume generation, extraction, and grading. Small local models manage routing and utilities. Each task goes to the cheapest model that hits its quality bar.</p>
     </div>
   </section>
 
@@ -135,9 +113,7 @@
     </div>
 
     <div class="prose">
-      <p>I designed and commissioned a self-hosted inference workstation (<strong>RTX 5090 32 GB</strong>,
-      Ryzen 9 9950X, 64 GB RAM) running <strong>vLLM in WSL</strong> with AWQ and FP8 quantized models behind
-      OpenAI-compatible endpoints, with hot-switching between two served models and automatic restore.</p>
+      <!-- Qwen draft p38 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a self-hosted inference workstation using an <strong>RTX 5090 32 GB</strong>, Ryzen 9 9950X, and 64 GB RAM to run vLLM in WSL. It serves AWQ and FP8 quantized models through OpenAI-compatible endpoints and can hot-switch between two models with automatic restore.</p>
     </div>
 
     <table class="dt">
@@ -150,7 +126,7 @@
     </table>
 
     <div class="prose">
-      <p>This is the same discipline as my <a href="archival-image-throughput-evaluation.html" class="link">vLLM throughput work</a>
+      <!-- TODO(qwen, 14 Oct): current text kept; Qwen draft failed the fact-check (round 1 and round 2 both failed: see skyrule_p45_r2.check.md). Rerun or leave to Tayler. --><p>This is the same discipline as my <a href="archival-image-throughput-evaluation.html" class="link">vLLM throughput work</a>
       at the University of Illinois, applied to my own hardware: measure first, then change one thing.</p>
     </div>
   </section>
@@ -164,22 +140,14 @@
     </div>
 
     <div class="prose">
-      <p>Underneath the product is a deterministic chart engine written in Python, exposed through a versioned
-      FastAPI layer, with regression controls that must reproduce <strong>279 reference spans</strong> exactly.
-      On top of it sits a sourced-rule pipeline over a <strong>76-title licensed corpus</strong>: whole-chapter
-      extraction, independent verification by a second model, a verbatim-quote gate, page re-checks, quarantine,
-      and staged release into a rule store.</p>
+      <!-- Qwen draft p48 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule with a deterministic Python chart engine underneath, exposed through a versioned FastAPI layer. The engine must reproduce <strong>279 reference spans</strong> exactly for regression control. Above it runs a sourced-rule pipeline over a <strong>76-title licensed corpus</strong>. The process starts with whole-chapter extraction, followed by independent verification from a second model, then a verbatim-quote gate, page re-checks, quarantine, and staged release into a rule store.</p>
 
-      <p><strong>4,256 verified rules</strong> were released for use on October 6, 2026. Every number in the
-      product traces to a rule, a page and an engine event.</p>
+      <!-- Qwen draft p49 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule to trace every number in the product to a rule, a page, and an engine event. On October 6, 2026, I released <strong>4,256 verified rules</strong> for use.</p>
     </div>
 
     <div class="insight-box" style="margin-top:1.5rem;">
       <div class="insight-box-title">An interpretable model with no scoreboard</div>
-      <p>The relationship model is specified as explicit functions, gives one value per goal per kind of
-      relationship, and holds every weight in a ledger with a stated basis, marked provisional until data
-      science calibrates it. A product rule is enforced in code and tests: <strong>no total, ranking or
-      compatibility score</strong>, even internally.</p>
+      <!-- Qwen draft p51 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built the relationship model using explicit functions, assigning one value per goal for each type of relationship. Each weight is tracked in a ledger with a documented basis and marked provisional until calibrated. I enforced a rule&mdash;no total score, no ranking, no compatibility metric, even internally.</p>
     </div>
   </section>
 
@@ -192,12 +160,9 @@
     </div>
 
     <div class="prose">
-      <p>The content generator is <strong>brief-first</strong>. Code lays out what the inputs support; the local
-      model plans a reading claim by claim; code validates every claim; then the model writes one sentence per
-      approved claim and code checks again. Nothing reaches the library on the model's word alone, and the
-      founder reviews before anything is released.</p>
+      <!-- Qwen draft p54 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>The system begins by analyzing the input to determine what it supports. A local model then generates claims one at a time, and code verifies each before the model writes a sentence. After the model writes, code checks again. I review everything before it is released.</p>
 
-      <p>I iterated the validator through <strong>seven versions</strong> from my own reviews, adding checks for
+      <!-- TODO(qwen, 14 Oct): current text kept; Qwen draft failed the fact-check (round 1 and round 2 both failed: see skyrule_p55_r2.check.md). Rerun or leave to Tayler. --><p>I iterated the validator through <strong>seven versions</strong> from my own reviews, adding checks for
       truncated claims, unsupported causal leaps, attributing a trait to the wrong person, and claims the inputs
       do not establish. Every new check is tested before use three ways:</p>
     </div>
@@ -212,9 +177,7 @@
     </table>
 
     <div class="prose">
-      <p>An end-to-end pilot on the 32B model ran against <strong>pass conditions set before the run</strong>. It
-      showed that an over-literal check was rejecting acceptable text. Fixing the prompt and the check raised
-      plan acceptance from 6 of 31 to 14 of 31 and usable output from about 690 to about 1,280 pieces per GPU-hour.</p>
+      <!-- Qwen draft p62 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I ran a pilot on the 32B model with pre-set success criteria and found the validation step was too rigid&mdash;rejecting otherwise valid outputs. I revised the prompt and adjusted the check, which increased plan acceptance from 6 of 31 to 14 of 31 and boosted usable output from about 690 to about 1,280 per GPU-hour.</p>
     </div>
   </section>
 
@@ -227,15 +190,12 @@
     </div>
 
     <div class="prose">
-      <p>Grading a 2.6-million-piece library three times over was measured at about 5,600 GPU-hours, which is not
+      <!-- TODO(qwen, 14 Oct): current text kept; Qwen draft failed the fact-check (round 1 and round 2 both failed: see skyrule_p65_r2.check.md). Rerun or leave to Tayler. --><p>Grading a 2.6-million-piece library three times over was measured at about 5,600 GPU-hours, which is not
       feasible. The grading strategy replaces it with <strong>statistical lot acceptance sampling</strong> (exact
       binomial plans with stated producer and consumer risk), code checks on every piece, brief-level grading
       before expansion, and a plan for a distilled grader.</p>
 
-      <p>Every quality bar is set before measurement and reported as both a point estimate and a <strong>Wilson
-      95% lower bound</strong>; for example, a precision gate passed at 84 of 96 (87.5%). An independent model
-      labels claims in each batch, its agreement with my verdicts is measured, and the labels become a regression
-      set for the validator.</p>
+      <!-- Qwen draft p66 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I set each performance bar before testing and report results as a point estimate and <strong>Wilson 95% lower bound</strong>. For example, a precision gate passed at 84 of 96 (87.5%). An independent model labels claims in each batch, and its agreement with my verdicts is measured. Those labels then become a regression set for the validator.</p>
     </div>
   </section>
 
@@ -248,11 +208,11 @@
     </div>
 
     <div class="kv">
-      <div class="k">Quality governance</div><div class="v">A register of quality bars with proof each was set before measuring, the authority to block on quality with a written reason, a weekly quality review, and re-runnable evidence required for every "done" claim</div>
-      <div class="k">Security &amp; IP</div><div class="v">A dedicated security and IP-protection function with the authority to block any merge or release that weakens a control, and a weekly security review</div>
-      <div class="k">Privacy by design</div><div class="v">Users' personal chart data is never sent to a cloud model and never appears in code, tests, logs or commits; fabricated fixtures only. Consent is the gate for storing anyone else's data</div>
-      <div class="k">Rights</div><div class="v">Licensed book text stays out of the repository, with rights records and a quote-permitted gate</div>
-      <div class="k">Engineering practice</div><div class="v">1,375 automated tests passing on the integration branch (October 12, 2026), known-bad controls that must fail, and a release gate that fails on any unapproved input change</div>
+      <div class="k">Quality governance</div><!-- Qwen draft p70_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built a register of quality bars, each with proof set before measuring. The quality function can block with a written reason. A weekly review follows, and re-runnable evidence is required for every "done" claim.</div>
+      <div class="k">Security &amp; IP</div><!-- TODO(qwen, 14 Oct): current text kept; Qwen draft failed the fact-check (round 1 and round 2 both failed: see skyrule_p72_r2.check.md). Rerun or leave to Tayler. --><div class="v">A dedicated security and IP-protection function with the authority to block any merge or release that weakens a control, and a weekly security review</div>
+      <div class="k">Privacy by design</div><!-- TODO(qwen, 14 Oct): current text kept; Qwen draft failed the fact-check (round 1 and round 2 both failed: see skyrule_p74_r2.check.md). Rerun or leave to Tayler. --><div class="v">Users' personal chart data is never sent to a cloud model and never appears in code, tests, logs or commits; fabricated fixtures only. Consent is the gate for storing anyone else's data</div>
+      <div class="k">Rights</div><!-- Qwen draft p76_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I maintain rights records and built a quote-permitted gate. The licensed book text remains outside the repository.</div>
+      <div class="k">Engineering practice</div><!-- Qwen draft p78_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I maintain 1,375 automated tests passing on the integration branch as of October 12, 2026, including known-bad controls that must fail. A release gate blocks any unapproved input changes.</div>
     </div>
   </section>
 
@@ -275,10 +235,7 @@
     </div>
 
     <div class="prose">
-      <p><strong>Next:</strong> regenerate the library on the new generator; validate the automated grader to an
-      85% agreement bar measured at the Wilson 95% lower bound; build consent-gated accounts with deletion and
-      export; open an invited beta of about ten people; then run a pre-registered calibration study so the
-      provisional weights are fitted to real outcomes. Public launch is planned for Q1 2027.</p>
+      <!-- Qwen draft p95_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p><strong>Next:</strong> I will regenerate the library using the new generator before validating the automated grader against an 85% agreement threshold at the <strong>Wilson 95% lower bound</strong>. I will build consent-gated accounts with full deletion and export capabilities and open an invited beta with about ten participants. I will then run a pre-registered calibration study to fit provisional weights to real outcomes. A public launch is planned for Q1 2027.</p>
     </div>
 
     <div class="tag-row" style="margin-top:1.5rem;">
