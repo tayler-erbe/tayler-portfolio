@@ -1,0 +1,74 @@
+/* Ask about Tayler: chat bubble and panel. Uses only the tokens defined in assets/site.css (DESIGN_SYSTEM.md):
+   no colour values, no font names, square corners. Loaded by chat.js from the same folder. */
+
+.ask-root { position: fixed; right: var(--space-5); bottom: var(--space-5); z-index: 200; display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-3); font-family: var(--font-body); pointer-events: none; }
+.ask-root > * { pointer-events: auto; }
+
+/* ---- bubble ---- */
+.ask-bubble {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 2.75rem; padding: var(--space-2) var(--space-4);
+  background: var(--surface2); color: var(--accent);
+  border: 1px solid var(--accent); border-radius: var(--radius);
+  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-label); text-transform: uppercase;
+  cursor: pointer; transition: background var(--dur), color var(--dur);
+}
+.ask-bubble svg { width: 1.15rem; height: 1.15rem; flex: none; }
+.ask-bubble:hover { background: var(--surface3); color: var(--accent-hover); }
+.ask-bubble:focus-visible, .ask-root button:focus-visible, .ask-root a:focus-visible, .ask-input:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.ask-root.is-open .ask-bubble { background: var(--accent-dim); }
+
+/* ---- panel ---- */
+.ask-panel {
+  width: min(24rem, calc(100vw - 2 * var(--space-5)));
+  height: min(36rem, calc(100vh - var(--nav-h) - 6rem));
+  display: flex; flex-direction: column;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-top: 2px solid var(--accent); border-radius: var(--radius);
+}
+.ask-panel[hidden] { display: none; }
+.ask-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); padding: var(--space-4) var(--space-4) var(--space-3); border-bottom: 1px solid var(--border); }
+.ask-title { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg); line-height: var(--leading-tight); letter-spacing: 0.02em; text-transform: uppercase; color: var(--white); }
+.ask-sub { display: block; margin-top: var(--space-2); font-family: var(--font-mono); font-weight: 400; font-size: var(--text-2xs); letter-spacing: var(--tracking-label); text-transform: none; color: var(--muted); line-height: var(--leading-normal); }
+.ask-close { flex: none; width: 2.25rem; height: 2.25rem; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: color var(--dur), border-color var(--dur); }
+.ask-close svg { width: 1rem; height: 1rem; }
+.ask-close:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ---- log ---- */
+.ask-log { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-5); scroll-padding-top: var(--space-4); }
+.ask-block { display: flex; flex-direction: column; gap: var(--space-3); }
+.ask-status { font-size: var(--text-sm); color: var(--muted); }
+.ask-q { align-self: flex-end; max-width: 85%; padding: var(--space-2) var(--space-3); background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); font-size: var(--text-sm); color: var(--text); }
+.ask-label { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--accent2); }
+.ask-card { padding: var(--space-4); background: var(--bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); display: flex; flex-direction: column; gap: var(--space-2); }
+.ask-card-fallback { border-left-color: var(--accent3); }
+.ask-card-title { font-family: var(--font-heading); font-weight: 700; font-size: var(--text-md); line-height: 1.2; color: var(--white); }
+.ask-answer { font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--text); }
+.ask-links { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
+.ask-links a { display: inline-block; padding: var(--space-1) var(--space-2); font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: 0.04em; color: var(--accent); border: 1px solid var(--accent-dim); border-radius: var(--radius); text-decoration: none; transition: border-color var(--dur), color var(--dur); }
+.ask-links a:hover { color: var(--accent-hover); border-color: var(--accent); }
+.ask-chips { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ask-chip { padding: var(--space-1) var(--space-3); min-height: 2rem; background: transparent; color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--font-body); font-size: var(--text-sm); text-align: left; cursor: pointer; transition: border-color var(--dur), color var(--dur); }
+.ask-chip:hover { border-color: var(--accent2); color: var(--white); }
+.ask-related, .ask-starters { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* ---- form ---- */
+.ask-form { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-4) var(--space-4); border-top: 1px solid var(--border); }
+.ask-input { flex: 1; min-width: 0; min-height: 2.5rem; padding: var(--space-2) var(--space-3); background: var(--bg); color: var(--white); border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--font-body); font-size: 1rem; }
+.ask-input::placeholder { color: var(--muted); }
+.ask-input:focus { border-color: var(--accent2); }
+.ask-send { flex: none; min-height: 2.5rem; padding: 0 var(--space-4); background: var(--accent); color: var(--ink); border: 1px solid var(--accent); border-radius: var(--radius); font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: var(--tracking-label); text-transform: uppercase; cursor: pointer; transition: background var(--dur); }
+.ask-send:hover { background: var(--accent-hover); }
+
+.ask-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---- phones (DESIGN_SYSTEM breakpoint 480px; checked at 400px) ---- */
+@media (max-width: 480px) {
+  .ask-root { right: var(--space-3); bottom: var(--space-3); left: var(--space-3); }
+  .ask-panel { width: 100%; height: calc(100vh - var(--nav-h) - 5.5rem); height: calc(100dvh - var(--nav-h) - 5.5rem); }
+  .ask-log { padding: var(--space-3); }
+  .ask-head, .ask-form { padding-left: var(--space-3); padding-right: var(--space-3); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ask-root *, .ask-root *::before, .ask-root *::after { transition: none !important; scroll-behavior: auto !important; }
+}

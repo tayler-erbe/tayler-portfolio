@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | Historical Book OCR &amp; Image Extraction</title>
+  <meta name="description" content="A case study by Tayler Erbe: reading about 22,700 pages of early printed books with self-hosted OCR and vision models on one GPU workstation." />
+  <meta name="keywords" content="Tayler Erbe, OCR, document AI, vision language models, historical books, self-hosted LLM, data scientist" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://taylererbe.com/historical-book-ocr.html" />
+  <meta property="og:title" content="Tayler Erbe | Historical Book OCR &amp; Image Extraction" />
+  <meta property="og:description" content="A case study by Tayler Erbe: reading about 22,700 pages of early printed books with self-hosted OCR and vision models on one GPU workstation." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://taylererbe.com/historical-book-ocr.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tayler Erbe | Historical Book OCR &amp; Image Extraction" />
+  <meta name="twitter:description" content="A case study by Tayler Erbe: reading about 22,700 pages of early printed books with self-hosted OCR and vision models on one GPU workstation." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Historical Book OCR & Image Extraction",
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://taylererbe.com/" },
+    "description": "A case study by Tayler Erbe: reading about 22,700 pages of early printed books with self-hosted OCR and vision models on one GPU workstation.",
+    "keywords": "Tayler Erbe, OCR, document AI, vision language models"
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
+  <style>
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .meta-item {  }
+    .chip { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border); color: var(--muted); }
+    .chip-accent { border-color: var(--accent2); color: var(--accent2); }
+    .chip-warm { border-color: var(--accent3); color: var(--accent3); }
+    .next-table { width: 100%; border-collapse: collapse; }
+    .next-table th { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 1rem; border-bottom: 2px solid var(--border); text-align: left; }
+    .next-table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--muted); vertical-align: top; }
+    .next-table td:first-child { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); white-space: nowrap; }
+    .next-table td:nth-child(2) { color: var(--text); font-weight: 500; }
+    .next-table tr:last-child td { border-bottom: none; }
+    .perf-bar-wrap { height: 5px; background: var(--surface2); margin-top: 0.35rem; }
+    .perf-bar { height: 5px; background: var(--accent); }
+    .perf-bar.warm { background: var(--accent3); }
+    blockquote { border-left: 3px solid var(--accent);
+      padding-left: 1.25rem;
+      margin: 1.5rem 0 0; }
+    blockquote p { font-style: italic; color: var(--text); font-size: 0.92rem; line-height: 1.7; }
+    blockquote cite { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; display: block; }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe · Project Case Study · Skyrule (personal project) · 2026</div>
+    <h1>Historical Book <span>OCR</span><br>&amp; Image Extraction</h1>
+    <p class="hero-desc">I built a system to read early printed books for Skyrule, a personal project. These were not modern texts. They were 170 scanned books, 22,700 pages in all, printed from the 1480s to the 1850s. The pages included Latin, early-modern English with old spelling, gothic type, and a few in Hebrew, Persian and Greek. There were multi-column layouts, footnotes, tables, diagrams, woodcuts, and poor microfilm scans. The text layers that came with the archive scans had destroyed every astrological symbol, so the pages had to be read again from the images.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Project</div>
+        <div class="meta-value"><a href="skyrule.html" class="link">Skyrule</a> · personal project</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Hardware</div>
+        <div class="meta-value">One self-hosted GPU workstation · open-weights models</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-value">Production run complete · Oct 2026</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Role</div>
+        <div class="meta-value">Designer &amp; engineer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-item">
+      <div class="stat-big">22,700</div>
+      <div class="stat-desc">Pages of early printed books</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">7</div>
+      <div class="stat-desc">OCR engines and models benchmarked</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">~3%</div>
+      <div class="stat-desc">Character error, best engine</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">6,910</div>
+      <div class="stat-desc">Pages read in about 7.6 GPU-hours</div>
+    </div>
+  </div>
+
+  <section id="measure-before-choosing-benchmarking-the">
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">Measure before choosing: benchmarking the readers</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose">
+      <p>OCR engines and vision models struggle with historical text. I tested seven OCR and vision models against professional reference transcriptions before choosing. I measured character error, word accuracy, speed, and how often each model ran into repeated or invented text. The best engine had about 3% character error. The traditional open-source OCR baseline had about 20% character error. But even the best model invented fluent Latin that was not on the page when it met the oldest type. No single model could be trusted alone.</p>
+    </div>
+  </section>
+
+  <section id="the-pipeline-agreement-as-a-quality-sign">
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">The pipeline: agreement as a quality signal</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose">
+      <p>The pipeline sorts every page by type first. Each page is read by more than one independent model. Their disagreement becomes a per-page quality score. Pages where the readers disagree go to stronger readers. The hardest go to a review queue that keeps the best reading so far. Combining several readers was more accurate than the best single model. Every page keeps a record of its source, which models read it, how much they agreed, and which reading was kept. The production run read 6,910 pages from 45 books in about 7.6 GPU-hours.</p>
+    </div>
+  </section>
+
+  <section id="pictures-not-just-words">
+    <div class="section-header">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">Pictures, not just words</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose">
+      <p>I built a system that finds and tags illustrations in early printed books using classical computer vision and a local vision model. From 7,070 pages, the system extracted about 2,200 picture crops in five minutes on a CPU. Duplicate detection helped avoid redundant work across different scans of the same book. Each image is tagged and linked to its source record and license. The goal is to make the visual content of historical books accessible without publishing anything without provenance.</p>
+    </div>
+  </section>
+
+  <section id="what-failed-and-what-it-taught-me">
+    <div class="section-header">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">What failed, and what it taught me</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose">
+      <p>A vision model that read symbols from the page confidently misread planet symbols, and a second pass by the same model did not catch the error. This showed that model confidence is not always aligned with accuracy. A second model or method was needed to check the work.</p>
+      <p>Letting a language model clean old spelling changed the meaning of words without breaking structural checks. To preserve accuracy, I now store text exactly as read and only normalise spelling at search time.</p>
+      <p>About 850 pages were briefly lost when pages sent for review were flagged as empty. A recovery step restored them. The lesson was to keep the best reading at every stage and to count pages as part of every step.</p>
+      <p>Numeric tables are handled separately from the rest of the page. I found that OCR alone could not be trusted on them.</p>
+    </div>
+  </section>
+
+  <section id="where-this-goes-next">
+    <div class="section-header">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">Where this goes next</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose">
+      <p>Next steps include a layout model to split columns, tables and figures before reading, and a system to zoom in on symbols and numbers for more accurate reads.</p>
+      <p>Done for Skyrule, my self-funded personal project, built outside my employment.</p>
+    </div>
+  </section>
+
+  <!-- BACK -->
+  <div class="back-section">
+    <a href="index.html" class="back-link">← Back to Portfolio</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe · Data Scientist · Applied AI &amp; Solutions Engineering, University of Illinois System</p>
+      <p>Last updated October 2026</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+<script src="assets/chat/chat.js?v=20261014" defer></script>
+</body>
+</html>
