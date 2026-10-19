@@ -348,7 +348,7 @@
             <div class="step-num">04</div>
             <div class="step-content">
               <div class="step-title">TOTAL_COMPLETED_TERMS</div>
-              <div class="step-body">Total terms completed across all recorded history. <strong>Excluded from model training</strong> — its inclusion risks data leakage by effectively revealing the outcome to the model. Used for statistical analysis only.</div>
+              <div class="step-body">Total terms completed across all recorded history. <strong>Used in the final model.</strong> Correction (Oct 2026): because it can partly reveal the outcome, the selected model&rsquo;s scores below may be inflated by leakage.</div>
             </div>
           </div>
           <div class="pipeline-step">
@@ -549,7 +549,7 @@
         </div>
         <div class="metric-row"><span class="metric-label">AUC (cross-validation)</span><span class="metric-value good">0.9847</span></div>
         <div class="metric-row"><span class="metric-label">F1 Score</span><span class="metric-value good">0.9676</span></div>
-        <div class="metric-row"><span class="metric-label">Accuracy</span><span class="metric-value good">94.8%</span></div>
+        <div class="metric-row"><span class="metric-label">Accuracy (cross-validation; may be inflated by leakage, see TOTAL_COMPLETED_TERMS)</span><span class="metric-value good">94.8%</span></div>
         <div class="metric-row"><span class="metric-label">AUCPR</span><span class="metric-value good">0.9958</span></div>
         <div class="metric-row"><span class="metric-label">Mean Per-Class Error</span><span class="metric-value">0.083</span></div>
         <div class="metric-row"><span class="metric-label">Trees / Max Depth</span><span class="metric-value">50 / 20</span></div>
