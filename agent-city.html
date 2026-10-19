@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent City &middot; Hobby Project &middot; Tayler Erbe</title>
+  <meta name="description" content="Agent City, a hobby project: a 3D town in the browser that gives my AI agents cute little faces and somewhere to live, so I can see who is working on what. How I built it, from a basic 2D town to concept art to 3D." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
+  <style>
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .progress-list { margin: 0 0 1em; padding-left: 1.2em; }
+    .progress-list li { margin-bottom: 0.4em; }
+  </style>
+</head>
+<body>
+  <!-- Page text is Tayler's own words, from her LinkedIn post of 19 Oct 2026, used verbatim. Section labels, captions and alt text are plain labels added by Claude. -->
+
+  <nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe &middot; Hobby Project &middot; Oct 2026 to Present</div>
+    <h1>Agent City<br><span>How I built my little agent town</span></h1>
+    <p class="hero-desc">People have been DMing me asking how I built my little agent town, so here&rsquo;s a breakdown 😊 It might look complex, but the underlying system of agents was already built and running without a visual UI. The town is essentially a visual skin over that system. I just gave the agents cute little faces and somewhere to live 😂 I wanted an easier, more enjoyable way to see who was working on what across my projects.</p>
+
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Hobby project &middot; still very much under development</div></div>
+      <div class="meta-item"><div class="meta-label">Runs on</div><div class="meta-value">JavaScript &amp; Three.js in the browser</div></div>
+      <div class="meta-item"><div class="meta-label">Residents</div><div class="meta-value">32 characters</div></div>
+    </div>
+
+    <div class="toc">
+      <a href="#why"><span class="toc-num">01</span><span class="toc-name">Why a town</span></a>
+      <a href="#visual"><span class="toc-num">02</span><span class="toc-name">From 2D to concept art to 3D</span></a>
+      <a href="#behind"><span class="toc-num">03</span><span class="toc-name">Behind the town</span></a>
+      <a href="#progression"><span class="toc-num">04</span><span class="toc-name">The progression</span></a>
+    </div>
+  </div>
+
+  <!-- 01 WHY -->
+  <section id="why">
+    <div class="section-header">
+      <div class="section-tag">01 / Why a town</div>
+      <h2 class="section-title">Why a town</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>It&rsquo;s a hobby project and still very much under development. Each character represents an agent, and the world gives me a way to see their activity instead of following everything through logs and text.</p>
+    </div>
+
+    <figure class="shot">
+      <img src="assets/shots/agent-city-tour.jpg" alt="A tour of Agent City: the island map, all 32 characters, Geisel Library, cozy rooms, the jazz café and the park" loading="lazy">
+      <figcaption>A look around the town</figcaption>
+    </figure>
+  </section>
+
+  <!-- 02 VISUAL -->
+  <section id="visual">
+    <div class="section-header">
+      <div class="section-tag">02 / From 2D to concept art to 3D</div>
+      <h2 class="section-title">From 2D to concept art to 3D</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Visually, it started as a basic 2D town, then became a pixel art city. From there, I made concept art for the world and its 32 characters, incorporating places I love, like Geisel Library, and spaces I wanted in the town, like a cozy jazz and record caf&eacute;.</p>
+      <p>The world runs in the browser using JavaScript and Three.js. I tested Tencent&rsquo;s Hunyuan3D 2.1 and Microsoft TRELLIS to turn my concept images into 3D models on my GPU. Hunyuan worked better for my characters, but the buildings needed a different approach. You can see why in the bottom row: soft edges, wobbly details, and architecture that looked like clay.</p>
+      <p>I switched to Blender scripts that assembled the buildings from individual parts. That gave me more control over the shapes, followed by several rounds of adding siding, porches, plants, stone, and vines.</p>
+      <p>The characters needed cleanup too: colours, rigging, moving ears and tails, and fixes like restoring the moth&rsquo;s wing patterns. BiRefNet handled background removal, and Blender handled rigging, animation, and cleanup. I compared the results against the concept art throughout the process.</p>
+    </div>
+
+    <figure class="shot">
+      <img src="assets/shots/agent-city-before-after.jpg" alt="Before and after: the basic 2D town, the pixel city, the concept map and the 3D town; the first test characters, the character concept art and all 32 in 3D; Geisel Library and the café from concept to 3D; generated buildings beside their scripted rebuilds and the moth's wings before and after" loading="lazy">
+      <figcaption>The progression, from first try to the town today</figcaption>
+    </figure>
+  </section>
+
+  <!-- 03 BEHIND -->
+  <section id="behind">
+    <div class="section-header">
+      <div class="section-tag">03 / Behind the town</div>
+      <h2 class="section-title">Behind the town</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Behind the town, a Python server and job queue connect the characters&rsquo; activity to the agents&rsquo; actual work. The agents can use Claude or Qwen3 32B running locally through vLLM or Ollama.</p>
+      <p>My setup is an RTX 5090 with 32 GB of VRAM, a Ryzen 9 9950X, and 64 GB of RAM. The image-to-3D generation step uses about 17 GB of GPU memory in my setup.</p>
+    </div>
+
+    <figure class="shot">
+      <img src="assets/shots/agent-city-kissaten-dj.jpg" alt="Inside the jazz kissaten café: chatting with the café's music agent, which suggests records for the mood" loading="lazy">
+      <figcaption>The jazz caf&eacute;, where the music agent suggests records</figcaption>
+    </figure>
+  </section>
+
+  <!-- 04 PROGRESSION -->
+  <section id="progression">
+    <div class="section-header">
+      <div class="section-tag">04 / The progression</div>
+      <h2 class="section-title">The progression</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>The image shows the progression:</p>
+      <ul class="progress-list">
+        <li>Top row: the basic 2D town, pixel city, concept map, and current 3D world.</li>
+        <li>Second row: the first test characters, character concept art, and all 32 in 3D.</li>
+        <li>Third row: Geisel Library and the caf&eacute;, from concept to their versions in the town.</li>
+        <li>Bottom row: some trial and error, including the generated buildings beside their scripted rebuilds, and the moth&rsquo;s wings before and after fixing them.</li>
+      </ul>
+      <p>Still plenty to build and fix, but apparently giving my agents faces also meant giving them a caf&eacute;, beach cottages, and a much nicer work environment than mine.</p>
+    </div>
+
+    <div class="tag-row" style="margin-top:1.5rem;">
+      <span class="tag tag-warm">Hobby Project</span><span class="tag tag-accent">Three.js</span><span class="tag tag-accent">JavaScript</span><span class="tag tag-accent">Hunyuan3D 2.1</span><span class="tag">Microsoft TRELLIS</span><span class="tag">BiRefNet</span><span class="tag tag-accent">Blender</span><span class="tag">Python</span><span class="tag">Claude</span><span class="tag">Qwen3 32B</span><span class="tag">vLLM</span><span class="tag">Ollama</span><span class="tag">RTX 5090</span>
+    </div>
+  </section>
+
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="agent-city.html">Agent City</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+<script src="assets/chat/chat.js?v=20261014" defer></script>
+</body>
+</html>
