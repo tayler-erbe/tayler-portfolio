@@ -9,7 +9,11 @@
 
   // ------------------------------------------------------------------ engine (pure; also used by the tests)
   var W_Q = 3, W_TITLE = 2, W_TAGS = 2, W_ANS = 1, K1 = 1.2, B = 0.75;
+  // words that say how she feels about a thing, not what the thing is: a match on these alone is never an answer
+  // ("favorite burrito" must not answer with the favorite-bands card when no card mentions burritos)
+  var GENERIC = { favorite: 1, favourite: 1, fav: 1, like: 1, love: 1, best: 1, type: 1, kind: 1, prefer: 1, enjoy: 1, thing: 1, most: 1 };
   var MIN_COVER = 0.4, MIN_SCORE = 2.5, RELATED_RATIO = 0.45, UNKNOWN_W = 0.6, ARTICLE_PRIOR = 0.7, ANSWER_CREDIT = 0.6;
+  var PARENT_SLACK = 0.02, PARENT_RATIO = 0.3;   // see the parent rule in search()
 
   function fold(s) {
     s = String(s || "").toLowerCase();
@@ -52,7 +56,8 @@
   function Engine(kb, opts) {
     var self = this;
     this.kb = kb;
-    this.opt = { minCover: MIN_COVER, minScore: MIN_SCORE, unknownW: UNKNOWN_W, articlePrior: ARTICLE_PRIOR };
+    this.opt = { minCover: MIN_COVER, minScore: MIN_SCORE, unknownW: UNKNOWN_W, articlePrior: ARTICLE_PRIOR,
+                 parentSlack: PARENT_SLACK, parentRatio: PARENT_RATIO };
     if (opts) for (var o in opts) this.opt[o] = opts[o];
     this.stop = {};
     (kb.stopwords || []).forEach(function (w) { self.stop[w] = 1; });
@@ -75,13 +80,19 @@
         tags: [].concat.apply([], (card.tags || []).map(function (t) { return self.analyze(t, false); })),
         ans: self.analyze(card.answer || "", false)
       };
+      // nocanon: alias groups this card must not join ("email" in an email-archiving card is not a way to contact her)
+      var drop = {};
+      if (card.nocanon && card.nocanon.length) {
+        card.nocanon.forEach(function (g) { drop["#" + rawTokens(g).map(stem).join("_")] = 1; });
+        Object.keys(f).forEach(function (k) { f[k] = f[k].filter(function (t) { return !drop[t]; }); });
+      }
       var tf = {}, len = 0;
       function add(list, w) { list.forEach(function (t) { tf[t] = (tf[t] || 0) + w; len += w; }); }
       add(f.q, W_Q); add(f.title, W_TITLE); add(f.tags, W_TAGS); add(f.ans, W_ANS);
       var keys = {};                               // terms in the questions, title and tags count fully; answer-only terms count 0.6
       f.ans.forEach(function (t) { keys[t] = ANSWER_CREDIT; });
       f.q.concat(f.title, f.tags).forEach(function (t) { keys[t] = 1; });
-      return { card: card, tf: tf, len: len, keys: keys,
+      return { card: card, tf: tf, len: len, keys: keys, drop: drop,
                exact: (card.questions || []).map(function (q) { return rawTokens(q).join(" "); }) };
     });
     this.N = this.docs.length;
@@ -94,6 +105,10 @@
     var diff = [];
     for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) diff.push(i);
     return diff.length === 2 && diff[1] === diff[0] + 1 && a[diff[0]] === b[diff[1]] && a[diff[1]] === b[diff[0]];
+  }
+  function dropsDouble(t, w) {                    // w is t with one copy of a doubled letter removed
+    for (var i = 0; i + 1 < t.length; i++) if (t[i] === t[i + 1] && t.slice(0, i) + t.slice(i + 1) === w) return true;
+    return false;
   }
   function uniq(a) { var s = {}, o = []; a.forEach(function (x) { if (!s[x]) { s[x] = 1; o.push(x); } }); return o; }
 
@@ -141,6 +156,7 @@
       var w = cands[i][0];
       if (w.charAt(0) !== t.charAt(0) || Math.abs(w.length - t.length) > max) continue;
       if (t.length < 6 && w.length === t.length && !isTransposition(t, w)) continue;   // short words: no substitutions (stock is not stack)
+      if (t.length < 6 && w.length < t.length && !dropsDouble(t, w)) continue;           // short words: drop only a doubled letter (chatt is chat, stock is not sock)
       var d = editDistance(t, w, max);
       if (d < bestD || (d === bestD && cands[i][1] > bestDf)) { best = w; bestD = d; bestDf = cands[i][1]; }
     }
@@ -174,35 +190,53 @@
     var wantsWriting = terms.indexOf("#medium") >= 0;
     var results = this.docs.map(function (d) {
       if (qnorm && d.exact.indexOf(qnorm) >= 0) return { card: d.card, score: 100, cover: 1, exact: true };
+      // a query word that carries an alias group this card opted out of says nothing about this card
+      // ("send her an email": "email" means contact, so an email-archiving card cannot claim it)
+      var blocked = {};
+      units.forEach(function (u) {
+        if (u.canons.some(function (c) { return d.drop[c]; })) u.words.concat(u.canons).forEach(function (m) { blocked[m] = 1; });
+      });
       var bm = 0;
       known.forEach(function (t) {
+        if (blocked[t]) return;
         var f = d.tf[t] || 0;
         if (!f) return;
         bm += self.idf(t) * (f * (K1 + 1)) / (f + K1 * (1 - B + B * d.len / self.avgLen));
       });
-      var cover = 0;
+      var cover = 0, content = false;
       if (qw > 0 && bm > 0) {
         var hit = 0;
         units.forEach(function (u) {
           // a unit counts when the card has one of its alias groups, or all of its words
           var best = 0;
+          if (u.canons.some(function (c) { return d.drop[c]; })) { return; }
           u.canons.forEach(function (c) { if ((d.keys[c] || 0) > best) best = d.keys[c]; });
           if (u.words.length) {
             var all = Math.min.apply(null, u.words.map(function (w) { return d.keys[w] || 0; }));
             if (all > best) best = all;
           }
           hit += u.w * best;
+          if (best > 0 && !u.words.concat(u.canons).every(function (m) { return GENERIC[m] || GENERIC[m.replace(/^#/, "")]; })) content = true;
         });
         cover = hit / qw;
       }
       var score = bm * (0.5 + cover);
       if (d.card.kind === "article" && !wantsWriting) score *= self.opt.articlePrior;   // a project card beats its article unless writing is asked for
       if (typeof d.card.prior === "number") score *= d.card.prior;   // e.g. her long own-words cards, so their answer text does not outrank a focused card
-      return { card: d.card, score: score, cover: cover, exact: false };
+      return { card: d.card, score: score, cover: cover, exact: false, content: content };
     }).filter(function (r) { return r.score > 0; });
     results.sort(function (a, b) { return b.score - a.score; });
+    // a focused card (e.g. "Book OCR: results") names its summary card as parent. When the parent covers the question as
+    // well as the focused card does, the question was general: answer with the summary and offer the focused card as related.
+    for (var hop = 0; hop < 2 && results.length && results[0].card.parent && !results[0].exact; hop++) {
+      var kid = results[0], pid = kid.card.parent, pi = -1;
+      for (var j = 1; j < results.length; j++) if (results[j].card.id === pid) { pi = j; break; }
+      if (pi < 0 || results[pi].cover < kid.cover - this.opt.parentSlack || results[pi].score < this.opt.parentRatio * kid.score) break;
+      var par = results.splice(pi, 1)[0];
+      results.unshift(par);
+    }
     var top = results[0];
-    var confident = !!top && (top.exact || (top.cover >= this.opt.minCover && top.score >= this.opt.minScore));
+    var confident = !!top && (top.exact || (top.content && top.cover >= this.opt.minCover && top.score >= this.opt.minScore));
     var related = [];
     if (top) {
       for (var i = 1; i < results.length && related.length < 2; i++) {
@@ -210,13 +244,14 @@
       }
     }
     return { query: query, terms: terms, best: confident ? top : null, top: top || null,
-             related: confident ? related : results.slice(0, 2), confident: confident };
+             related: confident ? related : results.filter(function (r) { return r.content; }).slice(0, 2), confident: confident };
   };
 
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var VERSION = (SRC.split("?")[1] || "");      // chat.js?v=20261014 passes v= on to kb.json and chat.css (cache busting)
+  var DATA_VERSION = "20261019";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
   var TEXT = {                                   // UI labels (functional, not prose); Tayler may change any of these
