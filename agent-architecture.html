@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Architecture &middot; Personal Project &middot; Tayler Erbe</title>
+  <meta name="description" content="The architecture behind my multi-agent system: 29 agents, one job queue with lanes and gates, shared memory and a decision log, code ownership enforced by tooling, one GPU shared by lease, authority levels, and Agent City as the observability layer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
+  <style>
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .diagram { background: var(--surface2); border: 1px solid var(--border); margin: var(--space-6) 0; }
+    .diagram-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 1.25rem; }
+    .diagram-scroll svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    .diagram figcaption { padding: 0.85rem 1.1rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); font-family: var(--font-mono); letter-spacing: 0.03em; }
+    .scroll-hint { display: none; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted); padding: 0 1.25rem 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    @media (max-width: 800px) { .scroll-hint { display: block; } }
+
+    /* SVG parts: colours come from the site tokens */
+    .d-frame { fill: none; stroke: var(--border); stroke-width: 1.5; }
+    .d-frame-accent { fill: none; stroke: var(--accent2); stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .d-box { fill: var(--surface); stroke: var(--border); stroke-width: 1.2; }
+    .d-box-accent { fill: var(--accent-faint); stroke: var(--accent2); stroke-width: 1.2; }
+    .d-box-warm { fill: var(--coral-bg); stroke: var(--accent3); stroke-width: 1.2; }
+    .d-box-green { fill: var(--green-bg); stroke: var(--green); stroke-width: 1.2; }
+    .d-box-muted { fill: var(--surface); stroke: var(--muted2); stroke-width: 1.2; stroke-dasharray: 3 3; }
+    .d-line { fill: none; stroke: var(--muted); stroke-width: 1.3; }
+    .d-line-accent { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+    .d-line-warm { fill: none; stroke: var(--accent3); stroke-width: 1.3; }
+    .d-line-dash { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 4; }
+    .d-arrow { fill: var(--muted); }
+    .d-arrow-accent { fill: var(--accent); }
+    .d-arrow-warm { fill: var(--accent3); }
+    .d-title { fill: var(--accent2); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .d-label { fill: var(--text); font-size: 12px; }
+    .d-label-strong { fill: var(--white); font-size: 13px; }
+    .d-small { fill: var(--muted); font-size: 10.5px; }
+    .d-warm { fill: var(--accent3); font-size: 11px; }
+    .d-green { fill: var(--green); font-size: 11px; }
+    .d-bar-vllm { fill: var(--accent-dim); stroke: var(--accent2); stroke-width: 1.2; }
+    .d-bar-ollama { fill: var(--green-bg); stroke: var(--green); stroke-width: 1.2; }
+    .d-bar-free { fill: var(--surface); stroke: var(--border); stroke-width: 1.2; }
+
+    .precedence { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin: var(--space-4) 0 var(--space-5); }
+    .precedence span.p { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: 0.06em; text-transform: uppercase; padding: 0.3rem 0.6rem; border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+    .precedence span.gt { color: var(--muted2); font-family: var(--font-mono); font-size: var(--text-xs); }
+    .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: var(--space-5) 0; }
+    .level { background: var(--surface); padding: 1.25rem; }
+    .level-num { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; color: var(--accent); line-height: 1; }
+    .level-who { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0.35rem 0 0.75rem; }
+    .level ul { margin: 0 0 0 1rem; color: var(--muted); font-size: 0.84rem; line-height: 1.6; }
+    .level-3 .level-num { color: var(--accent3); }
+    @media (max-width: 860px) { .levels { grid-template-columns: 1fr; } }
+    .roster td:nth-child(5) { font-family: var(--font-mono); font-size: var(--text-xs); white-space: nowrap; }
+    .note-line { font-size: 0.82rem; color: var(--muted); margin-top: var(--space-3); max-width: var(--measure); }
+  </style>
+</head>
+<body>
+  <!-- Page text written by Claude at Tayler's request (approved 19 Oct 2026, this page only), from the code and records listed at the bottom. Awaiting Tayler's approval before it goes live. -->
+
+  <nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; System Design</div>
+    <h1>Agent Architecture<br><span>How my agents actually work together</span></h1>
+    <p class="hero-desc">I run 29 AI agents across Skyrule, a personal product project, and my other personal projects. They share one job queue, one memory, one decision log and an ownership map that tooling enforces, on a single workstation with one GPU. This page is the system design: who the agents are, how work moves, what stops them, and what still needs me. <a href="agent-city.html" class="link">Agent City</a>, the 3D town, is how I watch it.</p>
+
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Running daily &middot; planned parts are marked as planned</div></div>
+      <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">Designer and builder of the whole system</div></div>
+      <div class="meta-item"><div class="meta-label">Job queue live since</div><div class="meta-value">Oct 2, 2026</div></div>
+      <div class="meta-item"><div class="meta-label">Numbers</div><div class="meta-value">As of Oct 19, 2026</div></div>
+    </div>
+
+    <div class="toc">
+      <a href="#roster"><span class="toc-num">01</span><span class="toc-name">The agent roster</span></a>
+      <a href="#lifecycle"><span class="toc-num">02</span><span class="toc-name">The work lifecycle</span></a>
+      <a href="#coordination"><span class="toc-num">03</span><span class="toc-name">Coordination and handoffs</span></a>
+      <a href="#models"><span class="toc-num">04</span><span class="toc-name">Models and the GPU</span></a>
+      <a href="#governance"><span class="toc-num">05</span><span class="toc-name">Quality and governance</span></a>
+      <a href="#observability"><span class="toc-num">06</span><span class="toc-name">Observability: Agent City</span></a>
+      <a href="#limits"><span class="toc-num">07</span><span class="toc-name">Known limits</span></a>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-item"><div class="stat-big">29</div><div class="stat-desc">Agents with written charters (Oct 19, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">1,060</div><div class="stat-desc">Jobs finished by the queue since Oct 2 (Oct 19, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">1,496</div><div class="stat-desc">Product tests passing of 1,499 run (Oct 19, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">294</div><div class="stat-desc">Founder decisions logged since Sep 30 (Oct 19, 2026)</div></div>
+  </div>
+
+  <!-- 01 ROSTER -->
+  <section id="roster">
+    <div class="section-header">
+      <div class="section-tag">01 / Roster</div>
+      <h2 class="section-title">Who the agents are</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>I organised the agents like a small company, because the hard problems in multi-agent work are the same ones a company has: who owns what, who may decide, and how work passes between people without getting lost. Every agent has a written charter that says what it is for and, just as important, what it is not for and who owns that instead.</p>
+      <p>There are three groups. The product organization is twelve departments of Skyrule. Four cross-cutting agents check, route and block across all of them. The rest serve my other personal projects and the machine itself. All 29 run on the same rails.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 515" role="img" aria-label="Diagram of the 29 agents in three groups: twelve product departments, four cross-cutting agents, and thirteen personal and operations agents, all above a band of shared rails: the job queue, memory and recall, the decision log, the ownership map and Agent City. I sit above all three groups and hold Level 3 decisions.">
+          <defs>
+            <marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+          </defs>
+          <!-- founder -->
+          <rect x="370" y="12" width="220" height="44" class="d-box-warm" />
+          <text x="480" y="31" text-anchor="middle" class="d-label-strong">Me</text>
+          <text x="480" y="47" text-anchor="middle" class="d-small">Level 3 decisions only</text>
+          <path d="M480 56 V66 H210 V80" class="d-line" marker-end="url(#ah1)" />
+          <path d="M480 56 V80" class="d-line" marker-end="url(#ah1)" />
+          <path d="M480 66 H780 V80" class="d-line" marker-end="url(#ah1)" />
+
+          <!-- product organization -->
+          <rect x="20" y="82" width="380" height="275" class="d-frame" />
+          <text x="34" y="102" class="d-title">Product organization &middot; 12</text>
+          <g>
+            <rect x="30" y="114" width="175" height="32" class="d-box" /><text x="117" y="135" text-anchor="middle" class="d-label">Office of the Founder</text>
+            <rect x="215" y="114" width="175" height="32" class="d-box" /><text x="302" y="135" text-anchor="middle" class="d-label">Program management</text>
+            <rect x="30" y="154" width="175" height="32" class="d-box" /><text x="117" y="175" text-anchor="middle" class="d-label">Domain practice</text>
+            <rect x="215" y="154" width="175" height="32" class="d-box" /><text x="302" y="175" text-anchor="middle" class="d-label">Relational science</text>
+            <rect x="30" y="194" width="175" height="32" class="d-box" /><text x="117" y="215" text-anchor="middle" class="d-label">Editorial</text>
+            <rect x="215" y="194" width="175" height="32" class="d-box" /><text x="302" y="215" text-anchor="middle" class="d-label">Product design</text>
+            <rect x="30" y="234" width="175" height="32" class="d-box" /><text x="117" y="255" text-anchor="middle" class="d-label">Platform and data</text>
+            <rect x="215" y="234" width="175" height="32" class="d-box" /><text x="302" y="255" text-anchor="middle" class="d-label">AI and performance</text>
+            <rect x="30" y="274" width="175" height="32" class="d-box" /><text x="117" y="295" text-anchor="middle" class="d-label">Data science</text>
+            <rect x="215" y="274" width="175" height="32" class="d-box" /><text x="302" y="295" text-anchor="middle" class="d-label">Brand and marketing</text>
+            <rect x="30" y="314" width="175" height="32" class="d-box" /><text x="117" y="335" text-anchor="middle" class="d-label">Legal and trust</text>
+            <rect x="215" y="314" width="175" height="32" class="d-box" /><text x="302" y="335" text-anchor="middle" class="d-label">Finance and operations</text>
+          </g>
+
+          <!-- cross-cutting -->
+          <rect x="415" y="82" width="190" height="275" class="d-frame-accent" />
+          <text x="429" y="102" class="d-title">Cross-cutting &middot; 4</text>
+          <rect x="425" y="114" width="170" height="32" class="d-box-accent" /><text x="510" y="135" text-anchor="middle" class="d-label">Principal Architect</text>
+          <rect x="425" y="154" width="170" height="32" class="d-box-accent" /><text x="510" y="175" text-anchor="middle" class="d-label">Quality and compliance</text>
+          <rect x="425" y="194" width="170" height="32" class="d-box-accent" /><text x="510" y="215" text-anchor="middle" class="d-label">Security and IP</text>
+          <rect x="425" y="234" width="170" height="32" class="d-box-accent" /><text x="510" y="255" text-anchor="middle" class="d-label">Overseer (hourly)</text>
+          <text x="510" y="292" text-anchor="middle" class="d-small">integrate and route</text>
+          <text x="510" y="308" text-anchor="middle" class="d-small">block with a written reason</text>
+          <text x="510" y="324" text-anchor="middle" class="d-small">check, never act</text>
+
+          <!-- personal and operations -->
+          <rect x="620" y="82" width="320" height="275" class="d-frame" />
+          <text x="634" y="102" class="d-title">Personal and operations &middot; 13</text>
+          <rect x="630" y="114" width="145" height="32" class="d-box" /><text x="702" y="135" text-anchor="middle" class="d-label">Voice writer</text>
+          <rect x="785" y="114" width="145" height="32" class="d-box" /><text x="857" y="135" text-anchor="middle" class="d-label">Writing partner</text>
+          <rect x="630" y="154" width="145" height="32" class="d-box" /><text x="702" y="175" text-anchor="middle" class="d-label">Post menu</text>
+          <rect x="785" y="154" width="145" height="32" class="d-box" /><text x="857" y="175" text-anchor="middle" class="d-label">Recon chief (news)</text>
+          <rect x="630" y="194" width="145" height="32" class="d-box" /><text x="702" y="215" text-anchor="middle" class="d-label">Video studio</text>
+          <rect x="785" y="194" width="145" height="32" class="d-box" /><text x="857" y="215" text-anchor="middle" class="d-label">GPU keeper</text>
+          <rect x="630" y="234" width="145" height="32" class="d-box" /><text x="702" y="255" text-anchor="middle" class="d-label">Kissaten DJ (music)</text>
+          <rect x="785" y="234" width="145" height="32" class="d-box" /><text x="857" y="255" text-anchor="middle" class="d-label">Site keeper</text>
+          <rect x="630" y="274" width="145" height="32" class="d-box-muted" /><text x="702" y="295" text-anchor="middle" class="d-label">Foreman (paused)</text>
+          <rect x="785" y="274" width="145" height="32" class="d-box-muted" /><text x="857" y="295" text-anchor="middle" class="d-label">4 personal admin</text>
+          <text x="780" y="332" text-anchor="middle" class="d-small">dashed: paused, or not detailed here</text>
+
+          <!-- rails -->
+          <path d="M210 357 V392" class="d-line" marker-end="url(#ah1)" />
+          <path d="M510 357 V392" class="d-line" marker-end="url(#ah1)" />
+          <path d="M780 357 V392" class="d-line" marker-end="url(#ah1)" />
+          <rect x="20" y="394" width="920" height="110" class="d-frame" />
+          <text x="34" y="414" class="d-title">Shared rails every agent runs on</text>
+          <rect x="30" y="426" width="172" height="62" class="d-box-accent" /><text x="116" y="452" text-anchor="middle" class="d-label-strong">Job queue</text><text x="116" y="472" text-anchor="middle" class="d-small">lanes, gates, budget</text>
+          <rect x="212" y="426" width="172" height="62" class="d-box-accent" /><text x="298" y="452" text-anchor="middle" class="d-label-strong">Memory and recall</text><text x="298" y="472" text-anchor="middle" class="d-small">555 sourced facts</text>
+          <rect x="394" y="426" width="172" height="62" class="d-box-accent" /><text x="480" y="452" text-anchor="middle" class="d-label-strong">Decision log</text><text x="480" y="472" text-anchor="middle" class="d-small">append-only, 294 entries</text>
+          <rect x="576" y="426" width="172" height="62" class="d-box-accent" /><text x="662" y="452" text-anchor="middle" class="d-label-strong">Ownership map</text><text x="662" y="472" text-anchor="middle" class="d-small">write scopes, enforced</text>
+          <rect x="758" y="426" width="172" height="62" class="d-box-green" /><text x="844" y="452" text-anchor="middle" class="d-label-strong">Agent City</text><text x="844" y="472" text-anchor="middle" class="d-small">reads all of it</text>
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
+      <figcaption>The 29 agents by function, above the shared rails (counts as of Oct 19, 2026)</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="cat-table roster">
+        <thead><tr><th>Agent</th><th>Lane: what it owns</th><th>May</th><th>May not</th><th>Default model</th></tr></thead>
+        <tbody>
+          <tr><td>Office of the Founder</td><td>Decision-record drafts, conflict briefs, dated handoffs</td><td>Draft records for me with a consequences table per department</td><td>Make any ruling or ratification</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Program management</td><td>Calendar, gate tracker, risk register, backlog</td><td>Say where and when; number decision records; re-derive totals</td><td>Decide what gets built, or any technical choice</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Domain practice</td><td>The product's domain rules and their sources</td><td>Write rule specs, source registries and their checkers</td><td>Decide what a rule means (that is mine), or write prose</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Relational science</td><td>The relational frame: roles, goals, relation kinds</td><td>Test any department's proposal against the consent rule</td><td>Domain rules, product voice, the engine</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Editorial</td><td>The content library, voice guide, rubric</td><td>Verify citations, argue against a draft, prepare grading</td><td>Give the final grade or write the prose</td><td>Claude Sonnet &middot; local prose seat</td></tr>
+          <tr><td>Product design</td><td>App surfaces and their specs, accessibility</td><td>Spec the views and their CI assertions</td><td>Copy of any kind, the API or engine, pricing</td><td>Claude Sonnet &middot; local code seat</td></tr>
+          <tr><td>Platform and data</td><td>Engine, API, data, job execution, CI, backups</td><td>Build and run the pipeline and its run records</td><td>Model choice, test policy, what may be quoted</td><td>Claude Sonnet &middot; local code seat</td></tr>
+          <tr><td>AI and performance</td><td>Extraction, scoring contract, grading instruments</td><td>Build instruments, run its own tests, plan GPU work</td><td>Domain rules, the engine, public claims</td><td>Claude Sonnet &middot; local code seat</td></tr>
+          <tr><td>Data science</td><td>Tracking plan, calibration study design, the weekly numbers</td><td>Design studies, power and interval arithmetic</td><td>Decide which rules are true; what may be logged</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Brand and marketing</td><td>Brand system, claims log, marketing plan</td><td>Draft claims and check them against decisions</td><td>Publish, post or upload anything</td><td>Claude Sonnet &middot; local prose seat</td></tr>
+          <tr><td>Legal and trust</td><td>Privacy, rights and promises to customers</td><td>Draft policies and briefs for counsel; veto with reasons</td><td>Give a licensed lawyer's opinion</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Finance and operations</td><td>Pricing model, budget arithmetic, bookkeeping setup</td><td>Draft the numbers and questions for an accountant</td><td>Architecture, product scope, tax advice</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Principal Architect</td><td>Cross-department coherence and integration</td><td>Find figures that disagree, route findings, audit ownership, merge</td><td>Decide or arbitrate a question a department owns</td><td>Claude Sonnet &middot; local code seat</td></tr>
+          <tr><td>Quality and compliance</td><td>CI gate, protected tests, release checklist</td><td>Block a merge, release or batch on quality, in writing</td><td>Make the release decision itself</td><td>Claude Sonnet &middot; local code seat</td></tr>
+          <tr><td>Security and IP</td><td>Threat model, secrets hygiene, dependency checks</td><td>Block a merge or release that weakens a control, in writing</td><td>Build the code or give legal opinions</td><td>Claude Sonnet</td></tr>
+          <tr><td>Overseer</td><td>An hourly round of every agent and the machine room</td><td>Read evidence; ask each agent on a local model whether its last run worked</td><td>Queue, restart or delete anything</td><td>Script &middot; local model</td></tr>
+          <tr><td>Voice writer</td><td>Drafts of public-facing sentences in my voice</td><td>Draft; I approve each one</td><td>Publish</td><td>Qwen3 32B AWQ (local)</td></tr>
+          <tr><td>Writing partner</td><td>Briefings on AI news, then argues the other side</td><td>Interview me and organise my words</td><td>Write my essays</td><td>Claude Sonnet</td></tr>
+          <tr><td>Post menu</td><td>A weekly menu of post and comment ideas</td><td>Draft options for me to pick from</td><td>Post, comment or connect</td><td>Claude Sonnet</td></tr>
+          <tr><td>Recon chief</td><td>News desks that read public feeds for AI news and trends</td><td>Fetch feeds and summarise them</td><td>Spend Claude usage (it runs on the cpu lane)</td><td>Script &middot; local model</td></tr>
+          <tr><td>Video studio</td><td>Image and video generation on my GPU</td><td>Run while the studio is up</td><td>Hold the GPU against running work</td><td>ComfyUI (local)</td></tr>
+          <tr><td>GPU keeper</td><td>Keeping the GPU from sitting idle</td><td>Queue the next GPU jobs when the GPU lane is empty</td><td>Restart the paused large regeneration</td><td>Claude Sonnet</td></tr>
+          <tr><td>Kissaten DJ</td><td>Music suggestions in the town's caf&eacute;</td><td>Propose a change to its taste notebook</td><td>Save anything until I press Save</td><td>Local model</td></tr>
+          <tr><td>Site keeper</td><td>Keeping this website in step with my work</td><td>Draft changes on a branch</td><td>Publish without my approval</td><td>Claude Sonnet</td></tr>
+          <tr><td>Foreman</td><td>Waking quiet departments on a local model</td><td>Queue small tasks; big ones wait for my approval</td><td>Run while paused (it is paused today)</td><td>Local vision model</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note-line">Four more personal admin agents (research scouts and an inbox reader) run on the same rails and follow the same rules; I leave them out of this table. "Local seat" is the model the department sits on when it runs locally instead of on Claude (section 04).</p>
+  </section>
+
+  <!-- 02 LIFECYCLE -->
+  <section id="lifecycle">
+    <div class="section-header">
+      <div class="section-tag">02 / Lifecycle</div>
+      <h2 class="section-title">How work moves</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>All unattended work goes through one job queue that I wrote in Python. A job is a small JSON object: an id, a lane, a command or a prompt, and optional gates. The queue is the only thing that launches work. Agents, the town and I can add jobs, but only the queue decides when they start.</p>
+      <p><strong>Why one queue:</strong> with several schedulers, nobody can answer "why did this run now?" With one, every launch is a single logged decision with its evidence. The cost is that the queue becomes critical infrastructure, so I kept it small, file-based and covered by its own tests.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 360" role="img" aria-label="State diagram of a job. A job is added and queued. Each tick it passes through gate checks: dependencies done, time reached, approval present for the Claude lane, no usage pause, launch budget left, a free lane slot, and an optional start condition. When all pass it runs. On exit the finish check decides: done, or retry while attempts remain, otherwise failed. A usage-limit stop returns the job to the queue without counting an attempt. A queued job can be cancelled. Done jobs are then reviewed outside the queue by the Done log, the Overseer and integration.">
+          <defs>
+            <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+            <marker id="ah2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-accent" /></marker>
+            <marker id="ah2w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-warm" /></marker>
+          </defs>
+          <rect x="20" y="150" width="100" height="44" class="d-box" /><text x="70" y="177" text-anchor="middle" class="d-label">Added</text>
+          <path d="M120 172 H158" class="d-line" marker-end="url(#ah2)" />
+          <rect x="160" y="150" width="110" height="44" class="d-box-accent" /><text x="215" y="177" text-anchor="middle" class="d-label-strong">Queued</text>
+          <path d="M270 172 H298" class="d-line" marker-end="url(#ah2)" />
+
+          <rect x="300" y="88" width="240" height="170" class="d-box" />
+          <text x="420" y="108" text-anchor="middle" class="d-title">Gate check, every tick</text>
+          <text x="314" y="130" class="d-small">1. dependencies are done</text>
+          <text x="314" y="148" class="d-small">2. not-before time has passed</text>
+          <text x="314" y="166" class="d-small">3. Claude lane: approval note</text>
+          <text x="314" y="184" class="d-small">4. Claude lane: no usage pause</text>
+          <text x="314" y="202" class="d-small">5. Claude lane: budget left</text>
+          <text x="314" y="220" class="d-small">6. the lane has a free slot</text>
+          <text x="314" y="238" class="d-small">7. start condition exits 0</text>
+          <path d="M420 88 V72 H240 V148" class="d-line-dash" marker-end="url(#ah2)" />
+          <text x="360" y="64" text-anchor="middle" class="d-small">any gate closed: stays queued, silently</text>
+
+          <path d="M540 172 H558" class="d-line-accent" marker-end="url(#ah2a)" />
+          <rect x="560" y="150" width="100" height="44" class="d-box-accent" /><text x="610" y="177" text-anchor="middle" class="d-label-strong">Running</text>
+          <path d="M660 172 H678" class="d-line" marker-end="url(#ah2)" />
+          <rect x="680" y="142" width="130" height="60" class="d-box" /><text x="745" y="167" text-anchor="middle" class="d-label">Exit code and</text><text x="745" y="185" text-anchor="middle" class="d-label">finish check</text>
+          <path d="M810 172 H848" class="d-line-accent" marker-end="url(#ah2a)" />
+          <rect x="850" y="150" width="95" height="44" class="d-box-green" /><text x="897" y="177" text-anchor="middle" class="d-label-strong">Done</text>
+
+          <!-- usage pause -->
+          <path d="M610 150 V30 H185 V148" class="d-line-dash" marker-end="url(#ah2)" />
+          <text x="400" y="24" text-anchor="middle" class="d-small">usage limit hit: lane pauses until the stated reset, attempt not counted</text>
+          <!-- retry loop -->
+          <path d="M715 202 V300 H215 V196" class="d-line-warm" marker-end="url(#ah2w)" />
+          <text x="465" y="292" text-anchor="middle" class="d-warm">failed check, attempts left: retry (3 by default)</text>
+          <!-- failed -->
+          <path d="M790 202 V230" class="d-line-warm" marker-end="url(#ah2w)" />
+          <rect x="740" y="232" width="100" height="34" class="d-box-warm" /><text x="790" y="254" text-anchor="middle" class="d-label">Failed</text>
+          <text x="790" y="284" text-anchor="middle" class="d-small">no attempts left</text>
+          <!-- cancelled -->
+          <path d="M170 194 V320" class="d-line" marker-end="url(#ah2)" />
+          <rect x="110" y="322" width="120" height="30" class="d-box-muted" /><text x="170" y="342" text-anchor="middle" class="d-label">Cancelled</text>
+          <!-- reviewed -->
+          <path d="M897 194 V276" class="d-line" marker-end="url(#ah2)" />
+          <rect x="850" y="278" width="100" height="70" class="d-box" /><text x="900" y="300" text-anchor="middle" class="d-label">Reviewed</text><text x="900" y="318" text-anchor="middle" class="d-small">Done log,</text><text x="900" y="334" text-anchor="middle" class="d-small">Overseer, merge</text>
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
+      <figcaption>The life of a job. "Reviewed" happens outside the queue.</figcaption>
+    </figure>
+
+    <h3 class="subhead">Lanes and concurrency</h3>
+    <div class="prose">
+      <p>Jobs run in lanes, and each lane has its own concurrency limit. A lane is a statement about a shared resource: what would break, or cost too much, if too many of these ran at once.</p>
+    </div>
+    <table class="dt">
+      <thead><tr><th>Lane</th><th>What runs there</th><th>Limit (Oct 19)</th><th>Why that limit</th></tr></thead>
+      <tbody>
+        <tr><td>cpu</td><td>Scripts, checks, merges, the Overseer, the news desks</td><td class="num">4</td><td>Cheap and independent; spends no model usage</td></tr>
+        <tr><td>vllm</td><td>Drivers for the local vLLM server: extraction, generation, grading</td><td class="num">1</td><td>One GPU. Speed inside a run comes from batched requests to the server, not from parallel jobs</td></tr>
+        <tr><td>ollama</td><td>Local department agents on Qwen</td><td class="num">1</td><td>Only one local seat fits on the card. The lane exists; no queued job has used it yet</td></tr>
+        <tr><td>claude</td><td>Headless Claude Code agents, one charter each</td><td class="num">22</td><td>Raised from 16 on Oct 18 for a release push, to return to 16 after. The code default is 6</td></tr>
+      </tbody>
+    </table>
+
+    <div class="kv">
+      <div class="k">The tick</div><div class="v">Windows Task Scheduler runs a tick every 15 minutes with no session open. Each finished job also triggers a tick at once, because on Oct 5 the GPU sat idle between ticks. A lock file makes sure two ticks never launch the same job, and a lock older than five minutes is treated as a crashed tick and cleared.</div>
+      <div class="k">Gates</div><div class="v">Of the 1,129 jobs added since Oct 2, 247 waited on other jobs, 61 had a not-before time, 120 had a start condition, 151 had a finish check that decides "done" by evidence rather than by exit code, and 373 carried a priority.</div>
+      <div class="k">Attempts and retries</div><div class="v">A job gets 3 attempts unless it says otherwise. A wrapper records the exit code; if the wrapper itself vanished (a reboot), the job goes back to the queue. Across 1,141 launches the queue made 65 automatic retries. As of Oct 19, 7 jobs ended failed and 49 were cancelled.</div>
+      <div class="k">The launch budget</div><div class="v">The Claude lane spends my own usage, so it is opt-in per job: a job without an approval note never starts there. A weekly budget caps launches (130 this week, set by me), so at least half my weekly usage stays free for my own work. When Claude reports a usage limit, the whole lane pauses until the reset time it states, and the stop does not count as a failed attempt.</div>
+      <div class="k">Self-scheduling</div><div class="v">Two hooks add work on their own. The GPU keeper checks every hour whether the GPU lane is empty and, if so, queues one planning job to line up the next GPU work; it has done that 173 times. A periodic hook queues the hourly Overseer round and the six-hourly news fetch, but only from an allowlist of scripts and arguments, at most hourly, and only with an approval note. Editing the config cannot make it run an arbitrary command.</div>
+    </div>
+  </section>
+
+  <!-- 03 COORDINATION -->
+  <section id="coordination">
+    <div class="section-header">
+      <div class="section-tag">03 / Coordination</div>
+      <h2 class="section-title">Handoffs, memory and ownership</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Agents do not talk to each other in real time. They coordinate through files with owners: dependencies in the queue, dated handoff documents, a shared memory, and a decision log. I chose this over agent-to-agent chat because every exchange then leaves a record that a new session, a reviewer or I can read later, and nothing depends on two agents being awake at once.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">Dependencies</div><div class="v">A job can name the jobs it waits for. That is how one department's output becomes another's input without either agent polling: the queue holds the second job until the first is done.</div>
+      <div class="k">Handoffs</div><div class="v">Each department writes dated handoff documents in its own folder, named by sender, receiver and topic: 539 so far across 11 departments. Documents supersede by date, never by version number, so "which one is current" always has one answer.</div>
+      <div class="k">Decision log</div><div class="v">My decisions go into an append-only log: 294 entries since Sep 30. Questions reach me as multiple choice with a recommended option, often on my phone from a morning brief page; a tap appends a line, and a later line for the same question supersedes the earlier one. Agents search the log before asking me anything, and memory recall always shows my recorded decisions first.</div>
+      <div class="k">Shared memory</div><div class="v">555 one-fact memory files across the departments. Each department writes only its own memories and reads everyone's. The tool enforces the rules a model will not reliably hold on its own: every memory names a source file that exists (its hash is stored), the body is capped at 1,200 characters, and near-duplicates are refused. Search runs on a small embedding model kept on the CPU, so recall still works while the GPU is busy.</div>
+      <div class="k">Memory sleep</div><div class="v">Every night a mechanical pass retires memories whose source is gone, hides ones whose source changed until an agent re-checks them, flags snapshots older than seven days, and flags duplicates. A second pass, where a local model checks memories against my decisions, is written but switched off until it passes its own evaluation.</div>
+      <div class="k">Session continuity</div><div class="v">A mission file and an open-threads register are the first things every session reads, so a fresh agent picks up where the last one stopped.</div>
+    </div>
+
+    <h3 class="subhead">Code ownership, enforced in layers</h3>
+    <div class="prose">
+      <p>A machine-readable ownership map assigns every folder and code path to one of the 15 product agents: each department's own folder plus 62 owned code paths, with 5 paths reserved for me. A sync script writes each agent's scope from that map, so the scopes are never edited by hand and a check mode fails if any agent file drifts.</p>
+      <p>Enforcement comes in three layers, because no single layer can see everything.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 300" role="img" aria-label="Three enforcement layers between an agent and the integrated code. Layer one, the scope guard, checks every file read and write tool call against the agent's scope and fails closed. Layer two, the shell guard, denies write-like shell commands that name paths outside scope, any git push, and merges except by the integrator. Layer three, the ownership audit, runs before integration and catches writes a script made that the shell guard could not see. Only then does a change reach the integration branch. Reading anywhere in the repository is allowed.">
+          <defs>
+            <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+            <marker id="ah3w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-warm" /></marker>
+          </defs>
+          <rect x="20" y="100" width="130" height="60" class="d-box-accent" /><text x="85" y="126" text-anchor="middle" class="d-label-strong">Department</text><text x="85" y="144" text-anchor="middle" class="d-label-strong">agent</text>
+          <path d="M150 130 H188" class="d-line" marker-end="url(#ah3)" />
+
+          <rect x="190" y="70" width="190" height="120" class="d-box" />
+          <text x="285" y="92" text-anchor="middle" class="d-title">1. Scope guard</text>
+          <text x="204" y="114" class="d-small">every file tool call</text>
+          <text x="204" y="132" class="d-small">writes only inside scope</text>
+          <text x="204" y="150" class="d-small">any error is a denial</text>
+          <text x="204" y="168" class="d-green">exact; fails closed</text>
+
+          <path d="M380 130 H408" class="d-line" marker-end="url(#ah3)" />
+          <rect x="410" y="70" width="190" height="120" class="d-box" />
+          <text x="505" y="92" text-anchor="middle" class="d-title">2. Shell guard</text>
+          <text x="424" y="114" class="d-small">write-like commands that</text>
+          <text x="424" y="132" class="d-small">name out-of-scope paths</text>
+          <text x="424" y="150" class="d-small">git push: always denied</text>
+          <text x="424" y="168" class="d-warm">heuristic: blind to scripts</text>
+
+          <path d="M600 130 H628" class="d-line" marker-end="url(#ah3)" />
+          <rect x="630" y="70" width="170" height="120" class="d-box" />
+          <text x="715" y="92" text-anchor="middle" class="d-title">3. Ownership audit</text>
+          <text x="644" y="114" class="d-small">each changed file</text>
+          <text x="644" y="132" class="d-small">against its owner, by</text>
+          <text x="644" y="150" class="d-small">the architect, pre-merge</text>
+          <text x="644" y="168" class="d-green">catches what 2 missed</text>
+
+          <path d="M800 130 H828" class="d-line" marker-end="url(#ah3)" />
+          <rect x="830" y="100" width="115" height="60" class="d-box-green" /><text x="887" y="126" text-anchor="middle" class="d-label-strong">Integration</text><text x="887" y="144" text-anchor="middle" class="d-label-strong">branch</text>
+
+          <path d="M285 190 V240 H85 V162" class="d-line-warm" marker-end="url(#ah3w)" />
+          <path d="M505 190 V240" class="d-line-warm" />
+          <path d="M715 190 V240 H505" class="d-line-warm" />
+          <text x="400" y="262" text-anchor="middle" class="d-warm">denied, with the reason, back to the agent (or to the owner)</text>
+          <text x="480" y="40" text-anchor="middle" class="d-small">Reading is open: every agent may read the whole repository. Only writes are confined.</text>
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
+      <figcaption>Least privilege as enforcement, not instruction</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>One detail I am glad I caught: on Windows, a hook that blocks by exit code does not reliably block, because PowerShell collapses every non-zero exit to 1, which the agent runtime treats as a warning. So the scope guard always exits 0 and denies through an explicit "deny" decision in its output. A control that silently becomes a warning is worse than no control, because it looks like one.</p>
+    </div>
+  </section>
+
+  <!-- 04 MODELS -->
+  <section id="models">
+    <div class="section-header">
+      <div class="section-tag">04 / Models</div>
+      <h2 class="section-title">Models and the GPU</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Two kinds of model do the work. Claude runs the agents that plan, engineer, review and write code. Open models on my own GPU do the bulk work: extraction, generation, grading, local agents and every draft of public-facing text. The split follows three things: usage (Claude is budgeted; the GPU is mine to fill), privacy (sensitive user data never goes to a cloud model), and fit (bulk work wants throughput, review wants judgment).</p>
+    </div>
+
+    <table class="dt">
+      <thead><tr><th>Work</th><th>Where it runs</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Engineering, review, planning, research synthesis</td><td>Claude Code agents on the claude lane</td><td>Judgment and tool use; budgeted per week</td></tr>
+        <tr><td>Extraction, generation, grading in bulk</td><td>vLLM on the local GPU</td><td>Throughput on a long run; no per-call usage</td></tr>
+        <tr><td>Drafts of public-facing text</td><td>A local Qwen model; I approve every draft</td><td>One consistent voice, under my review</td></tr>
+        <tr><td>Overseer questions, news summaries, the caf&eacute; DJ</td><td>A local model</td><td>Routine and frequent; should cost no Claude usage</td></tr>
+        <tr><td>Anything with sensitive user data</td><td>Local only</td><td>A rule, not a preference</td></tr>
+      </tbody>
+    </table>
+    <div class="prose">
+      <p>Of the 754 Claude-lane jobs since Oct 2, 458 ran on Sonnet, 270 on Opus and 26 on Fable. The model is chosen per job, so a routine status check does not cost what a hard design review costs.</p>
+    </div>
+
+    <h3 class="subhead">Seats: model roles, measured</h3>
+    <div class="prose">
+      <p>Each department sits on a named local "seat", and the mapping lives in one editable file; no department is tied to a model in code. I picked the seats by measuring on this card, not by reputation.</p>
+    </div>
+    <table class="dt">
+      <thead><tr><th>Seat</th><th>Base model</th><th>Temperature</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td>code</td><td>Qwen3 Coder 30B</td><td class="num">0.15</td><td>Engineering departments. Stayed fully on the GPU at a 32k context (about 30.5 GB)</td></tr>
+        <tr><td>prose</td><td>Qwen3 32B</td><td class="num">0.7</td><td>Editorial and brand. The only seat allowed to draft public-facing text</td></tr>
+        <tr><td>admin</td><td>Qwen3 32B</td><td class="num">0.4</td><td>Planning, legal, finance, research: same base, lower temperature</td></tr>
+        <tr><td>alt-code</td><td>Devstral Small 2 24B</td><td class="num">0.15</td><td>Opt-in only. It spilled about 18% to the CPU on the same task, so it is not the default</td></tr>
+        <tr><td>open</td><td>A low-refusal Qwen3 30B variant</td><td class="num">0.6</td><td>Opt-in per task only, then it reverts. It gets no extra permissions: the scope guard binds it the same way</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="subhead">One big model at a time: the GPU lease</h3>
+    <div class="prose">
+      <p>The workstation has one RTX 5090 with 32 GB. A vLLM server reserves 94% of the card when it starts and keeps it. A 32B Qwen seat on Ollama needs about 20 GB. They cannot share, and when they collide Ollama does not fail loudly: it spills to the CPU and runs about ten times slower. So I made the GPU a lease with exactly one holder: idle, a vLLM server (three profiles: an 8B generation model, Qwen3 32B AWQ, and Qwen3 VL 32B for vision and extraction), or the local Ollama seats.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 330" role="img" aria-label="The GPU lease. Top: a 32 GB memory bar showing that a vLLM server reserves 94 percent of the card, while a 32B Ollama seat needs about 20 GB, so the two cannot fit together. Bottom: the switch procedure. A switch request first checks whether GPU work is running; if so it is refused and asked again next tick. Otherwise the current holder is stopped or unloaded, the target is started, and the result is verified against nvidia-smi and health checks, ending in either the new holder or a reported failure.">
+          <defs>
+            <marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+            <marker id="ah4w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-warm" /></marker>
+          </defs>
+          <text x="20" y="24" class="d-title">32 GB card: one holder</text>
+          <rect x="20" y="36" width="846" height="30" class="d-bar-vllm" />
+          <rect x="866" y="36" width="54" height="30" class="d-bar-free" />
+          <text x="34" y="56" class="d-label">vLLM server: 94% reserved at start, held until it stops</text>
+          <rect x="20" y="76" width="562" height="30" class="d-bar-ollama" />
+          <rect x="582" y="76" width="338" height="30" class="d-bar-free" />
+          <text x="34" y="96" class="d-label">Qwen3 32B seat on Ollama: about 20 GB</text>
+          <text x="600" y="96" class="d-small">together they do not fit: Ollama spills to CPU</text>
+
+          <rect x="20" y="160" width="140" height="50" class="d-box-accent" /><text x="90" y="182" text-anchor="middle" class="d-label">Switch request</text><text x="90" y="198" text-anchor="middle" class="d-small">vllm, ollama or idle</text>
+          <path d="M160 185 H198" class="d-line" marker-end="url(#ah4)" />
+          <rect x="200" y="150" width="160" height="70" class="d-box" /><text x="280" y="178" text-anchor="middle" class="d-label">GPU work running?</text><text x="280" y="196" text-anchor="middle" class="d-small">live process markers</text>
+          <path d="M280 220 V270 H318" class="d-line-warm" marker-end="url(#ah4w)" />
+          <text x="290" y="250" class="d-warm">yes</text>
+          <rect x="320" y="250" width="200" height="44" class="d-box-warm" /><text x="420" y="270" text-anchor="middle" class="d-label">Refused</text><text x="420" y="286" text-anchor="middle" class="d-small">ask again next tick</text>
+          <path d="M360 185 H398" class="d-line" marker-end="url(#ah4)" />
+          <text x="370" y="176" class="d-small">no</text>
+          <rect x="400" y="160" width="150" height="50" class="d-box" /><text x="475" y="182" text-anchor="middle" class="d-label">Stop or unload</text><text x="475" y="198" text-anchor="middle" class="d-small">the current holder</text>
+          <path d="M550 185 H578" class="d-line" marker-end="url(#ah4)" />
+          <rect x="580" y="160" width="130" height="50" class="d-box" /><text x="645" y="182" text-anchor="middle" class="d-label">Start target</text><text x="645" y="198" text-anchor="middle" class="d-small">wait for health</text>
+          <path d="M710 185 H738" class="d-line" marker-end="url(#ah4)" />
+          <rect x="740" y="150" width="200" height="70" class="d-box-green" /><text x="840" y="176" text-anchor="middle" class="d-label">Verify: nvidia-smi</text><text x="840" y="192" text-anchor="middle" class="d-label">and health checks</text><text x="840" y="210" text-anchor="middle" class="d-small">new holder, or report FAILED</text>
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
+      <figcaption>The GPU lease: never two big models, never interrupt running work, never assume a switch worked</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>The rule the lease will not break: a switch never interrupts running GPU work. If a generation, extraction or grading process is live, a switch away from it is refused and asked again on the next tick. Generation can resume, but a half-written output file is not worth a race for the sake of a schedule. After every switch the result is checked against the card's actual memory use and the servers' health, not assumed. A separate restore script hands the card back to the vision model after a temporary switch, with the same refusal when work is running.</p>
+      <p>I also wrote time windows for who should hold the card at each hour of the day (generation overnight, local agents in the daytime). That scheduler runs as a dry run today: it logs what it would do, and switching happens by explicit request from a job or from me.</p>
+    </div>
+  </section>
+
+  <!-- 05 GOVERNANCE -->
+  <section id="governance">
+    <div class="section-header">
+      <div class="section-tag">05 / Governance</div>
+      <h2 class="section-title">Quality gates and authority</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Autonomy is only useful if I can trust what comes back without re-checking all of it. So review is split across independent checks, each with a narrow job, and I sit at the end only for the decisions that are truly mine.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">The Overseer</div><div class="v">Every hour it goes round every agent and the machine room. It looks for failed runs, runs that look stuck (over 3 hours on the Claude lane, 6 on cpu, 14 on the GPU lane), processes that vanished, missed scheduled runs and offline runtimes, and asks each agent on a local model whether its newest run did its job. Verdicts are up, waiting, watch or down. It checks and never acts: nothing is queued, restarted or deleted. At 08:30 on Oct 19 it had checked 28 agents: 19 up, 5 waiting on me, 4 to watch, none down.</div>
+      <div class="k">Review gates</div><div class="v">The quality agent can block a merge, a release or a content batch on quality, and the security agent can block one that weakens a control, each with a written reason. I can override either. The Principal Architect integrates changes and runs the ownership audit first.</div>
+      <div class="k">CI and protected tests</div><div class="v">CI runs the product suite on Ubuntu and Windows (the deploy target and the development machine catch different failures), then proves that 14 protected tests actually ran and passed. A green suite is not enough: a deleted or silently skipped test leaves the build green and the guarantee gone. Removing a protected test takes a diff with a name on it. A pressure test of 84 probes runs after the suite.</div>
+      <div class="k">Test counts</div><div class="v">On Oct 19 the product suite ran 1,499 tests on my working checkout: 1,496 passed and 3 failed, all three in one module that is mid-change. Those three are open, not hidden. The job queue has its own tests for the periodic hook (10, passing), and Agent City has its own suite (section 07).</div>
+      <div class="k">Findings are classified</div><div class="v">Every finding is one of four kinds: a safety or evidence blocker, an integration blocker, a publication-only blocker, or a later improvement. A new blocker must name the failed requirement, the evidence, the owner and the fix. Nicer writing is never a blocker.</div>
+    </div>
+
+    <h3 class="subhead">Authority levels: what needs me</h3>
+    <div class="prose">
+      <p>On Oct 18 I wrote down which decisions actually need me, so that agents stop asking about things they can safely decide. Only Level 3 comes to me. For example, if the editorial check finds a problem that an existing rule already prohibits, engineering fixes it and quality verifies it; I am not asked again.</p>
+    </div>
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div class="level-who">Agents act without asking</div>
+        <ul>
+          <li>Fix isolated bugs, update tests, repair formatting</li>
+          <li>Improve wording without changing meaning</li>
+          <li>Implement requirements already approved</li>
+          <li>Integrate changes that pass the defined checks</li>
+        </ul>
+      </div>
+      <div class="level">
+        <div class="level-num">2</div>
+        <div class="level-who">A department head approves</div>
+        <ul>
+          <li>Changes to internal checking mechanisms</li>
+          <li>Better implementation approaches</li>
+          <li>Bounded technical changes within policy</li>
+          <li>Never silently widen claims or weaken a control</li>
+        </ul>
+      </div>
+      <div class="level level-3">
+        <div class="level-num">3</div>
+        <div class="level-who">Only me</div>
+        <ul>
+          <li>The evidence standard and domain rules</li>
+          <li>Product promises; sensitive data and external access</li>
+          <li>Significant spending; release scope; acceptance criteria</li>
+          <li>Public deployment; authorising a full generation run</li>
+        </ul>
+      </div>
+    </div>
+    <div class="prose">
+      <p><strong>The release boundary.</strong> No agent publishes. The shell guard denies every git push, nothing generated is published automatically, and a full generation run or a public deployment needs my explicit go. This page is an example: an agent prepared it on a branch, and it goes live only after I approve it.</p>
+    </div>
+  </section>
+
+  <!-- 06 OBSERVABILITY -->
+  <section id="observability">
+    <div class="section-header">
+      <div class="section-tag">06 / Observability</div>
+      <h2 class="section-title">Agent City reads the real state</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>With 29 agents and hundreds of jobs, logs stopped being enough to answer "who is working, who is stuck, and who is waiting on me?" <a href="agent-city.html" class="link">Agent City</a> is my answer: a town in the browser, first in 2D and now in 3D with three.js, where each agent has a character and a building. It is a projection of the system above. It owns no scheduling and runs no work.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 330" role="img" aria-label="Agent City data flow. Sources on the left: the queue's jobs and job state files, its config and log, the agent charters, and model and GPU probes. A pure world builder turns them into a world, a state projection picks each agent's visible state by fixed precedence, and an event log diffs snapshots into numbered events. Browsers poll every five seconds with a sequence cursor and render the 3D town, the 2D city, the Desk, the Done log and the chat log. Commands go back the other way through preview, confirmation, an idempotency key and the queue's own lock, and can only change queued jobs.">
+          <defs>
+            <marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+            <marker id="ah5w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-warm" /></marker>
+          </defs>
+          <text x="20" y="24" class="d-title">Sources (read-only)</text>
+          <rect x="20" y="36" width="170" height="34" class="d-box" /><text x="105" y="58" text-anchor="middle" class="d-label">Jobs and job states</text>
+          <rect x="20" y="78" width="170" height="34" class="d-box" /><text x="105" y="100" text-anchor="middle" class="d-label">Queue config and log</text>
+          <rect x="20" y="120" width="170" height="34" class="d-box" /><text x="105" y="142" text-anchor="middle" class="d-label">Agent charters</text>
+          <rect x="20" y="162" width="170" height="34" class="d-box" /><text x="105" y="184" text-anchor="middle" class="d-label">Model and GPU probes</text>
+          <path d="M190 116 H228" class="d-line" marker-end="url(#ah5)" />
+
+          <rect x="230" y="76" width="150" height="80" class="d-box-accent" /><text x="305" y="104" text-anchor="middle" class="d-label-strong">World builder</text><text x="305" y="122" text-anchor="middle" class="d-small">pure: files and</text><text x="305" y="138" text-anchor="middle" class="d-small">probes in, a dict out</text>
+          <path d="M380 116 H418" class="d-line" marker-end="url(#ah5)" />
+          <rect x="420" y="76" width="160" height="80" class="d-box-accent" /><text x="500" y="104" text-anchor="middle" class="d-label-strong">State projection</text><text x="500" y="122" text-anchor="middle" class="d-small">one visible state per</text><text x="500" y="138" text-anchor="middle" class="d-small">agent, fixed precedence</text>
+          <path d="M580 116 H618" class="d-line" marker-end="url(#ah5)" />
+          <rect x="620" y="76" width="150" height="80" class="d-box-accent" /><text x="695" y="104" text-anchor="middle" class="d-label-strong">Events</text><text x="695" y="122" text-anchor="middle" class="d-small">snapshot diff,</text><text x="695" y="138" text-anchor="middle" class="d-small">numbered, last 2,000</text>
+          <path d="M770 116 H798" class="d-line" marker-end="url(#ah5)" />
+          <text x="695" y="180" text-anchor="middle" class="d-small">browsers poll every 5 s</text>
+          <text x="695" y="196" text-anchor="middle" class="d-small">with a since cursor</text>
+          <rect x="800" y="20" width="145" height="34" class="d-box-green" /><text x="872" y="42" text-anchor="middle" class="d-label">3D town</text>
+          <rect x="800" y="60" width="145" height="34" class="d-box-green" /><text x="872" y="82" text-anchor="middle" class="d-label">2D city</text>
+          <rect x="800" y="100" width="145" height="34" class="d-box-green" /><text x="872" y="122" text-anchor="middle" class="d-label">The Desk</text>
+          <rect x="800" y="140" width="145" height="34" class="d-box-green" /><text x="872" y="162" text-anchor="middle" class="d-label">Done log</text>
+          <rect x="800" y="180" width="145" height="34" class="d-box-green" /><text x="872" y="202" text-anchor="middle" class="d-label">Chat log</text>
+
+          <!-- command path -->
+          <text x="20" y="250" class="d-title">Commands (the only way back)</text>
+          <rect x="800" y="262" width="145" height="44" class="d-box" /><text x="872" y="282" text-anchor="middle" class="d-label">Button in a view</text><text x="872" y="298" text-anchor="middle" class="d-small">identity-checked</text>
+          <path d="M800 284 H732" class="d-line-warm" marker-end="url(#ah5w)" />
+          <rect x="560" y="262" width="170" height="44" class="d-box" /><text x="645" y="282" text-anchor="middle" class="d-label">Preview, then confirm</text><text x="645" y="298" text-anchor="middle" class="d-small">idempotency key, 24 h</text>
+          <path d="M560 284 H462" class="d-line-warm" marker-end="url(#ah5w)" />
+          <rect x="290" y="262" width="170" height="44" class="d-box" /><text x="375" y="282" text-anchor="middle" class="d-label">Queue's own lock</text><text x="375" y="298" text-anchor="middle" class="d-small">queued jobs only</text>
+          <path d="M290 284 H192" class="d-line-warm" marker-end="url(#ah5w)" />
+          <rect x="20" y="262" width="170" height="44" class="d-box-accent" /><text x="105" y="282" text-anchor="middle" class="d-label">Job queue</text><text x="105" y="298" text-anchor="middle" class="d-small">still the only launcher</text>
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
+      <figcaption>Agent City is a read-mostly projection; its few writes go through the queue's own lock</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p><strong>A deterministic projection.</strong> Each agent carries a few authoritative fields (availability, runtime, run state, attention, next scheduled start), and one pure function turns them into the one state the town shows, with a fixed precedence:</p>
+    </div>
+    <div class="precedence" role="list" aria-label="Visible state precedence, highest first">
+      <span class="p" role="listitem">blocked</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">waiting on me</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">working</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">queued</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">offline</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">paused</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">scheduled soon</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">sleeping</span><span class="gt" aria-hidden="true">&gt;</span>
+      <span class="p" role="listitem">idle</span>
+    </div>
+    <div class="prose">
+      <p>Two rules keep it honest. An agent whose runtime is unreachable shows as offline, never as asleep or done. An agent with nothing scheduled is idle, not sleeping. Tests check every conflicting pair, so "working" means a job is actually running, never that an agent looks busy.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">Polling with a cursor</div><div class="v">Browsers poll every 5 seconds and pass the sequence number of the last event they saw. They get a full snapshot on load and after any gap. Events come from diffing two snapshots, and the first run invents no history. I chose polling over server push because it is simple and robust on a standard-library server at this scale, and push can be added later without changing the event format.</div>
+      <div class="k">Run now never bypasses a gate</div><div class="v">"Run now" sets aside one date gate on one queued job and records the original. It is refused for approval flags, dependencies and start conditions, and it never overrides a usage pause or the launch budget. A button in a town must not be a way around the rules.</div>
+      <div class="k">Idempotent commands</div><div class="v">Every command can be previewed without changing anything. Commands that spend usage, override a gate, pause or cancel need an explicit confirm. The same idempotency key within 24 hours returns the stored result and never creates a second job, so a double tap on a phone is harmless. Running jobs are never touched.</div>
+      <div class="k">The Done log</div><div class="v">The queue's own records can be pruned or rewritten, so the first time the town sees a finished job it appends one line to an append-only ledger: who finished what, when, for which project, a one-line summary and the files the report names. 1,060 finished jobs as of Oct 19: 669 for Skyrule, 273 routine operations runs and 118 for my other personal projects.</div>
+      <div class="k">The chat log</div><div class="v">Every conversation I have had with any agent, and every board-room session, newest first, read-only. It never writes, renames or deletes a chat file.</div>
+      <div class="k">Access</div><div class="v">The town is reachable only over my private network with identity-checked access. It never listens on the public internet.</div>
+    </div>
+  </section>
+
+  <!-- 07 LIMITS -->
+  <section id="limits">
+    <div class="section-header">
+      <div class="section-tag">07 / Known limits</div>
+      <h2 class="section-title">What I would do differently</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="kv">
+      <div class="k">Parsing text for signals</div><div class="v">The queue detects a Claude usage limit by reading the job's output. On Oct 9 an agent's own report mentioned the limit, the pattern matched, and the lane paused for a day. I anchored the pattern to the start of a line and judge only the current attempt's output, but the real fix is a structured exit signal, not text matching.</div>
+      <div class="k">Shell writes are guarded by heuristics</div><div class="v">The file tools are guarded exactly. The shell is not: a script can write somewhere its command line does not name. The ownership audit catches that after the fact, before merge. I would rather run each agent in a sandbox where out-of-scope paths are simply not writable.</div>
+      <div class="k">Per-job work contracts are planned</div><div class="v">Today an agent's limits come from its charter and scope, not from the job. The next step, written down on Oct 18, is a machine-readable contract per job (allowed paths and tools, inputs, definition of done, required tests, budget, escalation) and a release controller that enforces existing policy. Neither is built yet.</div>
+      <div class="k">JSON files and a lock file</div><div class="v">The queue keeps 1,129 jobs in one JSON file and one state file per job, guarded by a lock file. That is easy to inspect and fine on one machine, but it rewrites the whole job list on every change. If I started again I would use SQLite from day one.</div>
+      <div class="k">Partly built</div><div class="v">The GPU time windows run as a dry run. The memory judge is switched off until it passes its evaluation. The foreman is paused, because an agent permission check refused its unattended job creation, and I have not yet decided on that rule. The local-agent lane exists but no queued job has used it. The town's own test suite ran 340 tests on Oct 19 with one error still open.</div>
+      <div class="k">What is not measured</div><div class="v">Claude cost is tracked only as launches against the weekly budget, not as tokens. The queue also has no native recurring schedule: a weekly job queues its own successor.</div>
+    </div>
+
+    <div class="prose" style="margin-top:1.5rem;">
+      <p>For the product side of this system, see the <a href="skyrule.html" class="link">Skyrule case study</a>. For how the town itself was made, see <a href="agent-city.html" class="link">Agent City</a>.</p>
+    </div>
+
+    <div class="tag-row" style="margin-top:1.5rem;">
+      <span class="tag tag-warm">Personal Project</span><span class="tag tag-accent">Multi-Agent Systems</span><span class="tag tag-accent">Claude Code Subagents</span><span class="tag tag-accent">Python</span><span class="tag">Job Scheduling</span><span class="tag">Least Privilege</span><span class="tag">vLLM</span><span class="tag">Ollama</span><span class="tag">Qwen3</span><span class="tag">Embeddings</span><span class="tag">GitHub Actions</span><span class="tag">pytest</span><span class="tag">Three.js</span><span class="tag">Observability</span><span class="tag">RTX 5090</span>
+    </div>
+  </section>
+
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="agent-city.html">Agent City</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+<script src="assets/chat/chat.js?v=20261014" defer></script>
+
+<!--
+SOURCES (every claim on this page traces to one of these; numbers dated 19 Oct 2026)
+Product repository (private; named here only by its parts):
+  S1  Job queue module: lanes, default limits, gates, attempts, usage pause, launch budget, chained tick, tick lock, GPU keeper, periodic allowlist, Claude CLI lane rule (jobqueue.py, docstring and code)
+  S2  Queue config: lane limits (cpu 4, vllm 1, ollama 1, claude 22 with the 18 Oct note), launch budget 130 since 16 Oct, keeper every hour, periodic overseer 1 h and recon 6 h, foreman paused with reason (config.json)
+  S3  Queue jobs list and per-job state files: 1,129 jobs; lanes claude 754, vllm 246, cpu 129, ollama 0; states done 1,060, cancelled 49, failed 7, queued 13; gates after 247, not_before 61, start_when 120, finish_check 151, priority 373; Claude models sonnet 458, opus 270, fable 26 (jobs.json and state files, computed 19 Oct)
+  S4  Queue log: 1,141 launches, 65 retries, 173 keeper jobs queued, 100 periodic jobs queued, first line 2 Oct 2026 (queue.log, computed 19 Oct)
+  S5  GPU lease module: one holder, 94% reservation, about 20 GB seat, spill behaviour, refuse while busy, verify against nvidia-smi (gpu.py docstring and switch())
+  S6  Restore script for the vision server (restore script docstring)
+  S7  Compute scheduler and day plan: 15-minute tick, time windows, dry run while switching is disabled, nightly memory sleep (scheduler.py, schedule.json)
+  S8  Seats file: seat models, temperatures, measurements, opt-in seats, department map (seats.json)
+  S9  Agent charters: 15 product agents, lanes and "Not for" clauses (agent definition files); 4 cross-cutting roles per charters
+  S10 Ownership map and hooks: 15 departments, 62 owned code paths, 5 operator-only paths; scope guard (fails closed, deny via output, PowerShell exit-code reason); shell guard (git push denied, merges integrator only); ownership audit before integration; sync script with check mode (ownership.json, scope_guard.py, bash_guard.py, check_ownership.py, sync_scopes.py)
+  S11 Memory tool and sleep pass: rules, 1,200-character cap, source hash, duplicate refusal, decisions first, CPU embeddings, judge pass off (memory.py, memory_sleep.py); 555 memory files counted 19 Oct
+  S12 Decision log: 294 entries, first 30 Sep 2026, append-only, later line supersedes, recommended option field (decisions.jsonl mechanism and counts only; serve_brief.py docstring)
+  S13 Handoff folders: 539 files in 11 department folders (counted 19 Oct)
+  S14 Founder directive, architecture and execution review, 18 Oct 2026: authority levels, finding classes, work contract and release controller (planned)
+  S15 CI workflow: Ubuntu and Windows, protected-test step with always(), pressure test 84 probes (tests.yml); protected list of 14 (check_protected_tests.py)
+  S16 Product test suite run 19 Oct (pytest tests api -m "not needs_swisseph"): 1,499 run, 1,496 passed, 3 failed (relmodel matter-state tests); queue periodic tests 10 passed
+  S17 Project instructions file: sensitive user data never goes to a cloud model; public-facing prose is drafted by a local model and approved by the Founder (CLAUDE.md)
+Agent Town (local folder, not public):
+  S18 ADRs (decisions.md): ADR-2 queue is the only scheduler and run-now sets aside only date gates, ADR-3 polling with a sequence cursor every 5 s, ADR-6 deterministic projection and precedence
+  S19 Architecture (architecture.md): sources table, commands, preview and confirm, idempotency 24 h, auth by private-network identity, events last 2,000
+  S20 State model (statemodel.py): fields, precedence, offline and idle rules, pair tests
+  S21 Overseer (overseer.py): checks, stuck thresholds, verdicts, never acts; state file at 08:30 19 Oct: 28 agents, 19 up, 5 waiting, 4 watch
+  S22 Done log (donelog.py; live endpoint 19 Oct): 1,060 rows; projects Skyrule 669, Operations 273, other personal projects 118
+  S23 Chat log (chatlog.py): read-only
+  S24 Music agent (music.py): proposes taste changes, saved only on her Save
+  S25 Events (events.py), controls (controls.py): snapshot diff, no invented history; never touches running jobs
+  S26 Agent table (world.py) and live world snapshot 19 Oct: 30 residents = 29 agents + the Founder; runtimes and default models
+  S27 Agent Town tests: unittest discover 19 Oct, 340 ran, 1 error
+Public site pages kept consistent: skyrule.html (15-agent organization, 15-minute tick, lanes, private access), agent-city.html (Claude or Qwen3 32B, RTX 5090 32 GB).
+-->
+</body>
+</html>
