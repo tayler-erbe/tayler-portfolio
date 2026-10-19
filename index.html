@@ -31,6 +31,7 @@
     .perf-year { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent2); white-space: nowrap; }
     .perf-rating { font-size: 0.85rem; color: var(--text); }
     #projects { background: var(--bg); }
+    #personal-projects { background: var(--bg); }
     .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
     .project-card { background: var(--surface); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; transition: background 0.2s; cursor: default; }
     .project-card:hover { background: var(--surface2); }
@@ -199,7 +200,7 @@
         </div>
         <div class="project-num">03</div>
         <div class="project-title">Email Archiving, E-Discovery & Privacy-Preserving NLP</div>
-        <p class="project-desc">Processed 79,676 historical .eml records from a 20-year institutional archive. PII detection and anonymization via Microsoft Presidio (5 strategies), LLaMA de-identified summarization, LDA + LLM-labeled topic modeling. Scalability analysis documented the production path. Built in partnership with RIMS and the University Library.</p>
+        <p class="project-desc">Processed 44,677 historical .eml files (79,676 messages) from a 20-year institutional archive. PII detection and anonymization via Microsoft Presidio (5 strategies), LLaMA de-identified summarization, LDA + LLM-labeled topic modeling. Scalability analysis documented the production path. Built in partnership with RIMS and the University Library.</p>
         <div class="project-tags">
           <span class="tag tag-accent">Presidio PII</span><span class="tag">LLaMA</span><span class="tag">E-Discovery</span><span class="tag">Topic Modeling</span><span class="tag">RIMS / Library</span>
         </div>
@@ -307,9 +308,9 @@
         </div>
         <div class="project-num">10</div>
         <div class="project-title">vLLM Multi-Model Sweep · Legislation Pipeline</div>
-        <p class="project-desc">Six-stage experimental funnel benchmarking three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="legislative-pipeline.html" class="link">Legislative Intelligence Platform</a>. Covers chunk-size sweep (66 cells), cross-model quality validation, concurrency scaling, per-request telemetry decomposition, SLO gate analysis, and a two-round human-graded qualitative review (Experiments 3 & 3.5). <strong>Production recommendation: Llama 3.1 8B AWQ at chunk_size=1200, concurrency=12–24</strong> — 20+ percentage-point parse-OK lead over all tested alternatives, quality invariant under concurrency (&lt;0.6pp across c=1→24), and the only model clearing 80% parse-OK at every tested chunk size. Exp 3.5 characterized parse-OK's within-model reliability: directional for Llama, reversed for Qwen and Mistral.</p>
+        <p class="project-desc">Six-stage experimental funnel benchmarking three open-weight 7–8B AWQ models (Mistral, Qwen 2.5, Llama 3.1) on a single NVIDIA L4 to defend or replace the production model choice for the <a href="legislative-pipeline.html" class="link">Legislative Intelligence Platform</a>. Covers chunk-size sweep (66 cells), cross-model quality validation, concurrency scaling, per-request telemetry decomposition, SLO gate analysis, and a two-round qualitative review graded by Claude Opus (Experiments 3 & 3.5). <strong>Production recommendation: Llama 3.1 8B AWQ at chunk_size=1200, concurrency=12–24</strong> — 20+ percentage-point parse-OK lead over all tested alternatives, quality invariant under concurrency (&lt;0.6pp across c=1→24), and the only model clearing 80% parse-OK at every tested chunk size. Exp 3.5 characterized parse-OK's within-model reliability: directional for Llama, reversed for Qwen and Mistral.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Llama 3.1 8B AWQ</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">AWQ Quantization</span><span class="tag">GPU Telemetry</span><span class="tag">Performance Engineering</span><span class="tag">Human-Graded QA</span><span class="tag">Production Decision</span>
+          <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Llama 3.1 8B AWQ</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">AWQ Quantization</span><span class="tag">GPU Telemetry</span><span class="tag">Performance Engineering</span><span class="tag">Opus-Graded QA</span><span class="tag">Production Decision</span>
         </div>
       </div>
 
@@ -329,6 +330,12 @@
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <section id="personal-projects">
+    <div class="section-header"><span class="section-tag">03 / Personal</span><h2 class="section-title">Personal Projects</h2><div class="section-line"></div></div>
+    <div class="projects-grid">
 
       <div class="project-card featured" style="border-left: 3px solid var(--accent3);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
@@ -428,12 +435,11 @@
       </div>
       -->
 
-
     </div>
   </section>
 
   <section id="skills">
-    <div class="section-header"><span class="section-tag">03 / Skills</span><h2 class="section-title">Technology Stack</h2><div class="section-line"></div></div>
+    <div class="section-header"><span class="section-tag">04 / Skills</span><h2 class="section-title">Technology Stack</h2><div class="section-line"></div></div>
     <div class="skills-layout">
       <div class="skill-group">
         <div class="skill-group-title">Languages & Modeling</div>
@@ -455,7 +461,7 @@
   </section>
 
   <section id="experience">
-    <div class="section-header"><span class="section-tag">04 / Experience</span><h2 class="section-title">Where I've Worked</h2><div class="section-line"></div></div>
+    <div class="section-header"><span class="section-tag">05 / Experience</span><h2 class="section-title">Where I've Worked</h2><div class="section-line"></div></div>
 
     <div class="exp-entry">
       <div class="exp-meta"><div class="exp-date">Aug 2026 – Present</div><div class="exp-org">Skyrule<br>Personal project<br>Self-hosted</div></div>
@@ -500,14 +506,14 @@
   </section>
 
   <section id="education">
-    <div class="section-header"><span class="section-tag">05 / Education</span><h2 class="section-title">Academic Background</h2><div class="section-line"></div></div>
+    <div class="section-header"><span class="section-tag">06 / Education</span><h2 class="section-title">Academic Background</h2><div class="section-line"></div></div>
     <div class="edu-grid">
       <div class="edu-card"><div class="edu-degree">B.S. Cognitive Science, Machine Learning &amp; Neural Computation</div><div class="edu-school">University of California, San Diego</div><p class="edu-note">Graduated Spring 2021</p></div>
     </div>
   </section>
 
   <section id="contact">
-    <div class="section-header"><span class="section-tag">06 / Contact</span></div>
+    <div class="section-header"><span class="section-tag">07 / Contact</span></div>
     <h2 class="section-title" style="font-family:var(--font-heading); font-size: clamp(2rem,4vw,3.5rem); color: var(--white); margin-bottom:1rem;">Let's Connect</h2>
     <p class="contact-tagline">Interested in analytics strategy, applied AI, or the work described here? Reach out.</p>
     <div class="contact-links">
@@ -523,7 +529,7 @@
   <footer class="site-footer">
     <div class="site-footer-meta">
       <p>Tayler Erbe · Data Scientist · AI Solutions, University of Illinois System</p>
-      <p>Last updated May 2026</p>
+      <p>Last updated October 2026</p>
     </div>
     <ul class="site-footer-links">
       <li><a href="index.html">Portfolio</a></li>
