@@ -324,7 +324,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026101903";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026101904";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -379,8 +379,25 @@
     return names[+m[2] - 1] + " " + (+m[3]) + ", " + m[1];
   }
 
+  // Tayler, 19 Oct: skip the model on slow phones. No model when the visitor asked to save data, on 2G/3G, or on a touch or
+  // narrow (<= 600px) screen unless the connection reports 4G. Without the Network Information API (Safari, iOS), load only
+  // on a non-touch or wide (> 900px) screen. Everyone else keeps the keyword search, which needs nothing extra.
+  function embAllowed() {
+    var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    var coarse = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+    var w = window.innerWidth || document.documentElement.clientWidth || 0;
+    if (c) {
+      var t = String(c.effectiveType || "");
+      if (c.saveData) return false;
+      if (t === "slow-2g" || t === "2g" || t === "3g") return false;
+      if ((coarse || w <= 600) && t !== "4g") return false;
+      return true;
+    }
+    return !coarse || w > 900;
+  }
   function loadEmbedder() {                       // lazy, non-blocking; resolves to the embed function or null
     if (embLoading) return embLoading;
+    if (!embAllowed()) { embState = "skipped"; return (embLoading = Promise.resolve(null)); }
     if (!EMB_ON || typeof WebAssembly !== "object" || typeof TextDecoder !== "function") { embState = "unsupported"; return (embLoading = Promise.resolve(null)); }
     embState = "loading";
     var dynImport = new Function("u", "return import(u)");   // keeps older parsers from failing on import()
@@ -557,7 +574,7 @@
 
   window.AskTayler = { Engine: Engine, load: load, search: function (q, v) { return engine ? engine.search(q, v) : null; },
                        loadEmbedder: loadEmbedder, embed: function (q) { return embedder ? embedder(q) : Promise.resolve(null); },
-                       embState: function () { return embState; }, _engine: function () { return engine; }, ask: function (q) { return load().then(function () { return searchBest(q); }); },
+                       embState: function () { return embState; }, embAllowed: function () { return embAllowed(); }, _engine: function () { return engine; }, ask: function (q) { return load().then(function () { return searchBest(q); }); },
                        _norm: rawTokens, _stem: stem };
   function start() { injectCss(); build(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
