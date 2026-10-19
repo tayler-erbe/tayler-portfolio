@@ -100,10 +100,70 @@
     </div>
   </section>
 
+
+  <!-- 03 AGENT CITY -->
+  <section id="agent-city">
+    <div class="section-header">
+      <div class="section-tag">03 / Agent City</div>
+      <h2 class="section-title">Agent City</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I launched Agent City on 15 October 2026 as a pixel-art city that works as the operations console for my AI agents and side projects. By 18 October, I had rebuilt it as a 3D world that runs in the browser, written in plain JavaScript with three.js; the 2D city is still there as a second view. I built it because tasks were finishing across several projects, decisions were being made, and some work was waiting on other work. I wanted to see where each project stood, what had changed, and where I was needed. The 3D world is not a distraction. It's a place where I show up more often because I enjoy it, and that makes me more present for the work.</p>
+    </div>
+
+    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
+      <img src="assets/shots/agent-city-3d-map.jpg" alt="Agent City in 3D: an island town with seven labelled neighbourhoods" loading="lazy">
+      <figcaption>Agent City in 3D, 18 Oct 2026: the whole map</figcaption>
+    </figure>
+
+    <div class="prose">
+      <!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>The world has 30 agents in seven neighbourhoods: a town center, a university campus, a creative quarter, an operations corner, a news and discovery district, a park and canyon, and a beach neighbourhood. The buildings are places I love, rebuilt in 3D: Geisel Library at UC San Diego, a Topanga Canyon retreat, a Cary park with a treehouse and slide, and a jazz kissaten café and record shop. There are 32 characters. I designed the concept art; they were turned into rigged, animated 3D models on my own GPU with open models and cleaned up in Blender by script.</p>
+    </div>
+
+    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
+      <img src="assets/shots/agent-city-characters.jpg" alt="The 32 Agent City characters standing in rows" loading="lazy">
+      <figcaption>The 32 characters, 3D models made on my own GPU from my concept art</figcaption>
+    </figure>
+
+    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
+      <img src="assets/shots/agent-city-geisel.jpg" alt="Geisel Library rebuilt in 3D on the Agent City campus" loading="lazy">
+      <figcaption>Geisel Library on the campus</figcaption>
+    </figure>
+
+    <div class="insight-box" style="margin-top:1.5rem;">
+      <div class="insight-box-title">Built to be operated, not watched</div>
+      <!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>Every animation maps to real state from the job queue: an agent is shown working only while its job is actually running. The town shows who is working, who needs me, what is scheduled, and what is offline. The place is not for show, it’s a control panel. I made a rule early on: the town must only reflect real system state. No fake motion, no busy-looking agents. That rule keeps the whole thing honest.</p>
+    </div>
+
+    <h3 class="subhead">What works today</h3>
+    <div class="kv"><!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. -->
+      <div class="k">Offices you can walk into</div><div class="v">Every agent has its own office. I can walk in, sit down, and chat with the agent about what it is working on.</div>
+      <div class="k">Board rooms</div><div class="v">I pick which agents join and brainstorm a topic with them live.</div>
+      <div class="k">Choose the brain</div><div class="v">For every conversation I choose the model: Claude Sonnet or Opus, or open models running locally on my own GPU through vLLM or Ollama. ChatGPT is wired in and waits only for a key.</div>
+      <div class="k">The Desk</div><div class="v">One page for the whole operation: today’s items that need me, a calendar with day, week and month views of finished jobs, running and queued jobs and my decisions, plus decisions, documents, projects, places and search.</div>
+      <div class="k">Done log and chat log</div><div class="v">The Done log keeps every finished job for good, newest first, with its report and the files it made: 1,031 finished jobs so far. The chat log keeps every conversation and board room.</div>
+      <div class="k">The Kissaten DJ</div><div class="v">A music agent behind the café counter that runs on a local model. I tell it my mood, it remembers my taste in a notebook it asks before saving to, and its suggestions appear as cards.</div>
+      <div class="k">Overseer</div><div class="v">It goes round every agent each hour: it flags failed, stuck or missed runs and asks each agent, on a local model, whether its last run did its job. It checks and never acts.</div>
+      <div class="k">Private by default</div><div class="v">It is reachable only over my private network, from my phone or laptop, over HTTPS; sign-in is checked against my private network identity; it never listens on the public internet.</div>
+    </div>
+
+    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
+      <img src="assets/shots/agent-city-office-chat.jpg" alt="Inside the GPU Keeper's office, with a chat with the agent open beside it" loading="lazy">
+      <figcaption>A chat with the GPU Keeper in its office, on a local model</figcaption>
+    </figure>
+
+    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
+      <img src="assets/shots/agent-city-kissaten-dj.jpg" alt="Inside the jazz kissaten: the Kissaten DJ suggests records in a chat panel" loading="lazy">
+      <figcaption>The Kissaten DJ suggesting records in the café</figcaption>
+    </figure>
+  </section>
+
   <!-- 03 LOCAL -->
   <section id="local">
     <div class="section-header">
-      <div class="section-tag">03 / Local LLM Stack</div>
+      <div class="section-tag">04 / Local LLM Stack</div>
       <h2 class="section-title">A self-hosted inference workstation</h2>
       <div class="section-line"></div>
     </div>
@@ -130,7 +190,7 @@
   <!-- 04 PROVENANCE -->
   <section id="provenance">
     <div class="section-header">
-      <div class="section-tag">04 / Provenance</div>
+      <div class="section-tag">05 / Provenance</div>
       <h2 class="section-title">Every number traces to a source</h2>
       <div class="section-line"></div>
     </div>
@@ -145,7 +205,7 @@
   <!-- 05 GENERATION -->
   <section id="generation">
     <div class="section-header">
-      <div class="section-tag">05 / Generation</div>
+      <div class="section-tag">06 / Generation</div>
       <h2 class="section-title">The model proposes; code checks every claim</h2>
       <div class="section-line"></div>
     </div>
@@ -175,7 +235,7 @@
   <!-- 06 EVALUATION -->
   <section id="evaluation">
     <div class="section-header">
-      <div class="section-tag">06 / Evaluation</div>
+      <div class="section-tag">07 / Evaluation</div>
       <h2 class="section-title">Grading 2.6 million pieces honestly</h2>
       <div class="section-line"></div>
     </div>
@@ -190,7 +250,7 @@
   <!-- 07 GOVERNANCE -->
   <section id="governance">
     <div class="section-header">
-      <div class="section-tag">07 / Governance</div>
+      <div class="section-tag">08 / Governance</div>
       <h2 class="section-title">Quality, security and data protection</h2>
       <div class="section-line"></div>
     </div>
@@ -207,7 +267,7 @@
   <!-- 08 NEXT -->
   <section id="next">
     <div class="section-header">
-      <div class="section-tag">08 / Timeline</div>
+      <div class="section-tag">09 / Timeline</div>
       <h2 class="section-title">Where it stands</h2>
       <div class="section-line"></div>
     </div>
