@@ -14,6 +14,9 @@
   var GENERIC = { favorite: 1, favourite: 1, fav: 1, like: 1, love: 1, best: 1, type: 1, kind: 1, prefer: 1, enjoy: 1, thing: 1, most: 1 };
   var MIN_COVER = 0.4, MIN_SCORE = 2.5, RELATED_RATIO = 0.45, UNKNOWN_W = 0.6, ARTICLE_PRIOR = 0.7, ANSWER_CREDIT = 0.6;
   var PARENT_SLACK = 0.02, PARENT_RATIO = 0.3;   // see the parent rule in search()
+  // meaning-based search (optional, loaded lazily): BM25 answers alone when it is sure (exact phrasing, or a confident match with
+  // cover >= GATE_COVER and score >= GATE_SCORE); otherwise BM25 and embedding scores are fused. Tuned on the blind dev half only.
+  var HYBRID_W = 0.5, GATE_COVER = 0.7, GATE_SCORE = 25, EMB_TAU = 0.75, EMB_FLOOR = 0.3, H_PARENT_RATIO = 0.9, AGREE_K = 3;
 
   function fold(s) {
     s = String(s || "").toLowerCase();
@@ -57,7 +60,9 @@
     var self = this;
     this.kb = kb;
     this.opt = { minCover: MIN_COVER, minScore: MIN_SCORE, unknownW: UNKNOWN_W, articlePrior: ARTICLE_PRIOR,
-                 parentSlack: PARENT_SLACK, parentRatio: PARENT_RATIO };
+                 parentSlack: PARENT_SLACK, parentRatio: PARENT_RATIO,
+                 hybridW: HYBRID_W, gateCover: GATE_COVER, gateScore: GATE_SCORE, embTau: EMB_TAU, embFloor: EMB_FLOOR,
+                 hParentRatio: H_PARENT_RATIO, agreeK: AGREE_K };
     if (opts) for (var o in opts) this.opt[o] = opts[o];
     this.stop = {};
     (kb.stopwords || []).forEach(function (w) { self.stop[w] = 1; });
@@ -168,7 +173,75 @@
     return Math.log(1 + (this.N - df + 0.5) / (df + 0.5));
   };
 
-  Engine.prototype.search = function (query) {
+  // kb_emb.bin (build_emb.py): uint32 header length, JSON header, uint16 owner[n], (pad), float32 scale[n], int8 vec[n*dim]
+  Engine.prototype.setEmbeddings = function (buf) {
+    var dv = new DataView(buf), hl = dv.getUint32(0, true);
+    var head = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, hl)));
+    var off = 4 + hl, n = head.n, dim = head.dim;
+    var owners = new Uint16Array(buf.slice(off, off + 2 * n)); off += 2 * n; if (off % 4) off += 2;
+    var scale = new Float32Array(buf.slice(off, off + 4 * n)); off += 4 * n;
+    var vec = new Int8Array(buf, off, n * dim);
+    var pos = {}, self = this;
+    this.docs.forEach(function (d, i) { pos[d.card.id] = i; });
+    var map = head.cards.map(function (id) { return pos[id] === undefined ? -1 : pos[id]; });   // header order -> doc index
+    this.emb = { n: n, dim: dim, owner: owners, scale: scale, vec: vec, map: map, head: head };
+    return head;
+  };
+  Engine.prototype.embScores = function (q) {      // max cosine over each card's vectors; q is a normalised Float32Array
+    var e = this.emb, out = new Float32Array(this.docs.length).fill(-1);
+    for (var i = 0; i < e.n; i++) {
+      var d = e.map[e.owner[i]];
+      if (d < 0) continue;
+      var s = 0, base = i * e.dim;
+      for (var k = 0; k < e.dim; k++) s += e.vec[base + k] * q[k];
+      s *= e.scale[i] / 127;
+      if (s > out[d]) out[d] = s;
+    }
+    return out;
+  };
+  Engine.prototype.agrees = function (id, qvec, k) {   // is BM25's card among the embedding's top k?
+    if (!k) return false;
+    var es = this._es || this.embScores(qvec), pos = -1, better = 0, i;
+    this._es = es;
+    for (i = 0; i < this.docs.length; i++) if (this.docs[i].card.id === id) { pos = i; break; }
+    if (pos < 0) return false;
+    for (i = 0; i < es.length; i++) if (es[i] > es[pos]) better++;
+    return better < k;
+  };
+  Engine.prototype.hybrid = function (res, qvec) {
+    this._es = null;
+    var o = this.opt, top = res.top;
+    if ((res.best && res.best.exact) || (top && (top.exact || (res.confident && top.cover >= o.gateCover && top.score >= o.gateScore)))) return res;   // BM25 is sure
+    if (res.confident && top && this.agrees(top.card.id, qvec, o.agreeK)) return res;   // both searches agree on BM25's card
+    if (!res.best && /\b(old|age|tall|height|weight|birthday)\b/.test(rawTokens(res.query).join(" "))) return res; // never guess personal details
+    var es = this._es || this.embScores(qvec), order = [], i;
+    for (i = 0; i < es.length; i++) order.push(i);
+    order.sort(function (a, b) { return es[b] - es[a]; });
+    order = order.slice(0, 30);
+    var smax = es[order[0]], f = {}, byId = {}, maxBm = 0;
+    (res.all || []).forEach(function (r) { if (r.score > maxBm) maxBm = r.score; });
+    (res.all || []).forEach(function (r) { f[r.card.id] = o.hybridW * r.score / (maxBm || 1); byId[r.card.id] = r; });
+    var self = this;
+    order.forEach(function (j) {
+      var c = self.docs[j].card;
+      f[c.id] = (f[c.id] || 0) + (1 - o.hybridW) * Math.max(0, (es[j] - o.embFloor) / Math.max(1e-6, smax - o.embFloor));
+      if (!byId[c.id]) byId[c.id] = { card: c, score: 0, cover: 0, exact: false, content: true };
+    });
+    var ids = Object.keys(f).sort(function (a, b) { return f[b] - f[a]; });
+    var best = ids[0], par = best && byId[best].card.parent;
+    if (par && f[par] !== undefined && f[par] >= o.hParentRatio * f[best]) best = par;   // a general question goes to the summary card
+    var confident = res.confident || smax >= o.embTau;
+    var related = ids.filter(function (id) { return id !== best && f[id] >= RELATED_RATIO * f[best]; }).slice(0, 2)
+                     .map(function (id) { return byId[id]; });
+    return { query: res.query, terms: res.terms, best: confident ? byId[best] : null, top: byId[best], related: related,
+             confident: confident, mode: "hybrid", embTop: smax, ranked: ids.slice(0, 30).map(function (id) { return byId[id]; }) };
+  };
+
+  Engine.prototype.search = function (query, qvec) {
+    var res = this.searchBm25(query);
+    return qvec && this.emb ? this.hybrid(res, qvec) : res;
+  };
+  Engine.prototype.searchBm25 = function (query) {
     var self = this, qnorm = rawTokens(query).join(" ");
     var units = this.units(query, true);
     if (!units.length && /\b(who|you|your|yourself|she|her|tayler|erbe|taylor|tay|u|ur)\b/.test(qnorm) &&
@@ -245,16 +318,22 @@
     }
     return { query: query, terms: terms, best: confident ? top : null, top: top || null,
              related: confident ? related : results.filter(function (r) { return r.content; }).slice(0, 2), confident: confident,
-             ranked: results.slice(0, 10) };   // tests and tuning only
+             ranked: results.slice(0, 30), all: results, mode: "bm25" };
   };
 
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026101902";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026101903";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
+  var EMB_URL = BASE + "kb_emb.bin" + (VERSION ? "?" + VERSION : "");
+  // the in-browser sentence model: library from jsDelivr and model files from the Hugging Face hub, both pinned to exact
+  // versions. The question is embedded on the visitor's device and never sent anywhere. If any of this fails (old phone,
+  // offline, blocked CDN), the panel keeps using BM25 alone.
+  var EMB_LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2/dist/transformers.min.js";
+  var EMB_ON = true;
   var TEXT = {                                   // UI labels (functional, not prose); Tayler may change any of these
     bubble: "Ask about Tayler",
     title: "Ask about Tayler",
@@ -268,7 +347,7 @@
     failed: "The answers could not load.",
     you: "You asked"
   };
-  var engine = null, loading = null, els = {};
+  var engine = null, loading = null, els = {}, embedder = null, embLoading = null, embState = "off";
 
   function h(tag, attrs, kids) {
     var e = document.createElement(tag);
@@ -298,6 +377,33 @@
     if (!m) return "";
     var names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     return names[+m[2] - 1] + " " + (+m[3]) + ", " + m[1];
+  }
+
+  function loadEmbedder() {                       // lazy, non-blocking; resolves to the embed function or null
+    if (embLoading) return embLoading;
+    if (!EMB_ON || typeof WebAssembly !== "object" || typeof TextDecoder !== "function") { embState = "unsupported"; return (embLoading = Promise.resolve(null)); }
+    embState = "loading";
+    var dynImport = new Function("u", "return import(u)");   // keeps older parsers from failing on import()
+    embLoading = load().then(function () {
+      return Promise.all([dynImport(EMB_LIB), fetch(EMB_URL, { credentials: "omit", cache: "force-cache" })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.arrayBuffer(); })]);
+    }).then(function (x) {
+      var lib = x[0], head = engine.setEmbeddings(x[1]);
+      lib.env.allowLocalModels = false;
+      lib.env.useBrowserCache = false;             // no Cache Storage: nothing is stored on the visitor's device
+      return lib.pipeline("feature-extraction", head.model, { revision: head.revision, dtype: head.dtype || "q8" });
+    }).then(function (fe) {
+      embedder = function (q) {
+        return fe(q, { pooling: "mean", normalize: true }).then(function (t) { return new Float32Array(t.data); });
+      };
+      embState = "ready";
+      return embedder;
+    }).catch(function () { embState = "failed"; embedder = null; return null; });
+    return embLoading;
+  }
+  function searchBest(q) {                         // hybrid when the model is ready, BM25 at once otherwise
+    if (!embedder) return Promise.resolve(engine.search(q));
+    return embedder(q).then(function (v) { return engine.search(q, v); }, function () { return engine.search(q); });
   }
 
   function load() {
@@ -347,6 +453,7 @@
     els.bubble.setAttribute("aria-expanded", "true");
     els.root.classList.add("is-open");
     els.input.focus();
+    loadEmbedder();
     if (!els.log.childNodes.length) {
       var status = h("p", { class: "ask-status", text: TEXT.loading });
       els.log.appendChild(status);
@@ -426,8 +533,7 @@
     els.input.focus();
   }
   function ask(q, label) {
-    load().then(function () {
-      var res = engine.search(q);
+    load().then(function () { return searchBest(q); }).then(function (res) {
       var block = h("div", { class: "ask-block" }, [userLine(label || q)]);
       if (res.best) {
         block.appendChild(cardView(res.best.card));
@@ -449,7 +555,9 @@
     document.head.appendChild(l);
   }
 
-  window.AskTayler = { Engine: Engine, load: load, search: function (q) { return engine ? engine.search(q) : null; },
+  window.AskTayler = { Engine: Engine, load: load, search: function (q, v) { return engine ? engine.search(q, v) : null; },
+                       loadEmbedder: loadEmbedder, embed: function (q) { return embedder ? embedder(q) : Promise.resolve(null); },
+                       embState: function () { return embState; }, _engine: function () { return engine; }, ask: function (q) { return load().then(function () { return searchBest(q); }); },
                        _norm: rawTokens, _stem: stem };
   function start() { injectCss(); build(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
