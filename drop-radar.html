@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drop Radar &middot; Personal Project &middot; Tayler Erbe</title>
+  <meta name="description" content="Drop Radar, a personal project: a 24/7 drop-alert system I built for my husband in a weekend. It watches about 40 stores and sources, alerts his phone in seconds, and improves itself through an AI agent that reads his Telegram notes, changes its own code, tests it and replies. Alerts only, never a checkout bot." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
+  <!--
+    Drafting note (25 Oct 2026): page structure and facts from master/work_history.md, section
+    "PERSONAL PROJECT - DROP RADAR" (lines 1145-1170), plus the story Tayler told in her own post.
+    Body prose drafted by Claude under the 20 Oct suspension of the no-Claude-writing rule;
+    awaiting Tayler's approval before publishing.
+    Privacy: no names, addresses, IDs, purchase data, repo or dashboard links on this page.
+  -->
+  <style>
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .diagram { background: var(--surface2); border: 1px solid var(--border); margin: var(--space-6) 0; }
+    .diagram-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 1.25rem; }
+    .diagram-scroll svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    .diagram figcaption { padding: 0.85rem 1.1rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); font-family: var(--font-mono); letter-spacing: 0.03em; }
+    .scroll-hint { display: none; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted); padding: 0 1.25rem 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    @media (max-width: 800px) { .scroll-hint { display: block; } }
+
+    /* SVG parts: colours come from the site tokens */
+    .d-frame { fill: none; stroke: var(--border); stroke-width: 1.5; }
+    .d-frame-accent { fill: none; stroke: var(--accent2); stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .d-box { fill: var(--surface); stroke: var(--border); stroke-width: 1.2; }
+    .d-box-accent { fill: var(--accent-faint); stroke: var(--accent2); stroke-width: 1.2; }
+    .d-box-warm { fill: var(--coral-bg); stroke: var(--accent3); stroke-width: 1.2; }
+    .d-box-green { fill: var(--green-bg); stroke: var(--green); stroke-width: 1.2; }
+    .d-line { fill: none; stroke: var(--muted); stroke-width: 1.3; }
+    .d-line-accent { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+    .d-line-warm { fill: none; stroke: var(--accent3); stroke-width: 1.3; }
+    .d-line-dash { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 4; }
+    .d-arrow { fill: var(--muted); }
+    .d-arrow-accent { fill: var(--accent); }
+    .d-arrow-warm { fill: var(--accent3); }
+    .d-title { fill: var(--accent2); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .d-label { fill: var(--text); font-size: 12px; }
+    .d-label-strong { fill: var(--white); font-size: 13px; }
+    .d-small { fill: var(--muted); font-size: 10.5px; }
+    .d-warm { fill: var(--accent3); font-size: 11px; }
+    .d-green { fill: var(--green); font-size: 11px; }
+
+    .plain-list { margin: 0 0 1em; padding-left: 1.2em; max-width: var(--measure); color: var(--muted); line-height: var(--leading-prose); }
+    .plain-list li { margin-bottom: 0.4em; }
+    .plain-list li strong { color: var(--text); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; Oct 2026 to Present</div>
+    <h1>Drop Radar<br><span>A drop-alert system that learns from his texts</span></h1>
+    <p class="hero-desc">Drop Radar is a real-time alert system I built for my husband over one weekend. It watches about 40 stores and sources around the clock for the limited releases he collects, pings his phone within seconds when one goes live, and improves itself from the notes he texts it. It only ever alerts. He still makes every purchase himself.</p>
+
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Live 24/7 since Oct 22, 2026</div></div>
+      <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">Builder and technical lead</div></div>
+      <div class="meta-item"><div class="meta-label">First build</div><div class="meta-value">Oct 22 to 25, 2026 (one weekend)</div></div>
+      <div class="meta-item"><div class="meta-label">Runs on</div><div class="meta-value">A home PC, standard-library Python</div></div>
+    </div>
+
+    <div class="toc">
+      <a href="#story"><span class="toc-num">01</span><span class="toc-name">Why I built it</span></a>
+      <a href="#what"><span class="toc-num">02</span><span class="toc-name">What it does</span></a>
+      <a href="#loop"><span class="toc-num">03</span><span class="toc-name">The self-improving loop</span></a>
+      <a href="#architecture"><span class="toc-num">04</span><span class="toc-name">Architecture and stack</span></a>
+      <a href="#results"><span class="toc-num">05</span><span class="toc-name">Results</span></a>
+      <a href="#limits"><span class="toc-num">06</span><span class="toc-name">What it will not do</span></a>
+      <a href="#timeline"><span class="toc-num">07</span><span class="toc-name">Timeline</span></a>
+      <a href="#lessons"><span class="toc-num">08</span><span class="toc-name">What I learned</span></a>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-item"><div class="stat-big">~40</div><div class="stat-desc">Stores and sources watched around the clock</div></div>
+    <div class="stat-item"><div class="stat-big">357</div><div class="stat-desc">Commits, Oct 22 to 25, 2026</div></div>
+    <div class="stat-item"><div class="stat-big">~3,300</div><div class="stat-desc">Lines of standard-library Python in 12 modules</div></div>
+    <div class="stat-item"><div class="stat-big">25</div><div class="stat-desc">Automated tests, all on fabricated data</div></div>
+  </div>
+
+  <!-- 01 STORY -->
+  <section id="story">
+    <div class="section-header">
+      <div class="section-tag">01 / Why I built it</div>
+      <h2 class="section-title">Why I built it</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>My husband worked at a card shop when he was 12. He went on to a completely different career, but he never stopped loving collecting and reselling: trading cards, collectible toys, watches.</p>
+      <p>For months he was glued to his phone trying to catch limited drops, and he kept losing them to bots. These releases sell out in minutes, and no person can refresh a dozen stores at once while also living their life.</p>
+      <p>So I built Drop Radar in a weekend. The goal was simple. He could stop watching his phone, trust it to tell him when something mattered, and we would get that time back together.</p>
+      <p>A few days in, its AI deep search found a limited-edition watch, only 100 made, that sold out within minutes. <strong>He got one.</strong></p>
+    </div>
+  </section>
+
+  <!-- 02 WHAT IT DOES -->
+  <section id="what">
+    <div class="section-header">
+      <div class="section-tag">02 / What it does</div>
+      <h2 class="section-title">What it <span>does</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Watches about 40 sources, all day and night</div>
+          <div class="step-body">Store product feeds for new items and restocks, store homepages for a waiting room appearing (a queue going up means a drop is starting), page and keyword watchers, and RSS feeds. Each source has its own check interval, and checks tighten inside the drop windows he knows well, like weekday mornings at one store and evenings at another. On top of that, Discord restock channels arrive over the official live connection, and an AI deep search hunts for small-batch limited editions the scripted feeds miss.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Filters to what he actually wants</div>
+          <div class="step-body">Online, at retail price, from the real store. Third-party marketplace sellers are flagged, and in-store sightings, resale listings and giveaways go to the dashboard instead of his phone. The same product or link only alerts once per 30 minutes across all sources, and quiet hours keep the night quiet.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Alerts at three levels</div>
+          <div class="step-body"><strong>LIVE</strong> means buyable now or the queue is up, with a loud push. <strong>SOON</strong> is an announcement, with a normal push. <strong>INFO</strong> goes to the dashboard only. Alerts go to a Telegram bot, with optional Pushover critical alerts and ntfy, and carry the product, store, price, seller, when it was posted, when it was seen, and the direct store link.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Gets him to checkout faster, within store rules</div>
+          <div class="step-body">One-tap cart links that open checkout with the item already in the cart (Drop Radar builds the link and never opens it). Reminders 24 hours and 15 minutes before an announced drop, with time zones converted and tested across a daylight-saving change. A per-store checklist so his accounts are ready for invite and raffle programs.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">Keeps a private ledger of his collection</div>
+          <div class="step-body">It reads a dedicated inbox, read-only, every 15 minutes and parses order, shipping, delivery and cancellation emails from about 15 retailers, plus eBay seller emails. From those it keeps cost basis, what he still holds, going rates with their source and date, days held, and a SELL NOW, HOLD or WATCH suggestion with its reason. For eBay it works out fees, payout and profit and reminds him 24 and 4 hours before a ship-by deadline. Emails it cannot read go to a review list, never dropped. All of it stays on our home PC.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 LOOP -->
+  <section id="loop">
+    <div class="section-header">
+      <div class="section-tag">03 / The self-improving loop</div>
+      <h2 class="section-title">It improves itself <span>at his command</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>This is my favourite part. The Telegram bot is not only an alert channel. It is a two-way line to an AI agent. Commands like <code>/add</code>, <code>/remove</code>, <code>/status</code>, <code>/remind</code>, <code>/ledger</code> and <code>/price</code> run straight away. Anything else he sends, a text, a dictated note or a screenshot, is saved as feedback.</p>
+      <p>A file watcher notices the new note (or a source that has started failing) and queues a run of a dedicated Claude Code agent. The agent has written rules and a living knowledge file. It reads the note, works out what is wrong, edits the code or the source list, runs the tests, restarts the service, and replies on Telegram with what it changed. He never touches a line of code.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 330" role="img" aria-label="The self-improving loop. He sends a text, dictated note or screenshot on Telegram. The bot runs commands straight away and saves anything else to a feedback inbox. A file watcher queues an agent run when a note or a source failure appears. A Claude Code agent with written rules and a knowledge file diagnoses the issue, changes the code or sources and runs the tests, then restarts the service and replies on Telegram with what changed. Scheduled runs feed the same agent: a daily review, a weekly review that ends with a feedback check-in, weekly resale picks and a monthly research pass.">
+          <defs>
+            <marker id="la" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+            <marker id="la-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-accent" /></marker>
+            <marker id="la-warm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-warm" /></marker>
+          </defs>
+
+          <text x="20" y="24" class="d-title">One note, one fix, one reply</text>
+
+          <rect x="20" y="40" width="160" height="78" class="d-box-warm" />
+          <text x="100" y="66" text-anchor="middle" class="d-label-strong">His phone</text>
+          <text x="100" y="86" text-anchor="middle" class="d-small">a text, a dictated note</text>
+          <text x="100" y="101" text-anchor="middle" class="d-small">or a screenshot</text>
+
+          <rect x="210" y="40" width="160" height="78" class="d-box" />
+          <text x="290" y="66" text-anchor="middle" class="d-label-strong">Telegram bot</text>
+          <text x="290" y="86" text-anchor="middle" class="d-small">commands run now</text>
+          <text x="290" y="101" text-anchor="middle" class="d-small">the rest to an inbox</text>
+
+          <rect x="400" y="40" width="160" height="78" class="d-box" />
+          <text x="480" y="66" text-anchor="middle" class="d-label-strong">File watcher</text>
+          <text x="480" y="86" text-anchor="middle" class="d-small">new note or a failure</text>
+          <text x="480" y="101" text-anchor="middle" class="d-small">queues an agent run</text>
+
+          <rect x="590" y="40" width="160" height="78" class="d-box-accent" />
+          <text x="670" y="66" text-anchor="middle" class="d-label-strong">Claude Code agent</text>
+          <text x="670" y="86" text-anchor="middle" class="d-small">written rules and a</text>
+          <text x="670" y="101" text-anchor="middle" class="d-small">living knowledge file</text>
+
+          <rect x="780" y="40" width="160" height="78" class="d-box-green" />
+          <text x="860" y="66" text-anchor="middle" class="d-label-strong">Change and test</text>
+          <text x="860" y="86" text-anchor="middle" class="d-small">edit code or sources,</text>
+          <text x="860" y="101" text-anchor="middle" class="d-small">run tests, restart</text>
+
+          <path d="M180 79 H206" class="d-line" marker-end="url(#la)" />
+          <path d="M370 79 H396" class="d-line" marker-end="url(#la)" />
+          <path d="M560 79 H586" class="d-line" marker-end="url(#la)" />
+          <path d="M750 79 H776" class="d-line-accent" marker-end="url(#la-accent)" />
+
+          <!-- reply back to the phone -->
+          <path d="M860 118 V160 H100 V122" class="d-line-accent" marker-end="url(#la-accent)" />
+          <rect x="370" y="148" width="220" height="24" class="d-box" />
+          <text x="480" y="164" text-anchor="middle" class="d-label">Reply on Telegram: what changed</text>
+
+          <!-- scheduled runs -->
+          <rect x="20" y="200" width="920" height="116" class="d-frame-accent" />
+          <text x="34" y="220" class="d-title">Scheduled runs of the same agent, through a job queue</text>
+          <rect x="34" y="234" width="210" height="62" class="d-box" />
+          <text x="139" y="260" text-anchor="middle" class="d-label-strong">Daily review</text>
+          <text x="139" y="280" text-anchor="middle" class="d-small">every day</text>
+          <rect x="258" y="234" width="210" height="62" class="d-box-warm" />
+          <text x="363" y="260" text-anchor="middle" class="d-label-strong">Weekly review</text>
+          <text x="363" y="280" text-anchor="middle" class="d-small">ends with Keep / Change / Drop</text>
+          <rect x="482" y="234" width="210" height="62" class="d-box" />
+          <text x="587" y="260" text-anchor="middle" class="d-label-strong">Weekly resale picks</text>
+          <text x="587" y="280" text-anchor="middle" class="d-small">a briefing for reselling</text>
+          <rect x="706" y="234" width="220" height="62" class="d-box" />
+          <text x="816" y="260" text-anchor="middle" class="d-label-strong">Monthly research</text>
+          <text x="816" y="280" text-anchor="middle" class="d-small">a research pass</text>
+          <path d="M670 200 V122" class="d-line-dash" marker-end="url(#la)" />
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
+      <figcaption>How a note from his phone becomes a tested code change and a reply</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>The agent also runs on a schedule: a daily review, a weekly review, a weekly resale-picks briefing and a monthly research pass. Every weekly review ends with a feedback check-in. Each change from that week gets <strong>Keep</strong>, <strong>Change</strong> and <strong>Drop</strong> buttons, plus one open question that rotates, so the person using it checks the system every week.</p>
+      <p>He asked for it to be easy, so questions come as tap-to-choose Telegram buttons rather than paragraphs: what to follow, which Discord servers, how often the deep search runs. Every choice is saved to a file the agent acts on, and every choice can be undone. Each extra feature also has a live on and off switch, so anything he declines comes out without a restart.</p>
+    </div>
+  </section>
+
+  <!-- 04 ARCHITECTURE -->
+  <section id="architecture">
+    <div class="section-header">
+      <div class="section-tag">04 / Architecture and stack</div>
+      <h2 class="section-title">Architecture and <span>stack</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Everything is standard-library Python, run by Windows Task Scheduler with a wrapper that restarts it if it stops. No frameworks, no proxies, nothing to install beyond Python itself.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 440" role="img" aria-label="Architecture. Six kinds of source on the left: store product feeds, waiting-room detection, page and keyword watchers, RSS feeds, Discord over the official Gateway, and the AI deep search. They feed a polling engine in the middle that runs each source on its own interval, backs off politely, filters and removes duplicates, and records health and timing. On the right, alerts at three levels: LIVE and SOON go to his phone through Telegram, Pushover or ntfy, and INFO goes to the dashboard. Along the bottom, a private band on the home PC: the collection ledger, and the arrival log, kept out of the code repository.">
+          <defs>
+            <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+            <marker id="aa-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-accent" /></marker>
+          </defs>
+
+          <!-- sources -->
+          <rect x="20" y="20" width="240" height="300" class="d-frame" />
+          <text x="34" y="40" class="d-title">Sources &middot; about 40</text>
+          <rect x="34" y="52" width="212" height="36" class="d-box" /><text x="140" y="75" text-anchor="middle" class="d-label">Store product feeds</text>
+          <rect x="34" y="96" width="212" height="36" class="d-box" /><text x="140" y="119" text-anchor="middle" class="d-label">Waiting-room detection</text>
+          <rect x="34" y="140" width="212" height="36" class="d-box" /><text x="140" y="163" text-anchor="middle" class="d-label">Page and keyword watchers</text>
+          <rect x="34" y="184" width="212" height="36" class="d-box" /><text x="140" y="207" text-anchor="middle" class="d-label">RSS feeds</text>
+          <rect x="34" y="228" width="212" height="36" class="d-box-accent" /><text x="140" y="251" text-anchor="middle" class="d-label">Discord Gateway (websocket)</text>
+          <rect x="34" y="272" width="212" height="36" class="d-box-warm" /><text x="140" y="295" text-anchor="middle" class="d-label">AI deep search</text>
+
+          <path d="M260 170 H306" class="d-line" marker-end="url(#aa)" />
+
+          <!-- engine -->
+          <rect x="310" y="20" width="320" height="300" class="d-frame-accent" />
+          <text x="324" y="40" class="d-title">Polling engine &middot; 24/7</text>
+          <rect x="324" y="52" width="292" height="50" class="d-box" />
+          <text x="470" y="73" text-anchor="middle" class="d-label">Own interval per source</text>
+          <text x="470" y="91" text-anchor="middle" class="d-small">tighter inside known drop windows</text>
+          <rect x="324" y="110" width="292" height="50" class="d-box" />
+          <text x="470" y="131" text-anchor="middle" class="d-label">Polite by design</text>
+          <text x="470" y="149" text-anchor="middle" class="d-small">backoff on 403 / 429, host spacing</text>
+          <rect x="324" y="168" width="292" height="50" class="d-box" />
+          <text x="470" y="189" text-anchor="middle" class="d-label">Filter and de-duplicate</text>
+          <text x="470" y="207" text-anchor="middle" class="d-small">online, retail, real store; 30-min de-dup</text>
+          <rect x="324" y="226" width="292" height="50" class="d-box-green" />
+          <text x="470" y="247" text-anchor="middle" class="d-label">Health and timing</text>
+          <text x="470" y="265" text-anchor="middle" class="d-small">health per source, arrival log per alert</text>
+          <text x="470" y="302" text-anchor="middle" class="d-small">REST polling stays as the Discord fallback</text>
+
+          <path d="M630 100 H676" class="d-line-accent" marker-end="url(#aa-accent)" />
+          <path d="M630 170 H676" class="d-line" marker-end="url(#aa)" />
+          <path d="M630 240 H676" class="d-line" marker-end="url(#aa)" />
+
+          <!-- outputs -->
+          <rect x="680" y="20" width="260" height="300" class="d-frame" />
+          <text x="694" y="40" class="d-title">Alerts</text>
+          <rect x="694" y="74" width="232" height="50" class="d-box-warm" />
+          <text x="810" y="95" text-anchor="middle" class="d-label-strong">LIVE</text>
+          <text x="810" y="113" text-anchor="middle" class="d-small">buyable now or queue up: loud push</text>
+          <rect x="694" y="144" width="232" height="50" class="d-box-accent" />
+          <text x="810" y="165" text-anchor="middle" class="d-label-strong">SOON</text>
+          <text x="810" y="183" text-anchor="middle" class="d-small">announcement: normal push</text>
+          <rect x="694" y="214" width="232" height="50" class="d-box" />
+          <text x="810" y="235" text-anchor="middle" class="d-label-strong">INFO</text>
+          <text x="810" y="253" text-anchor="middle" class="d-small">dashboard only (10-min refresh)</text>
+          <text x="810" y="296" text-anchor="middle" class="d-small">phone: Telegram, Pushover, ntfy</text>
+
+          <!-- private band -->
+          <rect x="20" y="344" width="920" height="84" class="d-frame" />
+          <text x="34" y="364" class="d-title">Private, stays on the home PC</text>
+          <rect x="34" y="374" width="290" height="42" class="d-box" />
+          <text x="179" y="400" text-anchor="middle" class="d-label">Collection ledger (local database)</text>
+          <rect x="335" y="374" width="290" height="42" class="d-box" />
+          <text x="480" y="400" text-anchor="middle" class="d-label">Arrival log and monthly timing summary</text>
+          <rect x="636" y="374" width="290" height="42" class="d-box" />
+          <text x="781" y="400" text-anchor="middle" class="d-label">Never in the code repo (tested)</text>
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
+      <figcaption>Sources in, three alert levels out, private data kept at home</figcaption>
+    </figure>
+
+    <div class="kv">
+      <div class="k">Language</div><div class="v">Python, standard library only: urllib, sqlite3, imaplib, email, threading, http.server, and a websocket client built on ssl and socket</div>
+      <div class="k">Alerts and chat</div><div class="v">Telegram Bot API with inline keyboards, Pushover, ntfy</div>
+      <div class="k">Ingestion</div><div class="v">Shopify product feeds, waiting-room pages, page and keyword watchers, RSS, Discord REST and Gateway APIs, email over IMAP (read-only)</div>
+      <div class="k">AI</div><div class="v">A Claude Code subagent that maintains the system, scheduled agent runs through an autonomous job queue, Claude web research for the deep search, and ChatGPT as an independent second opinion</div>
+      <div class="k">Running it</div><div class="v">Windows Task Scheduler with an auto-restart wrapper, a GitHub Pages dashboard, unittest</div>
+    </div>
+
+    <div class="prose">
+      <p><strong>Discord, the official way.</strong> I joined nine community restock servers for him and followed six of their announcement channels into his own private server, where a read-only bot reads the posts. It started as REST polling every 10 seconds. I moved it to Discord&rsquo;s official Gateway through a websocket client written on the standard library, with heartbeat, resume and dead-connection detection, so posts now arrive in about a second, with REST polling as an automatic fallback. No self-bots, no user tokens.</p>
+      <p><strong>Health that tells the truth.</strong> Every source has a health row with real states. The Discord feed only counts as healthy when a followed post actually arrived in the last 24 hours, not just because the code ran. An arrival log records every alert&rsquo;s upstream post time, detection time and send time, and feeds a monthly summary of which sources are fastest and each store&rsquo;s busiest day and hour.</p>
+      <p><strong>Bugs found in live data.</strong> A backoff that froze the whole loop for up to an hour (a blocked host is now skipped, not slept on). Channels whose first posts were swallowed because they had no baseline yet. A substring match that let &ldquo;atc&rdquo; fire on &ldquo;watch&rdquo;. A feedback watcher that queued notes it had already handled again. All four were found in live data and fixed.</p>
+    </div>
+  </section>
+
+  <!-- 05 RESULTS -->
+  <section id="results">
+    <div class="section-header">
+      <div class="section-tag">05 / Results</div>
+      <h2 class="section-title">Results</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="results-strip results-strip-4">
+      <div class="result-cell"><div class="result-num">1 of 100</div><div class="result-label">Limited-edition watch found by the deep search, sold out in minutes. He got one.</div></div>
+      <div class="result-cell"><div class="result-num">~1s</div><div class="result-label">Discord post to Drop Radar over the Gateway, down from 10-second polling</div></div>
+      <div class="result-cell"><div class="result-num">22</div><div class="result-label">Stores he buys from, terms researched. None permits automated checkout</div></div>
+      <div class="result-cell"><div class="result-num">24/7</div><div class="result-label">Live since Oct 22, 2026, on a home PC</div></div>
+    </div>
+
+    <div class="prose" style="margin-top:1.5rem;">
+      <p>The deep search was added to hunt for small-batch limited editions that scripted feeds miss. Its first test run surfaced the 100-piece watch. That one find changed the design: the deep search is now weighted toward limited editions, which he named as his top priority.</p>
+    </div>
+  </section>
+
+  <!-- 06 LIMITS -->
+  <section id="limits">
+    <div class="section-header">
+      <div class="section-tag">06 / What it will not do</div>
+      <h2 class="section-title">What it will <span>not</span> do</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-label">Alerts only</div>
+      <p>Drop Radar never buys, never joins or skips a queue, never solves a CAPTCHA and never tries to get around bot protection. It uses no proxies. <strong>He still makes every purchase himself.</strong></p>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-box">
+        <div class="insight-box-title">Checked the rules first</div>
+        <p>I researched all 22 stores he buys from: the platform, the bot protection I could observe, and their terms of service, quoted and dated. None permits automated checkout, so I built the legitimate speed-ups instead: cart links, reminders and account readiness.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">No scraping where it is forbidden</div>
+        <p>TCGplayer and eBay forbid scraping, and eBay&rsquo;s sold-price API is restricted. Going rates are automated only through a paid API that permits it, and otherwise flagged for him to check by hand.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Polite to every store</div>
+        <p>When a store pushes back with a 403 or 429, Drop Radar checks it less often. Hosts are spaced out. It never hides behind proxies.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">His data stays home</div>
+        <p>Every purchase, sale and timing record stays on our home PC and never goes into the code repository. Git ignores it twice over, and a test proves it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 TIMELINE -->
+  <section id="timeline">
+    <div class="section-header">
+      <div class="section-tag">07 / Timeline</div>
+      <h2 class="section-title">Timeline</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="kv">
+      <div class="k">Oct 22, 2026</div><div class="v">Version 1 live: store feed, waiting-room, page and RSS watchers; Telegram, Pushover and ntfy alerts; bot commands; dashboard; drop windows and reminders; feedback notes through the bot; 14 more sources the same day.</div>
+      <div class="k">Oct 22 to 23</div><div class="v">Quality reset after he judged the early alerts low-value: only actionable alerts reach his phone, news and trackers move to the dashboard, the AI agent starts daily reviews, and the Discord reader and bot are built.</div>
+      <div class="k">Oct 23 to 24</div><div class="v">Loop-freeze and feedback-watcher bugs fixed; Discord health made truthful; tap-to-choose buttons; the deep search starts, and its first run finds the 100-piece watch he bought.</div>
+      <div class="k">Oct 25</div><div class="v">Nine Discord servers configured and six channels followed in; retail-price-only filter; checkout research across 22 stores; collection ledger built and connected; Gateway websocket, cart links, drop reminders, richer alerts and the arrival log shipped; the weekly feedback check-in begins.</div>
+    </div>
+  </section>
+
+  <!-- 08 LESSONS -->
+  <section id="lessons">
+    <div class="section-header">
+      <div class="section-tag">08 / What I learned</div>
+      <h2 class="section-title">What I <span>learned</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-box">
+        <div class="insight-box-title">The person using it runs the roadmap</div>
+        <p>He judged the early alerts low-value, and he was right. That reset the design within a day. It is also why the weekly check-in is built in, not bolted on.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">An AI that goes looking finds different things</div>
+        <p>Feeds wait for a store to post. The deep search goes hunting for small-batch editions, and its first run found the watch.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Healthy means it worked, not that it ran</div>
+        <p>A source that runs without errors but never delivers anything is broken. Health now checks for real arrivals.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Rules first, then speed</div>
+        <p>Reading every store&rsquo;s terms before building meant every speed-up I shipped is one he can use without putting his accounts at risk.</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:1.5rem;">
+      <p>I also ran the big decisions past ChatGPT as an outside consultant, including a ranked top-10 plan for earlier alerts and better checkout odds under the no-bot rules, and adopted its strongest free ideas the same day.</p>
+    </div>
+
+    <div class="tag-row" style="margin-top:1.5rem;">
+      <span class="tag tag-warm">Personal Project</span><span class="tag tag-accent">Python (stdlib)</span><span class="tag tag-accent">Claude Code Agent</span><span class="tag tag-accent">Telegram Bot API</span><span class="tag">Discord Gateway</span><span class="tag">WebSocket</span><span class="tag">SQLite</span><span class="tag">IMAP</span><span class="tag">Shopify Feeds</span><span class="tag">RSS</span><span class="tag">GitHub Pages</span><span class="tag">Task Scheduler</span><span class="tag">unittest</span>
+    </div>
+  </section>
+
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="agent-architecture.html">Agent Architecture</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+<script src="assets/chat/chat.js?v=20261014" defer></script>
+</body>
+</html>
