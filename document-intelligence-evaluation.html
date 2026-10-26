@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | Document Intelligence Evaluation — Local Models for OCR, Tables, Charts and Evidence</title>
+  <meta name="description" content="Tayler Erbe's reproducible evaluation of local vision and language models for document intelligence: which model reads which part of a mixed document packet (scanned text, tables, charts, spreadsheets rendered to PDF, legal clauses) on a 12 GB laptop GPU and a 32 GB desktop GPU. 40,975 scored rows, public benchmarks only." />
+  <meta name="keywords" content="Tayler Erbe, document intelligence, OCR evaluation, vision language models, Qwen3-VL, Qwen2.5-VL, Nemotron, ChartQA, OmniDocBench, CUAD, ContractNLI, local inference, Ollama, vLLM, evidence-linked extraction" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://taylererbe.com/document-intelligence-evaluation.html" />
+  <meta property="og:title" content="Tayler Erbe | Document Intelligence Evaluation" />
+  <meta property="og:description" content="Which local model reads which part of a messy document packet? A reproducible evaluation of OCR, tables, charts and evidence-linked extraction on one GPU." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://taylererbe.com/document-intelligence-evaluation.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tayler Erbe | Document Intelligence Evaluation" />
+  <meta name="twitter:description" content="A reproducible evaluation of local models for OCR, tables, charts and evidence-linked extraction on a 12 GB laptop GPU and a 32 GB desktop GPU." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Document Intelligence Evaluation — Local Models for OCR, Tables, Charts and Evidence-Linked Extraction",
+    "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://taylererbe.com/" },
+    "description": "Model evaluation case study by Tayler Erbe: frozen public benchmarks, five local vision models, six tasks, two GPUs, 40,975 scored rows, and an evidence-linked extraction design for legal and proposal documents.",
+    "keywords": "Tayler Erbe, document intelligence, OCR, vision language models, model evaluation, local inference"
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
+  <style>
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .hero .wrap { max-width: none; }
+    .hero-ctas { margin-top: 1.75rem; }
+    .doc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: var(--space-5); }
+    .doc-cell { background: var(--surface); padding: 1.25rem; }
+    .doc-cell h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.5rem; }
+    .doc-cell p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; max-width: none; }
+    .doc-cell .doc-needs { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-top: 0.75rem; line-height: 1.8; }
+    .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-5); }
+    .route-metrics { display: flex; gap: var(--space-5); margin: var(--space-4) 0; flex-wrap: wrap; }
+    .route-metrics > div strong { display: block; font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--accent); line-height: 1; }
+    .route-metrics > div span { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--muted); }
+    .method-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; max-width: none; }
+    .method-card .route-link { display: inline-block; margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    /* explorer */
+    .di-filters { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: var(--space-3); align-items: end; margin-top: var(--space-5); }
+    .di-filters label { display: flex; flex-direction: column; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .di-filters select { font-family: var(--font-body); font-size: 0.88rem; color: var(--text); background: var(--surface); border: 1px solid var(--border); padding: 0.6rem 0.7rem; border-radius: var(--radius); }
+    .di-filters select:focus-visible { outline: var(--focus-ring); }
+    .di-reset { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: none; border: 1px solid var(--border); padding: 0.65rem 1rem; cursor: pointer; }
+    .di-reset:hover { border-color: var(--accent2); color: var(--accent2); }
+    .di-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-4); flex-wrap: wrap; margin-top: var(--space-6); }
+    .di-head h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; text-transform: uppercase; }
+    .di-csv { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); background: none; border: 1px solid var(--accent); padding: 0.65rem 1rem; cursor: pointer; }
+    .di-csv:hover { background: var(--accent-dim); }
+    .di-notice { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-top: var(--space-3); max-width: none; }
+    .di-bars { display: flex; flex-direction: column; gap: 0.45rem; margin-top: var(--space-5); background: var(--surface2); border: 1px solid var(--border); padding: 1.25rem; }
+    .di-bar-row { display: grid; grid-template-columns: minmax(170px, 240px) 1fr 80px; gap: var(--space-4); align-items: center; }
+    .di-bar-label { font-size: 0.82rem; color: var(--text); line-height: 1.3; }
+    .di-bar-label small { display: block; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .di-bar-track { height: 14px; background: var(--surface); border: 1px solid var(--border); }
+    .di-bar-fill { height: 100%; background: var(--accent); }
+    .di-bar-value { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); text-align: right; }
+    .di-empty { font-size: 0.85rem; color: var(--muted); max-width: none; }
+    .di-sub { display: block; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .di-count { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted2); margin-top: var(--space-3); max-width: none; }
+    .legal-table td.num.good { color: var(--green); }
+    .stack-head { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    .stack-list { list-style: none; font-size: 0.85rem; color: var(--muted); line-height: 2.1; }
+    .stack-list li { display: flex; align-items: center; gap: 0.5rem; }
+    .stack-list li::before { content: '\203A'; color: var(--accent2); }
+    @media (max-width: 860px) {
+      .doc-grid, .finding-grid, .di-filters { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .doc-grid, .finding-grid, .di-filters { grid-template-columns: 1fr; }
+      .di-bar-row { grid-template-columns: 1fr; gap: 0.25rem; }
+      .di-bar-value { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <nav class="subnav" aria-label="On this page">
+    <ul>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#evaluated">What was tested</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#findings">Findings</a></li>
+      <li><a href="#explorer">Explorer</a></li>
+      <li><a href="#evidence">Evidence</a></li>
+      <li><a href="#hardware">Hardware</a></li>
+      <li><a href="#applications">Applications</a></li>
+      <li><a href="#takeaways">Takeaways</a></li>
+      <li><a href="#next">Next</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe · Model Evaluation Case Study · October 2026</div>
+    <h1>Document Intelligence<br>on One GPU: <span>Which Local Model<br>Reads What</span></h1>
+    <p class="hero-desc">
+      Proposal packets, contracts, research awards and reports often carry their most useful facts in places
+      that are hard to extract: scanned text, budget tables, charts, spreadsheets flattened into PDF and
+      clauses buried on page forty. This case study defines the problem, then measures
+      <strong>five open vision models, six tasks and eight methods</strong> under a frozen protocol on a
+      12 GB laptop GPU and a 32 GB desktop GPU. It uses public benchmarks only. Every score comes from reference
+      answers and code, never from another model's opinion.
+    </p>
+    <div class="hero-ctas">
+      <a href="#explorer" class="btn-primary">Explore the results ↓</a>
+      <a href="assets/document-intelligence/routing-report-2026-10-21.md" class="btn-ghost" download>Download the routing report</a>
+    </div>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Workload</div>
+        <div class="meta-value">OCR · tables · charts · whole pages · legal clauses</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Hardware</div>
+        <div class="meta-value">RTX 4000 Ada Laptop (12 GB) · RTX 5090 (32 GB)</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Data</div>
+        <div class="meta-value">OmniDocBench · ChartQA · CUAD · ContractNLI</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-value">Evaluation complete · prototype routing, not production approval</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Role</div>
+        <div class="meta-value">Evaluation design · orchestration · failure analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-item">
+      <div class="stat-big">40,975</div>
+      <div class="stat-desc">Scored result rows, two machines</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">5 × 6 × 8</div>
+      <div class="stat-desc">Models × tasks × methods</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">1,322</div>
+      <div class="stat-desc">Held-out confirmation questions (722 charts)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-big">0</div>
+      <div class="stat-desc">Scores given by a model judge</div>
+    </div>
+  </div>
+
+  <!-- 01 THE PROBLEM -->
+  <section id="problem">
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">The Problem</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Most organisations already have the information they need. It sits in document packets: a procurement proposal with a pricing table and a scanned signature page, a research proposal with a budget spreadsheet printed to PDF, a contract with renewal terms in an amendment, a technical report with a key result shown only in a chart. All of it can be read by hand. A database cannot read it, and neither can a search box.</p>
+        <p>Plain prose is rarely the problem. The problem is the <strong>hard-to-reach information</strong>: numbers in tables, values shown only in a graph, text in images and scans, fields split across pages, and the exact sentence that supports an answer. A single document needs several kinds of extraction at once. Each kind fails differently.</p>
+        <p>Cloud document services solve part of this problem, but many of these documents cannot leave the organisation. That makes the question narrower and more useful: <strong>on a GPU an organisation already has, which open model can be trusted with which part of a document, and how would you know?</strong> This evaluation was built to answer that question with reproducible numbers.</p>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-label">What "solved" has to mean</div>
+          <p>An extracted record is useful only when the <strong>numbers are right</strong>, the <strong>source page is attached</strong>, and the system says so when it is unsure or could not read a page. Fluent text that is 90% right is a liability in a budget.</p>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-label">Five kinds of extraction in one packet</div>
+          <p>Running text from scans · tables with amounts · charts and graphs · spreadsheets rendered to PDF · clause-level evidence for a question. Each needs its own test and its own metric; a single "accuracy" number hides the one that matters.</p>
+        </div>
+        <div class="callout callout-warn">
+          <div class="callout-label">Constraints</div>
+          <p>One model on the GPU at a time. A 12 GB laptop GPU as the realistic target, a 32 GB desktop as the reference. No model grades another model. Failed and truncated answers stay in the denominator as zero. Public datasets only, so every number here can be published and checked.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-grid">
+      <div class="doc-cell">
+        <h3>Procurement proposals</h3>
+        <p>Supplier packets that mix a cover letter, line-item pricing tables, delivery terms and scanned compliance forms.</p>
+        <div class="doc-needs">Tables · scans · multi-page fields · exact clauses</div>
+      </div>
+      <div class="doc-cell">
+        <h3>Research proposals and awards</h3>
+        <p>Narrative, budget tables, spreadsheets printed to PDF, milestone charts and reporting obligations spread over dozens of pages.</p>
+        <div class="doc-needs">Tables · spreadsheets as PDF · charts · dates and amounts</div>
+      </div>
+      <div class="doc-cell">
+        <h3>Contracts and legal documents</h3>
+        <p>Parties, term, payment, termination and governing law, often amended later and answered only by one specific sentence.</p>
+        <div class="doc-needs">Clause evidence · absent-field handling · provenance</div>
+      </div>
+      <div class="doc-cell">
+        <h3>Financial and technical reports</h3>
+        <p>Results that exist only as charts, with the underlying data table never printed.</p>
+        <div class="doc-needs">Chart reading · chart to table · numeric fidelity</div>
+      </div>
+      <div class="doc-cell">
+        <h3>Invoices and purchase orders</h3>
+        <p>Identifiers, totals and matching references that must reconcile to the cent.</p>
+        <div class="doc-needs">OCR · numbers · table structure</div>
+      </div>
+      <div class="doc-cell">
+        <h3>Scanned archives</h3>
+        <p>Old print, mixed layouts, images and pages the OCR engine silently skips.</p>
+        <div class="doc-needs">Whole-page text · layout · unread-page detection</div>
+      </div>
+    </div>
+    <div class="takeaway"><strong>These are the applications the evaluation is for, not claims that each has been validated.</strong> Public OCR, chart and table scores say which model to try first; correctness on an organisation's own documents still needs its own labelled test.</div>
+  </section>
+
+  <!-- 02 WHAT WAS TESTED -->
+  <section id="evaluated">
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">What Was Tested</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">Each kind of hard-to-reach information became one frozen task with its own public answer key and its own metric. The same cases, prompts, schemas, token budgets and image sizes were sent to every model.</p>
+    <table class="dt">
+      <thead>
+        <tr><th>Task</th><th>Stands in for</th><th>Public data</th><th>Cases</th><th>Scored by</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Prose crop OCR</td><td>Running text in scans</td><td>OmniDocBench</td><td class="num">50</td><td>Character error rate; numeric recall and precision</td></tr>
+        <tr><td>Table transcription</td><td>Budget and pricing tables</td><td>OmniDocBench</td><td class="num">60 (+159 held out)</td><td>TEDS tree similarity; cell-text F1; numeric recall</td></tr>
+        <tr><td>Chart questions</td><td>A value that exists only in a graph</td><td>ChartQA</td><td class="num">200 (+2,022 / +1,322 held out)</td><td>Relaxed accuracy, 5% numeric tolerance</td></tr>
+        <tr><td>Chart to table</td><td>Recovering the data behind a chart</td><td>ChartQA</td><td class="num">60</td><td>Value recall and precision within 5%; label recall</td></tr>
+        <tr><td>Whole-page text</td><td>Mixed pages with figures and tables</td><td>OmniDocBench</td><td class="num">40 (+80 fresh pages)</td><td>Word F1 against page text; numeric recall</td></tr>
+        <tr><td>Layout detection</td><td>Finding tables and figures on a page</td><td>OmniDocBench</td><td class="num">120</td><td>Precision, recall, F1 at IoU 0.5</td></tr>
+        <tr><td>Clause extraction</td><td>Contract questions with evidence</td><td>CUAD · ContractNLI</td><td class="num">24 (+60 fresh docs)</td><td>Strict correctness; evidence F1; acceptance; truncation</td></tr>
+      </tbody>
+    </table>
+
+    <div class="two-col" style="margin-top: 2rem;">
+      <div>
+        <div class="subhead">Models</div>
+        <table class="dt">
+          <thead><tr><th>Model</th><th>Runtime</th><th>Machine</th></tr></thead>
+          <tbody>
+            <tr><td>Qwen3-VL 8B Instruct</td><td>Ollama</td><td>Laptop and desktop</td></tr>
+            <tr><td>Qwen2.5-VL 7B</td><td>Ollama</td><td>Laptop and desktop (same weights)</td></tr>
+            <tr><td>Qwen3-VL 32B AWQ</td><td>vLLM</td><td>Desktop</td></tr>
+            <tr><td>Qwen2.5-VL 32B</td><td>Ollama</td><td>Desktop</td></tr>
+            <tr><td>27B local tag*</td><td>Ollama</td><td>Desktop</td></tr>
+            <tr><td>Qwen3 32B (text)</td><td>vLLM</td><td>Desktop, legal track</td></tr>
+            <tr><td>Nemotron 3 Nano 30B</td><td>Hosted API</td><td>Legal track</td></tr>
+          </tbody>
+        </table>
+        <p class="text-muted" style="font-size: 0.8rem; max-width: none;">*A locally tagged 27B build whose upstream identity could not be verified; reported but not recommended.</p>
+      </div>
+      <div>
+        <div class="subhead">Methods</div>
+        <div class="kv">
+          <div class="k">Baseline</div><div class="v">The task prompt, JSON schema forced, temperature 0</div>
+          <div class="k">Expert prompt</div><div class="v">Role and rules added to the prompt</div>
+          <div class="k">Self-check</div><div class="v">Answer, then re-read the image and correct, in one call</div>
+          <div class="k">Upscale / hires</div><div class="v">Larger input image before the model sees it</div>
+          <div class="k">Vote3</div><div class="v">Three answers per question, majority wins (round 2)</div>
+          <div class="k">Read table first</div><div class="v">Transcribe the chart data, then answer (round 2)</div>
+          <div class="k">Layout masking</div><div class="v">Blank detected figures and tables before page OCR (round 2)</div>
+          <div class="k">Evidence by ID</div><div class="v">Model picks block IDs; code copies the text (legal)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 METHOD -->
+  <section id="method">
+    <div class="section-header">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">Method — Rules That Make the Numbers Comparable</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="prose" style="margin-bottom: 2rem;">
+      <p>The desktop and the laptop ran weeks apart under different runtimes. For their results to merge into one report, "the same test" had to be checked in code rather than promised. A conformance check fingerprints the frozen case manifests, the exact requests each task sends to a model, the model-call settings and the scorers, and the merge tool refuses rows that fail it.</p>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Freeze the cases before any model sees them</div>
+          <div class="step-body">Development sets were selected and hashed first; held-out confirmation sets (2,181 cases in round 1, 1,988 in round 2) were frozen separately and used once. "Fresh" means unused in earlier runs, not proven absent from pretraining.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Send identical requests</div>
+          <div class="step-body">Same prompt, JSON schema, token budget (300 to 6,000 by task) and image cap (1,600 to 1,800 px) for every model. Temperature 0, instruct builds only. A thinking build burns the budget on hidden reasoning and gets cut off, so one was removed and its rows deleted.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Score with answer keys and code</div>
+          <div class="step-body">Character error, TEDS, relaxed accuracy, value recall and word F1 are computed against the datasets' published references. <strong>No model grades another model.</strong> Truncated or failed answers score zero and stay in the denominator; nothing is re-run to rescue it.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Pre-register, then confirm</div>
+          <div class="step-body">Round 2 picked its confirmatory method (vote3) on development data, wrote the decision down, then ran the held-out charts and pages. Paired bootstrap intervals and McNemar tests with Holm correction come from the same frozen code on both machines.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">Merge only what conforms</div>
+          <div class="step-body">Each export carries its case hashes, model digests and conformance result. The merged report marks a cross-machine comparison as a reproduction only when the weights match; the 8B digest differed between machines, so that pair is labelled a method comparison.</div>
+        </div>
+      </div>
+    </div>
+    <div class="insight-grid">
+      <div class="insight-box">
+        <div class="insight-box-title">Division of labour</div>
+        <p>Local models did all the reading, extraction and answering. AI coding assistants wrote and ran the harness. No assistant read a page, a crop or a model answer; people read aggregate tables only.</p>
+      </div>
+      <div class="insight-box">
+        <div class="insight-box-title">Do the two machines agree?</div>
+        <p>Qwen2.5-VL 7B ran with identical weights on both. <strong>11 of its 13 comparison groups reproduced</strong> under the report's rule; the two that disagreed were a 200-question chart prompt variant (+3.0 points) and a 60-case chart-to-table variant (−14.8 points).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 FINDINGS -->
+  <section id="findings">
+    <div class="section-header">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">Findings — A Different Route for Each Task</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">There is no universal winner. The small model is good enough to start with for text and tables, the method matters as much as the model for charts, and the one trick that makes page text cleaner throws away numbers.</p>
+
+    <div class="method-grid method-grid-3">
+      <div class="method-card winner">
+        <div class="method-header">
+          <div class="method-name">OCR + Tables</div>
+          <span class="method-badge badge-green">8B Baseline</span>
+        </div>
+        <p>Qwen3-VL 8B Instruct on the 12 GB laptop reads prose crops as well as the 32B models and transcribes tables at the same TEDS.</p>
+        <div class="route-metrics">
+          <div><strong>1.2%</strong><span>character error · 50 crops</span></div>
+          <div><strong>0.818</strong><span>table TEDS · 60 tables</span></div>
+        </div>
+        <p>Numeric recall on the crops was <strong>96.5%</strong>. The bar set for this evaluation was 99%, so this is a review-assisted candidate, not an unattended one.</p>
+        <a href="#explorer" class="route-link" data-di-preset="ocr_crop">Inspect OCR rows →</a>
+      </div>
+      <div class="method-card">
+        <div class="method-header">
+          <div class="method-name">Chart Questions</div>
+          <span class="method-badge badge-blue">Method per model</span>
+        </div>
+        <p>8B scores <strong>79.5%</strong> at baseline and <strong>36.0%</strong> with self-check. 7B is the mirror image: <strong>52.5%</strong> baseline, <strong>79.0%</strong> with self-check. The 32B reference reaches 85.0% and 91.0%.</p>
+        <div class="route-metrics">
+          <div><strong>−43.5</strong><span>points · 8B self-check</span></div>
+          <div><strong>+26.5</strong><span>points · 7B self-check</span></div>
+        </div>
+        <p>Same prompt, same images. A method is not a global switch; it has to be chosen per model and per task.</p>
+        <a href="#explorer" class="route-link" data-di-preset="chart_qa">Compare chart rows →</a>
+      </div>
+      <div class="method-card">
+        <div class="method-header">
+          <div class="method-name">Chart → Data</div>
+          <span class="method-badge badge-blue">8B Self-check</span>
+        </div>
+        <p>Recovering the table behind a chart is where 8B needs help. Self-check lifts value recall from <strong>0.418 to 0.930</strong> on 60 charts; the expert prompt reaches 0.900.</p>
+        <div class="route-metrics">
+          <div><strong>0.930</strong><span>value recall · self-check</span></div>
+          <div><strong>0.418</strong><span>value recall · baseline</span></div>
+        </div>
+        <p>A 60-case task: a strong candidate that still needs a larger held-out set before it is trusted.</p>
+        <a href="#explorer" class="route-link" data-di-preset="chart_table">Explore chart extraction →</a>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-label="Chart question accuracy by model and method on 200 development questions. Qwen2.5-VL 7B: baseline 52.5, expert 47.5, self-check 79.0, upscale 47.5. Qwen3-VL 8B: 79.5, 75.0, 36.0, 80.0. Qwen3-VL 32B: 85.0, 84.0, 91.0, 89.5 percent.">
+<rect width="960" height="600" fill="var(--surface2)"/>
+<text x="480.0" y="36" text-anchor="middle" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="22" letter-spacing="0.5">CHART QUESTIONS: SAME MODEL, DIFFERENT METHOD</text>
+<text x="480.0" y="56" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11" letter-spacing="1">RELAXED ACCURACY / 200 DEVELOPMENT QUESTIONS / SELF-CHECK HELPS 7B AND 32B, HURTS 8B</text>
+<line x1="80" y1="470.0" x2="920" y2="470.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="474.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0%</text>
+<line x1="80" y1="396.0" x2="920" y2="396.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="400.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">20%</text>
+<line x1="80" y1="322.0" x2="920" y2="322.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="326.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">40%</text>
+<line x1="80" y1="248.0" x2="920" y2="248.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="252.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">60%</text>
+<line x1="80" y1="174.0" x2="920" y2="174.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="178.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">80%</text>
+<line x1="80" y1="100.0" x2="920" y2="100.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="104.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">100%</text>
+<text x="22" y="285.0" transform="rotate(-90 22 285.0)" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">RELAXED ACCURACY</text>
+<line x1="80" y1="470" x2="920" y2="470" stroke="var(--muted2)" stroke-width="1.5"/>
+<rect x="128.0" y="275.8" width="40" height="194.2" fill="var(--accent)" rx="1"/>
+<text x="148.0" y="268.8" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="14">52.5</text>
+<rect x="176.0" y="294.2" width="40" height="175.8" fill="var(--slate)" rx="1"/>
+<text x="196.0" y="287.2" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="14">47.5</text>
+<rect x="224.0" y="177.7" width="40" height="292.3" fill="var(--accent3)" rx="1"/>
+<text x="244.0" y="170.7" text-anchor="middle" fill="var(--accent3)" font-family="var(--font-display)" font-weight="800" font-size="14">79.0</text>
+<rect x="272.0" y="294.2" width="40" height="175.8" fill="var(--accent2)" rx="1"/>
+<text x="292.0" y="287.2" text-anchor="middle" fill="var(--accent2)" font-family="var(--font-display)" font-weight="800" font-size="14">47.5</text>
+<text x="220.0" y="494" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">Qwen2.5-VL 7B / laptop</text>
+<rect x="408.0" y="175.8" width="40" height="294.2" fill="var(--accent)" rx="1"/>
+<text x="428.0" y="168.8" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="14">79.5</text>
+<rect x="456.0" y="192.5" width="40" height="277.5" fill="var(--slate)" rx="1"/>
+<text x="476.0" y="185.5" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="14">75.0</text>
+<rect x="504.0" y="336.8" width="40" height="133.2" fill="var(--accent3)" rx="1"/>
+<text x="524.0" y="329.8" text-anchor="middle" fill="var(--accent3)" font-family="var(--font-display)" font-weight="800" font-size="14">36.0</text>
+<rect x="552.0" y="174.0" width="40" height="296.0" fill="var(--accent2)" rx="1"/>
+<text x="572.0" y="167.0" text-anchor="middle" fill="var(--accent2)" font-family="var(--font-display)" font-weight="800" font-size="14">80.0</text>
+<text x="500.0" y="494" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">Qwen3-VL 8B Instruct / laptop</text>
+<rect x="688.0" y="155.5" width="40" height="314.5" fill="var(--accent)" rx="1"/>
+<text x="708.0" y="148.5" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="14">85.0</text>
+<rect x="736.0" y="159.2" width="40" height="310.8" fill="var(--slate)" rx="1"/>
+<text x="756.0" y="152.2" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="14">84.0</text>
+<rect x="784.0" y="133.3" width="40" height="336.7" fill="var(--accent3)" rx="1"/>
+<text x="804.0" y="126.3" text-anchor="middle" fill="var(--accent3)" font-family="var(--font-display)" font-weight="800" font-size="14">91.0</text>
+<rect x="832.0" y="138.8" width="40" height="331.2" fill="var(--accent2)" rx="1"/>
+<text x="852.0" y="131.8" text-anchor="middle" fill="var(--accent2)" font-family="var(--font-display)" font-weight="800" font-size="14">89.5</text>
+<text x="780.0" y="494" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">Qwen3-VL 32B AWQ / desktop</text>
+<rect x="90" y="70" width="200" height="106" fill="var(--surface2)" stroke="var(--border)" stroke-width="1" rx="2"/>
+<rect x="102" y="82" width="14" height="14" fill="var(--accent)" rx="2"/>
+<text x="124" y="93" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Baseline</text>
+<rect x="102" y="104" width="14" height="14" fill="var(--slate)" rx="2"/>
+<text x="124" y="115" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Expert prompt</text>
+<rect x="102" y="126" width="14" height="14" fill="var(--accent3)" rx="2"/>
+<text x="124" y="137" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Self-check</text>
+<rect x="102" y="148" width="14" height="14" fill="var(--accent2)" rx="2"/>
+<text x="124" y="159" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Upscale</text>
+<text x="500.0" y="576" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">MODEL AND MACHINE / DIGESTS RECORDED PER ROW / FAILED CASES SCORE ZERO</text>
+</svg>
+      <div class="chart-caption">Fig. 01 — Chart questions, 200 development cases. The same self-check instruction moves 7B up 26.5 points and 8B down 43.5.</div>
+    </div>
+
+    <div class="two-col" style="margin-top: 2.5rem;">
+      <div class="prose">
+        <p>On the text tasks, model size made little difference. The 8B model's pooled character error on 50 prose crops was <strong>1.2% on both machines</strong>. That matched Qwen3-VL 32B AWQ and Qwen2.5-VL 32B on the desktop. Qwen2.5-VL 7B scored 2.0% and 1.8%. Table transcription followed the same order: 8B scored 0.818 TEDS, compared with 0.821 for the 32B AWQ build and 0.724 for 7B. No prompt variant changed the table result significantly.</p>
+        <p>That is good news for the 12 GB target, but one caveat drives the rest of the project. Every model, large or small, recovered <strong>96.5% of the numbers</strong> in the crops. For budgets and invoices, the missing 3.5% is the whole problem. That is why the evaluation treats numeric recall as its own gate rather than folding it into a text score.</p>
+      </div>
+      <div class="chart-wrap" style="margin-top: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-label="Crop OCR character error and table TEDS by model. Character error: 7B 2.0 and 1.8 percent, 8B 1.2 percent on both machines, 32B-class models 1.1 to 1.2 percent. TEDS: 7B 0.724, 8B 0.818 and 0.819, Qwen2.5-VL 32B 0.805, Qwen3-VL 32B 0.821, 27B tag 0.852.">
+<rect width="960" height="560" fill="var(--surface2)"/>
+<text x="480.0" y="36" text-anchor="middle" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="22" letter-spacing="0.5">PROSE CROPS AND TABLES: THE 8B MODEL KEEPS UP WITH 32B</text>
+<text x="480.0" y="56" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11" letter-spacing="1">50 PROSE CROPS (CHARACTER ERROR, LOWER IS BETTER) / 60 TABLES (TEDS, HIGHER IS BETTER) / DEVELOPMENT SET</text>
+<text x="236" y="117" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen2.5-VL 7B / laptop</text>
+<rect x="250" y="101" width="200.0" height="24" fill="var(--accent3)" rx="1"/>
+<text x="458.0" y="118" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">2.0%</text>
+<rect x="620" y="101" width="103.3" height="24" fill="var(--accent3)" rx="1"/>
+<text x="731.3" y="118" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">0.724</text>
+<text x="236" y="169" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen2.5-VL 7B / desktop</text>
+<rect x="250" y="153" width="180.0" height="24" fill="var(--accent3)" rx="1"/>
+<text x="438.0" y="170" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">1.8%</text>
+<rect x="620" y="153" width="103.3" height="24" fill="var(--accent3)" rx="1"/>
+<text x="731.3" y="170" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">0.724</text>
+<text x="236" y="221" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen3-VL 8B Instruct / laptop</text>
+<rect x="250" y="205" width="120.0" height="24" fill="var(--accent)" rx="1"/>
+<text x="378.0" y="222" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">1.2%</text>
+<rect x="620" y="205" width="181.7" height="24" fill="var(--accent)" rx="1"/>
+<text x="809.7" y="222" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">0.818</text>
+<text x="236" y="273" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen3-VL 8B Instruct / desktop</text>
+<rect x="250" y="257" width="120.0" height="24" fill="var(--accent)" rx="1"/>
+<text x="378.0" y="274" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">1.2%</text>
+<rect x="620" y="257" width="182.5" height="24" fill="var(--accent)" rx="1"/>
+<text x="810.5" y="274" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">0.819</text>
+<text x="236" y="325" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen2.5-VL 32B / desktop</text>
+<rect x="250" y="309" width="120.0" height="24" fill="var(--slate)" rx="1"/>
+<text x="378.0" y="326" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">1.2%</text>
+<rect x="620" y="309" width="170.8" height="24" fill="var(--slate)" rx="1"/>
+<text x="798.8" y="326" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">0.805</text>
+<text x="236" y="377" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen3-VL 32B AWQ / desktop</text>
+<rect x="250" y="361" width="120.0" height="24" fill="var(--slate)" rx="1"/>
+<text x="378.0" y="378" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">1.2%</text>
+<rect x="620" y="361" width="184.2" height="24" fill="var(--slate)" rx="1"/>
+<text x="812.2" y="378" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">0.821</text>
+<text x="236" y="429" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">27B local tag* / desktop</text>
+<rect x="250" y="413" width="110.0" height="24" fill="var(--slate)" rx="1"/>
+<text x="368.0" y="430" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">1.1%</text>
+<rect x="620" y="413" width="210.0" height="24" fill="var(--slate)" rx="1"/>
+<text x="838.0" y="430" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="15">0.852</text>
+<line x1="250" y1="89" x2="250" y2="449" stroke="var(--muted2)" stroke-width="1.5"/>
+<text x="250" y="81" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">CHARACTER ERROR / 0 TO 2.5%</text>
+<line x1="620" y1="89" x2="620" y2="449" stroke="var(--muted2)" stroke-width="1.5"/>
+<text x="620" y="81" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">TABLE TEDS / 0.60 TO 0.90</text>
+<text x="480.0" y="532" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">NUMERIC RECALL ON THE CROPS WAS 96.5% FOR EVERY MODEL / *27B TAG: UPSTREAM IDENTITY NOT VERIFIED</text>
+</svg>
+        <div class="chart-caption">Fig. 02 — Crop OCR and table transcription by model and machine, development set.</div>
+      </div>
+    </div>
+
+    <div class="subhead" style="margin-top: 3rem;">Round 2: confirming on charts nobody had used</div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Development scores on 200 questions can make a method look better than it is. Round 2 froze <strong>1,322 new questions across 722 charts</strong> and 80 new pages. It selected vote3 (three answers, majority wins) in advance as the one confirmatory method. Everything else ran as a supporting comparison.</p>
+        <p>Vote3 held up: <strong>+4.5 points on 7B</strong> (95% interval +3.0 to +6.1) and <strong>+2.6 on the desktop 32B</strong> (+1.4 to +3.7). On 8B it did nothing (−0.2, interval crossing zero). Self-check's development pattern also held on the fresh charts: +17.8 for 7B, −42.7 for 8B. Read-table-first was dropped on development data. Upscale alone did not help.</p>
+        <p>The costs differ. Self-check is one longer call. Vote3 is three calls. For a 7B deployment, self-check is the cheap win and vote3 is the expensive one. For 8B, neither applies. For 32B, vote3 is the only confirmed gain.</p>
+      </div>
+      <div class="chart-wrap" style="margin-top: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-label="Round-2 confirmation: change in chart accuracy versus baseline with 95 percent intervals. 7B vote3 plus 4.5 points, 7B self-check plus 17.8, 7B upscale minus 3.8, 8B vote3 minus 0.2 not significant, 8B self-check minus 42.7, 8B upscale plus 1.5, 32B vote3 plus 2.6.">
+<rect width="960" height="560" fill="var(--surface2)"/>
+<text x="480.0" y="36" text-anchor="middle" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="22" letter-spacing="0.5">ROUND 2: DOES THE METHOD HOLD ON FRESH CHARTS?</text>
+<text x="480.0" y="56" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11" letter-spacing="1">CHANGE IN RELAXED ACCURACY VS BASELINE / 1,322 HELD-OUT QUESTIONS ACROSS 722 CHARTS / 95% INTERVALS</text>
+<line x1="300.0" y1="90" x2="300.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="300.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">-50</text>
+<line x1="380.0" y1="90" x2="380.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="380.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">-40</text>
+<line x1="460.0" y1="90" x2="460.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="460.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">-30</text>
+<line x1="540.0" y1="90" x2="540.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="540.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">-20</text>
+<line x1="620.0" y1="90" x2="620.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="620.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">-10</text>
+<line x1="700.0" y1="90" x2="700.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="700.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">+0</text>
+<line x1="780.0" y1="90" x2="780.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="780.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">+10</text>
+<line x1="860.0" y1="90" x2="860.0" y2="450" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="860.0" y="468" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">+20</text>
+<line x1="700.0" y1="90" x2="700.0" y2="450" stroke="var(--muted)" stroke-width="1.5"/>
+<text x="284" y="118" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen2.5-VL 7B / vote3</text>
+<line x1="724.0" y1="114" x2="748.8" y2="114" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="736.0" cy="114" r="6" fill="var(--accent)" stroke="var(--surface2)" stroke-width="2"/>
+<text x="760.8" y="119" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">+4.5 pp</text>
+<text x="838.8" y="118" fill="var(--muted)" font-family="var(--font-mono)" font-size="10">confirmatory</text>
+<text x="284" y="170" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen2.5-VL 7B / self-check</text>
+<line x1="820.0" y1="166" x2="865.6" y2="166" stroke="var(--accent2)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="842.4" cy="166" r="6" fill="var(--accent2)" stroke="var(--surface2)" stroke-width="2"/>
+<text x="877.6" y="171" fill="var(--accent2)" font-family="var(--font-display)" font-weight="800" font-size="15">+17.8 pp</text>
+<text x="955.6" y="170" fill="var(--muted)" font-family="var(--font-mono)" font-size="10">supporting</text>
+<text x="284" y="222" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen2.5-VL 7B / upscale</text>
+<line x1="656.0" y1="218" x2="683.2" y2="218" stroke="var(--accent3)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="669.6" cy="218" r="6" fill="var(--accent3)" stroke="var(--surface2)" stroke-width="2"/>
+<text x="695.2" y="223" fill="var(--accent3)" font-family="var(--font-display)" font-weight="800" font-size="15">-3.8 pp</text>
+<text x="773.2" y="222" fill="var(--muted)" font-family="var(--font-mono)" font-size="10">worse</text>
+<text x="284" y="274" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen3-VL 8B / vote3</text>
+<line x1="691.2" y1="270" x2="706.4" y2="270" stroke="var(--slate)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="698.4" cy="270" r="6" fill="var(--slate)" stroke="var(--surface2)" stroke-width="2"/>
+<text x="718.4" y="275" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">-0.2 pp</text>
+<text x="796.4" y="274" fill="var(--muted)" font-family="var(--font-mono)" font-size="10">not significant</text>
+<text x="284" y="326" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen3-VL 8B / self-check</text>
+<line x1="336.0" y1="322" x2="383.2" y2="322" stroke="var(--accent3)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="358.4" cy="322" r="6" fill="var(--accent3)" stroke="var(--surface2)" stroke-width="2"/>
+<text x="395.2" y="327" fill="var(--accent3)" font-family="var(--font-display)" font-weight="800" font-size="15">-42.7 pp</text>
+<text x="473.2" y="326" fill="var(--muted)" font-family="var(--font-mono)" font-size="10">worse</text>
+<text x="284" y="378" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen3-VL 8B / upscale</text>
+<line x1="702.4" y1="374" x2="721.6" y2="374" stroke="var(--accent2)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="712.0" cy="374" r="6" fill="var(--accent2)" stroke="var(--surface2)" stroke-width="2"/>
+<text x="733.6" y="379" fill="var(--accent2)" font-family="var(--font-display)" font-weight="800" font-size="15">+1.5 pp</text>
+<text x="811.6" y="378" fill="var(--muted)" font-family="var(--font-mono)" font-size="10">slightly better</text>
+<text x="284" y="430" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Qwen3-VL 32B AWQ / vote3</text>
+<line x1="711.2" y1="426" x2="729.6" y2="426" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="720.8" cy="426" r="6" fill="var(--accent)" stroke="var(--surface2)" stroke-width="2"/>
+<text x="741.6" y="431" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">+2.6 pp</text>
+<text x="819.6" y="430" fill="var(--muted)" font-family="var(--font-mono)" font-size="10">confirmatory</text>
+<text x="600.0" y="532" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">PERCENTAGE POINTS / LAPTOP RUNS FOR 7B AND 8B, DESKTOP FOR 32B / QUESTIONS ON ONE CHART ARE CORRELATED</text>
+</svg>
+        <div class="chart-caption">Fig. 03 — Round-2 confirmation on held-out charts. Intervals are paired bootstrap, 95%; questions on the same chart are correlated.</div>
+      </div>
+    </div>
+
+    <div class="subhead" style="margin-top: 3rem;">Whole pages: the masking trade-off</div>
+    <div class="two-col">
+      <div class="chart-wrap" style="margin-top: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-label="Layout masking on Qwen3-VL 32B: word F1 rises from 0.809 to 0.895 on 40 development pages and 0.814 to 0.881 on 80 confirmation pages, while numeric recall falls from 0.909 to 0.720 and 0.872 to 0.694.">
+<rect width="960" height="440" fill="var(--surface2)"/>
+<text x="480.0" y="36" text-anchor="middle" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="22" letter-spacing="0.5">LAYOUT MASKING: CLEANER PROSE, LOST NUMBERS</text>
+<text x="480.0" y="56" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11" letter-spacing="1">QWEN3-VL 32B AWQ / DESKTOP / BASELINE VS LAYOUT MASKING / WHOLE-PAGE TEXT</text>
+<line x1="330.0" y1="90" x2="330.0" y2="328" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="330.0" y="346" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.6</text>
+<line x1="467.5" y1="90" x2="467.5" y2="328" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="467.5" y="346" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.7</text>
+<line x1="605.0" y1="90" x2="605.0" y2="328" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="605.0" y="346" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.8</text>
+<line x1="742.5" y1="90" x2="742.5" y2="328" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="742.5" y="346" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.9</text>
+<line x1="880.0" y1="90" x2="880.0" y2="328" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="880.0" y="346" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">1.0</text>
+<text x="314" y="118" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Word F1 / 40 development pages</text>
+<line x1="617.4" y1="114" x2="735.6" y2="114" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="617.4" cy="114" r="6" fill="var(--surface2)" stroke="var(--slate)" stroke-width="2.5"/>
+<circle cx="735.6" cy="114" r="6" fill="var(--accent)"/>
+<text x="607.4" y="118" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.809</text>
+<text x="745.6" y="119" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">0.895</text>
+<text x="314" y="180" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Numeric recall / 40 development pages</text>
+<line x1="754.9" y1="176" x2="495.0" y2="176" stroke="var(--accent3)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="754.9" cy="176" r="6" fill="var(--surface2)" stroke="var(--slate)" stroke-width="2.5"/>
+<circle cx="495.0" cy="176" r="6" fill="var(--accent3)"/>
+<text x="485.0" y="180" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.720</text>
+<text x="764.9" y="181" fill="var(--accent3)" font-family="var(--font-display)" font-weight="800" font-size="15">0.909</text>
+<text x="314" y="242" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Word F1 / 80 confirmation pages</text>
+<line x1="624.2" y1="238" x2="716.4" y2="238" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="624.2" cy="238" r="6" fill="var(--surface2)" stroke="var(--slate)" stroke-width="2.5"/>
+<circle cx="716.4" cy="238" r="6" fill="var(--accent)"/>
+<text x="614.2" y="242" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.814</text>
+<text x="726.4" y="243" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">0.881</text>
+<text x="314" y="304" text-anchor="end" fill="var(--text)" font-family="var(--font-mono)" font-size="11.5">Numeric recall / 80 confirmation pages</text>
+<line x1="704.0" y1="300" x2="459.2" y2="300" stroke="var(--accent3)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="704.0" cy="300" r="6" fill="var(--surface2)" stroke="var(--slate)" stroke-width="2.5"/>
+<circle cx="459.2" cy="300" r="6" fill="var(--accent3)"/>
+<text x="449.2" y="304" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0.694</text>
+<text x="714.0" y="305" fill="var(--accent3)" font-family="var(--font-display)" font-weight="800" font-size="15">0.872</text>
+<rect x="90" y="70" width="200" height="84" fill="var(--surface2)" stroke="var(--border)" stroke-width="1" rx="2"/>
+<rect x="102" y="82" width="14" height="14" fill="var(--slate)" rx="2"/>
+<text x="124" y="93" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Baseline</text>
+<rect x="102" y="104" width="14" height="14" fill="var(--accent)" rx="2"/>
+<text x="124" y="115" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Masking, improved</text>
+<rect x="102" y="126" width="14" height="14" fill="var(--accent3)" rx="2"/>
+<text x="124" y="137" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Masking, worse</text>
+<text x="605.0" y="426" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">SCORE 0.6 TO 1.0 / TWO DIFFERENT PAGE SETS, REPORTED SEPARATELY</text>
+</svg>
+        <div class="chart-caption">Fig. 04 — Layout masking on Qwen3-VL 32B AWQ. Word F1 up, numeric recall down, on both page sets.</div>
+      </div>
+      <div class="prose">
+        <p>Figures and tables confuse whole-page OCR, so in round 2 I used a layout detector to blank them first. The prose got cleaner: word F1 rose from <strong>0.814 to 0.881</strong> on the 80 confirmation pages for the desktop 32B, and 7B gained +0.085 on the laptop. 8B gained +0.010, with an interval that includes zero.</p>
+        <p>But masking also hid numbers needed in the page text. Numeric recall on the same 80 pages fell from <strong>0.872 to 0.694</strong>, and from 0.909 to 0.720 on the 40 development pages. Results for newspapers got worse. That trade is unacceptable for contracts and budgets, so masking stays <strong>experimental</strong>: the next version will blank only tables, figures and equations, and I will judge it on numeric recall first.</p>
+      </div>
+    </div>
+    <div class="warn"><strong>Do not trade numbers for cleaner prose.</strong> A method that raises the headline text score while silently dropping amounts is a regression for every application on this page. Numeric recall is reported beside every text metric for that reason.</div>
+  </section>
+
+  <!-- 05 EXPLORER -->
+  <section id="explorer">
+    <div class="section-header">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">Results Explorer</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">Every scored configuration from the merged report: pick a task, a machine, an evaluation split and a method. Metrics mean different things per task, so nothing here is averaged into one score. Bars are the metric itself; "—" means the source did not report that field.</p>
+    <form class="di-filters" id="di-filters">
+      <label>Task
+        <select id="di-task">
+          <option value="ocr_crop">Prose crop OCR</option>
+          <option value="table">Table transcription</option>
+          <option value="chart_qa">Chart questions</option>
+          <option value="chart_table">Chart to table</option>
+          <option value="page_text">Whole-page text</option>
+        </select>
+      </label>
+      <label>Hardware
+        <select id="di-side">
+          <option value="laptop">Laptop · 12 GB</option>
+          <option value="desktop">Desktop · 32 GB</option>
+          <option value="all">Both machines</option>
+        </select>
+      </label>
+      <label>Evaluation split
+        <select id="di-split">
+          <option value="development">Development</option>
+          <option value="confirmation v1">Confirmation v1</option>
+          <option value="confirmation v2">Confirmation v2</option>
+        </select>
+      </label>
+      <label>Method
+        <select id="di-variant">
+          <option value="all">All recorded methods</option>
+          <option value="baseline" selected>Baseline only</option>
+          <option value="selfcheck">Self-check only</option>
+          <option value="expert">Expert prompt only</option>
+          <option value="upscale">Upscale only</option>
+          <option value="hires">Hires only</option>
+          <option value="layoutmask">Layout masking only</option>
+        </select>
+      </label>
+      <button type="button" class="di-reset" id="di-reset">Reset</button>
+    </form>
+    <div class="di-head">
+      <div>
+        <div class="label" id="di-metric">CHARACTER ERROR / LOWER IS BETTER</div>
+        <h3 id="di-title">Prose crop OCR</h3>
+      </div>
+      <button type="button" class="di-csv" id="di-csv">Export this view (CSV)</button>
+    </div>
+    <p class="di-notice" id="di-notice" role="status" aria-live="polite">Loading measured results…</p>
+    <div class="di-bars" id="di-bars" aria-label="Filtered metric comparison"></div>
+    <div class="table-wrap">
+      <table class="dt">
+        <caption class="sr-only">Measured configurations for the selected task, hardware and split</caption>
+        <thead><tr><th>Model / method</th><th id="di-score-col">Score</th><th>Cases / failed</th><th>Numeric recall</th><th>Median latency</th></tr></thead>
+        <tbody id="di-rows"></tbody>
+      </table>
+    </div>
+    <p class="di-count" id="di-count"></p>
+    <noscript><p class="di-notice">Enable JavaScript to filter results, or read the <a href="assets/document-intelligence/merged-report-2026-10-21.md" class="link">generated merged report</a>.</p></noscript>
+  </section>
+
+  <!-- 06 EVIDENCE-LINKED EXTRACTION -->
+  <section id="evidence">
+    <div class="section-header">
+      <span class="section-tag">06</span>
+      <h2 class="section-title">Beyond OCR — Evidence-Linked Extraction</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Reading the page is half the job. For contracts and proposals, the answer to "what is the termination notice period?" needs the sentence that proves it. Early legal runs on public contract datasets exposed a specific failure: models <strong>quoted text that did not exist</strong> in the cited span, or paraphrased it enough to fail a string check. A quote you cannot find is worse than no answer.</p>
+        <p>The fix takes copying out of the model's hands. Source documents are split into blocks with IDs. Retrieval supplies candidate blocks. The model returns <strong>only the IDs and the label</strong>. Application code then copies the exact text, verifies its hash and location, and records absent fields explicitly. In the public legal tests, this removed every copy failure produced by the quoting design (0 failed requests against 2 to 4 for the baseline). The remaining gains came from handling fields that are genuinely absent.</p>
+        <p>This does not prove the answer is right. Mechanical provenance and semantic correctness are separate checks. That is why the legal track reports strict correctness, accepted responses, evidence F1, retrieval coverage and truncation in separate columns rather than as one score.</p>
+      </div>
+      <div>
+        <div class="callout callout-good">
+          <div class="callout-label">Evidence by ID</div>
+          <p>Model selects block IDs → code copies the source text → hash and offset verified → absent fields recorded as absent → human reviews with the page beside the answer.</p>
+        </div>
+        <div class="callout callout-warn">
+          <div class="callout-label">Known limit</div>
+          <p>Retrieval is the bottleneck. When the right block is not among the candidates, no evidence design can recover it; coverage has to be measured and shown, not assumed.</p>
+        </div>
+        <table class="dt legal-table">
+          <caption class="sr-only">24-case public diagnostic pack, 12 questions per task</caption>
+          <thead><tr><th>Model (24-case pack)</th><th>CUAD</th><th>ContractNLI</th></tr></thead>
+          <tbody>
+            <tr><td>Qwen3 32B · local</td><td class="num">5/12</td><td class="num">9/12</td></tr>
+            <tr><td>Qwen3-VL 32B · local</td><td class="num">5/12</td><td class="num">8/12</td></tr>
+            <tr><td>Nemotron 3 Nano 30B · API, as first configured</td><td class="num">1/12</td><td class="num">5/12</td></tr>
+            <tr><td>Nemotron · reasoning on, 16k budget</td><td class="num">4/12</td><td class="num">6/12</td></tr>
+            <tr><td>Nemotron · schema in prompt</td><td class="num">4/12</td><td class="num good">9/12</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="subhead" style="margin-top: 2.5rem;">Configuration, not verdict: the Nemotron reassessment</div>
+    <div class="two-col">
+      <div class="chart-wrap" style="margin-top: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-label="Reasoning off versus on over 60 public legal documents. CUAD strict correct 3 of 30 off, 13 of 30 on; CUAD accepted 7 and 20; ContractNLI strict correct 5 and 12; ContractNLI accepted 28 and 22.">
+<rect width="960" height="520" fill="var(--surface2)"/>
+<text x="480.0" y="36" text-anchor="middle" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="22" letter-spacing="0.5">LEGAL EXTRACTION: REASONING ON VS OFF</text>
+<text x="480.0" y="56" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11" letter-spacing="1">NEMOTRON 3 NANO 30B VIA API / 30 CUAD + 30 CONTRACTNLI DOCUMENTS / TEMPERATURE 0 / 16,000-TOKEN BUDGET</text>
+<line x1="80" y1="420.0" x2="920" y2="420.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="424.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0/30</text>
+<line x1="80" y1="313.3" x2="920" y2="313.3" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="317.3" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">10/30</text>
+<line x1="80" y1="206.7" x2="920" y2="206.7" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="210.7" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">20/30</text>
+<line x1="80" y1="100.0" x2="920" y2="100.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="104.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">30/30</text>
+<text x="22" y="260.0" transform="rotate(-90 22 260.0)" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">DOCUMENTS OUT OF 30</text>
+<line x1="80" y1="420" x2="920" y2="420" stroke="var(--muted2)" stroke-width="1.5"/>
+<rect x="124.0" y="388.0" width="56" height="32.0" fill="var(--slate)" rx="1"/>
+<text x="152.0" y="381.0" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">3</text>
+<rect x="190.0" y="281.3" width="56" height="138.7" fill="var(--accent)" rx="1"/>
+<text x="218.0" y="274.3" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">13</text>
+<text x="185.0" y="444" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">CUAD / strict correct</text>
+<rect x="334.0" y="345.3" width="56" height="74.7" fill="var(--slate)" rx="1"/>
+<text x="362.0" y="338.3" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">7</text>
+<rect x="400.0" y="206.7" width="56" height="213.3" fill="var(--accent)" rx="1"/>
+<text x="428.0" y="199.7" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">20</text>
+<text x="395.0" y="444" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">CUAD / accepted</text>
+<rect x="544.0" y="366.7" width="56" height="53.3" fill="var(--slate)" rx="1"/>
+<text x="572.0" y="359.7" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">5</text>
+<rect x="610.0" y="292.0" width="56" height="128.0" fill="var(--accent)" rx="1"/>
+<text x="638.0" y="285.0" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">12</text>
+<text x="605.0" y="444" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">ContractNLI / strict correct</text>
+<rect x="754.0" y="121.3" width="56" height="298.7" fill="var(--slate)" rx="1"/>
+<text x="782.0" y="114.3" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">28</text>
+<rect x="820.0" y="185.3" width="56" height="234.7" fill="var(--accent)" rx="1"/>
+<text x="848.0" y="178.3" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">22</text>
+<text x="815.0" y="444" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">ContractNLI / accepted</text>
+<rect x="90" y="70" width="190" height="62" fill="var(--surface2)" stroke="var(--border)" stroke-width="1" rx="2"/>
+<rect x="102" y="82" width="14" height="14" fill="var(--slate)" rx="2"/>
+<text x="124" y="93" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Reasoning off</text>
+<rect x="102" y="104" width="14" height="14" fill="var(--accent)" rx="2"/>
+<text x="124" y="115" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Reasoning on</text>
+<text x="500.0" y="492" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">PRE-SPECIFIED CONTRAST ON DOCUMENTS UNUSED IN EARLIER RUNS / ONE TRUNCATION PER TASK WITH REASONING ON, SCORED ZERO</text>
+</svg>
+        <div class="chart-caption">Fig. 05 — Reasoning on versus off, 60 public legal documents not used in earlier runs. Strict correctness and accepted responses, out of 30 per task.</div>
+      </div>
+      <div class="prose">
+        <p>A hosted Nemotron 3 Nano 30B endpoint scored far below the local Qwen models on the first pass. The easy conclusion was "weak model". The honest one was "weak configuration, untested". A controlled reassessment ran <strong>192 requests across eight configurations</strong> on the same 24 cases. It changed one mechanism at a time: output budget, reasoning, sampling, label definitions, full-document context, evidence by ID and schema delivery.</p>
+        <p>Budget alone changed nothing. Enabling reasoning at the same budget lifted CUAD from 1/12 to 4/12. A pre-specified contrast on <strong>60 fresh documents</strong> then confirmed the direction. With reasoning on, strict correctness rose from 3/30 to 13/30 on CUAD and 5/30 to 12/30 on ContractNLI. The cost was one truncation per task, which counts as zero.</p>
+        <p>That supports enabling reasoning for further work. It does not establish production adequacy, a cross-model winner (no other model ran on those 60 documents) or a serving defect. A poor result without a controlled comparison proves nothing about the model family. The reassessment was designed to avoid drawing conclusions about the model family or a serving defect by accident.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 HARDWARE -->
+  <section id="hardware">
+    <div class="section-header">
+      <span class="section-tag">07</span>
+      <h2 class="section-title">The Hardware Constraint</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>The target is a mobile workstation: an <strong>RTX 4000 Ada Laptop GPU with about 12 GB</strong> of memory and 64 GB of system RAM. The small models (6.0 and 6.1 GB of weights) leave room for a 16k context, one image and the runtime, as long as only one model is resident. The desktop, an RTX 5090 with 32 GB, served Qwen3-VL 32B AWQ through vLLM using about 30.5 GB at the recorded profile. That rules out running the large model on the laptop.</p>
+        <p>Latency per case on the laptop is workable for a review-assisted workflow: a prose crop in 2.6 s, a table in 8.5 s, a chart question in 1.4 s. These are medians for single requests with one model loaded. They do not measure sustained pages per hour. A whole page at 6,000 output tokens is the slow path on either machine.</p>
+        <p>Weights are only part of the memory budget. Context length, image preprocessing on the CPU, runtime overhead and any concurrency all need headroom. The runtime can silently push layers to the CPU when memory runs out. Every laptop run was checked to be fully on the GPU before it counted.</p>
+      </div>
+      <div class="chart-wrap" style="margin-top: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-label="Median seconds per case. Laptop Qwen3-VL 8B: prose crop 2.56, table 8.54, chart question 1.43, chart to table 1.75. Desktop Qwen3-VL 32B AWQ: 1.00, 5.51, 0.52, 3.94.">
+<rect width="960" height="480" fill="var(--surface2)"/>
+<text x="480.0" y="36" text-anchor="middle" fill="var(--white)" font-family="var(--font-display)" font-weight="800" font-size="22" letter-spacing="0.5">SECONDS PER CASE: LAPTOP 8B VS DESKTOP 32B</text>
+<text x="480.0" y="56" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="11" letter-spacing="1">MEDIAN REQUEST TIME / BASELINE METHOD / DEVELOPMENT SET / ONE MODEL ON THE GPU</text>
+<line x1="80" y1="390.0" x2="920" y2="390.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="394.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">0 s</text>
+<line x1="80" y1="332.0" x2="920" y2="332.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="336.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">2 s</text>
+<line x1="80" y1="274.0" x2="920" y2="274.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="278.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">4 s</text>
+<line x1="80" y1="216.0" x2="920" y2="216.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="220.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">6 s</text>
+<line x1="80" y1="158.0" x2="920" y2="158.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="162.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">8 s</text>
+<line x1="80" y1="100.0" x2="920" y2="100.0" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,4"/>
+<text x="68" y="104.0" text-anchor="end" fill="var(--muted)" font-family="var(--font-mono)" font-size="11">10 s</text>
+<text x="22" y="245.0" transform="rotate(-90 22 245.0)" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">MEDIAN SECONDS</text>
+<line x1="80" y1="390" x2="920" y2="390" stroke="var(--muted2)" stroke-width="1.5"/>
+<rect x="124.0" y="315.8" width="56" height="74.2" fill="var(--accent)" rx="1"/>
+<text x="152.0" y="308.8" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">2.56</text>
+<rect x="190.0" y="361.0" width="56" height="29.0" fill="var(--slate)" rx="1"/>
+<text x="218.0" y="354.0" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">1.00</text>
+<text x="185.0" y="414" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">Prose crop</text>
+<rect x="334.0" y="142.3" width="56" height="247.7" fill="var(--accent)" rx="1"/>
+<text x="362.0" y="135.3" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">8.54</text>
+<rect x="400.0" y="230.2" width="56" height="159.8" fill="var(--slate)" rx="1"/>
+<text x="428.0" y="223.2" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">5.51</text>
+<text x="395.0" y="414" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">Table</text>
+<rect x="544.0" y="348.5" width="56" height="41.5" fill="var(--accent)" rx="1"/>
+<text x="572.0" y="341.5" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">1.43</text>
+<rect x="610.0" y="374.9" width="56" height="15.1" fill="var(--slate)" rx="1"/>
+<text x="638.0" y="367.9" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">0.52</text>
+<text x="605.0" y="414" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">Chart question</text>
+<rect x="754.0" y="339.2" width="56" height="50.8" fill="var(--accent)" rx="1"/>
+<text x="782.0" y="332.2" text-anchor="middle" fill="var(--accent)" font-family="var(--font-display)" font-weight="800" font-size="15">1.75</text>
+<rect x="820.0" y="275.7" width="56" height="114.3" fill="var(--slate)" rx="1"/>
+<text x="848.0" y="268.7" text-anchor="middle" fill="var(--slate)" font-family="var(--font-display)" font-weight="800" font-size="15">3.94</text>
+<text x="815.0" y="414" text-anchor="middle" fill="var(--text)" font-family="var(--font-mono)" font-size="12">Chart to table</text>
+<rect x="90" y="70" width="330" height="62" fill="var(--surface2)" stroke="var(--border)" stroke-width="1" rx="2"/>
+<rect x="102" y="82" width="14" height="14" fill="var(--accent)" rx="2"/>
+<text x="124" y="93" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Qwen3-VL 8B Instruct / 12 GB laptop GPU / Ollama</text>
+<rect x="102" y="104" width="14" height="14" fill="var(--slate)" rx="2"/>
+<text x="124" y="115" fill="var(--text)" font-family="var(--font-mono)" font-size="11">Qwen3-VL 32B AWQ / 32 GB desktop GPU / vLLM</text>
+<text x="500.0" y="452" text-anchor="middle" fill="var(--muted)" font-family="var(--font-mono)" font-size="10" letter-spacing="1">PER-CASE LATENCY IS NOT SUSTAINED THROUGHPUT / DIFFERENT RUNTIMES AND WEIGHTS</text>
+</svg>
+        <div class="chart-caption">Fig. 06 — Median seconds per case, baseline method. Laptop 8B on Ollama versus desktop 32B AWQ on vLLM.</div>
+      </div>
+    </div>
+    <div class="results-strip results-strip-4">
+      <div class="result-cell"><div class="result-num">12 GB</div><div class="result-label">Laptop GPU, runs 7B and 8B</div></div>
+      <div class="result-cell"><div class="result-num">32 GB</div><div class="result-label">Desktop GPU, runs 32B AWQ</div></div>
+      <div class="result-cell"><div class="result-num">2.56 s</div><div class="result-label">Median prose crop, laptop 8B</div></div>
+      <div class="result-cell"><div class="result-num">8.54 s</div><div class="result-label">Median table, laptop 8B</div></div>
+    </div>
+    <div class="takeaway"><strong>What was not measured:</strong> sustained throughput on a shared data-centre GPU, purchase cost, or any total-cost comparison against a hosted service. Those need their own benchmark with the real queue and the real allocation.</div>
+  </section>
+
+  <!-- 08 APPLICATIONS -->
+  <section id="applications">
+    <div class="section-header">
+      <span class="section-tag">08</span>
+      <h2 class="section-title">What This Means for the Problem</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Back to the packet. The intended workflow identifies document types, recovers text and tables, proposes defined fields, attaches page-level evidence, flags missing or uncertain information, and exports approved records. The evaluation shows which parts are ready for a review-assisted prototype on workstation hardware and which are not.</p>
+        <p><strong>Ready to prototype:</strong> prose OCR and table transcription with the 8B model, chart questions with a method chosen for each model, chart-to-data with 8B self-check, and evidence-by-ID extraction for clause questions. <strong>Not ready:</strong> unattended numeric extraction (96.5% recall against a 99% bar), whole-page masking where numbers matter, and any claim about an organisation's own documents until a labelled, document-disjoint test exists for those documents.</p>
+        <p>Native spreadsheets should be parsed directly whenever the original file exists. A spreadsheet rendered into a PDF needs the table route and a numeric check. Multi-page packet segmentation, chart interpretation and field validation each need their own gate.</p>
+      </div>
+      <div>
+        <div class="callout callout-info">
+          <div class="callout-label">Keeping documents local</div>
+          <p>Where policy or contract forbids external processing, a local pipeline keeps content inside an organisation-controlled environment. That is an architectural option, not a security certification: access control, encryption, logging, retention and network egress still have to be implemented and verified. <a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf" target="_blank" rel="noopener" class="link">NIST AI 600-1</a> is the risk framing used here.</p>
+        </div>
+        <div class="callout">
+          <div class="callout-label">Routing, from the measured results</div>
+          <p>Prose crops → 8B baseline · Tables → 8B baseline · Chart questions → 8B with self-check off, or 7B with self-check on · Chart to data → 8B self-check · Whole pages → baseline, masking only in a numeric-checked variant · Clauses → evidence by ID with retrieval coverage shown.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 TAKEAWAYS -->
+  <section id="takeaways">
+    <div class="section-header">
+      <span class="section-tag">09</span>
+      <h2 class="section-title">Engineering Takeaways</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Define the problem as extraction types, not "OCR"</div>
+          <div class="step-body">A packet needs text, tables, charts, flattened spreadsheets and clause evidence, and each one fails differently. Six tasks with six metrics found a 43-point swing that a single accuracy number would have averaged away.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">The method is part of the model</div>
+          <div class="step-body">Self-check helped 7B by 26.5 points and hurt 8B by 43.5 on identical inputs. Route methods per model and task, and confirm each pairing on data it has not seen.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Keep failures in the denominator</div>
+          <div class="step-body">Truncated and failed answers score zero and are never re-run. That rule is what made the thinking-build collapse and the first Nemotron result visible instead of quietly "fixed".</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Report numbers beside text</div>
+          <div class="step-body">Masking raised word F1 by 0.067 and cut numeric recall by 0.178 on the same pages. Any document workflow that handles money needs numeric recall as its own gate.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">Separate provenance from correctness</div>
+          <div class="step-body">Letting code copy the evidence removed every copy failure; it did not make answers right. Show both, and show retrieval coverage, so a reviewer knows which kind of wrong they are looking at.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">06</div>
+        <div>
+          <div class="step-title">A bad score is a configuration until proven otherwise</div>
+          <div class="step-body">One controlled reassessment, one mechanism at a time, turned a 1/12 into a 13/30-versus-3/30 reasoning contrast. Conclude about the model family only after the configuration has had its fair test.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 NEXT -->
+  <section id="next">
+    <div class="section-header">
+      <span class="section-tag">10</span>
+      <h2 class="section-title">Next Steps &amp; Open Questions</h2>
+      <div class="section-line"></div>
+    </div>
+    <table class="cat-table">
+      <thead><tr><th>Step</th><th>Work</th><th>Done when</th></tr></thead>
+      <tbody>
+        <tr><td>01 Masking v2</td><td>Blank only tables, figures and equations, as a new frozen protocol on fresh pages</td><td>Numeric recall holds while word F1 improves, or the variant is dropped</td></tr>
+        <tr><td>02 Clause blocks</td><td>Finer, clause-level blocks for evidence by ID, measured against the retrieval ceiling first</td><td>Precision gain shown on a document-disjoint public set</td></tr>
+        <tr><td>03 Review workflow</td><td>Wire evidence by ID into a reviewer screen with source-page navigation, explicit unread and uncertain states, and persisted corrections</td><td>One complete packet reviewed end to end on public or synthetic data</td></tr>
+        <tr><td>04 Domain validation</td><td>Independent human labels on representative documents, a double-labelled subset, and a document-disjoint holdout</td><td>Field-level accuracy and numeric fidelity with intervals, by document type</td></tr>
+        <tr><td>05 Operations</td><td>Bounded queues, checkpoints, retries, permissions and throughput on the target GPU</td><td>Sustained pages per hour and recovery measured, not projected</td></tr>
+        <tr><td>06 More candidates</td><td>Dedicated OCR and layout models, further local and API models, on the identical frozen inputs</td><td>Each new entrant scored under the same contract, no universal winner assumed</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 11 TECH STACK -->
+  <section id="tech">
+    <div class="section-header">
+      <span class="section-tag">11</span>
+      <h2 class="section-title">Technology Stack &amp; Downloads</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="three-col">
+      <div>
+        <div class="stack-head">Models &amp; serving</div>
+        <ul class="stack-list">
+          <li>Qwen3-VL 8B Instruct, Qwen2.5-VL 7B (Ollama)</li>
+          <li>Qwen3-VL 32B AWQ, Qwen3 32B (vLLM)</li>
+          <li>Qwen2.5-VL 32B, 27B local tag (Ollama)</li>
+          <li>Nemotron 3 Nano 30B (hosted API)</li>
+          <li>DocLayout-YOLO for layout detection</li>
+        </ul>
+      </div>
+      <div>
+        <div class="stack-head">Evaluation harness</div>
+        <ul class="stack-list">
+          <li>Python 3.12 · frozen case manifests (SHA-256)</li>
+          <li>Conformance check: requests, client, scorers</li>
+          <li>TEDS (apted) · Levenshtein · relaxed accuracy</li>
+          <li>Paired bootstrap · McNemar · Holm correction</li>
+          <li>Export and merge with digest and hash audit</li>
+        </ul>
+      </div>
+      <div>
+        <div class="stack-head">Hardware &amp; data</div>
+        <ul class="stack-list">
+          <li>RTX 4000 Ada Laptop GPU · 12 GB · 64 GB RAM</li>
+          <li>RTX 5090 · 32 GB · WSL2 for vLLM</li>
+          <li>OmniDocBench · ChartQA</li>
+          <li>CUAD · ContractNLI</li>
+          <li>One model resident on the GPU at a time</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tag-row" style="margin-top: 2rem;">
+      <span class="tag tag-accent">Model Evaluation</span>
+      <span class="tag tag-accent">Vision-Language Models</span>
+      <span class="tag tag-accent">Local Inference</span>
+      <span class="tag">OCR</span>
+      <span class="tag">Table Extraction</span>
+      <span class="tag">Chart QA</span>
+      <span class="tag">Evidence-Linked Extraction</span>
+      <span class="tag">Pre-registered Confirmation</span>
+      <span class="tag">Ollama · vLLM</span>
+    </div>
+    <div class="hero-ctas" style="margin-top: 2rem;">
+      <a href="assets/document-intelligence/routing-report-2026-10-21.md" class="btn-ghost" download>Routing report (Markdown)</a>
+      <a href="assets/document-intelligence/merged-report-2026-10-21.md" class="btn-ghost" download>Merged results (Markdown)</a>
+      <a href="assets/document-intelligence/benchmark.json" class="btn-ghost" download>Explorer data &amp; source hashes (JSON)</a>
+    </div>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1.25rem; max-width: 72ch;">Public-benchmark findings only. No private documents, labels, responses or results derived from them appear on this page or in its downloads. Dataset terms belong to their publishers; public availability does not imply unrestricted redistribution.</p>
+  </section>
+
+  <!-- BACK -->
+  <div class="back-section">
+    <a href="index.html" class="back-link">← Back to Portfolio</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe · Data Scientist · Applied AI &amp; Solutions Engineering</p>
+      <p>Model Evaluation Case Study · October 2026 · Prototype evidence, not production certification</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+<script src="assets/document-intelligence/explorer.js" defer></script>
+<script src="assets/chat/chat.js?v=20261014" defer></script>
+</body>
+</html>

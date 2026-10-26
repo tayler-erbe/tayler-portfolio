@@ -329,6 +329,21 @@
         </div>
       </div>
 
+      <div class="project-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
+          <span class="project-status status status-complete"><span class="status-dot"></span>Evaluation Complete · Prototype Routing</span>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="document-intelligence-evaluation.html" class="project-link">Case Study ↗</a>
+          </div>
+        </div>
+        <div class="project-num">12</div>
+        <div class="project-title">Document Intelligence on One GPU · Local Model Evaluation</div>
+        <p class="project-desc">Model evaluation case study that starts by defining the problem: proposal packets, contracts, research awards and reports keep their most useful facts in scanned text, budget tables, charts, spreadsheets flattened into PDF and clauses buried deep in the document. Five open vision models, six frozen tasks and eight methods were measured on a 12 GB laptop GPU and a 32 GB desktop GPU under a conformance-checked protocol, <strong>40,975 scored rows across two machines</strong>, public benchmarks only, no model grading another. Findings: the 8B model matches 32B on prose OCR (1.2% character error) and tables (0.818 TEDS); the same self-check method moves one model up 26.5 points and another down 43.5 on chart questions; layout masking cleans page text while cutting numeric recall from 87.2% to 69.4%; and a controlled reassessment turned a "weak" hosted model into a confirmed reasoning-on gain (3/30 to 13/30). Includes an interactive results explorer and an evidence-by-ID extraction design for clause questions.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">Model Evaluation</span><span class="tag tag-accent">Qwen3-VL</span><span class="tag tag-accent">Local Inference</span><span class="tag">OCR</span><span class="tag">Table Extraction</span><span class="tag">Chart QA</span><span class="tag">Evidence-Linked Extraction</span><span class="tag">Ollama · vLLM</span>
+        </div>
+      </div>
+
     </div>
   </section>
 
