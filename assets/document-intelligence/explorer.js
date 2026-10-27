@@ -30,7 +30,8 @@
     $('di-title').textContent = t.name;
     $('di-notice').textContent = t.note
       + (s.side === 'all' ? ' Both-machine views mix hardware and runtime; the 8B weights differ between machines.' : '')
-      + (s.split === 'confirmation v2' ? ' Round-2 page scores come from the routing report; latencies and failure counts it does not report are left blank.' : '');
+      + (s.split === 'confirmation v2' ? ' Round-2 page scores come from the routing report; latencies and failure counts it does not report are left blank.' : '')
+      + (s.split === 'confirmation v3' ? ' Final round on the desktop: 100 FinTabNet.c tables and 80 unused OmniDocBench pages, every model at 8,192 output tokens. Only the PaddleOCR-VL-1.6 table hypothesis passed the pre-registered rule; official-pipeline rows are supporting.' : '');
     const chart = $('di-bars'), body = $('di-rows');
     chart.replaceChildren(); body.replaceChildren();
     if (!current.length) chart.append(node('p', 'di-empty', 'No recorded configuration matches these filters. An absent result is a run that was not made, not a failure.'));
