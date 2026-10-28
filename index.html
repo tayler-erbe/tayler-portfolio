@@ -344,6 +344,21 @@
         </div>
       </div>
 
+      <div class="project-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.4rem;">
+          <span class="project-status status status-complete"><span class="status-dot"></span>Screening Complete · One Model Advanced</span>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="generation-model-evaluation.html" class="project-link">Case Study ↗</a>
+          </div>
+        </div>
+        <div class="project-num">13</div>
+        <div class="project-title">Rule-Bound Generation on One GPU · Local Model Evaluation</div>
+        <p class="project-desc">Model evaluation case study for a text generator that must pass its own automated checks. Seven open-weight models ran the real generator on the same 20 frozen groups under a decision rule written before the run, with the public IFEval benchmark measured beside it and speed and memory measured the same way on one RTX 5090. Findings: Qwen3.8 27B more than doubled accepted groups (7 vs 3 of 20) at a quarter of the output tokens per accepted group; the same Qwen3-32B dropped from 3 to 1 when only the server and quantisation changed; Gemma 4 wrote the best plans but no passing pieces; and two models tied on IFEval while differing on the real checks.</p>
+        <div class="project-tags">
+          <span class="tag tag-accent">Model Evaluation</span><span class="tag tag-accent">Constrained Generation</span><span class="tag tag-accent">Pre-registration</span><span class="tag">IFEval</span><span class="tag">Qwen · Gemma · GPT-OSS · Nemotron</span><span class="tag">Ollama · vLLM</span><span class="tag">RTX 5090</span>
+        </div>
+      </div>
+
     </div>
   </section>
 
