@@ -62,6 +62,7 @@
       <li><a href="#evaluated">What was tested</a></li>
       <li><a href="#method">Method</a></li>
       <li><a href="#findings">Findings</a></li>
+      <li><a href="#why">Why it won</a></li>
       <li><a href="#public">Public benchmark</a></li>
       <li><a href="#hardware">Speed &amp; memory</a></li>
       <li><a href="#advisory">Advisory</a></li>
@@ -121,8 +122,8 @@
       <div class="stat-desc">Fewer output tokens per accepted group for the best candidate</div>
     </div>
     <div class="stat-item">
-      <div class="stat-big">0</div>
-      <div class="stat-desc">Scores given by a model judge</div>
+      <div class="stat-big">0.90 / 0</div>
+      <div class="stat-desc">Best public score, groups it kept: Gemma 4</div>
     </div>
   </div>
 
@@ -274,6 +275,51 @@
     </div>
   </section>
 
+  <!-- 04b WHY -->
+  <section id="why">
+    <div class="section-header">
+      <span class="section-tag">04b</span>
+      <h2 class="section-title">Why the Smaller, Newer Model Won</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">Qwen3.8 27B is smaller than the current Qwen3-32B and still kept more than twice as many groups. The run records show where the difference came from, stage by stage, on the same 20 groups.</p>
+    <div class="table-scroll">
+    <table class="dt">
+      <thead><tr><th>Measured on the same 20 groups</th><th>Qwen3-32B (current)</th><th>Qwen3.8 27B</th></tr></thead>
+      <tbody>
+        <tr><td>Plan attempts needed</td><td class="num">41</td><td class="num good">27</td></tr>
+        <tr><td>Average plan length (output tokens)</td><td class="num">727</td><td class="num good">491</td></tr>
+        <tr><td>Groups whose plans failed every retry</td><td class="num">15</td><td class="num good">12</td></tr>
+        <tr><td>Groups where one claim copied another</td><td class="num">7</td><td class="num good">2</td></tr>
+        <tr><td>Groups where a claim missed the goal's own words</td><td class="num">15</td><td class="num good">10</td></tr>
+        <tr><td>Groups with a cause-and-effect leap or a mismatched interaction</td><td class="num">4 and 4</td><td class="num good">0 and 0</td></tr>
+        <tr><td>Groups where a suggestion missed its exact anchor words</td><td class="num">15</td><td class="num">15</td></tr>
+        <tr><td>Groups where a claim slid from behaviour into feelings or causes</td><td class="num good">0</td><td class="num">9</td></tr>
+        <tr class="lead"><td>Groups written and accepted</td><td class="num">3</td><td class="num good">7</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="finding-grid">
+      <div class="callout">
+        <div class="callout-label">It said less, so it broke fewer rules</div>
+        <p>Its plans were about a third shorter. Every extra sentence in a plan is another chance to copy a claim, overreach or miss a required word. Under strict checks, concision is a skill, and the newer model had more of it.</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-label">It followed the specific rules better</div>
+        <p>Copying between claims fell from 7 groups to 2, and cause-and-effect leaps disappeared. Plans passed sooner, so the generator reached the writing stage for more groups, and once there, the pieces passed.</p>
+      </div>
+      <div class="callout">
+        <div class="callout-label">Size was not the driver; the generation was</div>
+        <p>Qwen3.8 is a later release of the same family. The likeliest explanation is newer instruction training that handles many simultaneous constraints better. On the same server the gap is even larger: the 32B kept 1 group on Ollama against the 27B's 7, so the current model was being helped by its vLLM setup.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-label">What it did not fix, and what it made worse</div>
+        <p>Both models failed the exact-anchor-wording rule on the same 15 groups. That points at a contradiction in the instructions, not at the model, and a prompt fix is prepared separately. The 27B also slid from behaviour into feelings or causes more often. A new model trades one set of failures for another; it does not remove them.</p>
+      </div>
+    </div>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">These are behaviours measured in the run records. The reasons behind them, such as training data and instruction tuning, cannot be observed from outside the model and are stated as the likeliest explanation, not as fact. With 20 groups, the two models' intervals overlap, which is why the result earns a full trial rather than a switch.</p>
+  </section>
+
   <!-- 05 PUBLIC BENCHMARK -->
   <section id="public">
     <div class="section-header">
@@ -287,16 +333,16 @@
       <thead><tr><th>Arm</th><th>Model</th><th>Prompt strict</th><th>95% interval</th><th>Instruction strict</th><th>Prompt loose</th><th>Instruction loose</th></tr></thead>
       <tbody>
         <tr><td>A</td><td>Qwen3-32B · vLLM</td><td class="num">0.830</td><td class="num">0.796 to 0.859</td><td class="num">0.880</td><td class="num">0.869</td><td class="num">0.910</td></tr>
-        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="5">Second window running</td></tr>
-        <tr><td>C</td><td>Qwen3.8 27B</td><td class="pending" colspan="5">Second window running</td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="5">Second window running</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="pending" colspan="5">Second window running</td></tr>
-        <tr><td>F</td><td>Gemma 4 31B</td><td class="pending" colspan="5">Second window running (first attempt contaminated)</td></tr>
+        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="5">Not completed: the run stopped on a harness bug before this arm</td></tr>
+        <tr><td>C</td><td>Qwen3.8 27B</td><td class="num">0.806</td><td class="num">0.770 to 0.837</td><td class="num">0.865</td><td class="num">0.847</td><td class="num">0.897</td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="5">Not completed: the run stopped on a harness bug before this arm</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="pending" colspan="5">Not scored: another model appeared on the GPU mid-run, so the arm was discarded</td></tr>
+        <tr class="lead"><td>F</td><td>Gemma 4 31B</td><td class="num good">0.900</td><td class="num">0.872 to 0.923</td><td class="num good">0.928</td><td class="num good">0.922</td><td class="num good">0.947</td></tr>
         <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td class="num">0.823</td><td class="num">0.788 to 0.852</td><td class="num">0.880</td><td class="num">0.865</td><td class="num">0.909</td></tr>
       </tbody>
     </table>
     </div>
-    <div class="takeaway"><strong>A public score did not predict the task result.</strong> Qwen3-32B and Qwen 3.6 are statistically tied on IFEval (49 prompts only one passed against 53 only the other passed, McNemar p = 0.77), yet the current model kept more groups on the generator's checks. General instruction-following is necessary, not sufficient; the only reliable test of a rule-bound generator is its own rules.</div>
+    <div class="takeaway"><strong>The public score pointed the wrong way.</strong> Gemma 4 led IFEval clearly (0.900 against the current model's 0.830; it passed 61 prompts the current model failed and failed only 23 it passed) and kept nothing on the generator's checks. Qwen3.8 had the lowest IFEval score of the four models completed (0.806) and kept the most groups. Qwen3-32B and Qwen 3.6 tied on IFEval (McNemar p = 0.77) and still differed on the task. General instruction-following measures something real, but not the thing this generator needs; the only reliable test of a rule-bound generator is its own rules.</div>
   </section>
 
   <!-- 06 SPEED AND MEMORY -->
@@ -312,10 +358,10 @@
       <thead><tr><th>Arm</th><th>Model</th><th>Licence</th><th>VRAM after load</th><th>Time to first token</th><th>Generation tokens/s</th></tr></thead>
       <tbody>
         <tr><td>A</td><td>Qwen3-32B · vLLM AWQ</td><td>Apache 2.0</td><td class="num">30.4 GB</td><td class="num">0.65 s</td><td class="num">68</td></tr>
-        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="4">Second window running</td></tr>
-        <tr><td>C</td><td>Qwen3.8 27B</td><td class="pending" colspan="4">Second window running</td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="4">Second window running</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="pending" colspan="4">Second window running</td></tr>
+        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="4">Not completed</td></tr>
+        <tr><td>C</td><td>Qwen3.8 27B</td><td>Apache 2.0</td><td class="num">19.3 GB</td><td class="num">0.71 s</td><td class="num">122</td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="4">Not completed</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td>see model card</td><td class="num">23.7 GB</td><td class="num">0.27 s</td><td class="num">336</td></tr>
         <tr><td>F</td><td>Gemma 4 31B</td><td>Apache 2.0</td><td class="num">23.6 GB</td><td class="num">1.11 s</td><td class="num">127</td></tr>
         <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Apache 2.0</td><td class="num">23.1 GB</td><td class="num">0.29 s</td><td class="num">259</td></tr>
       </tbody>
@@ -336,12 +382,12 @@
     <table class="dt">
       <thead><tr><th>Model</th><th>Use it for</th><th>Avoid it for</th></tr></thead>
       <tbody>
-        <tr class="lead"><td>Qwen3.8 27B</td><td>The first model to try for strict, check-gated writing. Best yield and the cheapest accepted output here, with room to spare on the card.</td><td>Thinking-on runs under a time budget: the thinking arm timed out.</td></tr>
-        <tr><td>Gemma 4 31B</td><td>Planning and structuring. It wrote the most check-passing plans of any model.</td><td>Final wording under exact-phrase rules, where every piece it wrote failed.</td></tr>
+        <tr class="lead"><td>Qwen3.8 27B</td><td>The first model to try for strict, check-gated writing. Best yield and the cheapest accepted output here, in 19 GB, at about 1.8 times the current model's single-stream speed.</td><td>Thinking-on runs under a time budget: the thinking arm timed out.</td></tr>
+        <tr><td>Gemma 4 31B</td><td>General instruction-following, where it had the best public score here (IFEval 0.900), and planning, where it wrote the most check-passing plans.</td><td>Final wording under exact-phrase rules, where every piece it wrote failed.</td></tr>
         <tr><td>Qwen 3.6 35B-A3B</td><td>High-volume work where speed matters and the rules are general: about four times the current model's single-stream speed at the same IFEval score.</td><td>Exact-wording constraints, where it trailed the current model.</td></tr>
         <tr><td>Qwen3-32B on vLLM</td><td>A dependable baseline with batching. Keep it as the control for any switch.</td><td>Running it under a different server and quantisation and assuming the same results.</td></tr>
         <tr><td>GPT-OSS 20B</td><td>Matching the current yield in less memory; a sensible fallback on a smaller card.</td><td>Expecting an improvement on this task: it tied the baseline.</td></tr>
-        <tr><td>Nemotron 3 Nano</td><td>Fast utility work: routing, classification, short structured replies.</td><td>Long, rule-dense generation: it kept nothing here.</td></tr>
+        <tr><td>Nemotron 3 Nano</td><td>Fast utility work: routing, classification, short structured replies. The fastest model measured, at about 336 tokens a second.</td><td>Long, rule-dense generation: it kept nothing here.</td></tr>
       </tbody>
     </table>
     </div>
