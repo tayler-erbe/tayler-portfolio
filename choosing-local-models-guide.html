@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tayler Erbe | Choosing a Local Model: A Practical Guide</title>
+  <meta name="description" content="A practical guide by Tayler Erbe to finding, selecting, evaluating, validating and fine-tuning open-weight language models: what parameter counts mean, how models are trained, why a smaller model can beat a bigger one, and how to test a model on your own task." />
+  <meta name="keywords" content="Tayler Erbe, choosing an LLM, model evaluation guide, parameters explained, quantization, mixture of experts, instruction tuning, fine-tuning, LoRA, QLoRA, validation, IFEval, local models" />
+  <meta name="author" content="Tayler Erbe" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://taylererbe.com/choosing-local-models-guide.html" />
+  <meta property="og:title" content="Tayler Erbe | Choosing a Local Model: A Practical Guide" />
+  <meta property="og:description" content="What parameters, training stages, quantization and benchmarks really tell you, and a six-step method for picking, validating and fine-tuning a model for your own task." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://taylererbe.com/choosing-local-models-guide.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tayler Erbe | Choosing a Local Model" />
+  <meta name="twitter:description" content="A practical guide to finding, evaluating, validating and fine-tuning open-weight models." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
+  <style>
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-5); }
+    @media (max-width: 760px) { .finding-grid { grid-template-columns: 1fr; } .table-scroll { overflow-x: auto; } }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <nav class="subnav" aria-label="On this page">
+    <ul>
+      <li><a href="#basics">The basics</a></li>
+      <li><a href="#training">How models are trained</a></li>
+      <li><a href="#smaller">Why smaller can win</a></li>
+      <li><a href="#benchmarks">Benchmarks</a></li>
+      <li><a href="#method">Six-step method</a></li>
+      <li><a href="#finetune">Fine-tuning</a></li>
+      <li><a href="#validate">Validation</a></li>
+      <li><a href="#checklist">Checklist</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe · Advisory Guide · October 2026</div>
+    <h1>Choosing a Local Model:<br><span>Find, Evaluate, Validate,<br>Fine-Tune</span></h1>
+    <p class="hero-desc">
+      Model names are full of numbers that sound like a ranking: 8B, 27B, 32B, 35B-A3B, Q4, AWQ. They are not a
+      ranking. This guide explains what those numbers mean, how today's models are trained, why a
+      <strong>smaller model can beat a bigger one</strong> on a real task, and the method I use to pick, validate and,
+      only when needed, fine-tune a model. Every recommendation here comes from evaluations I ran on one GPU,
+      written up in my <a href="generation-model-evaluation.html">generation model evaluation</a> and
+      <a href="document-intelligence-evaluation.html">document intelligence evaluation</a>.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">For</div>
+        <div class="meta-value">Teams choosing an open-weight model for a specific job</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Covers</div>
+        <div class="meta-value">Parameters · training · quantisation · benchmarks · fine-tuning · validation</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Evidence</div>
+        <div class="meta-value">Two pre-registered evaluations on one RTX 5090</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 BASICS -->
+  <section id="basics">
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2 class="section-title">Reading a Model's Name</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="table-scroll">
+    <table class="dt">
+      <thead><tr><th>You see</th><th>It means</th><th>What it does and does not tell you</th></tr></thead>
+      <tbody>
+        <tr><td>27B, 32B</td><td>Billions of parameters: the numbers the model learned in training</td><td>Capacity, like the size of a library. Not how well the books were chosen, or whether the model follows instructions.</td></tr>
+        <tr><td>35B-A3B</td><td>Mixture of experts: 35B parameters in total, about 3B active for each word</td><td>Fast, because most of the model sits idle on any one word. Each word gets less of the model's effort than in a dense model of the same size.</td></tr>
+        <tr><td>Q4, Q4_K_M, AWQ</td><td>Compression: each parameter stored in about 4 bits instead of 16</td><td>Lets a large model fit on one card. Different methods lose different things, so the same model can behave differently under each.</td></tr>
+        <tr><td>Instruct, chat</td><td>A version trained to follow requests</td><td>The version you want for applications. A "base" model only continues text.</td></tr>
+        <tr><td>Thinking, reasoning</td><td>A version that writes hidden reasoning before answering</td><td>Can help hard problems. It spends tokens and time, and under a token budget it can run out before it answers.</td></tr>
+        <tr><td>Version, release date</td><td>Which training recipe produced it</td><td>Often matters more than size. A newer generation can beat an older, larger one.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- 02 TRAINING -->
+  <section id="training">
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2 class="section-title">How Today's Models Are Trained</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">Most open-weight chat models go through three broad stages. Vendors publish different amounts of detail about each, so treat this as the common shape, not any one model's recipe.</p>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Pretraining: learn language and knowledge</div>
+          <div class="step-body">The model reads trillions of words of web text, books, code and other sources and learns to predict the next word. Knowledge, fluency and general reasoning come mostly from here, and this is where more parameters help most.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Instruction tuning: learn to follow requests</div>
+          <div class="step-body">The model is trained on many examples of an instruction paired with a good answer. This turns a text predictor into an assistant. The quality and variety of these examples shape how precisely it follows instructions.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Preference and reinforcement tuning: learn what "better" means</div>
+          <div class="step-body">The model is rewarded for answers that people, a reward model or an automatic checker prefer. Checkers that can verify an answer, such as "used exactly three bullets" or "the code passes its tests", train rule-following directly. Newer models generally put more effort into this stage.</div>
+        </div>
+      </div>
+    </div>
+    <div class="takeaway"><strong>Size mostly comes from stage 1; discipline mostly comes from stages 2 and 3.</strong> If your task needs knowledge, size helps. If it needs exact compliance with many rules at once, the recency and quality of the later stages matter more.</div>
+  </section>
+
+  <!-- 03 SMALLER -->
+  <section id="smaller">
+    <div class="section-header">
+      <span class="section-tag">03</span>
+      <h2 class="section-title">Why a Smaller Model Can Win</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="prose">
+        <p>In my generation evaluation, Qwen3.8 27B kept 7 of 20 test groups through a strict writing generator's checks. The larger Qwen3-32B it would replace kept 3. The task needed almost no knowledge. It needed a model that obeys many rules at once: use exact wording, never copy one claim into another, never claim one thing causes another.</p>
+        <p>The run records showed how. The smaller model's plans were about a third shorter, it copied between claims in 2 groups instead of 7, and it made no cause-and-effect leaps. It needed 27 plan attempts instead of 41 and a quarter of the output tokens per accepted group. It is a later release of the same family, and the likeliest reason is newer instruction and preference training. That cannot be confirmed from outside the model, which is exactly why the test matters more than the explanation.</p>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-label">Four reasons a smaller model can beat a bigger one</div>
+          <p><strong>Newer training.</strong> A later recipe can outweigh extra parameters. <strong>Concision.</strong> Under strict checks, every extra sentence is another chance to break a rule. <strong>Serving.</strong> Compression and the server change behaviour; the same 32B kept 3 groups under one setup and 1 under another. <strong>Fit.</strong> A model that fits fully on the card at the context you need beats one that spills to the CPU.</p>
+        </div>
+        <div class="callout callout-warn">
+          <div class="callout-label">And why it might not</div>
+          <p>The same smaller model was worse on one rule: it slid from behaviour into feelings more often. A new model trades one set of failures for another. Only your own checks tell you whether the trade is worth it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 BENCHMARKS -->
+  <section id="benchmarks">
+    <div class="section-header">
+      <span class="section-tag">04</span>
+      <h2 class="section-title">What Public Benchmarks Can and Cannot Tell You</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="finding-grid">
+      <div class="callout callout-info">
+        <div class="callout-label">Use them to build a shortlist</div>
+        <p>Public leaderboards and benchmarks such as IFEval, for instruction-following, are the cheapest way to find candidates that fit your hardware and are broadly capable. They are measured the same way for every model, so they are fair as far as they go.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-label">Never use them as the verdict</div>
+        <p>In my evaluation, Gemma 4 had the best IFEval score by a clear margin, 0.900 against 0.830, and kept 0 of 20 groups on the real task. Qwen3.8 had the lowest IFEval score of the four models completed, and kept the most. A benchmark measures its own instructions, not yours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 METHOD -->
+  <section id="method">
+    <div class="section-header">
+      <span class="section-tag">05</span>
+      <h2 class="section-title">A Six-Step Method for Picking a Model</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Find candidates</div>
+          <div class="step-body">Start from what fits your hardware at the context length you need, then shortlist from public benchmarks, recent releases and the families you already run. Include your current model as the baseline.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Turn your real task into a test</div>
+          <div class="step-body">Freeze a set of real cases with automatic, code-based checks or answer keys. No model grades another. Keep failed and timed-out answers in the denominator.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Write the decision rule before you run</div>
+          <div class="step-body">State what counts as better, by how much, and what you will do with a pass. Freeze it by hash. With several candidates and small samples, one will look good by luck; a rule written first keeps you honest.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Prove the test is faithful</div>
+          <div class="step-body">Your current model must reproduce its known result inside the harness. If it does not, you are measuring the harness, and nothing is concluded.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">Change one thing at a time</div>
+          <div class="step-body">Run the same model on each server and compression you are considering, so serving effects are not mistaken for model effects. Test prompt changes and model changes separately, or in a two-by-two grid.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">06</div>
+        <div>
+          <div class="step-title">Confirm on data it has not seen</div>
+          <div class="step-body">A screening win earns a confirmation run on new cases and a new random seed, with an interval on the difference. Adopt only after that, through your normal release checks.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 FINE-TUNING -->
+  <section id="finetune">
+    <div class="section-header">
+      <span class="section-tag">06</span>
+      <h2 class="section-title">When and How to Fine-Tune</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">Fine-tuning means training an existing model further on your own examples. It is the most expensive lever, so try it last.</p>
+    <div class="table-scroll">
+    <table class="dt">
+      <thead><tr><th>Order</th><th>Lever</th><th>Cost</th><th>Try it when</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Fix the instructions</td><td>Minutes</td><td>Always first. Look for contradictions: my generator's prompt banned a phrase that its own anchor rule required.</td></tr>
+        <tr><td class="num">2</td><td>Switch or route models</td><td>Hours of evaluation</td><td>A candidate wins your pre-registered test. Consider one model per stage when models fail at different stages.</td></tr>
+        <tr><td class="num">3</td><td>Fine-tune</td><td>Days, plus GPU time</td><td>The best prompt and model together still miss your bar, and you can produce enough good examples.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="finding-grid">
+      <div class="callout">
+        <div class="callout-label">Rejection-sampling fine-tuning</div>
+        <p>If your task has automatic checks, you already have a free labeller. Generate many outputs, keep only those that pass every check, and train the model on them. It learns to produce passing outputs more often on the first try.</p>
+      </div>
+      <div class="callout">
+        <div class="callout-label">Preference tuning</div>
+        <p>Pair a passing and a failing answer to the same request, and train the model to prefer the passing one. It teaches the difference directly, not just the good example.</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-label">LoRA and QLoRA: fine-tuning on one GPU</div>
+        <p>Instead of changing all of a model's parameters, LoRA trains a small add-on, usually well under one percent of the model's size. QLoRA does the same on a compressed 4-bit copy of the base model, which is what can make a 27B model trainable on a single 32 GB card. You keep the add-on as a small separate file and load it on top of the base model.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-label">The main risk: learning the checks, not the job</div>
+        <p>A model trained to pass checks can learn to pass them while writing worse. Hold out cases it never trains on, and measure general skill and quality alongside the checks.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 VALIDATION -->
+  <section id="validate">
+    <div class="section-header">
+      <span class="section-tag">07</span>
+      <h2 class="section-title">How to Validate a Tuned Model</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Split by case, before you train</div>
+          <div class="step-body">Training, validation and held-out test sets are drawn as whole cases, never as rows of the same case, and the held-out set is never seen during training or tuning.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Compare like with like</div>
+          <div class="step-body">Run the tuned and untuned model on the same server, compression, prompt and seeds, so the only difference is the training.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Guard what the checks cannot see</div>
+          <div class="step-body">Re-run a public benchmark to catch lost general skill, and an independent quality read of a fixed sample to catch outputs that pass the rules but read worse. Each guard has a limit you state in advance.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Then release it like any other change</div>
+          <div class="step-body">A tuned model that wins still goes through your normal release route: a small live trial, a quality review and a way back.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 CHECKLIST -->
+  <section id="checklist">
+    <div class="section-header">
+      <span class="section-tag">08</span>
+      <h2 class="section-title">One-Page Checklist</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="table-scroll">
+    <table class="dt">
+      <thead><tr><th>Question</th><th>Good answer</th></tr></thead>
+      <tbody>
+        <tr><td>Does the model fit fully on my GPU at the context I need?</td><td>Yes, measured, not estimated</td></tr>
+        <tr><td>Is my test my real task?</td><td>Real cases, automatic checks, frozen before any run</td></tr>
+        <tr><td>Did I decide what "better" means first?</td><td>A written rule, frozen by hash</td></tr>
+        <tr><td>Does my current model reproduce its known result?</td><td>Within the stated tolerance, or nothing is concluded</td></tr>
+        <tr><td>Did I separate server, compression, prompt and model?</td><td>A control arm for each change</td></tr>
+        <tr><td>Did the winner hold on new cases and a new seed?</td><td>A paired interval that excludes no difference</td></tr>
+        <tr><td>Before fine-tuning, did I fix the prompt and try other models?</td><td>Yes, in that order</td></tr>
+        <tr><td>Is my held-out set truly unseen?</td><td>Split by case before training, never touched in tuning</td></tr>
+        <tr><td>Did general skill and quality hold?</td><td>Public benchmark and quality read within pre-stated limits</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="tag-row" style="margin-top: 2rem;">
+      <span class="tag tag-accent">Model Selection</span>
+      <span class="tag tag-accent">Evaluation Method</span>
+      <span class="tag tag-accent">Fine-Tuning</span>
+      <span class="tag">LoRA · QLoRA</span>
+      <span class="tag">Quantisation</span>
+      <span class="tag">Mixture of Experts</span>
+      <span class="tag">IFEval</span>
+    </div>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1.25rem; max-width: 72ch;">A fine-tuning experiment following this method is in progress for the generation evaluation, and its results will be added here when it finishes.</p>
+  </section>
+
+  <!-- BACK -->
+  <div class="back-section">
+    <a href="index.html" class="back-link">← Back to Portfolio</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe · Data Scientist · Applied AI &amp; Solutions Engineering</p>
+      <p>Advisory Guide · October 2026 · Based on my own evaluations, not vendor claims</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+<script src="assets/chat/chat.js?v=20261014" defer></script>
+</body>
+</html>
