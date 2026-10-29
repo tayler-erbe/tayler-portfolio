@@ -785,7 +785,7 @@
             <tr><td>Nemotron 3 Nano 30B · API, reasoning on</td><td class="num">13</td><td class="num">12</td></tr>
           </tbody>
         </table>
-        <p class="text-muted" style="font-size: 0.8rem; max-width: none;">Same documents and requests for every row, 16,000-token budget. At 30 questions per task, differences of a few documents are noise. High reasoning hurt gpt-oss-20b through truncation.</p>
+        <p class="text-muted" style="font-size: 0.8rem; max-width: none;">Same documents and requests for every row, 16,000-token budget. The CUAD set includes 15 absent fields, so answering "absent" every time scores 15/30: no configuration beat that baseline. At 30 questions per task, differences of a few documents are noise. High reasoning hurt gpt-oss-20b through truncation.</p>
       </div>
     </div>
 
@@ -838,7 +838,7 @@
       <div class="prose">
         <p>A hosted Nemotron 3 Nano 30B endpoint scored far below the local Qwen models on the first pass. The easy conclusion was "weak model". The honest one was "weak configuration, untested". A controlled reassessment ran <strong>192 requests across eight configurations</strong> on the same 24 cases. It changed one mechanism at a time: output budget, reasoning, sampling, label definitions, full-document context, evidence by ID and schema delivery.</p>
         <p>Budget alone changed nothing. Enabling reasoning at the same budget lifted CUAD from 1/12 to 4/12. A pre-specified contrast on <strong>60 fresh documents</strong> then confirmed the direction. With reasoning on, strict correctness rose from 3/30 to 13/30 on CUAD and 5/30 to 12/30 on ContractNLI. The cost was one truncation per task, which counts as zero.</p>
-        <p>That supports enabling reasoning for further work. It does not establish production adequacy or a serving defect. In the final comparison on the same 60 documents (table above), both local models scored higher. A poor result without a controlled comparison proves nothing about the model family. The reassessment was designed to avoid drawing conclusions about the model family or a serving defect by accident.</p>
+        <p>That supports enabling reasoning for further work. It does not establish production adequacy or a serving defect. In the final comparison on the same 60 documents (table above), it trailed Qwen3 32B on ContractNLI. On CUAD, no configuration beat the always-absent baseline of 15 out of 30. A poor result without a controlled comparison proves nothing about the model family. The reassessment was designed to avoid drawing conclusions about the model family or a serving defect by accident.</p>
       </div>
     </div>
   </section>
