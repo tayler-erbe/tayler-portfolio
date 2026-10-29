@@ -62,6 +62,7 @@
       <li><a href="#method">Method</a></li>
       <li><a href="#findings">Findings</a></li>
       <li><a href="#differences">What differed</a></li>
+      <li><a href="#round2">Round 2</a></li>
       <li><a href="#public">Public benchmark</a></li>
       <li><a href="#hardware">Speed &amp; memory</a></li>
       <li><a href="#incidents">Run incidents</a></li>
@@ -94,11 +95,11 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">Data</div>
-        <div class="meta-value">20 frozen task groups, one seed · IFEval (541 prompts)</div>
+        <div class="meta-value">20 frozen groups, then 60 new groups · IFEval (541 prompts)</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Status</div>
-        <div class="meta-value">Main task screen complete · public benchmark partial · one configuration eligible for a full trial, not adopted</div>
+        <div class="meta-value">Screen and pre-registered replication complete · public benchmark complete except one flagged arm · Qwen3.8 eligible for the release route, not adopted</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Role</div>
@@ -147,7 +148,7 @@
         </div>
         <div class="callout callout-warn">
           <div class="callout-label">Constraints</div>
-          <p>One model on the GPU at a time. No change to the prompt, the checks or the bar for any arm. Within each completed main arm, rejected and timed-out groups stay in the denominator of 20. Only counts and check names are reported, never generated text.</p>
+          <p>One model on the GPU at a time. For the round 1 screen, no arm changed the prompt, checks or screening bar; round 2 tested a candidate prompt as a separate factor. Within each completed main arm, rejected and timed-out groups stay in the denominator of 20. Only counts and check names are reported, never generated text.</p>
         </div>
       </div>
     </div>
@@ -169,9 +170,9 @@
         <tr><td>B</td><td>Qwen3-32B</td><td>Ollama · Q4_K_M</td><td>off</td><td>Same model, different backend configuration (server and quantisation change together)</td></tr>
         <tr><td>C</td><td>Qwen3.8 27B</td><td>Ollama · Q4_K_M</td><td>off</td><td>A newer version number in the same model family</td></tr>
         <tr><td>D</td><td>GPT-OSS 20B</td><td>Ollama</td><td>low</td><td>A different model family</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td>Ollama · Q4_K_M</td><td>off</td><td>A model from another vendor, smaller on disk</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td>Ollama · Q4_K_M</td><td>off</td><td>A model from another vendor</td></tr>
         <tr><td>F</td><td>Gemma 4 31B</td><td>Ollama · Q4_K_M</td><td>off</td><td>A model from another family, downloaded for this screen</td></tr>
-        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Ollama · Q4_K_M</td><td>off</td><td>A mixture-of-experts model (35B total, about 3B active, per its name), downloaded for this screen</td></tr>
+        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Ollama · Q4_K_M</td><td>off</td><td>An additional model configuration, downloaded for this screen</td></tr>
       </tbody>
     </table>
     </div>
@@ -225,7 +226,7 @@
         <div class="step-num">06</div>
         <div>
           <div class="step-title">Review the design before spending GPU time</div>
-          <div class="step-body">An independent reviewer model read the bench design over two rounds; its first-round requirements were built and covered by 67 CPU tests before the card was used. A later independent audit of this write-up found overstatements, which are corrected on this page.</div>
+          <div class="step-body">The bench design underwent two independent model-review rounds, and the bench had 67 CPU tests. A later independent audit of this write-up found overstatements, which are corrected on this page.</div>
         </div>
       </div>
     </div>
@@ -310,11 +311,53 @@
       </div>
       <div class="callout callout-info">
         <div class="callout-label">Hypotheses worth testing</div>
-        <p>Newer instruction and preference training in the later release; more concise output under strict checks; a better fit between the model and its chat template. Each is a hypothesis, not a finding. A repeat on a new seed and more groups is queued as the next evidence.</p>
+        <p>Possible explanations include differences in training, output concision under strict checks, and fit with the chat template. This screen does not distinguish among them. The round 2 replication on a new seed and 60 new groups is that next evidence; it held, though it still does not identify the cause.</p>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">The instruction conflict sits under every arm</div>
-        <p>Because one rule banned a phrase another required, some failures may reflect incompatible instructions rather than either model. The aggregate BF8 counts do not identify how much of the failure that conflict caused. A candidate fix is queued for a separate test.</p>
+        <p>Because one rule banned a phrase another required, some failures may reflect incompatible instructions rather than either model. The aggregate BF8 counts do not identify how much of the failure that conflict caused. A candidate fix was tested in round 2; its benefit was not shown at that precision.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04c ROUND 2 -->
+  <section id="round2">
+    <div class="section-header">
+      <span class="section-tag">04c</span>
+      <h2 class="section-title">Round 2: Replication on New Groups</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">A second pre-registered round, frozen before it ran, repeated the comparison on 60 new groups from one job, with a new seed. It also crossed model with prompt, using a candidate fix for the instruction conflict, and tested one model per stage. Primary rule: the advantage replicates only if the paired 95% interval lies above zero, exact McNemar p &lt; 0.05, and first-try acceptance is not worse.</p>
+    <div class="table-scroll">
+    <table class="dt">
+      <thead><tr><th>Arm</th><th>Model</th><th>Prompt</th><th>Accepted of 60</th><th>95% interval</th><th>Accepted on first try</th><th>Calls per accepted group</th><th>Output tokens per accepted group</th></tr></thead>
+      <tbody>
+        <tr><td>A.fx1</td><td>Qwen3-32B · vLLM</td><td>current</td><td class="num">11</td><td class="num">0.11 to 0.30</td><td class="num">0</td><td class="num">42.7</td><td class="num">7,516</td></tr>
+        <tr><td>A.fx2</td><td>Qwen3-32B · vLLM</td><td>candidate fix</td><td class="num">16</td><td class="num">0.17 to 0.39</td><td class="num">1</td><td class="num">29.7</td><td class="num">5,044</td></tr>
+        <tr class="lead"><td>C.fx1</td><td>Qwen3.8 27B · Ollama</td><td>current</td><td class="num good">24</td><td class="num">0.29 to 0.53</td><td class="num">0</td><td class="num">14.8</td><td class="num">3,194</td></tr>
+        <tr class="lead"><td>C.fx2</td><td>Qwen3.8 27B · Ollama</td><td>candidate fix</td><td class="num good">28</td><td class="num">0.35 to 0.59</td><td class="num">0</td><td class="num">13.9</td><td class="num">2,629</td></tr>
+        <tr><td>F.fx1</td><td>Gemma 4 31B · Ollama</td><td>current</td><td class="num">4</td><td class="num">0.03 to 0.16</td><td class="num">1</td><td class="num">65.5</td><td class="num">17,423</td></tr>
+        <tr><td>S.fx1</td><td>Gemma 4 plans, Qwen3.8 writes</td><td>current</td><td class="num">25</td><td class="num">0.30 to 0.54</td><td class="num">3</td><td class="num">13.0</td><td class="num">3,010</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">The staged arm used two passes: Gemma's recorded plan responses were replayed byte for byte, and Qwen3.8 handled the writing requests. Its plan-token accounting includes Gemma's replayed outputs, and its resource figures mix the two models; they are not measured costs of a live two-model pipeline.</p>
+    <div class="finding-grid">
+      <div class="callout">
+        <div class="callout-label">Primary result: replicated</div>
+        <p>Qwen3.8 27B accepted 24 of 60 groups against the current configuration's 11, a difference of 21.7 points (95% Newcombe interval 6.6 to 35.5). Paired by group: only Qwen3.8 accepted 18, only the current configuration 5, both 6, neither 31 (exact McNemar p = 0.011). First-try acceptance was not worse. The round-1 screening result held on new groups under the pre-registered rule.</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-label">Model versus prompt</div>
+        <p>Across the two-by-two, the Qwen3.8 on Ollama versus Qwen3-32B on vLLM contrast averaged about 21 points (bootstrap interval 9 to 33). The candidate prompt contrast averaged 7.5 points (interval -3 to 18), so a prompt benefit was not demonstrated at this precision. The interaction estimate was -1.7 points (interval about -20 to 18): none was detected, but meaningful interactions remain compatible with the data. These secondary estimates are exploratory.</p>
+      </div>
+      <div class="callout">
+        <div class="callout-label">One model per stage</div>
+        <p>Gemma 4's plans were accepted for 52 of 60 groups, against 27 for Qwen3.8's own plans. With Qwen3.8 writing from Gemma's plans, 25 groups were accepted, against 24 with Qwen3.8's own plans: an estimated gain of 1.7 points, with a 95% interval from -17 to +20. This did not demonstrate a benefit at this precision. Holding the recorded Gemma plans fixed, Qwen3.8 writing accepted 35 points more groups than Gemma writing, with an interval from 23 to 47 points, in these configurations.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-label">Scope</div>
+        <p>One seed, 60 groups from a single job, so one placement, one relation and one goal. Each arm is still a configuration bundle: the Qwen3.8 arms ran on Ollama and the baseline on vLLM. The replication supports taking Qwen3.8 through the full release route; it is not release validation, and it does not say how it will do across the rest of the library.</p>
       </div>
     </div>
   </section>
@@ -332,17 +375,17 @@
       <thead><tr><th>Arm</th><th>Configuration</th><th>Prompt strict</th><th>95% interval</th><th>Instruction strict</th><th>Prompt loose</th><th>Instruction loose</th></tr></thead>
       <tbody>
         <tr><td>A</td><td>Qwen3-32B · vLLM</td><td class="num">0.830</td><td class="num">0.796 to 0.859</td><td class="num">0.880</td><td class="num">0.869</td><td class="num">0.910</td></tr>
-        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="5">Not run in the first round; scheduled in round 2</td></tr>
+        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="5">Flagged contaminated in round 2: descriptive only (prompt strict 0.839), not compared</td></tr>
         <tr><td>C</td><td>Qwen3.8 27B</td><td class="num">0.806</td><td class="num">0.770 to 0.837</td><td class="num">0.865</td><td class="num">0.847</td><td class="num">0.897</td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="5">Not run in the first round; scheduled in round 2</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="pending" colspan="5">Contaminated: another model appeared mid-run; scheduled again in round 2</td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B</td><td class="num">0.725</td><td class="num">0.685 to 0.761</td><td class="num">0.805</td><td class="num">0.758</td><td class="num">0.831</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="num">0.793</td><td class="num">0.757 to 0.825</td><td class="num">0.856</td><td class="num">0.817</td><td class="num">0.875</td></tr>
         <tr class="lead"><td>F</td><td>Gemma 4 31B</td><td class="num good">0.900</td><td class="num">0.872 to 0.923</td><td class="num good">0.928</td><td class="num good">0.922</td><td class="num good">0.947</td></tr>
         <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td class="num">0.823</td><td class="num">0.788 to 0.852</td><td class="num">0.880</td><td class="num">0.865</td><td class="num">0.909</td></tr>
       </tbody>
     </table>
     </div>
-    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">Paired against A on the same 541 prompts, unadjusted exact McNemar: F passed 61 prompts A failed and failed 23 A passed (p &lt; 0.0001); G 49 and 53 (p = 0.77); C 41 and 54 (p = 0.22). A non-significant result means no difference was detected, not that the scores are equal. Gemma 4's IFEval arm was run afresh in the second window after the first attempt was contaminated.</p>
-    <div class="takeaway"><strong>The two rankings differed.</strong> Among the four completed IFEval arms, Gemma 4 scored highest and accepted no task groups; Qwen3.8 scored lowest and accepted the most. IFEval and the generator's checks measure different things: general verifiable instructions versus this task's specific rules. Neither alone establishes writing quality or fitness for release. In this study, the task checks and a pre-registered rule decided which configuration earned a full trial.</div>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">Paired against A on the same 541 prompts, unadjusted exact McNemar: F passed 61 prompts A failed and failed 23 A passed (p &lt; 0.0001); G 49 and 53 (p = 0.77); C 41 and 54 (p = 0.22). A non-significant result means no difference was detected, not that the scores are equal. Gemma 4's IFEval arm was run afresh in the second window after the first attempt was contaminated. D and E were run in round 2 with the same locked checker, on a different day from A; against A, D passed 35 prompts A failed and failed 92 (p &lt; 0.0001), E 34 and 54 (p = 0.042). B's round 2 arm was flagged contaminated and is not compared.</p>
+    <div class="takeaway"><strong>The two rankings differed.</strong> Across the six configurations with clean IFEval results, Gemma 4 scored highest and accepted almost no task groups in either round; Qwen3.8 scored below the current configuration and accepted the most. IFEval and the generator's checks measure different things: general verifiable instructions versus this task's specific rules. Neither alone establishes writing quality or fitness for release. In this study, the task checks and a pre-registered rule decided which configuration earned a full trial.</div>
   </section>
 
   <!-- 06 SPEED AND MEMORY -->
@@ -357,17 +400,17 @@
     <table class="dt">
       <thead><tr><th>Arm</th><th>Configuration</th><th>Licence as reported by Ollama's model metadata</th><th>VRAM after load</th><th>Time to first token</th><th>Generation tokens/s</th></tr></thead>
       <tbody>
-        <tr><td>A</td><td>Qwen3-32B · vLLM AWQ</td><td>not captured by the bench</td><td class="num">30,436 MiB</td><td class="num">0.65 s</td><td class="num">68</td></tr>
-        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="4">Scheduled in round 2</td></tr>
+        <tr><td>A</td><td>Qwen3-32B · vLLM AWQ</td><td>Not reported here; vLLM baseline</td><td class="num">30,436 MiB</td><td class="num">0.65 s</td><td class="num">68</td></tr>
+        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="4">Flagged contaminated in round 2: not reported</td></tr>
         <tr><td>C</td><td>Qwen3.8 27B</td><td>Apache License</td><td class="num">19,324 MiB</td><td class="num">0.71 s</td><td class="num">122</td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="4">Scheduled in round 2</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td>not recorded</td><td class="num">23,670 MiB</td><td class="num">0.27 s</td><td class="num">336</td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B · MXFP4</td><td>Apache License</td><td class="num">13,156 MiB</td><td class="num">0.21 s</td><td class="num">280</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td>NVIDIA Open Model License Agreement</td><td class="num">23,670 MiB</td><td class="num">0.27 s</td><td class="num">336</td></tr>
         <tr><td>F</td><td>Gemma 4 31B</td><td>Apache License</td><td class="num">23,560 MiB</td><td class="num">1.08 s</td><td class="num">128</td></tr>
         <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Apache License</td><td class="num">23,102 MiB</td><td class="num">0.29 s</td><td class="num">259</td></tr>
       </tbody>
     </table>
     </div>
-    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">VRAM after load is the observed allocation for each configuration; it does not separate weights, caches and server reservations. Licences are shown exactly as Ollama's metadata reports them, without a version; check each model's own licence before use. These are single-stream rates; vLLM batches requests in real use, so they are not aggregate throughput or production capacity.</p>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">VRAM after load is the observed allocation for each configuration; it does not separate weights, caches and server reservations. For the Ollama arms, the licence strings reproduce Ollama's metadata without adding a version. The vLLM baseline is not covered by that statement. Check each model's own licence before use. These are single-stream rates; vLLM batches requests in real use, so they are not aggregate throughput or production capacity.</p>
   </section>
 
   <!-- 07 INCIDENTS -->
@@ -381,10 +424,10 @@
     <table class="dt">
       <thead><tr><th>Window</th><th>What happened</th><th>Effect on the numbers</th></tr></thead>
       <tbody>
-        <tr><td>Task screen</td><td>All seven main arms completed. At the end, restoring the resident service failed because GPU memory had not yet been released; the backup restore job then restored it.</td><td>None on task scores</td></tr>
-        <tr><td>Evaluation 1</td><td>Gemma 4's IFEval arm was stopped when the bench's watcher saw a model it had not loaded. The bench deferred its restore. I first attributed the load to a morning check-in job; a later diagnosis traced it to an hourly agent round on the same machine that falls back to a local model when the resident service is down. I unloaded that model by hand so the restore and results could proceed.</td><td>Gemma 4's partial IFEval run discarded</td></tr>
+        <tr><td>Task screen</td><td>All seven main arms completed. At the end, restoring the resident service failed because GPU memory had not yet been released; the service was subsequently restored.</td><td>None on task scores</td></tr>
+        <tr><td>Evaluation 1</td><td>Gemma 4's IFEval arm was stopped when the bench's watcher saw a model it had not loaded. The bench deferred its restore. I first attributed the load to a morning check-in job; a later diagnosis traced it to an hourly agent round on the same machine that falls back to a local model when the resident service is down. My coordinating agent, Claude, unloaded that model by hand so the restore and results could proceed.</td><td>Gemma 4's partial IFEval run discarded</td></tr>
         <tr><td>Evaluation 2</td><td>Started early at my request, without first removing that interference; a schedule change is not isolation. Gemma 4 and Qwen3.8 completed cleanly. Nemotron's speed test completed cleanly; its IFEval run was then contaminated, and timing suggests the same cause, though that was not measured. The window stopped on a text-encoding error in the bench before reaching B and D, and the resident service was restored afterwards.</td><td>Nemotron IFEval discarded; B and D not run</td></tr>
-        <tr><td>Round 2</td><td>Its first two windows were refused before touching the GPU by a path guard that did not yet allow round 2's output folder. I made a two-line repair, recorded with before and after hashes and re-tested, and re-queued them. Round 2 now steps aside for the hourly agent round instead of competing with it.</td><td>None: nothing ran in the refused attempts</td></tr>
+        <tr><td>Round 2</td><td>Its first two windows were refused before touching the GPU by a path guard that did not yet allow round 2's output folder. A two-line repair to the bench's output-path guard, documented in the bench's repair record, let them run. All three round 2 windows then completed, yielded to the agent rounds, and restored the resident service. The third window flagged Qwen3-32B's IFEval arm on Ollama as contaminated after a watcher check recorded other jobs running; completion does not clear that flag.</td><td>Qwen3-32B Ollama IFEval and speed: descriptive only, not compared. The round 2 task replication is unaffected</td></tr>
       </tbody>
     </table>
     </div>
@@ -397,24 +440,24 @@
       <h2 class="section-title">Observations for This Kind of Workload</h2>
       <div class="section-line"></div>
     </div>
-    <p class="section-lede">Specific to this generator and these configurations on one 32 GB card, October 2026. These are observations from one screen, not general rankings. The general method is in my <a href="choosing-local-models-guide.html">guide to choosing, validating and fine-tuning a local model</a>.</p>
+    <p class="section-lede">Specific to this generator and these configurations on one 32 GB card, October 2026. These observations come from the initial screen and the round 2 experiments; they are not general rankings. The general method is in my <a href="choosing-local-models-guide.html">guide to choosing, validating and fine-tuning a local model</a>.</p>
     <div class="table-scroll">
     <table class="dt">
       <thead><tr><th>Configuration</th><th>What this screen observed</th></tr></thead>
       <tbody>
-        <tr class="lead"><td>Qwen3.8 27B · Ollama</td><td>The next full-trial candidate for this generator: 7 of 20 accepted, about a quarter of the baseline's output tokens per accepted group, 19,324 MiB after load. Its thinking-on variant did not finish within its time cap.</td></tr>
-        <tr><td>Gemma 4 31B · Ollama</td><td>Highest IFEval score among completed arms; 0 of 20 accepted, with most groups failing at the writing stage. Worth investigating as a planner in a staged design.</td></tr>
+        <tr class="lead"><td>Qwen3.8 27B · Ollama</td><td>The candidate for this generator's release route: 7 of 20 accepted in the screen, then 24 of 60 against 11 in the pre-registered replication, with fewer tokens per accepted group in both; 19,324 MiB after load. Its thinking-on variant did not finish within its time cap.</td></tr>
+        <tr><td>Gemma 4 31B · Ollama</td><td>Highest IFEval score; 0 of 20 and then 4 of 60 accepted, failing mostly at the writing stage. Its plans were accepted far more often, but using them for Qwen3.8 to write from did not demonstrate a gain at this precision.</td></tr>
         <tr><td>Qwen 3.6 35B-A3B · Ollama</td><td>259 generation tokens a second single-stream; 2 of 20 accepted.</td></tr>
         <tr><td>Qwen3-32B · vLLM AWQ</td><td>The baseline, 3 of 20; keep it as the control for any change.</td></tr>
         <tr><td>Qwen3-32B · Ollama Q4_K_M</td><td>1 of 20: the same model under another backend configuration did worse here.</td></tr>
-        <tr><td>GPT-OSS 20B · Ollama</td><td>3 of 20; memory and IFEval not yet measured.</td></tr>
+        <tr><td>GPT-OSS 20B · Ollama</td><td>3 of 20; the lowest IFEval score measured, 0.725; the smallest memory footprint, 13,156 MiB, at 280 tokens a second.</td></tr>
         <tr><td>Nemotron 3 Nano · Ollama</td><td>The fastest measured, 336 tokens a second; 0 of 20 accepted. Other task types were not tested.</td></tr>
       </tbody>
     </table>
     </div>
     <div class="callout callout-info" style="margin-top: 2rem;">
       <div class="callout-label">Did this need another model download?</div>
-      <p>Not for the next planned step. The configuration that met the screening rule was on the machine before this screen, and neither model downloaded for it met the rule. The proposed next evidence is a repeat on a new seed and more groups, a separate test of the instruction fix, and a staged-model test. A wider search remains possible later.</p>
+      <p>Neither model downloaded for the original screen met its screening rule; the configuration that did was already installed. Round 2 has now completed the replication, the candidate-prompt test and the staged-model test. A wider model search remains possible later.</p>
     </div>
   </section>
 
@@ -479,8 +522,8 @@
       <div class="section-line"></div>
     </div>
     <div class="prose">
-      <p><strong>Round 2, queued, not yet run.</strong> A repeat of the baseline against Qwen3.8 27B on a new seed and more than 60 new groups, under a new pre-registered rule with a paired interval; a two-by-two of model and prompt, using a candidate fix for the instruction contradiction; a staged test in which Gemma 4 plans and Qwen3.8 writes; and the missing IFEval and speed arms.</p>
-      <p><strong>A small fine-tuning experiment, designed and pre-registered, not yet run.</strong> Training Qwen3.8 27B on its own check-passing outputs, with test groups split off by whole job, a pre-registered rule, and guards on IFEval and an independent quality read. A null result would be specific to that recipe.</p>
+      <p><strong>Round 2, done.</strong> The Qwen3.8 advantage replicated on 60 new groups; the candidate prompt fix was not shown to help at this precision; the staged design did not demonstrate a gain at this precision; all IFEval and speed arms completed, though Qwen3-32B's round 2 measurements on Ollama are flagged contaminated and excluded from comparisons. Taking Qwen3.8 into the generator is a release decision: its own canary run, an independent quality review and the project owner's approval of the model change.</p>
+      <p><strong>A fine-tuning experiment, pre-registered.</strong> It has its own pre-registration and build, and reserves the round 2 groups from its training and validation data. Its first pilot stopped on a server setup error, recorded and fixed, and has been re-queued. No fine-tuning result is reported here.</p>
       <p><strong>Adoption only through the release route.</strong> Any change still needs its own canary run and an independent quality review. Level 2 research only: nothing on this page is release validation.</p>
     </div>
     <div class="tag-row" style="margin-top: 2rem;">
