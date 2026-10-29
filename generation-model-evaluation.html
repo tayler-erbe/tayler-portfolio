@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tayler Erbe | Generation Model Evaluation: Which Local Model Follows the Rules</title>
-  <meta name="description" content="Tayler Erbe's pre-registered evaluation of seven open-weight language models for rule-bound text generation on one RTX 5090: a task bench built from a real generator's own automated checks, the public IFEval benchmark, and speed and memory measured the same way for every model." />
+  <title>Tayler Erbe | Generation Model Evaluation: Screening Local Models on a Rule-Bound Generator</title>
+  <meta name="description" content="Tayler Erbe's pre-registered screening of local language-model configurations on a check-gated text generator, on one RTX 5090: a task bench using the generator's own automated checks, the public IFEval benchmark, and single-stream speed and memory, with every limitation stated." />
   <meta name="keywords" content="Tayler Erbe, model evaluation, constrained generation, instruction following, IFEval, Qwen3, Qwen3.8, Qwen3.6, Gemma 4, gpt-oss, Nemotron, Ollama, vLLM, local inference, RTX 5090, pre-registration" />
   <meta name="author" content="Tayler Erbe" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://taylererbe.com/generation-model-evaluation.html" />
   <meta property="og:title" content="Tayler Erbe | Generation Model Evaluation" />
-  <meta property="og:description" content="Seven local models, one rule-bound writing task, a public benchmark beside it, and a decision rule written before the run." />
+  <meta property="og:description" content="Seven model configurations, one check-gated writing task, a public benchmark beside it, and a decision rule written before the run." />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://taylererbe.com/generation-model-evaluation.html" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Tayler Erbe | Generation Model Evaluation" />
-  <meta name="twitter:description" content="Which local model follows a generator's rules? A pre-registered task bench plus IFEval, on one GPU." />
+  <meta name="twitter:description" content="Screening local models on a rule-bound generator: a pre-registered task bench plus IFEval, on one GPU." />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Generation Model Evaluation: Which Local Model Follows the Rules",
+    "headline": "Generation Model Evaluation: Screening Local Models on a Rule-Bound Generator",
     "author": { "@type": "Person", "name": "Tayler Erbe", "url": "https://taylererbe.com/" },
-    "description": "Model evaluation case study by Tayler Erbe: seven open-weight models on a rule-bound generation task, a pre-registered decision rule, the public IFEval benchmark and like-for-like speed and memory measurements on one GPU.",
+    "description": "Model evaluation case study by Tayler Erbe: seven model configurations covering six models on a check-gated generation task, a pre-registered screening rule, the public IFEval benchmark and single-stream speed and memory on one GPU.",
     "keywords": "Tayler Erbe, model evaluation, constrained generation, IFEval, local inference, Ollama, vLLM"
   }
   </script>
@@ -31,7 +31,6 @@
   <link rel="stylesheet" href="assets/site.css" />
   <style>
     /* page-specific styles; shared tokens and components live in assets/site.css */
-    .hero-ctas { margin-top: 1.75rem; }
     .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-5); }
     .dt td.pending { color: var(--muted2); font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-label); text-transform: uppercase; }
     .dt tr.lead td { color: var(--white); }
@@ -62,10 +61,11 @@
       <li><a href="#evaluated">What was tested</a></li>
       <li><a href="#method">Method</a></li>
       <li><a href="#findings">Findings</a></li>
-      <li><a href="#why">Why it won</a></li>
+      <li><a href="#differences">What differed</a></li>
       <li><a href="#public">Public benchmark</a></li>
       <li><a href="#hardware">Speed &amp; memory</a></li>
-      <li><a href="#advisory">Advisory</a></li>
+      <li><a href="#incidents">Run incidents</a></li>
+      <li><a href="#advisory">Observations</a></li>
       <li><a href="#takeaways">Takeaways</a></li>
       <li><a href="#next">Next</a></li>
     </ul>
@@ -74,19 +74,19 @@
   <!-- HERO -->
   <div class="hero">
     <div class="hero-eyebrow">Tayler Erbe · Model Evaluation Case Study · October 2026</div>
-    <h1>Rule-Bound Generation<br>on One GPU: <span>Which Local Model<br>Follows the Rules</span></h1>
+    <h1>Rule-Bound Generation<br>on One GPU: <span>Screening Local<br>Models Honestly</span></h1>
     <p class="hero-desc">
-      A text generator that must pass its own automated checks is only as good as the model's ability to follow
-      instructions exactly. When my generator's yield stalled, the question became whether a different local model
-      would do better. This case study measures <strong>seven open-weight models</strong> on the generator's own
-      checks, under a decision rule written before the run, and sets a <strong>public instruction-following
-      benchmark</strong> beside it. Speed and memory are measured the same way for every model on one RTX 5090.
-      No model grades another.
+      A text generator that must pass its own automated checks depends on two things together: a model that
+      follows instructions, and prompts and checks that do not contradict each other. When my generator's yield
+      stalled, I screened <strong>seven model configurations covering six local models</strong> on the generator's
+      own checks, under a decision rule written before the run, and set the <strong>public IFEval
+      benchmark</strong> beside it. This page reports what was measured, what was not, and what can and cannot be
+      concluded from it.
     </p>
     <div class="hero-meta">
       <div class="meta-item">
         <div class="meta-label">Workload</div>
-        <div class="meta-value">Rule-bound structured writing · plan, then write, then check</div>
+        <div class="meta-value">Check-gated structured writing · plan, then write, then check</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Hardware</div>
@@ -94,11 +94,11 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">Data</div>
-        <div class="meta-value">20 frozen task groups · IFEval (541 prompts)</div>
+        <div class="meta-value">20 frozen task groups, one seed · IFEval (541 prompts)</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Status</div>
-        <div class="meta-value">Screening complete · one model advanced to a full trial, not adopted</div>
+        <div class="meta-value">Main task screen complete · public benchmark partial · one configuration eligible for a full trial, not adopted</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Role</div>
@@ -110,20 +110,20 @@
   <!-- STAT STRIP -->
   <div class="stat-strip">
     <div class="stat-item">
-      <div class="stat-big">7</div>
-      <div class="stat-desc">Open-weight models, same task, same checks</div>
+      <div class="stat-big">7 · 6</div>
+      <div class="stat-desc">Main configurations · distinct models</div>
     </div>
     <div class="stat-item">
       <div class="stat-big">3 → 7</div>
-      <div class="stat-desc">Groups accepted of 20: current model vs best candidate</div>
+      <div class="stat-desc">Groups accepted of 20: current configuration vs the screen's best</div>
     </div>
     <div class="stat-item">
-      <div class="stat-big">4×</div>
-      <div class="stat-desc">Fewer output tokens per accepted group for the best candidate</div>
+      <div class="stat-big">~¼</div>
+      <div class="stat-desc">Output tokens per accepted group, best vs current, in this run</div>
     </div>
     <div class="stat-item">
-      <div class="stat-big">0.90 / 0</div>
-      <div class="stat-desc">Best public score, groups it kept: Gemma 4</div>
+      <div class="stat-big">0</div>
+      <div class="stat-desc">Scores given by a model judge</div>
     </div>
   </div>
 
@@ -136,18 +136,18 @@
     </div>
     <div class="two-col">
       <div class="prose">
-        <p>Skyrule, my self-funded personal project, writes a library of short structured readings with a local model. Each piece is made in stages. The model first writes a plan, then writes the piece from the plan, and code checks every plan and every piece before anything is kept. The checks are strict on purpose. A claim must use the exact wording it is anchored to, two claims may not copy each other, and a suggestion must rest on a supported input.</p>
-        <p>A trial run on 20 frozen test groups ran cleanly but kept only <strong>3 of 20</strong> groups. That was far below the bar of 9. Every first plan failed at least one check, with a median of five failing checks per plan. Tracing the prompts showed the required words were reaching the model. The model simply was not following the instructions it had been given.</p>
-        <p>That makes the question narrow and testable: <strong>with the prompt, the checks and the bar held fixed, does a different local model follow the rules better, and by how much?</strong></p>
+        <p>Skyrule, my self-funded personal project, writes a library of short structured readings with a local model. Each piece is made in stages. The model writes a plan, then writes the piece from the plan, and code checks every plan and every piece before anything is kept. The checks are strict on purpose: a claim must use the exact wording it is anchored to, two claims may not copy each other, and a suggestion must rest on a supported input.</p>
+        <p>A trial run on 20 frozen test groups completed within its bounds but kept only <strong>3 of 20</strong> groups, against the project's pre-registered bar of 9. A separate measurement found that every first plan failed at least one check, with a median of five failing checks per plan. It also reconstructed the prompts and found the required anchor words present for all 20 groups, and it found a contradiction: one rule banned the phrase "each other" while every accepted wording of one goal contained it.</p>
+        <p>So the low yield could come from the model, the serving setup, the instructions, or all three. This screen asks one narrower question: <strong>with the prompt, checks and bar held fixed, does another local model configuration accept clearly more groups, enough to justify a full trial?</strong></p>
       </div>
       <div>
         <div class="callout">
-          <div class="callout-label">What "better" has to mean</div>
-          <p>More groups that pass every check, without passing fewer on the first try. Fluent writing that fails a check is a rejected piece, so the generator's own checks are the score.</p>
+          <div class="callout-label">What "clearly more" has to mean</div>
+          <p>At least four more accepted groups than the current configuration, without fewer accepted on the first try, decided before the run. Fluent writing that fails a check is a rejected piece, so the generator's own checks are the score for this screen. They do not measure writing quality beyond what they test.</p>
         </div>
         <div class="callout callout-warn">
           <div class="callout-label">Constraints</div>
-          <p>One model on the GPU at a time. No change to the prompt, the checks or the bar for any model. Rejected and timed-out work stays in the denominator. No piece text appears anywhere in the reporting, only counts and check names.</p>
+          <p>One model on the GPU at a time. No change to the prompt, the checks or the bar for any arm. Within each completed main arm, rejected and timed-out groups stay in the denominator of 20. Only counts and check names are reported, never generated text.</p>
         </div>
       </div>
     </div>
@@ -160,22 +160,22 @@
       <h2 class="section-title">What Was Tested</h2>
       <div class="section-line"></div>
     </div>
-    <p class="section-lede">Seven configurations. The first two hold the model fixed and change the server, so a serving effect cannot be mistaken for a model effect.</p>
+    <p class="section-lede">Seven main configurations covering six models, plus one optional thinking configuration. Each arm is a bundle of model, server, quantisation, chat template and default sampling settings; the results describe those bundles.</p>
     <div class="table-scroll">
     <table class="dt">
-      <thead><tr><th>Arm</th><th>Model</th><th>Server · quantisation</th><th>Why it is here</th></tr></thead>
+      <thead><tr><th>Arm</th><th>Model</th><th>Server · quantisation</th><th>Thinking setting as recorded</th><th>Why it is here</th></tr></thead>
       <tbody>
-        <tr><td>A</td><td>Qwen3-32B</td><td>vLLM · AWQ</td><td>The current generator; must reproduce the trial run or nothing is concluded</td></tr>
-        <tr><td>B</td><td>Qwen3-32B</td><td>Ollama · Q4_K_M</td><td>Same model, different server: isolates the serving effect</td></tr>
-        <tr><td>C</td><td>Qwen3.8 27B</td><td>Ollama · Q4_K_M</td><td>Newer generation of the same family</td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td>Ollama</td><td>Different family, known for structured output</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td>Ollama</td><td>Small, fast mixture-of-experts reasoning model</td></tr>
-        <tr><td>F</td><td>Gemma 4 31B</td><td>Ollama · Q4_K_M</td><td>Current dense model from another family; downloaded for this test</td></tr>
-        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Ollama · Q4_K_M</td><td>Current mixture-of-experts model; downloaded for this test</td></tr>
+        <tr><td>A</td><td>Qwen3-32B</td><td>vLLM · AWQ</td><td>none set</td><td>The current generator configuration; the baseline</td></tr>
+        <tr><td>B</td><td>Qwen3-32B</td><td>Ollama · Q4_K_M</td><td>off</td><td>Same model, different backend configuration (server and quantisation change together)</td></tr>
+        <tr><td>C</td><td>Qwen3.8 27B</td><td>Ollama · Q4_K_M</td><td>off</td><td>A newer version number in the same model family</td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B</td><td>Ollama</td><td>low</td><td>A different model family</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td>Ollama · Q4_K_M</td><td>off</td><td>A model from another vendor, smaller on disk</td></tr>
+        <tr><td>F</td><td>Gemma 4 31B</td><td>Ollama · Q4_K_M</td><td>off</td><td>A model from another family, downloaded for this screen</td></tr>
+        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Ollama · Q4_K_M</td><td>off</td><td>A mixture-of-experts model (35B total, about 3B active, per its name), downloaded for this screen</td></tr>
       </tbody>
     </table>
     </div>
-    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">Thinking was off for every arm that allows it; GPT-OSS cannot turn it off, so it ran at its lowest setting. A thinking-on arm of Qwen3.8 was run as an optional extra and timed out at its 25-minute cap.</p>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">An optional eighth arm, Qwen3.8 27B with thinking set to low, hit its per-arm time cap and was not compared.</p>
   </section>
 
   <!-- 03 METHOD -->
@@ -189,43 +189,43 @@
       <div class="pipeline-step">
         <div class="step-num">01</div>
         <div>
-          <div class="step-title">Write the decision rule before the run</div>
-          <div class="step-body">The rule was frozen by hash before any model loaded. The bench counts only if the current model reproduces the trial run within two groups. A candidate earns a full trial only if it beats the current model by at least four accepted groups and does no worse on first-try acceptance.</div>
+          <div class="step-title">Write the screening rule before the run</div>
+          <div class="step-body">Frozen by hash before any model loaded. Fidelity gate: the baseline must reproduce the trial run's 3 of 20 within two groups, or nothing is concluded. Screening rule: an arm earns a full trial if it accepts at least four more groups than the baseline and does not accept fewer on the first try. The four-group margin is a screening threshold with no calibrated false-positive control across several candidates.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">02</div>
         <div>
-          <div class="step-title">Run the real generator, not a copy of the idea</div>
-          <div class="step-body">Each arm ran the release generator's own code, prompt, retry budget, seed and checks on the same 20 frozen groups, pointed at a different model. Only the server and model changed. Every file's hash was checked against the release tree.</div>
+          <div class="step-title">Run the real generator</div>
+          <div class="step-body">Each arm ran the release generator's own code, prompt, retry budget, seed and checks on the same 20 frozen groups, pointed at a different model configuration. The bench's records show each copied file's hash checked against the release version.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">03</div>
         <div>
-          <div class="step-title">Refuse a model that does not fit</div>
-          <div class="step-body">A model that spills off the GPU runs slower and changes the result, so each arm had to load 100% onto the card at the same context length, or it was refused. All seven fit.</div>
+          <div class="step-title">Require a full fit on the card</div>
+          <div class="step-body">Every Ollama arm had to load 100% onto the GPU at a 16,384-token context, or it was refused. All six Ollama arms did. The vLLM baseline ran on its own server; its fit was not checked the same way.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">04</div>
         <div>
-          <div class="step-title">Guard the GPU like a shared lab bench</div>
-          <div class="step-body">The bench held a lock on the card, checked it still owned the card before every destructive step, and watched for any model it had not loaded. It always restored the machine's resident service at the end. When a scheduled morning job loaded its own model mid-run, the watcher stopped that arm and marked it contaminated instead of reporting a number.</div>
+          <div class="step-title">Guard the GPU and refuse unsafe restores</div>
+          <div class="step-body">The bench held a lock on the card, checked ownership before destructive steps, watched for any model it had not loaded, and stopped an arm when one appeared. It refused to restore the machine's resident service while it did not own the card. Restores did not always succeed; see the incident record below.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">05</div>
         <div>
-          <div class="step-title">Put a public benchmark beside the private one</div>
-          <div class="step-body">IFEval (541 prompts with verifiable constraints) was scored with its reference checker, which was first validated against the paper's published answers. The two kinds of result are reported side by side and never mixed into one number.</div>
+          <div class="step-title">Put a public benchmark beside the task</div>
+          <div class="step-body">IFEval was scored with its reference checker. Before use, the checker reproduced the paper's published GPT-4 results within a tolerance of two prompts and two instructions on all four metrics; it was not an exact match. Two rows draw a random letter; the draw was seeded identically for every arm.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">06</div>
         <div>
-          <div class="step-title">Have the design reviewed before spending GPU time</div>
-          <div class="step-body">An independent reviewer model read the design twice. Its first-round demands (a lock held across load and restore, ownership checks, restores that wait, and race tests) were all built and tested on CPU, 67 tests in all, before the card was touched.</div>
+          <div class="step-title">Review the design before spending GPU time</div>
+          <div class="step-body">An independent reviewer model read the bench design over two rounds; its first-round requirements were built and covered by 67 CPU tests before the card was used. A later independent audit of this write-up found overstatements, which are corrected on this page.</div>
         </div>
       </div>
     </div>
@@ -235,89 +235,88 @@
   <section id="findings">
     <div class="section-header">
       <span class="section-tag">04</span>
-      <h2 class="section-title">Findings: The Task Bench</h2>
+      <h2 class="section-title">Findings: The Task Screen</h2>
       <div class="section-line"></div>
     </div>
-    <p class="section-lede">The bench was faithful: the current model reproduced the trial run exactly, 3 of 20. One candidate cleared the rule.</p>
+    <p class="section-lede">The fidelity gate passed: the baseline accepted 3 of 20, within two groups of the trial run's 3 of 20. That establishes fidelity under the pre-registered gate only. One configuration met the screening rule.</p>
     <div class="table-scroll">
     <table class="dt">
-      <thead><tr><th>Arm</th><th>Model</th><th>Accepted groups</th><th>95% interval</th><th>Model calls per accepted group</th><th>Output tokens per accepted group</th><th>Pre-registered verdict</th></tr></thead>
+      <thead><tr><th>Arm</th><th>Configuration</th><th>Accepted groups</th><th>95% interval (Wilson)</th><th>Accepted on first try</th><th>Calls per accepted group</th><th>Output tokens per accepted group</th><th>Screening result</th></tr></thead>
       <tbody>
-        <tr><td>A</td><td>Qwen3-32B · vLLM</td><td class="num">3 / 20</td><td class="num">0.05 to 0.36</td><td class="num">34.0</td><td class="num">11,021</td><td><span class="verdict base">Baseline</span></td></tr>
-        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="num">1 / 20</td><td class="num">0.01 to 0.24</td><td class="num">104.0</td><td class="num">33,527</td><td><span class="verdict no">Not worth a trial</span></td></tr>
-        <tr class="lead"><td>C</td><td>Qwen3.8 27B</td><td class="num good">7 / 20</td><td class="num">0.18 to 0.57</td><td class="num good">16.4</td><td class="num good">2,733</td><td><span class="verdict go">Worth a full trial</span></td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td class="num">3 / 20</td><td class="num">0.05 to 0.36</td><td class="num">34.7</td><td class="num">17,693</td><td><span class="verdict no">Not worth a trial</span></td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="num">0 / 20</td><td class="num">0.00 to 0.16</td><td class="num">n/a</td><td class="num">n/a</td><td><span class="verdict no">Not worth a trial</span></td></tr>
-        <tr><td>F</td><td>Gemma 4 31B</td><td class="num">0 / 20</td><td class="num">0.00 to 0.16</td><td class="num">n/a</td><td class="num">n/a</td><td><span class="verdict no">Not worth a trial</span></td></tr>
-        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td class="num">2 / 20</td><td class="num">0.03 to 0.30</td><td class="num">51.0</td><td class="num">14,708</td><td><span class="verdict no">Not worth a trial</span></td></tr>
+        <tr><td>A</td><td>Qwen3-32B · vLLM</td><td class="num">3 / 20</td><td class="num">0.05 to 0.36</td><td class="num">0 / 20</td><td class="num">34.0</td><td class="num">11,021</td><td><span class="verdict base">Baseline</span></td></tr>
+        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="num">1 / 20</td><td class="num">0.01 to 0.24</td><td class="num">0 / 20</td><td class="num">104.0</td><td class="num">33,527</td><td><span class="verdict no">Not eligible</span></td></tr>
+        <tr class="lead"><td>C</td><td>Qwen3.8 27B</td><td class="num good">7 / 20</td><td class="num">0.18 to 0.57</td><td class="num">0 / 20</td><td class="num good">16.4</td><td class="num good">2,733</td><td><span class="verdict go">Earns a full trial under the pre-registered screening rule</span></td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B</td><td class="num">3 / 20</td><td class="num">0.05 to 0.36</td><td class="num">0 / 20</td><td class="num">34.7</td><td class="num">17,693</td><td><span class="verdict no">Not eligible</span></td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="num">0 / 20</td><td class="num">0.00 to 0.16</td><td class="num">0 / 20</td><td class="num">n/a</td><td class="num">n/a</td><td><span class="verdict no">Not eligible</span></td></tr>
+        <tr><td>F</td><td>Gemma 4 31B</td><td class="num">0 / 20</td><td class="num">0.00 to 0.16</td><td class="num">0 / 20</td><td class="num">n/a</td><td class="num">n/a</td><td><span class="verdict no">Not eligible</span></td></tr>
+        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td class="num">2 / 20</td><td class="num">0.03 to 0.30</td><td class="num">0 / 20</td><td class="num">51.0</td><td class="num">14,708</td><td><span class="verdict no">Not eligible</span></td></tr>
       </tbody>
     </table>
     </div>
-    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">No model passed a group on its first try, so first-try acceptance was 0 of 20 for every arm. Qwen3.8 against the current model, group by group: both passed 2, only Qwen3.8 passed 5, only the current model passed 1 (exact McNemar p = 0.22, reported, deciding nothing).</p>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">C met the rule: seven minus three is four more accepted groups, and first-try acceptance was 0 of 20 for both, so it did not lose. Paired by group, C and A both accepted 2, only C accepted 5, only A accepted 1 (exact McNemar p = 0.22, unadjusted, descriptive). The marginal intervals describe uncertainty in each arm's rate; they are not a test of the paired difference. With 20 fixed groups and one seed, these results say little about small differences or about other groups. "Calls" and "output tokens" per accepted group are success-normalised totals across all stages of this run, not measured completion times.</p>
 
     <div class="finding-grid">
       <div class="callout">
-        <div class="callout-label">The serving setup matters as much as the model</div>
-        <p>The same Qwen3-32B kept 3 groups on vLLM with AWQ and 1 group on Ollama with Q4, and spent three times the calls doing it. A model comparison that changes the server at the same time is measuring two things at once.</p>
+        <div class="callout-label">Backend configuration is part of the comparison</div>
+        <p>The same Qwen3-32B accepted 3 groups on vLLM with AWQ and 1 on Ollama with Q4_K_M. Total calls were about equal, 102 and 104, so per accepted group B used about three times as many. Server, quantisation and possibly template and sampling defaults changed together. In this single run the two bundles differed; the screen does not show how reproducible that is, or how much the server alone contributes.</p>
       </div>
       <div class="callout callout-info">
-        <div class="callout-label">Different models fail at different stages</div>
-        <p>Gemma 4 was the best planner in the group: its plans were rejected for only 3 groups, against 15 for the current model. But every piece it wrote then failed the writing checks, so it kept nothing. Qwen3.8 was the reverse, with middling plans but pieces that pass. One model per stage is a design worth testing.</p>
+        <div class="callout-label">Failures differed by stage</div>
+        <p>Gemma 4 had 3 groups rejected at the plan stage and 14 at the writing stage, across 42 writing calls, and accepted none. The current configuration had 15 groups rejected at the plan stage. This suggests testing a different model for each stage. It does not establish which model plans or writes best.</p>
       </div>
       <div class="callout">
-        <div class="callout-label">Efficiency moved more than yield</div>
-        <p>Qwen3.8 needed about half the model calls and a quarter of the output tokens per accepted group. On a single card that matters as much as the pass count, because it sets how long a full library takes to write.</p>
+        <div class="callout-label">Resource use per accepted group fell sharply</div>
+        <p>C used about half the model calls and about a quarter of the output tokens per accepted group in this run. On a single card that matters, but full-library time also depends on batching, latency and how yield varies across other groups.</p>
       </div>
       <div class="callout callout-warn">
-        <div class="callout-label">Seven still miss the bar</div>
-        <p>The best result, 7 of 20, is still below the bar of 9. A better model narrows the gap; it does not close it. The remaining failures cluster on two exact-wording checks for every Qwen model, which points back at the instructions as well as the model.</p>
+        <div class="callout-label">Still below the bar</div>
+        <p>The best result, 7 of 20, is below the project's bar of 9. A better configuration, if confirmed, would narrow the gap, not close it. The instruction contradiction still needs its own repair and test.</p>
       </div>
     </div>
   </section>
 
-  <!-- 04b WHY -->
-  <section id="why">
+  <!-- 04b DIFFERENCES -->
+  <section id="differences">
     <div class="section-header">
       <span class="section-tag">04b</span>
-      <h2 class="section-title">Why the Smaller, Newer Model Won</h2>
+      <h2 class="section-title">Observed Differences Between the Two Qwen Configurations</h2>
       <div class="section-line"></div>
     </div>
-    <p class="section-lede">Qwen3.8 27B is smaller than the current Qwen3-32B and still kept more than twice as many groups. The run records show where the difference came from, stage by stage, on the same 20 groups.</p>
+    <p class="section-lede">Qwen3.8 27B is smaller than Qwen3-32B and accepted four more groups in this screen. The records show where the two runs differed. They do not show why.</p>
     <div class="table-scroll">
     <table class="dt">
-      <thead><tr><th>Measured on the same 20 groups</th><th>Qwen3-32B (current)</th><th>Qwen3.8 27B</th></tr></thead>
+      <thead><tr><th>Measured on the same 20 groups</th><th>A · Qwen3-32B vLLM</th><th>C · Qwen3.8 27B</th></tr></thead>
       <tbody>
-        <tr><td>Plan attempts needed</td><td class="num">41</td><td class="num good">27</td></tr>
-        <tr><td>Average plan length (output tokens)</td><td class="num">727</td><td class="num good">491</td></tr>
-        <tr><td>Groups whose plans failed every retry</td><td class="num">15</td><td class="num good">12</td></tr>
-        <tr><td>Groups where one claim copied another</td><td class="num">7</td><td class="num good">2</td></tr>
-        <tr><td>Groups where a claim missed the goal's own words</td><td class="num">15</td><td class="num good">10</td></tr>
-        <tr><td>Groups with a cause-and-effect leap or a mismatched interaction</td><td class="num">4 and 4</td><td class="num good">0 and 0</td></tr>
-        <tr><td>Groups where a suggestion missed its exact anchor words</td><td class="num">15</td><td class="num">15</td></tr>
-        <tr><td>Groups where a claim slid from behaviour into feelings or causes</td><td class="num good">0</td><td class="num">9</td></tr>
-        <tr class="lead"><td>Groups written and accepted</td><td class="num">3</td><td class="num good">7</td></tr>
+        <tr><td>Total plan calls</td><td class="num">41</td><td class="num">27</td></tr>
+        <tr><td>Average output tokens per plan call</td><td class="num">727</td><td class="num">491</td></tr>
+        <tr><td>Groups rejected at the plan stage after all retries</td><td class="num">15</td><td class="num">12</td></tr>
+        <tr><td>Groups failing DUP1 at round 0: one claim copies another</td><td class="num">7</td><td class="num">2</td></tr>
+        <tr><td>Groups failing GOAL1 at round 0: the goal's own wording plus an added contribution</td><td class="num">15</td><td class="num">10</td></tr>
+        <tr><td>Groups failing LAUNDER2 / INTERACT2 at round 0: causal leap / interaction mismatch</td><td class="num">4 / 4</td><td class="num">0 / 0</td></tr>
+        <tr><td>Groups failing BF8 at round 0: a suggestion must contain the anchor words or a ledger trait name exactly</td><td class="num">15</td><td class="num">15</td></tr>
+        <tr><td>Groups failing NEV1 at round 0: what remains must be behaviour, not a feeling, cause, outcome or label</td><td class="num">0</td><td class="num">9</td></tr>
+        <tr class="lead"><td>Groups accepted</td><td class="num">3</td><td class="num">7</td></tr>
       </tbody>
     </table>
     </div>
     <div class="finding-grid">
       <div class="callout">
-        <div class="callout-label">It said less, so it broke fewer rules</div>
-        <p>Its plans were about a third shorter. Every extra sentence in a plan is another chance to copy a claim, overreach or miss a required word. Under strict checks, concision is a skill, and the newer model had more of it.</p>
-      </div>
-      <div class="callout callout-info">
-        <div class="callout-label">It followed the specific rules better</div>
-        <p>Copying between claims fell from 7 groups to 2, and cause-and-effect leaps disappeared. Plans passed sooner, so the generator reached the writing stage for more groups, and once there, the pieces passed.</p>
-      </div>
-      <div class="callout">
-        <div class="callout-label">Size was not the driver; the generation was</div>
-        <p>Qwen3.8 is a later release of the same family. The likeliest explanation is newer instruction training that handles many simultaneous constraints better. On the same server the gap is even larger: the 32B kept 1 group on Ollama against the 27B's 7, so the current model was being helped by its vLLM setup.</p>
+        <div class="callout-label">What the records show</div>
+        <p>C's plans were about a third shorter on average and it needed fewer plan calls. At the first plan it was flagged less often on DUP1, GOAL1 and LAUNDER2, and more often on NEV1. These are checker flags at the first plan, not a full semantic audit or counts across retries. Both had 15 groups fail BF8 at round 0; the counts do not show whether they were the same groups.</p>
       </div>
       <div class="callout callout-warn">
-        <div class="callout-label">What it did not fix, and what it made worse</div>
-        <p>Both models failed the exact-anchor-wording rule on the same 15 groups. That points at a contradiction in the instructions, not at the model, and a prompt fix is prepared separately. The 27B also slid from behaviour into feelings or causes more often. A new model trades one set of failures for another; it does not remove them.</p>
+        <div class="callout-label">What the records do not show</div>
+        <p>This screen compares configuration bundles. It does not isolate training, model size, architecture, chat template, quantisation, sampling or run-to-run variation, so it cannot say which of them produced the difference. Shorter plans coincided with fewer flags on some checks; the screen does not show that shortness caused it.</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-label">Hypotheses worth testing</div>
+        <p>Newer instruction and preference training in the later release; more concise output under strict checks; a better fit between the model and its chat template. Each is a hypothesis, not a finding. A repeat on a new seed and more groups is queued as the next evidence.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-label">The instruction conflict sits under every arm</div>
+        <p>Because one rule banned a phrase another required, some failures may reflect incompatible instructions rather than either model. The aggregate BF8 counts do not identify how much of the failure that conflict caused. A candidate fix is queued for a separate test.</p>
       </div>
     </div>
-    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">These are behaviours measured in the run records. The reasons behind them, such as training data and instruction tuning, cannot be observed from outside the model and are stated as the likeliest explanation, not as fact. With 20 groups, the two models' intervals overlap, which is why the result earns a full trial rather than a switch.</p>
   </section>
 
   <!-- 05 PUBLIC BENCHMARK -->
@@ -327,22 +326,23 @@
       <h2 class="section-title">Public Benchmark: IFEval</h2>
       <div class="section-line"></div>
     </div>
-    <p class="section-lede">IFEval scores general, verifiable instructions such as "answer in three paragraphs" or "do not use commas". Prompt-level strict accuracy is the headline; the interval is about plus or minus four points near 80%.</p>
+    <p class="section-lede">IFEval scores general, verifiable instructions such as "answer in three paragraphs" or "do not use commas". Prompt-level strict accuracy is the headline figure.</p>
     <div class="table-scroll">
     <table class="dt">
-      <thead><tr><th>Arm</th><th>Model</th><th>Prompt strict</th><th>95% interval</th><th>Instruction strict</th><th>Prompt loose</th><th>Instruction loose</th></tr></thead>
+      <thead><tr><th>Arm</th><th>Configuration</th><th>Prompt strict</th><th>95% interval</th><th>Instruction strict</th><th>Prompt loose</th><th>Instruction loose</th></tr></thead>
       <tbody>
         <tr><td>A</td><td>Qwen3-32B · vLLM</td><td class="num">0.830</td><td class="num">0.796 to 0.859</td><td class="num">0.880</td><td class="num">0.869</td><td class="num">0.910</td></tr>
-        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="5">Not completed: the run stopped on a harness bug before this arm</td></tr>
+        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="5">Not run in the first round; scheduled in round 2</td></tr>
         <tr><td>C</td><td>Qwen3.8 27B</td><td class="num">0.806</td><td class="num">0.770 to 0.837</td><td class="num">0.865</td><td class="num">0.847</td><td class="num">0.897</td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="5">Not completed: the run stopped on a harness bug before this arm</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="pending" colspan="5">Not scored: another model appeared on the GPU mid-run, so the arm was discarded</td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="5">Not run in the first round; scheduled in round 2</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td class="pending" colspan="5">Contaminated: another model appeared mid-run; scheduled again in round 2</td></tr>
         <tr class="lead"><td>F</td><td>Gemma 4 31B</td><td class="num good">0.900</td><td class="num">0.872 to 0.923</td><td class="num good">0.928</td><td class="num good">0.922</td><td class="num good">0.947</td></tr>
         <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td class="num">0.823</td><td class="num">0.788 to 0.852</td><td class="num">0.880</td><td class="num">0.865</td><td class="num">0.909</td></tr>
       </tbody>
     </table>
     </div>
-    <div class="takeaway"><strong>The public score pointed the wrong way.</strong> Gemma 4 led IFEval clearly (0.900 against the current model's 0.830; it passed 61 prompts the current model failed and failed only 23 it passed) and kept nothing on the generator's checks. Qwen3.8 had the lowest IFEval score of the four models completed (0.806) and kept the most groups. Qwen3-32B and Qwen 3.6 tied on IFEval (McNemar p = 0.77) and still differed on the task. General instruction-following measures something real, but not the thing this generator needs; the only reliable test of a rule-bound generator is its own rules.</div>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">Paired against A on the same 541 prompts, unadjusted exact McNemar: F passed 61 prompts A failed and failed 23 A passed (p &lt; 0.0001); G 49 and 53 (p = 0.77); C 41 and 54 (p = 0.22). A non-significant result means no difference was detected, not that the scores are equal. Gemma 4's IFEval arm was run afresh in the second window after the first attempt was contaminated.</p>
+    <div class="takeaway"><strong>The two rankings differed.</strong> Among the four completed IFEval arms, Gemma 4 scored highest and accepted no task groups; Qwen3.8 scored lowest and accepted the most. IFEval and the generator's checks measure different things: general verifiable instructions versus this task's specific rules. Neither alone establishes writing quality or fitness for release. In this study, the task checks and a pre-registered rule decided which configuration earned a full trial.</div>
   </section>
 
   <!-- 06 SPEED AND MEMORY -->
@@ -352,55 +352,76 @@
       <h2 class="section-title">Speed &amp; Memory on One Card</h2>
       <div class="section-line"></div>
     </div>
-    <p class="section-lede">One request at a time, 20 fixed prompts, the same client-side definitions for every server, on one RTX 5090. These describe this card and configuration, not the models in general.</p>
+    <p class="section-lede">One request at a time, 20 fixed prompts, the same client-side definitions for every server, on one RTX 5090. These describe this card and these configurations only.</p>
     <div class="table-scroll">
     <table class="dt">
-      <thead><tr><th>Arm</th><th>Model</th><th>Licence</th><th>VRAM after load</th><th>Time to first token</th><th>Generation tokens/s</th></tr></thead>
+      <thead><tr><th>Arm</th><th>Configuration</th><th>Licence as reported by Ollama's model metadata</th><th>VRAM after load</th><th>Time to first token</th><th>Generation tokens/s</th></tr></thead>
       <tbody>
-        <tr><td>A</td><td>Qwen3-32B · vLLM AWQ</td><td>Apache 2.0</td><td class="num">30.4 GB</td><td class="num">0.65 s</td><td class="num">68</td></tr>
-        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="4">Not completed</td></tr>
-        <tr><td>C</td><td>Qwen3.8 27B</td><td>Apache 2.0</td><td class="num">19.3 GB</td><td class="num">0.71 s</td><td class="num">122</td></tr>
-        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="4">Not completed</td></tr>
-        <tr><td>E</td><td>Nemotron 3 Nano</td><td>see model card</td><td class="num">23.7 GB</td><td class="num">0.27 s</td><td class="num">336</td></tr>
-        <tr><td>F</td><td>Gemma 4 31B</td><td>Apache 2.0</td><td class="num">23.6 GB</td><td class="num">1.11 s</td><td class="num">127</td></tr>
-        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Apache 2.0</td><td class="num">23.1 GB</td><td class="num">0.29 s</td><td class="num">259</td></tr>
+        <tr><td>A</td><td>Qwen3-32B · vLLM AWQ</td><td>not captured by the bench</td><td class="num">30,436 MiB</td><td class="num">0.65 s</td><td class="num">68</td></tr>
+        <tr><td>B</td><td>Qwen3-32B · Ollama</td><td class="pending" colspan="4">Scheduled in round 2</td></tr>
+        <tr><td>C</td><td>Qwen3.8 27B</td><td>Apache License</td><td class="num">19,324 MiB</td><td class="num">0.71 s</td><td class="num">122</td></tr>
+        <tr><td>D</td><td>GPT-OSS 20B</td><td class="pending" colspan="4">Scheduled in round 2</td></tr>
+        <tr><td>E</td><td>Nemotron 3 Nano</td><td>not recorded</td><td class="num">23,670 MiB</td><td class="num">0.27 s</td><td class="num">336</td></tr>
+        <tr><td>F</td><td>Gemma 4 31B</td><td>Apache License</td><td class="num">23,560 MiB</td><td class="num">1.08 s</td><td class="num">128</td></tr>
+        <tr><td>G</td><td>Qwen 3.6 35B-A3B</td><td>Apache License</td><td class="num">23,102 MiB</td><td class="num">0.29 s</td><td class="num">259</td></tr>
       </tbody>
     </table>
     </div>
-    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">vLLM batches many requests at once in real use, so its single-stream figure understates what it delivers to the generator. The current model's vLLM server reserves most of the card by design; the VRAM figure reflects that reservation, not the weights alone.</p>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem; max-width: 72ch;">VRAM after load is the observed allocation for each configuration; it does not separate weights, caches and server reservations. Licences are shown exactly as Ollama's metadata reports them, without a version; check each model's own licence before use. These are single-stream rates; vLLM batches requests in real use, so they are not aggregate throughput or production capacity.</p>
   </section>
 
-  <!-- 07 ADVISORY -->
-  <section id="advisory">
+  <!-- 07 INCIDENTS -->
+  <section id="incidents">
     <div class="section-header">
       <span class="section-tag">07</span>
-      <h2 class="section-title">Advisory: Current Local Models for Rule-Bound Work</h2>
+      <h2 class="section-title">Run Incidents, Recorded as They Happened</h2>
       <div class="section-line"></div>
     </div>
-    <p class="section-lede">For a single 32 GB card, October 2026. Each line is a recommendation for this kind of workload, plan then write then check, not a general ranking. The general method behind it is in my <a href="choosing-local-models-guide.html">guide to choosing, validating and fine-tuning a local model</a>.</p>
     <div class="table-scroll">
     <table class="dt">
-      <thead><tr><th>Model</th><th>Use it for</th><th>Avoid it for</th></tr></thead>
+      <thead><tr><th>Window</th><th>What happened</th><th>Effect on the numbers</th></tr></thead>
       <tbody>
-        <tr class="lead"><td>Qwen3.8 27B</td><td>The first model to try for strict, check-gated writing. Best yield and the cheapest accepted output here, in 19 GB, at about 1.8 times the current model's single-stream speed.</td><td>Thinking-on runs under a time budget: the thinking arm timed out.</td></tr>
-        <tr><td>Gemma 4 31B</td><td>General instruction-following, where it had the best public score here (IFEval 0.900), and planning, where it wrote the most check-passing plans.</td><td>Final wording under exact-phrase rules, where every piece it wrote failed.</td></tr>
-        <tr><td>Qwen 3.6 35B-A3B</td><td>High-volume work where speed matters and the rules are general: about four times the current model's single-stream speed at the same IFEval score.</td><td>Exact-wording constraints, where it trailed the current model.</td></tr>
-        <tr><td>Qwen3-32B on vLLM</td><td>A dependable baseline with batching. Keep it as the control for any switch.</td><td>Running it under a different server and quantisation and assuming the same results.</td></tr>
-        <tr><td>GPT-OSS 20B</td><td>Matching the current yield in less memory; a sensible fallback on a smaller card.</td><td>Expecting an improvement on this task: it tied the baseline.</td></tr>
-        <tr><td>Nemotron 3 Nano</td><td>Fast utility work: routing, classification, short structured replies. The fastest model measured, at about 336 tokens a second.</td><td>Long, rule-dense generation: it kept nothing here.</td></tr>
+        <tr><td>Task screen</td><td>All seven main arms completed. At the end, restoring the resident service failed because GPU memory had not yet been released; the backup restore job then restored it.</td><td>None on task scores</td></tr>
+        <tr><td>Evaluation 1</td><td>Gemma 4's IFEval arm was stopped when the bench's watcher saw a model it had not loaded. The bench deferred its restore. I first attributed the load to a morning check-in job; a later diagnosis traced it to an hourly agent round on the same machine that falls back to a local model when the resident service is down. I unloaded that model by hand so the restore and results could proceed.</td><td>Gemma 4's partial IFEval run discarded</td></tr>
+        <tr><td>Evaluation 2</td><td>Started early at my request, without first removing that interference; a schedule change is not isolation. Gemma 4 and Qwen3.8 completed cleanly. Nemotron's speed test completed cleanly; its IFEval run was then contaminated, and timing suggests the same cause, though that was not measured. The window stopped on a text-encoding error in the bench before reaching B and D, and the resident service was restored afterwards.</td><td>Nemotron IFEval discarded; B and D not run</td></tr>
+        <tr><td>Round 2</td><td>Its first two windows were refused before touching the GPU by a path guard that did not yet allow round 2's output folder. I made a two-line repair, recorded with before and after hashes and re-tested, and re-queued them. Round 2 now steps aside for the hourly agent round instead of competing with it.</td><td>None: nothing ran in the refused attempts</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- 08 OBSERVATIONS -->
+  <section id="advisory">
+    <div class="section-header">
+      <span class="section-tag">08</span>
+      <h2 class="section-title">Observations for This Kind of Workload</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="section-lede">Specific to this generator and these configurations on one 32 GB card, October 2026. These are observations from one screen, not general rankings. The general method is in my <a href="choosing-local-models-guide.html">guide to choosing, validating and fine-tuning a local model</a>.</p>
+    <div class="table-scroll">
+    <table class="dt">
+      <thead><tr><th>Configuration</th><th>What this screen observed</th></tr></thead>
+      <tbody>
+        <tr class="lead"><td>Qwen3.8 27B · Ollama</td><td>The next full-trial candidate for this generator: 7 of 20 accepted, about a quarter of the baseline's output tokens per accepted group, 19,324 MiB after load. Its thinking-on variant did not finish within its time cap.</td></tr>
+        <tr><td>Gemma 4 31B · Ollama</td><td>Highest IFEval score among completed arms; 0 of 20 accepted, with most groups failing at the writing stage. Worth investigating as a planner in a staged design.</td></tr>
+        <tr><td>Qwen 3.6 35B-A3B · Ollama</td><td>259 generation tokens a second single-stream; 2 of 20 accepted.</td></tr>
+        <tr><td>Qwen3-32B · vLLM AWQ</td><td>The baseline, 3 of 20; keep it as the control for any change.</td></tr>
+        <tr><td>Qwen3-32B · Ollama Q4_K_M</td><td>1 of 20: the same model under another backend configuration did worse here.</td></tr>
+        <tr><td>GPT-OSS 20B · Ollama</td><td>3 of 20; memory and IFEval not yet measured.</td></tr>
+        <tr><td>Nemotron 3 Nano · Ollama</td><td>The fastest measured, 336 tokens a second; 0 of 20 accepted. Other task types were not tested.</td></tr>
       </tbody>
     </table>
     </div>
     <div class="callout callout-info" style="margin-top: 2rem;">
-      <div class="callout-label">Do you need to download another model?</div>
-      <p>Not yet. The leading candidate was already installed, and the two newest models I downloaded for the test did not beat it. The next information comes from repeating the winner on another seed and more groups, and from testing one model per stage, not from a wider search.</p>
+      <div class="callout-label">Did this need another model download?</div>
+      <p>Not for the next planned step. The configuration that met the screening rule was on the machine before this screen, and neither model downloaded for it met the rule. The proposed next evidence is a repeat on a new seed and more groups, a separate test of the instruction fix, and a staged-model test. A wider search remains possible later.</p>
     </div>
   </section>
 
-  <!-- 08 TAKEAWAYS -->
+  <!-- 09 TAKEAWAYS -->
   <section id="takeaways">
     <div class="section-header">
-      <span class="section-tag">08</span>
+      <span class="section-tag">09</span>
       <h2 class="section-title">Engineering Takeaways</h2>
       <div class="section-line"></div>
     </div>
@@ -408,52 +429,59 @@
       <div class="pipeline-step">
         <div class="step-num">01</div>
         <div>
-          <div class="step-title">Measure the task, then read the leaderboard</div>
-          <div class="step-body">Two models tied on IFEval and differed on the real checks. A public benchmark tells you which models to try; your own checks tell you which one to use.</div>
+          <div class="step-title">Measure the task as well as the leaderboard</div>
+          <div class="step-body">Here the IFEval ranking and the task ranking differed. A public benchmark is useful for building a shortlist; in this study, the task's own checks and a rule written in advance decided which configuration earned a full trial.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">02</div>
         <div>
-          <div class="step-title">Prove the bench before trusting it</div>
-          <div class="step-body">The bench only counted because the current model reproduced the trial run exactly. Without that check, a difference between arms could have been a difference between harnesses.</div>
+          <div class="step-title">Check the harness and the instructions</div>
+          <div class="step-body">The baseline reproduced the earlier run's count, 3 of 20, which is what the fidelity gate requires. That does not prove the harness, checks or prompts are sound; a separate review found a contradiction in the instructions.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">03</div>
         <div>
-          <div class="step-title">Separate the server from the model</div>
-          <div class="step-body">Changing only the server and quantisation moved the same model from 3 to 1 accepted groups. Any model switch needs that control arm.</div>
+          <div class="step-title">Compare bundles, and say so</div>
+          <div class="step-body">The same model accepted 3 groups under one backend configuration and 1 under another in this run. Any model comparison is a comparison of model, server, quantisation and template together unless those are separated.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">04</div>
         <div>
-          <div class="step-title">Decide before you look</div>
-          <div class="step-body">With seven arms and 20 groups, one model can clear any threshold by luck. Writing the rule down first, and treating a pass as "earns a full trial" rather than "adopt", kept a screening result from becoming a decision.</div>
+          <div class="step-title">Decide before you look, and keep the decision small</div>
+          <div class="step-body">With seven arms and 20 groups, one arm can clear a threshold by luck. A rule written first, and a pass that earns only a full trial, kept a screening result from becoming an adoption.</div>
         </div>
       </div>
       <div class="pipeline-step">
         <div class="step-num">05</div>
         <div>
-          <div class="step-title">A shared GPU needs a lease, not good intentions</div>
-          <div class="step-body">A scheduled job on the same machine loaded its own model during the run. Because the bench watched for that, the arm was marked contaminated instead of producing a wrong number, and it was re-run in a clean window.</div>
+          <div class="step-title">A shared GPU needs isolation, not just good timing</div>
+          <div class="step-body">Moving a window earlier did not remove the interference that contaminated it. The watcher caught both events and the affected results were discarded; round 2 now coordinates with the other job instead.</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">06</div>
+        <div>
+          <div class="step-title">Have the write-up audited too</div>
+          <div class="step-body">An independent audit of the first draft of this page found causal claims the data did not support, a units error and figures from the wrong window. The corrected page says less and is more defensible.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 09 NEXT -->
+  <!-- 10 NEXT -->
   <section id="next">
     <div class="section-header">
-      <span class="section-tag">09</span>
+      <span class="section-tag">10</span>
       <h2 class="section-title">Next</h2>
       <div class="section-line"></div>
     </div>
     <div class="prose">
-      <p><strong>Full trial of Qwen3.8 27B.</strong> It goes through the same release route as any change: its own canary run and an independent quality review, on more groups and another seed. A screening pass is not an adoption.</p>
-      <p><strong>One model per stage.</strong> Plan with the strongest planner and write with the strongest writer, measured against the same checks.</p>
-      <p><strong>The instructions themselves.</strong> The same two exact-wording checks dominate the failures across the Qwen family, and a fix to the prompt is already prepared as a separate candidate. Model choice and prompt choice will be tested one at a time, so each effect stays visible.</p>
+      <p><strong>Round 2, queued, not yet run.</strong> A repeat of the baseline against Qwen3.8 27B on a new seed and more than 60 new groups, under a new pre-registered rule with a paired interval; a two-by-two of model and prompt, using a candidate fix for the instruction contradiction; a staged test in which Gemma 4 plans and Qwen3.8 writes; and the missing IFEval and speed arms.</p>
+      <p><strong>A small fine-tuning experiment, designed and pre-registered, not yet run.</strong> Training Qwen3.8 27B on its own check-passing outputs, with test groups split off by whole job, a pre-registered rule, and guards on IFEval and an independent quality read. A null result would be specific to that recipe.</p>
+      <p><strong>Adoption only through the release route.</strong> Any change still needs its own canary run and an independent quality review. Level 2 research only: nothing on this page is release validation.</p>
     </div>
     <div class="tag-row" style="margin-top: 2rem;">
       <span class="tag tag-accent">Model Evaluation</span>
