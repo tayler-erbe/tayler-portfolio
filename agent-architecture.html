@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agent Architecture &middot; Personal Project &middot; Tayler Erbe</title>
-  <meta name="description" content="The architecture behind my multi-agent system: 29 agents, one job queue with lanes and gates, shared memory and a decision log, code ownership enforced by tooling, one GPU shared by lease, authority levels, and Agent City as the observability layer." />
+  <meta name="description" content="The architecture behind my multi-agent system: 42 agents, one job queue with lanes and gates, shared memory and a decision log, code ownership enforced by tooling, one GPU shared by lease, authority levels, and Agent City as the observability layer." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="assets/site.css" />
@@ -74,13 +74,13 @@
   <div class="hero">
     <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; System Design</div>
     <h1>Agent Architecture<br><span>How my agents actually work together</span></h1>
-    <p class="hero-desc">I run 29 AI agents across Skyrule, a personal product project, and my other personal projects. They share one job queue, one memory, one decision log and an ownership map that tooling enforces, on a single workstation with one GPU. This page is the system design: who the agents are, how work moves, what stops them, and what still needs me. <a href="agent-city.html" class="link">Agent City</a>, the 3D town, is how I watch it.</p>
+    <p class="hero-desc">I run 42 AI agents across Skyrule, a personal product project, and my other personal projects. They share one job queue, one memory, one decision log and an ownership map that tooling enforces, on a single workstation with one GPU. This page is the system design: who the agents are, how work moves, what stops them, and what still needs me. <a href="agent-city.html" class="link">Agent City</a>, the 3D town, is how I watch it.</p>
 
     <div class="hero-meta">
-      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Running daily &middot; planned parts are marked as planned</div></div>
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">The job queue runs daily &middot; planned parts are marked as planned</div></div>
       <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">Designer and builder of the whole system</div></div>
       <div class="meta-item"><div class="meta-label">Job queue live since</div><div class="meta-value">Oct 2, 2026</div></div>
-      <div class="meta-item"><div class="meta-label">Numbers</div><div class="meta-value">As of Oct 19, 2026</div></div>
+      <div class="meta-item"><div class="meta-label">Numbers</div><div class="meta-value">As of Nov 10, 2026</div></div>
     </div>
 
     <div class="toc">
@@ -95,10 +95,10 @@
   </div>
 
   <div class="stat-strip">
-    <div class="stat-item"><div class="stat-big">29</div><div class="stat-desc">Agents with written charters (Oct 19, 2026)</div></div>
-    <div class="stat-item"><div class="stat-big">1,060</div><div class="stat-desc">Jobs finished by the queue since Oct 2 (Oct 19, 2026)</div></div>
-    <div class="stat-item"><div class="stat-big">1,496</div><div class="stat-desc">Product tests passing of 1,499 run (Oct 19, 2026)</div></div>
-    <div class="stat-item"><div class="stat-big">294</div><div class="stat-desc">Founder decisions logged since Sep 30 (Oct 19, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">42</div><div class="stat-desc">Agents with written charters in use (Nov 10, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">3,153</div><div class="stat-desc">Jobs finished by the queue since Oct 2 (Nov 10, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">1,719</div><div class="stat-desc">Product tests passing, 0 failing, on the release tree (Oct 23, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">534</div><div class="stat-desc">Founder decisions logged since Sep 30 (Nov 10, 2026)</div></div>
   </div>
 
   <!-- 01 ROSTER -->
@@ -111,12 +111,13 @@
 
     <div class="prose">
       <p>I organised the agents like a small company, because the hard problems in multi-agent work are the same ones a company has: who owns what, who may decide, and how work passes between people without getting lost. Every agent has a written charter that says what it is for and, just as important, what it is not for and who owns that instead.</p>
-      <p>There are three groups. The product organization is twelve departments of Skyrule. Four cross-cutting agents check, route and block across all of them. The rest serve my other personal projects and the machine itself. All 29 run on the same rails.</p>
+      <p>There are three groups. The product organization is twelve departments of Skyrule and, since Oct 26, five working teams that group those departments until launch, each team wearing its departments&rsquo; review hats. Four cross-cutting agents check, route and block across all of them. The rest serve my other personal projects &mdash; writing, the job search, a print-on-demand shop, collectibles alerts, OCR research and Agent City itself &mdash; and the machine. All 42 run on the same rails.</p>
+      <p><strong>How I count:</strong> every agent with a written charter that is in use on Nov 10, each counted once. An agent another one replaced is not counted.</p>
     </div>
 
     <figure class="diagram">
       <div class="diagram-scroll">
-        <svg viewBox="0 0 960 515" role="img" aria-label="Diagram of the 29 agents in three groups: twelve product departments, four cross-cutting agents, and thirteen personal and operations agents, all above a band of shared rails: the job queue, memory and recall, the decision log, the ownership map and Agent City. I sit above all three groups and hold Level 3 decisions.">
+        <svg viewBox="0 0 960 595" role="img" aria-label="Diagram of the 42 agents in three groups: the Skyrule organization of twelve departments and five working teams, four cross-cutting agents, and twenty-one personal and operations agents, two of them paused, all above a band of shared rails: the job queue, memory and recall, the decision log, the ownership map and Agent City. I sit above all three groups and hold Level 3 decisions.">
           <defs>
             <marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
           </defs>
@@ -129,25 +130,24 @@
           <path d="M480 66 H780 V80" class="d-line" marker-end="url(#ah1)" />
 
           <!-- product organization -->
-          <rect x="20" y="82" width="380" height="275" class="d-frame" />
-          <text x="34" y="102" class="d-title">Product organization &middot; 12</text>
-          <g>
-            <rect x="30" y="114" width="175" height="32" class="d-box" /><text x="117" y="135" text-anchor="middle" class="d-label">Office of the Founder</text>
-            <rect x="215" y="114" width="175" height="32" class="d-box" /><text x="302" y="135" text-anchor="middle" class="d-label">Program management</text>
-            <rect x="30" y="154" width="175" height="32" class="d-box" /><text x="117" y="175" text-anchor="middle" class="d-label">Domain practice</text>
-            <rect x="215" y="154" width="175" height="32" class="d-box" /><text x="302" y="175" text-anchor="middle" class="d-label">Relational science</text>
-            <rect x="30" y="194" width="175" height="32" class="d-box" /><text x="117" y="215" text-anchor="middle" class="d-label">Editorial</text>
-            <rect x="215" y="194" width="175" height="32" class="d-box" /><text x="302" y="215" text-anchor="middle" class="d-label">Product design</text>
-            <rect x="30" y="234" width="175" height="32" class="d-box" /><text x="117" y="255" text-anchor="middle" class="d-label">Platform and data</text>
-            <rect x="215" y="234" width="175" height="32" class="d-box" /><text x="302" y="255" text-anchor="middle" class="d-label">AI and performance</text>
-            <rect x="30" y="274" width="175" height="32" class="d-box" /><text x="117" y="295" text-anchor="middle" class="d-label">Data science</text>
-            <rect x="215" y="274" width="175" height="32" class="d-box" /><text x="302" y="295" text-anchor="middle" class="d-label">Brand and marketing</text>
-            <rect x="30" y="314" width="175" height="32" class="d-box" /><text x="117" y="335" text-anchor="middle" class="d-label">Legal and trust</text>
-            <rect x="215" y="314" width="175" height="32" class="d-box" /><text x="302" y="335" text-anchor="middle" class="d-label">Finance and operations</text>
-          </g>
+          <rect x="20" y="82" width="380" height="355" class="d-frame" />
+          <text x="34" y="102" class="d-title">Skyrule organization &middot; 17</text>
+          <rect x="30" y="114" width="175" height="32" class="d-box" /><text x="117" y="135" text-anchor="middle" class="d-label">Office of the Founder</text>
+          <rect x="215" y="114" width="175" height="32" class="d-box" /><text x="302" y="135" text-anchor="middle" class="d-label">Program management</text>
+          <rect x="30" y="154" width="175" height="32" class="d-box" /><text x="117" y="175" text-anchor="middle" class="d-label">Domain practice</text>
+          <rect x="215" y="154" width="175" height="32" class="d-box" /><text x="302" y="175" text-anchor="middle" class="d-label">Relational science</text>
+          <rect x="30" y="194" width="175" height="32" class="d-box" /><text x="117" y="215" text-anchor="middle" class="d-label">Editorial</text>
+          <rect x="215" y="194" width="175" height="32" class="d-box" /><text x="302" y="215" text-anchor="middle" class="d-label">Product design</text>
+          <rect x="30" y="234" width="175" height="32" class="d-box" /><text x="117" y="255" text-anchor="middle" class="d-label">Platform and data</text>
+          <rect x="215" y="234" width="175" height="32" class="d-box" /><text x="302" y="255" text-anchor="middle" class="d-label">AI and performance</text>
+          <rect x="30" y="274" width="175" height="32" class="d-box" /><text x="117" y="295" text-anchor="middle" class="d-label">Data science</text>
+          <rect x="215" y="274" width="175" height="32" class="d-box" /><text x="302" y="295" text-anchor="middle" class="d-label">Brand and marketing</text>
+          <rect x="30" y="314" width="175" height="32" class="d-box" /><text x="117" y="335" text-anchor="middle" class="d-label">Legal and trust</text>
+          <rect x="215" y="314" width="175" height="32" class="d-box" /><text x="302" y="335" text-anchor="middle" class="d-label">Finance and operations</text>
+          <rect x="30" y="358" width="360" height="62" class="d-box-accent" /><text x="210" y="382" text-anchor="middle" class="d-label-strong">5 working teams, since Oct 26</text><text x="210" y="402" text-anchor="middle" class="d-small">foundation, platform, app &amp; brand, release, program</text>
 
           <!-- cross-cutting -->
-          <rect x="415" y="82" width="190" height="275" class="d-frame-accent" />
+          <rect x="415" y="82" width="190" height="355" class="d-frame-accent" />
           <text x="429" y="102" class="d-title">Cross-cutting &middot; 4</text>
           <rect x="425" y="114" width="170" height="32" class="d-box-accent" /><text x="510" y="135" text-anchor="middle" class="d-label">Principal Architect</text>
           <rect x="425" y="154" width="170" height="32" class="d-box-accent" /><text x="510" y="175" text-anchor="middle" class="d-label">Quality and compliance</text>
@@ -158,35 +158,40 @@
           <text x="510" y="324" text-anchor="middle" class="d-small">check, never act</text>
 
           <!-- personal and operations -->
-          <rect x="620" y="82" width="320" height="275" class="d-frame" />
-          <text x="634" y="102" class="d-title">Personal and operations &middot; 13</text>
+          <rect x="620" y="82" width="320" height="355" class="d-frame" />
+          <text x="634" y="102" class="d-title">Personal and operations &middot; 21</text>
           <rect x="630" y="114" width="145" height="32" class="d-box" /><text x="702" y="135" text-anchor="middle" class="d-label">Voice writer</text>
           <rect x="785" y="114" width="145" height="32" class="d-box" /><text x="857" y="135" text-anchor="middle" class="d-label">Writing partner</text>
           <rect x="630" y="154" width="145" height="32" class="d-box" /><text x="702" y="175" text-anchor="middle" class="d-label">Post menu</text>
           <rect x="785" y="154" width="145" height="32" class="d-box" /><text x="857" y="175" text-anchor="middle" class="d-label">Recon chief (news)</text>
           <rect x="630" y="194" width="145" height="32" class="d-box" /><text x="702" y="215" text-anchor="middle" class="d-label">Video studio</text>
-          <rect x="785" y="194" width="145" height="32" class="d-box" /><text x="857" y="215" text-anchor="middle" class="d-label">GPU keeper</text>
-          <rect x="630" y="234" width="145" height="32" class="d-box" /><text x="702" y="255" text-anchor="middle" class="d-label">Kissaten DJ (music)</text>
-          <rect x="785" y="234" width="145" height="32" class="d-box" /><text x="857" y="255" text-anchor="middle" class="d-label">Site keeper</text>
-          <rect x="630" y="274" width="145" height="32" class="d-box-muted" /><text x="702" y="295" text-anchor="middle" class="d-label">Foreman (paused)</text>
-          <rect x="785" y="274" width="145" height="32" class="d-box-muted" /><text x="857" y="295" text-anchor="middle" class="d-label">4 personal admin</text>
-          <text x="780" y="332" text-anchor="middle" class="d-small">dashed: paused, or not detailed here</text>
+          <rect x="785" y="194" width="145" height="32" class="d-box" /><text x="857" y="215" text-anchor="middle" class="d-label">Kissaten DJ (music)</text>
+          <rect x="630" y="234" width="145" height="32" class="d-box" /><text x="702" y="255" text-anchor="middle" class="d-label">Site keeper</text>
+          <rect x="785" y="234" width="145" height="32" class="d-box" /><text x="857" y="255" text-anchor="middle" class="d-label">Email agent (inbox)</text>
+          <rect x="630" y="274" width="145" height="32" class="d-box" /><text x="702" y="295" text-anchor="middle" class="d-label">Scouts (3)</text>
+          <rect x="785" y="274" width="145" height="32" class="d-box" /><text x="857" y="295" text-anchor="middle" class="d-label">Shop agents (2)</text>
+          <rect x="630" y="314" width="145" height="32" class="d-box" /><text x="702" y="335" text-anchor="middle" class="d-label">Drop Radar</text>
+          <rect x="785" y="314" width="145" height="32" class="d-box" /><text x="857" y="335" text-anchor="middle" class="d-label">Storage cleanup</text>
+          <rect x="630" y="354" width="145" height="32" class="d-box" /><text x="702" y="375" text-anchor="middle" class="d-label">Town keepers (2)</text>
+          <rect x="785" y="354" width="145" height="32" class="d-box" /><text x="857" y="375" text-anchor="middle" class="d-label">OCR agents (2)</text>
+          <rect x="630" y="394" width="145" height="32" class="d-box-muted" /><text x="702" y="415" text-anchor="middle" class="d-label">GPU keeper (paused)</text>
+          <rect x="785" y="394" width="145" height="32" class="d-box-muted" /><text x="857" y="415" text-anchor="middle" class="d-label">Foreman (paused)</text>
 
           <!-- rails -->
-          <path d="M210 357 V392" class="d-line" marker-end="url(#ah1)" />
-          <path d="M510 357 V392" class="d-line" marker-end="url(#ah1)" />
-          <path d="M780 357 V392" class="d-line" marker-end="url(#ah1)" />
-          <rect x="20" y="394" width="920" height="110" class="d-frame" />
-          <text x="34" y="414" class="d-title">Shared rails every agent runs on</text>
-          <rect x="30" y="426" width="172" height="62" class="d-box-accent" /><text x="116" y="452" text-anchor="middle" class="d-label-strong">Job queue</text><text x="116" y="472" text-anchor="middle" class="d-small">lanes, gates, budget</text>
-          <rect x="212" y="426" width="172" height="62" class="d-box-accent" /><text x="298" y="452" text-anchor="middle" class="d-label-strong">Memory and recall</text><text x="298" y="472" text-anchor="middle" class="d-small">555 sourced facts</text>
-          <rect x="394" y="426" width="172" height="62" class="d-box-accent" /><text x="480" y="452" text-anchor="middle" class="d-label-strong">Decision log</text><text x="480" y="472" text-anchor="middle" class="d-small">append-only, 294 entries</text>
-          <rect x="576" y="426" width="172" height="62" class="d-box-accent" /><text x="662" y="452" text-anchor="middle" class="d-label-strong">Ownership map</text><text x="662" y="472" text-anchor="middle" class="d-small">write scopes, enforced</text>
-          <rect x="758" y="426" width="172" height="62" class="d-box-green" /><text x="844" y="452" text-anchor="middle" class="d-label-strong">Agent City</text><text x="844" y="472" text-anchor="middle" class="d-small">reads all of it</text>
+          <path d="M210 437 V472" class="d-line" marker-end="url(#ah1)" />
+          <path d="M510 437 V472" class="d-line" marker-end="url(#ah1)" />
+          <path d="M780 437 V472" class="d-line" marker-end="url(#ah1)" />
+          <rect x="20" y="474" width="920" height="110" class="d-frame" />
+          <text x="34" y="494" class="d-title">Shared rails every agent runs on</text>
+          <rect x="30" y="506" width="172" height="62" class="d-box-accent" /><text x="116" y="532" text-anchor="middle" class="d-label-strong">Job queue</text><text x="116" y="552" text-anchor="middle" class="d-small">lanes, gates, budget</text>
+          <rect x="212" y="506" width="172" height="62" class="d-box-accent" /><text x="298" y="532" text-anchor="middle" class="d-label-strong">Memory and recall</text><text x="298" y="552" text-anchor="middle" class="d-small">779 sourced facts</text>
+          <rect x="394" y="506" width="172" height="62" class="d-box-accent" /><text x="480" y="532" text-anchor="middle" class="d-label-strong">Decision log</text><text x="480" y="552" text-anchor="middle" class="d-small">append-only, 534 entries</text>
+          <rect x="576" y="506" width="172" height="62" class="d-box-accent" /><text x="662" y="532" text-anchor="middle" class="d-label-strong">Ownership map</text><text x="662" y="552" text-anchor="middle" class="d-small">write scopes, enforced</text>
+          <rect x="758" y="506" width="172" height="62" class="d-box-green" /><text x="844" y="532" text-anchor="middle" class="d-label-strong">Agent City</text><text x="844" y="552" text-anchor="middle" class="d-small">reads all of it</text>
         </svg>
       </div>
       <div class="scroll-hint">Scroll sideways to see the whole diagram</div>
-      <figcaption>The 29 agents by function, above the shared rails (counts as of Oct 19, 2026)</figcaption>
+      <figcaption>The 42 agents by function, above the shared rails (counts as of Nov 10, 2026; dashed boxes are paused)</figcaption>
     </figure>
 
     <div class="table-wrap">
@@ -205,6 +210,7 @@
           <tr><td>Brand and marketing</td><td>Brand system, claims log, marketing plan</td><td>Draft claims and check them against decisions</td><td>Publish, post or upload anything</td><td>Claude Sonnet &middot; local prose seat</td></tr>
           <tr><td>Legal and trust</td><td>Privacy, rights and promises to customers</td><td>Draft policies and briefs for counsel; veto with reasons</td><td>Give a licensed lawyer's opinion</td><td>Claude Sonnet &middot; local admin seat</td></tr>
           <tr><td>Finance and operations</td><td>Pricing model, budget arithmetic, bookkeeping setup</td><td>Draft the numbers and questions for an accountant</td><td>Architecture, product scope, tax advice</td><td>Claude Sonnet &middot; local admin seat</td></tr>
+          <tr><td>Five working teams</td><td>Since Oct 26: foundation, platform, app and brand, release, program; each groups several departments until launch</td><td>Do the work across their departments, wearing those departments&rsquo; review hats</td><td>Change the departments&rsquo; records, rules or ownership</td><td>Claude Sonnet</td></tr>
           <tr><td>Principal Architect</td><td>Cross-department coherence and integration</td><td>Find figures that disagree, route findings, audit ownership, merge</td><td>Decide or arbitrate a question a department owns</td><td>Claude Sonnet &middot; local code seat</td></tr>
           <tr><td>Quality and compliance</td><td>CI gate, protected tests, release checklist</td><td>Block a merge, release or batch on quality, in writing</td><td>Make the release decision itself</td><td>Claude Sonnet &middot; local code seat</td></tr>
           <tr><td>Security and IP</td><td>Threat model, secrets hygiene, dependency checks</td><td>Block a merge or release that weakens a control, in writing</td><td>Build the code or give legal opinions</td><td>Claude Sonnet</td></tr>
@@ -214,14 +220,14 @@
           <tr><td>Post menu</td><td>A weekly menu of post and comment ideas</td><td>Draft options for me to pick from</td><td>Post, comment or connect</td><td>Claude Sonnet</td></tr>
           <tr><td>Recon chief</td><td>News desks that read public feeds for AI news and trends</td><td>Fetch feeds and summarise them</td><td>Spend Claude usage (it runs on the cpu lane)</td><td>Script &middot; local model</td></tr>
           <tr><td>Video studio</td><td>Image and video generation on my GPU</td><td>Run while the studio is up</td><td>Hold the GPU against running work</td><td>ComfyUI (local)</td></tr>
-          <tr><td>GPU keeper</td><td>Keeping the GPU from sitting idle</td><td>Queue the next GPU jobs when the GPU lane is empty</td><td>Restart the paused large regeneration</td><td>Claude Sonnet</td></tr>
+          <tr><td>GPU keeper</td><td>Keeping the GPU from sitting idle</td><td>Queue the next GPU jobs when the GPU lane is empty</td><td>Run while paused (off since Oct 26, while the GPU is lent to an OCR evaluation)</td><td>Claude Sonnet</td></tr>
           <tr><td>Kissaten DJ</td><td>Music suggestions in the town's caf&eacute;</td><td>Propose a change to its taste notebook</td><td>Save anything until I press Save</td><td>Local model</td></tr>
           <tr><td>Site keeper</td><td>Keeping this website in step with my work</td><td>Draft changes on a branch</td><td>Publish without my approval</td><td>Claude Sonnet</td></tr>
           <tr><td>Foreman</td><td>Waking quiet departments on a local model</td><td>Queue small tasks; big ones wait for my approval</td><td>Run while paused (it is paused today)</td><td>Local vision model</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="note-line">Four more personal admin agents (research scouts and an inbox reader) run on the same rails and follow the same rules; I leave them out of this table. "Local seat" is the model the department sits on when it runs locally instead of on Claude (section 04).</p>
+    <p class="note-line">Twelve more personal agents (job and income scouts, the inbox agent, two shop agents, Drop Radar, storage cleanup, Agent City&rsquo;s own two keepers and two OCR research agents) run on the same rails and follow the same rules; I leave them out of this table. "Local seat" is the model the department sits on when it runs locally instead of on Claude (section 04).</p>
   </section>
 
   <!-- 02 LIFECYCLE -->
@@ -296,21 +302,22 @@
       <p>Jobs run in lanes, and each lane has its own concurrency limit. A lane is a statement about a shared resource: what would break, or cost too much, if too many of these ran at once.</p>
     </div>
     <table class="dt">
-      <thead><tr><th>Lane</th><th>What runs there</th><th>Limit (Oct 19)</th><th>Why that limit</th></tr></thead>
+      <thead><tr><th>Lane</th><th>What runs there</th><th>Limit (Nov 10)</th><th>Why that limit</th></tr></thead>
       <tbody>
         <tr><td>cpu</td><td>Scripts, checks, merges, the Overseer, the news desks</td><td class="num">4</td><td>Cheap and independent; spends no model usage</td></tr>
         <tr><td>vllm</td><td>Drivers for the local vLLM server: extraction, generation, grading</td><td class="num">1</td><td>One GPU. Speed inside a run comes from batched requests to the server, not from parallel jobs</td></tr>
         <tr><td>ollama</td><td>Local department agents on Qwen</td><td class="num">1</td><td>Only one local seat fits on the card. The lane exists; no queued job has used it yet</td></tr>
-        <tr><td>claude</td><td>Headless Claude Code agents, one charter each</td><td class="num">22</td><td>Raised from 16 on Oct 18 for a release push, to return to 16 after. The code default is 6</td></tr>
+        <tr><td>claude</td><td>Headless Claude Code agents, one charter each</td><td class="num">2</td><td>Cut from 22 to 2 on Oct 29, after parallel Opus jobs used 67 credits in two hours. Raising it again needs my approval. The code default is 6</td></tr>
       </tbody>
     </table>
 
     <div class="kv">
       <div class="k">The tick</div><div class="v">Windows Task Scheduler runs a tick every 15 minutes with no session open. Each finished job also triggers a tick at once, because on Oct 5 the GPU sat idle between ticks. A lock file makes sure two ticks never launch the same job, and a lock older than five minutes is treated as a crashed tick and cleared.</div>
-      <div class="k">Gates</div><div class="v">Of the 1,129 jobs added since Oct 2, 247 waited on other jobs, 61 had a not-before time, 120 had a start condition, 151 had a finish check that decides "done" by evidence rather than by exit code, and 373 carried a priority.</div>
-      <div class="k">Attempts and retries</div><div class="v">A job gets 3 attempts unless it says otherwise. A wrapper records the exit code; if the wrapper itself vanished (a reboot), the job goes back to the queue. Across 1,141 launches the queue made 65 automatic retries. As of Oct 19, 7 jobs ended failed and 49 were cancelled.</div>
-      <div class="k">The launch budget</div><div class="v">The Claude lane spends my own usage, so it is opt-in per job: a job without an approval note never starts there. A weekly budget caps launches (130 this week, set by me), so at least half my weekly usage stays free for my own work. When Claude reports a usage limit, the whole lane pauses until the reset time it states, and the stop does not count as a failed attempt.</div>
-      <div class="k">Self-scheduling</div><div class="v">Two hooks add work on their own. The GPU keeper checks every hour whether the GPU lane is empty and, if so, queues one planning job to line up the next GPU work; it has done that 173 times. A periodic hook queues the hourly Overseer round and the six-hourly news fetch, but only from an allowlist of scripts and arguments, at most hourly, and only with an approval note. Editing the config cannot make it run an arbitrary command.</div>
+      <div class="k">Gates</div><div class="v">Of the 3,424 jobs added from Oct 2 to Nov 10, 368 waited on other jobs, 135 had a not-before time, 449 had a start condition, 158 had a finish check that decides "done" by evidence rather than by exit code, and 1,123 carried a priority.</div>
+      <div class="k">Attempts and retries</div><div class="v">A job gets 3 attempts unless it says otherwise. A wrapper records the exit code; if the wrapper itself vanished (a reboot), the job goes back to the queue. Since Oct 22 a job can instead re-run on a fixed interval, with a heartbeat and a maximum run time, so launches are no longer a count of retries. Across 6,779 launches to Nov 10, 35 jobs ended failed and 140 were cancelled.</div>
+      <div class="k">The launch budget</div><div class="v">The Claude lane spends my own usage, so it is opt-in per job: a job without an approval note never starts there. A weekly budget, set by me each week, caps launches: 130 in mid-October, 60 this week. When Claude reports a usage limit, the whole lane pauses until the reset time it states, and the stop does not count as a failed attempt.</div>
+      <div class="k">Self-scheduling</div><div class="v">Two hooks add work on their own. The GPU keeper queued a planning job whenever the GPU lane sat empty, 190 times in all; it has been switched off since Oct 26 while the GPU is lent to an OCR evaluation. A periodic hook queues the hourly Overseer round, the six-hourly news fetch, an hourly night watch and the shop&rsquo;s hourly order router, but only from an allowlist of scripts and arguments, and only with an approval note. Editing the config cannot make it run an arbitrary command: a 30-minute keeper added to the config on Nov 7 without being on the allowlist was refused 1,119 times by Nov 10. The control worked; the cost is that a keeper I asked for has not run yet.</div>
+      <div class="k">Reliability layer</div><div class="v">Added Oct 21&ndash;27. An hourly night watch reports how long the GPU has been idle and why each queued job is still waiting. A watchdog runs as its own scheduled task and raises a desktop alert if the queue stops ticking. Interval jobs carry heartbeats and a maximum run time. And since Oct 27 only the scheduler may launch a job: a job started by hand is refused.</div>
     </div>
   </section>
 
@@ -328,16 +335,16 @@
 
     <div class="kv">
       <div class="k">Dependencies</div><div class="v">A job can name the jobs it waits for. That is how one department's output becomes another's input without either agent polling: the queue holds the second job until the first is done.</div>
-      <div class="k">Handoffs</div><div class="v">Each department writes dated handoff documents in its own folder, named by sender, receiver and topic: 539 so far across 11 departments. Documents supersede by date, never by version number, so "which one is current" always has one answer.</div>
-      <div class="k">Decision log</div><div class="v">My decisions go into an append-only log: 294 entries since Sep 30. Questions reach me as multiple choice with a recommended option, often on my phone from a morning brief page; a tap appends a line, and a later line for the same question supersedes the earlier one. Agents search the log before asking me anything, and memory recall always shows my recorded decisions first.</div>
-      <div class="k">Shared memory</div><div class="v">555 one-fact memory files across the departments. Each department writes only its own memories and reads everyone's. The tool enforces the rules a model will not reliably hold on its own: every memory names a source file that exists (its hash is stored), the body is capped at 1,200 characters, and near-duplicates are refused. Search runs on a small embedding model kept on the CPU, so recall still works while the GPU is busy.</div>
+      <div class="k">Handoffs</div><div class="v">Each department writes dated handoff documents in its own folder, named by sender, receiver and topic: 964 so far across 13 department folders (Nov 10). Documents supersede by date, never by version number, so "which one is current" always has one answer.</div>
+      <div class="k">Decision log</div><div class="v">My decisions go into an append-only log: 534 entries since Sep 30. Questions reach me as multiple choice with a recommended option, often on my phone from a morning brief page; a tap appends a line, and a later line for the same question supersedes the earlier one. Agents search the log before asking me anything, and memory recall always shows my recorded decisions first.</div>
+      <div class="k">Shared memory</div><div class="v">779 one-fact memory files across the departments (Nov 10). Each department writes only its own memories and reads everyone's. The tool enforces the rules a model will not reliably hold on its own: every memory names a source file that exists (its hash is stored), the body is capped at 1,200 characters, and near-duplicates are refused. Search runs on a small embedding model kept on the CPU, so recall still works while the GPU is busy.</div>
       <div class="k">Memory sleep</div><div class="v">Every night a mechanical pass retires memories whose source is gone, hides ones whose source changed until an agent re-checks them, flags snapshots older than seven days, and flags duplicates. A second pass, where a local model checks memories against my decisions, is written but switched off until it passes its own evaluation.</div>
       <div class="k">Session continuity</div><div class="v">A mission file and an open-threads register are the first things every session reads, so a fresh agent picks up where the last one stopped.</div>
     </div>
 
     <h3 class="subhead">Code ownership, enforced in layers</h3>
     <div class="prose">
-      <p>A machine-readable ownership map assigns every folder and code path to one of the 15 product agents: each department's own folder plus 62 owned code paths, with 5 paths reserved for me. A sync script writes each agent's scope from that map, so the scopes are never edited by hand and a check mode fails if any agent file drifts.</p>
+      <p>A machine-readable ownership map assigns every folder and code path to one of the 15 product agents or, since Oct 26, one of the five teams, with 5 paths reserved for me. A sync script writes each agent's scope from that map, so the scopes are never edited by hand and a check mode fails if any agent file drifts.</p>
       <p>Enforcement comes in three layers, because no single layer can see everything.</p>
     </div>
 
@@ -416,7 +423,7 @@
       </tbody>
     </table>
     <div class="prose">
-      <p>Of the 754 Claude-lane jobs since Oct 2, 458 ran on Sonnet, 270 on Opus and 26 on Fable. The model is chosen per job, so a routine status check does not cost what a hard design review costs.</p>
+      <p>Of the 1,339 Claude-lane jobs from Oct 2 to Nov 10, 700 ran on Sonnet, 589 on Opus, 26 on Fable and 24 on a pinned model version. The model is chosen per job, so a routine status check does not cost what a hard design review costs.</p>
     </div>
 
     <h3 class="subhead">Seats: model roles, measured</h3>
@@ -435,7 +442,7 @@
 
     <h3 class="subhead">One big model at a time: the GPU lease</h3>
     <div class="prose">
-      <p>The workstation has one RTX 5090 with 32 GB. A vLLM server reserves 94% of the card when it starts and keeps it. A 32B Qwen seat on Ollama needs about 20 GB. They cannot share, and when they collide Ollama does not fail loudly: it spills to the CPU and runs about ten times slower. So I made the GPU a lease with exactly one holder: idle, a vLLM server (three profiles: an 8B generation model, Qwen3 32B AWQ, and Qwen3 VL 32B for vision and extraction), or the local Ollama seats.</p>
+      <p>The workstation has one RTX 5090 with 32 GB. A vLLM server reserves 94% of the card when it starts and keeps it. A 32B Qwen seat on Ollama needs about 20 GB. They cannot share, and when they collide Ollama does not fail loudly: it spills to the CPU and runs about ten times slower. So I made the GPU a lease with exactly one holder: idle, a vLLM server (three profiles: an 8B generation model, Qwen3 32B AWQ, and Qwen3 VL 32B for vision and extraction), or the local Ollama seats. Since Oct 28 the generation server runs Qwen3.8 27B (W4A16), chosen in a recorded decision; Qwen3 32B AWQ is kept as the rollback, and the server will not start if its launch script differs by a single byte from the pinned copy.</p>
     </div>
 
     <figure class="diagram">
@@ -475,7 +482,7 @@
 
     <div class="prose">
       <p>The rule the lease will not break: a switch never interrupts running GPU work. If a generation, extraction or grading process is live, a switch away from it is refused and asked again on the next tick. Generation can resume, but a half-written output file is not worth a race for the sake of a schedule. After every switch the result is checked against the card's actual memory use and the servers' health, not assumed. A separate restore script hands the card back to the vision model after a temporary switch, with the same refusal when work is running.</p>
-      <p>I also wrote time windows for who should hold the card at each hour of the day (generation overnight, local agents in the daytime). That scheduler runs as a dry run today: it logs what it would do, and switching happens by explicit request from a job or from me.</p>
+      <p>I also wrote time windows for who should hold the card at each hour of the day (generation overnight, local agents in the daytime). That scheduler runs as a dry run today: it logs what it would do, and switching happens by explicit request from a job or from me. Since Oct 26 there are also protected GPU windows for long runs: while one is open, anything that polls the generation server, Agent City included, is stopped for the whole window and restarted only after the window is verified closed.</p>
     </div>
   </section>
 
@@ -492,10 +499,11 @@
     </div>
 
     <div class="kv">
-      <div class="k">The Overseer</div><div class="v">Every hour it goes round every agent and the machine room. It looks for failed runs, runs that look stuck (over 3 hours on the Claude lane, 6 on cpu, 14 on the GPU lane), processes that vanished, missed scheduled runs and offline runtimes, and asks each agent on a local model whether its newest run did its job. Verdicts are up, waiting, watch or down. It checks and never acts: nothing is queued, restarted or deleted. At 08:30 on Oct 19 it had checked 28 agents: 19 up, 5 waiting on me, 4 to watch, none down.</div>
+      <div class="k">The Overseer</div><div class="v">Every hour it goes round every agent and the machine room. It looks for failed runs, runs that look stuck (over 3 hours on the Claude lane, 6 on cpu, 14 on the GPU lane), processes that vanished, missed scheduled runs and offline runtimes, and asks each agent on a local model whether its newest run did its job. Verdicts are up, waiting, watch or down. It checks and never acts: nothing is queued, restarted or deleted.</div>
       <div class="k">Review gates</div><div class="v">The quality agent can block a merge, a release or a content batch on quality, and the security agent can block one that weakens a control, each with a written reason. I can override either. The Principal Architect integrates changes and runs the ownership audit first.</div>
-      <div class="k">CI and protected tests</div><div class="v">CI runs the product suite on Ubuntu and Windows (the deploy target and the development machine catch different failures), then proves that 14 protected tests actually ran and passed. A green suite is not enough: a deleted or silently skipped test leaves the build green and the guarantee gone. Removing a protected test takes a diff with a name on it. A pressure test of 84 probes runs after the suite.</div>
-      <div class="k">Test counts</div><div class="v">On Oct 19 the product suite ran 1,499 tests on my working checkout: 1,496 passed and 3 failed, all three in one module that is mid-change. Those three are open, not hidden. The job queue has its own tests for the periodic hook (10, passing), and Agent City has its own suite (section 07).</div>
+      <div class="k">CI and protected tests</div><div class="v">CI runs the product suite on Ubuntu and Windows (the deploy target and the development machine catch different failures), then proves that every test on a protected list actually ran and passed (57 on the Oct 23 release tree). A green suite is not enough: a deleted or silently skipped test leaves the build green and the guarantee gone. Removing a protected test takes a diff with a name on it. A pressure test of 84 probes runs after the suite.</div>
+      <div class="k">Test counts</div><div class="v">On Oct 23 the release tree ran its product and API tests: 1,719 passed, 30 skipped, 0 failed. The job queue has its own tests for the periodic hook, and Agent City has its own suite (section 07).</div>
+      <div class="k">A second opinion</div><div class="v">Since Oct 24, once a day, my recent decisions and the queue&rsquo;s anomalies (failed jobs, chains re-queued again and again) go to one of OpenAI&rsquo;s strongest models for review. It sends procedural text only, never the work or any personal data, costs about 2 cents a day under its own monthly cap, and returns only concerns and suggested changes. Since Oct 23 the same provider can also act as a second grader of generated text, against a spend ledger with a hard cap. Its findings are advice: they change nothing on their own.</div>
       <div class="k">Findings are classified</div><div class="v">Every finding is one of four kinds: a safety or evidence blocker, an integration blocker, a publication-only blocker, or a later improvement. A new blocker must name the failed requirement, the evidence, the owner and the fix. Nicer writing is never a blocker.</div>
     </div>
 
@@ -536,7 +544,7 @@
       </div>
     </div>
     <div class="prose">
-      <p><strong>The release boundary.</strong> No agent publishes. The shell guard denies every git push, nothing generated is published automatically, and a full generation run or a public deployment needs my explicit go. This page is an example: an agent prepared it on a branch, and it goes live only after I approve it.</p>
+      <p><strong>The release boundary.</strong> No agent publishes. The shell guard denies every git push, nothing generated is published automatically, and a full generation run or a public deployment needs my explicit go. Two jobs do act outside my machine on their own, each approved by me: the shop&rsquo;s order router sends paid orders to the print provider every hour and holds anything unusual for me, and Drop Radar sends collectibles alerts by Telegram. Neither publishes anything. This page is an example: an agent prepared it on a branch, and it goes live only after I approve it.</p>
     </div>
   </section>
 
@@ -549,7 +557,7 @@
     </div>
 
     <div class="prose">
-      <p>With 29 agents and hundreds of jobs, logs stopped being enough to answer "who is working, who is stuck, and who is waiting on me?" <a href="agent-city.html" class="link">Agent City</a> is my answer: a town in the browser, first in 2D and now in 3D with three.js, where each agent has a character and a building. It is a projection of the system above. It owns no scheduling and runs no work.</p>
+      <p>With 42 agents and thousands of jobs, logs stopped being enough to answer "who is working, who is stuck, and who is waiting on me?" <a href="agent-city.html" class="link">Agent City</a> is my answer: a town in the browser, first in 2D and now in 3D with three.js, where each agent has a character and a building. It is a projection of the system above. It owns no scheduling and runs no work.</p>
     </div>
 
     <figure class="diagram">
@@ -617,7 +625,7 @@
       <div class="k">Polling with a cursor</div><div class="v">Browsers poll every 5 seconds and pass the sequence number of the last event they saw. They get a full snapshot on load and after any gap. Events come from diffing two snapshots, and the first run invents no history. I chose polling over server push because it is simple and robust on a standard-library server at this scale, and push can be added later without changing the event format.</div>
       <div class="k">Run now never bypasses a gate</div><div class="v">"Run now" sets aside one date gate on one queued job and records the original. It is refused for approval flags, dependencies and start conditions, and it never overrides a usage pause or the launch budget. A button in a town must not be a way around the rules.</div>
       <div class="k">Idempotent commands</div><div class="v">Every command can be previewed without changing anything. Commands that spend usage, override a gate, pause or cancel need an explicit confirm. The same idempotency key within 24 hours returns the stored result and never creates a second job, so a double tap on a phone is harmless. Running jobs are never touched.</div>
-      <div class="k">The Done log</div><div class="v">The queue's own records can be pruned or rewritten, so the first time the town sees a finished job it appends one line to an append-only ledger: who finished what, when, for which project, a one-line summary and the files the report names. 1,060 finished jobs as of Oct 19: 669 for Skyrule, 273 routine operations runs and 118 for my other personal projects.</div>
+      <div class="k">The Done log</div><div class="v">The queue's own records can be pruned or rewritten, so the first time the town sees a finished job it appends one line to an append-only ledger: who finished what, when, for which project, a one-line summary and the files the report names. It catches up whenever the Done log or the Desk is opened, so it can lag the queue: its last count, on Oct 19, was 1,060 finished jobs (669 for Skyrule, 273 routine operations runs, 118 for my other personal projects), against 3,153 finished in the queue by Nov 10.</div>
       <div class="k">The chat log</div><div class="v">Every conversation I have had with any agent, and every board-room session, newest first, read-only. It never writes, renames or deletes a chat file.</div>
       <div class="k">Access</div><div class="v">The town is reachable only over my private network with identity-checked access. It never listens on the public internet.</div>
     </div>
@@ -635,9 +643,11 @@
       <div class="k">Parsing text for signals</div><div class="v">The queue detects a Claude usage limit by reading the job's output. On Oct 9 an agent's own report mentioned the limit, the pattern matched, and the lane paused for a day. I anchored the pattern to the start of a line and judge only the current attempt's output, but the real fix is a structured exit signal, not text matching.</div>
       <div class="k">Shell writes are guarded by heuristics</div><div class="v">The file tools are guarded exactly. The shell is not: a script can write somewhere its command line does not name. The ownership audit catches that after the fact, before merge. I would rather run each agent in a sandbox where out-of-scope paths are simply not writable.</div>
       <div class="k">Per-job work contracts are planned</div><div class="v">Today an agent's limits come from its charter and scope, not from the job. The next step, written down on Oct 18, is a machine-readable contract per job (allowed paths and tools, inputs, definition of done, required tests, budget, escalation) and a release controller that enforces existing policy. Neither is built yet.</div>
-      <div class="k">JSON files and a lock file</div><div class="v">The queue keeps 1,129 jobs in one JSON file and one state file per job, guarded by a lock file. That is easy to inspect and fine on one machine, but it rewrites the whole job list on every change. If I started again I would use SQLite from day one.</div>
-      <div class="k">Partly built</div><div class="v">The GPU time windows run as a dry run. The memory judge is switched off until it passes its evaluation. The foreman is paused, because an agent permission check refused its unattended job creation, and I have not yet decided on that rule. The local-agent lane exists but no queued job has used it. The town's own test suite ran 340 tests on Oct 19 with one error still open.</div>
-      <div class="k">What is not measured</div><div class="v">Claude cost is tracked only as launches against the weekly budget, not as tokens. The queue also has no native recurring schedule: a weekly job queues its own successor.</div>
+      <div class="k">JSON files and a lock file</div><div class="v">The queue keeps 3,424 jobs in one 4.9 MB JSON file and one state file per job, guarded by a lock file. That is easy to inspect and fine on one machine, but it rewrites the whole job list on every change. If I started again I would use SQLite from day one.</div>
+      <div class="k">Partly built</div><div class="v">The GPU time windows run as a dry run. The memory judge is switched off until it passes its evaluation. The foreman is paused, because an agent permission check refused its unattended job creation, and I have not yet decided on that rule. The GPU keeper has been off since Oct 26. The local-agent lane exists but no queued job has used it. Agent City&rsquo;s own test suite: 385 passed on Oct 28.</div>
+      <div class="k">Parallel Claude jobs</div><div class="v">I had raised the Claude lane to 22 parallel jobs for a release push. On Oct 29 parallel Opus jobs used 67 credits in two hours, because the budget counts launches, not cost. The lane is now 2, and raising it needs my approval. A budget should measure what it is meant to protect.</div>
+      <div class="k">A watcher that leans on what it watches</div><div class="v">The Overseer reads its list of agents from Agent City. When the town stopped answering in early November, the Overseer flagged the town every hour, correctly, but with no list it checked no agents at all. It should keep its own copy of the roster.</div>
+      <div class="k">What is not measured</div><div class="v">Claude cost is tracked only as launches against the weekly budget, not as tokens. Interval jobs with heartbeats were added on Oct 22, but weekly jobs such as the income scout are still queued ahead as separate dated jobs.</div>
     </div>
 
     <div class="prose" style="margin-top:1.5rem;">
@@ -671,7 +681,7 @@
 <script src="assets/chat/chat.js?v=20261014" defer></script>
 
 <!--
-SOURCES (every claim on this page traces to one of these; numbers dated 19 Oct 2026)
+SOURCES (every claim on this page traces to one of these; numbers updated 10 Nov 2026; older figures are dated where they appear)
 Product repository (private; named here only by its parts):
   S1  Job queue module: lanes, default limits, gates, attempts, usage pause, launch budget, chained tick, tick lock, GPU keeper, periodic allowlist, Claude CLI lane rule (jobqueue.py, docstring and code)
   S2  Queue config: lane limits (cpu 4, vllm 1, ollama 1, claude 22 with the 18 Oct note), launch budget 130 since 16 Oct, keeper every hour, periodic overseer 1 h and recon 6 h, foreman paused with reason (config.json)
@@ -701,6 +711,18 @@ Agent Town (local folder, not public):
   S25 Events (events.py), controls (controls.py): snapshot diff, no invented history; never touches running jobs
   S26 Agent table (world.py) and live world snapshot 19 Oct: 30 residents = 29 agents + the Founder; runtimes and default models
   S27 Agent Town tests: unittest discover 19 Oct, 340 ran, 1 error
+Updated 10 Nov 2026 (counted from the same files):
+  S2b Queue config 10 Nov: lanes cpu 4, vllm 1, ollama 1, claude 2 (_claude_lane_note_29oct: cut from 22 after 67 credits in 2 h); claude_budget max_launches 60 since 6 Nov; gpu_keeper enabled false; periodic: overseer 1 h, recon 6 h, night watch 1 h (21 Oct), shop order router 1 h (24 Oct), c2c-keeper 0.5 h (7 Nov, not allowlisted)
+  S3b jobs.json and state files 10 Nov: 3,424 jobs; lanes cpu 1,708, claude 1,339, vllm 377, ollama 0; status done 3,153, cancelled 140, failed 35, queued 6; gates after 368, not_before 135, start_when 449, finish_check 158, priority 1,123; Claude models sonnet 700, opus 589, fable 26, pinned versions 24
+  S4b queue.log 10 Nov: 6,779 launches since 2 Oct; keeper 190; periodic_refused 1,119
+  S5b gpu.py: vllm_qwen = Qwen3.8 27B W4A16 since 28 Oct with a script sha256 pin; vllm_qwen32b kept for rollback; protected GPU windows from 26 Oct (Agent Town START_HERE.md)
+  S9b Team charters (.claude/agents/team-*.md): five working teams, Founder 26 Oct; personal and operations charters counted 10 Nov: 21 (user-level, Agent Town, shop, Drop Radar, storage and OCR agent folders); job-inbox superseded by email-agent 24 Oct and not counted
+  S11b memory files 10 Nov: 779; S12b decisions.jsonl 10 Nov: 534 lines; S13b handoffs: 964 top-level files in 13 folders
+  S15b/S16b PROJECT_STATE.md (24 Oct entries): release tree tests+api 1,719 passed / 30 skipped / 0 failed; protected list 57 entries
+  S28 Reliability: night_watch.py, watchdog, heartbeats and max_hours (jobqueue.py), hand launch refused 27 Oct (RELIABILITY.md)
+  S29 daily_oversight.py (24 Oct, about 2 cents a day, own monthly cap, procedural text only); openai_second_grader.py (23 Oct, spend ledger with a hard cap)
+  S30 Automatic external actions: pod-shop order router (periodic, --live --auto-send, Founder 24 Oct); Drop Radar Telegram alerts (drop-radar charter)
+  S31 Overseer reports from 4 Nov: city server did not answer, 0 agents checked (agent-town state/overseer_report.md); Agent Town tests 385 passed 28 Oct (agents/town-keeper/NOTES.md)
 Public site pages kept consistent: skyrule.html (15-agent organization, 15-minute tick, lanes, private access), agent-city.html (Claude or Qwen3 32B, RTX 5090 32 GB).
 -->
 </body>
