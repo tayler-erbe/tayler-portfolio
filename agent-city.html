@@ -12,6 +12,19 @@
     /* page-specific styles; shared tokens and components live in assets/site.css */
     .progress-list { margin: 0 0 1em; padding-left: 1.2em; }
     .progress-list li { margin-bottom: 0.4em; }
+    .tile-grid { display: grid; gap: var(--space-3); margin: var(--space-3) 0 var(--space-6); }
+    .tile-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .tile-grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .tile-grid-5 { grid-template-columns: repeat(5, 1fr); }
+    @media (max-width: 860px) { .tile-grid-3, .tile-grid-4, .tile-grid-5 { grid-template-columns: repeat(2, 1fr); } }
+    .tile { margin: 0; border: 1px solid var(--border); background: var(--surface); }
+    .tile a { display: block; }
+    .tile img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+    .tile-top img { object-position: top; }
+    .tile-contain img { object-fit: contain; background: var(--surface2); }
+    .tile figcaption { padding: 0.5rem 0.65rem; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted); letter-spacing: 0.04em; line-height: 1.4; }
+    .tile-row-label { margin-top: var(--space-5); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent2); text-transform: uppercase; letter-spacing: var(--tracking-label); }
+    .shot-narrow { max-width: 760px; margin-left: auto; margin-right: auto; }
   </style>
 </head>
 <body>
@@ -60,10 +73,17 @@
       <p>It&rsquo;s a hobby project and still very much under development. Each character represents an agent, and the world gives me a way to see their activity instead of following everything through logs and text.</p>
     </div>
 
-    <figure class="shot">
-      <img src="assets/shots/agent-city-tour.jpg" alt="A tour of Agent City: the island map, all 32 characters, Geisel Library, cozy rooms, the jazz café and the park" loading="lazy">
-      <figcaption>A look around the town</figcaption>
-    </figure>
+    <div class="tile-grid tile-grid-3">
+      <figure class="tile"><a href="assets/shots/agent-city/t-map.jpg"><img src="assets/shots/agent-city/t-map.jpg" alt="The 3D island map with its labelled neighbourhoods" loading="lazy"></a><figcaption>The island</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-characters.jpg"><img src="assets/shots/agent-city/t-characters.jpg" alt="All 32 characters in 3D, lined up" loading="lazy"></a><figcaption>All 32 residents</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-geisel.jpg"><img src="assets/shots/agent-city/t-geisel.jpg" alt="Geisel Library in the 3D town at dusk" loading="lazy"></a><figcaption>Geisel Library</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-lounge.jpg"><img src="assets/shots/agent-city/t-lounge.jpg" alt="A cozy office with a fireplace, bookshelves and a rug" loading="lazy"></a><figcaption>A cozy office</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-cafe-dj.jpg"><img src="assets/shots/agent-city/t-cafe-dj.jpg" alt="The jazz café interior with the DJ chat panel open" loading="lazy"></a><figcaption>Chatting with the caf&eacute; DJ</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-gpu-keeper.jpg"><img src="assets/shots/agent-city/t-gpu-keeper.jpg" alt="The GPU Keeper, a beaver, in its office with its status panel" loading="lazy"></a><figcaption>The GPU Keeper&rsquo;s office</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-patio.jpg"><img src="assets/shots/agent-city/t-patio.jpg" alt="A lounge with a string-lit patio" loading="lazy"></a><figcaption>A lounge and patio</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-cafe.jpg"><img src="assets/shots/agent-city/t-cafe.jpg" alt="The Jazz Kissaten and Records café from outside" loading="lazy"></a><figcaption>The jazz caf&eacute;</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/t-park.jpg"><img src="assets/shots/agent-city/t-park.jpg" alt="The park with its spiral slide" loading="lazy"></a><figcaption>The park</figcaption></figure>
+    </div>
   </section>
 
   <!-- 02 VISUAL -->
@@ -81,10 +101,34 @@
       <p>The characters needed cleanup too: colours, rigging, moving ears and tails, and fixes like restoring the moth&rsquo;s wing patterns. BiRefNet handled background removal, and Blender handled rigging, animation, and cleanup. I compared the results against the concept art throughout the process.</p>
     </div>
 
-    <figure class="shot">
-      <img src="assets/shots/agent-city-before-after.jpg" alt="Before and after: the basic 2D town, the pixel city, the concept map and the 3D town; the first test characters, the character concept art and all 32 in 3D; Geisel Library and the café from concept to 3D; generated buildings beside their scripted rebuilds and the moth's wings before and after" loading="lazy">
-      <figcaption>The progression, from first try to the town today</figcaption>
-    </figure>
+    <div class="tile-row-label">Top row &middot; the town</div>
+    <div class="tile-grid tile-grid-4">
+      <figure class="tile tile-top"><a href="assets/shots/agent-city/p-2d-town.jpg"><img src="assets/shots/agent-city/p-2d-town.jpg" alt="The first 2D town: a green board with signposts" loading="lazy"></a><figcaption>Day 1: the first 2D town</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-pixel-city.jpg"><img src="assets/shots/agent-city/p-pixel-city.jpg" alt="The pixel art city at night" loading="lazy"></a><figcaption>Next: a pixel art city</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-concept-map.jpg"><img src="assets/shots/agent-city/p-concept-map.jpg" alt="The illustrated concept map of the island" loading="lazy"></a><figcaption>My concept map</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-3d-town.jpg"><img src="assets/shots/agent-city/p-3d-town.jpg" alt="The 3D island today" loading="lazy"></a><figcaption>The 3D town today</figcaption></figure>
+    </div>
+    <div class="tile-row-label">Second row &middot; the characters</div>
+    <div class="tile-grid tile-grid-3">
+      <figure class="tile"><a href="assets/shots/agent-city/p-test-chars.jpg"><img src="assets/shots/agent-city/p-test-chars.jpg" alt="Three simple first test characters" loading="lazy"></a><figcaption>Day 1: the first test characters</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-char-art.jpg"><img src="assets/shots/agent-city/p-char-art.jpg" alt="Character concept art: Sage, Beat, Frankie, Miso, Morel, Ink, Luna and June" loading="lazy"></a><figcaption>My character art</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-32-chars.jpg"><img src="assets/shots/agent-city/p-32-chars.jpg" alt="All 32 characters in 3D" loading="lazy"></a><figcaption>All 32 characters in 3D</figcaption></figure>
+    </div>
+    <div class="tile-row-label">Third row &middot; concept to town</div>
+    <div class="tile-grid tile-grid-4">
+      <figure class="tile"><a href="assets/shots/agent-city/p-geisel-concept.jpg"><img src="assets/shots/agent-city/p-geisel-concept.jpg" alt="Concept art of Geisel Library" loading="lazy"></a><figcaption>My Geisel concept</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-geisel-3d.jpg"><img src="assets/shots/agent-city/p-geisel-3d.jpg" alt="Geisel Library in the 3D town" loading="lazy"></a><figcaption>Geisel in 3D</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-cafe-concept.jpg"><img src="assets/shots/agent-city/p-cafe-concept.jpg" alt="Concept art of the jazz and records café" loading="lazy"></a><figcaption>My caf&eacute; concept</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-cafe-3d.jpg"><img src="assets/shots/agent-city/p-cafe-3d.jpg" alt="The café in the 3D town" loading="lazy"></a><figcaption>The caf&eacute; in 3D</figcaption></figure>
+    </div>
+    <div class="tile-row-label">Bottom row &middot; trial and error</div>
+    <div class="tile-grid tile-grid-5">
+      <figure class="tile"><a href="assets/shots/agent-city/p-geisel-ai.jpg"><img src="assets/shots/agent-city/p-geisel-ai.jpg" alt="The AI-generated Geisel model, soft and blobby" loading="lazy"></a><figcaption>AI 3D model: blobby</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-geisel-script.jpg"><img src="assets/shots/agent-city/p-geisel-script.jpg" alt="Geisel rebuilt by Blender script" loading="lazy"></a><figcaption>Rebuilt by script</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-cottage-ai.jpg"><img src="assets/shots/agent-city/p-cottage-ai.jpg" alt="An AI-generated cottage with a clay look" loading="lazy"></a><figcaption>AI cottage: the clay look</figcaption></figure>
+      <figure class="tile"><a href="assets/shots/agent-city/p-cottage-script.jpg"><img src="assets/shots/agent-city/p-cottage-script.jpg" alt="The script-built cottage" loading="lazy"></a><figcaption>Script-built cottage</figcaption></figure>
+      <figure class="tile tile-contain"><a href="assets/shots/agent-city/p-wing-fix.jpg"><img src="assets/shots/agent-city/p-wing-fix.jpg" alt="The moth's wings before and after the pattern fix" loading="lazy"></a><figcaption>Wing fix: before, after</figcaption></figure>
+    </div>
   </section>
 
   <!-- 03 BEHIND -->
@@ -102,7 +146,7 @@
 
     <div class="prose" style="margin-top:1rem;"><p><a href="agent-architecture.html" class="link">Read the full agent architecture &#8594;</a> &nbsp; <a href="agent-town-system-design.html" class="link">Read the town&rsquo;s system design &#8594;</a></p></div>
 
-    <figure class="shot">
+    <figure class="shot shot-narrow">
       <img src="assets/shots/agent-city-kissaten-dj.jpg" alt="Inside the jazz kissaten café: chatting with the café's music agent, which suggests records for the mood" loading="lazy">
       <figcaption>The jazz caf&eacute;, where the music agent suggests records</figcaption>
     </figure>
@@ -117,7 +161,7 @@
     </div>
 
     <div class="prose">
-      <p>The image shows the progression:</p>
+      <p>The pictures above show the progression:</p>
       <ul class="progress-list">
         <li>Top row: the basic 2D town, pixel city, concept map, and current 3D world.</li>
         <li>Second row: the first test characters, character concept art, and all 32 in 3D.</li>
