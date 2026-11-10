@@ -92,7 +92,7 @@
       </div>
       <div class="meta-item">
         <div class="meta-label">Stakeholders</div>
-        <div class="meta-value">University Archivist, UIUC Library · Associate Director, Information Governance (RIMS) · Dimuthu Tilakaratne, CDAO, University of Illinois System</div>
+        <div class="meta-value">University Archivist, UIUC Library · Associate Director, Information Governance (RIMS) · AITS analytics leadership</div>
       </div>
       <div class="meta-item">
         <div class="meta-label">Status</div>
@@ -139,13 +139,9 @@
     <div class="two-col">
       <div class="prose">
         <p>Universities and large institutions accumulate decades of digital correspondence from faculty, staff, and administrators who retire, leave, or pass away. This material often contains historically significant records, operational decisions, project documentation, and institutional knowledge, but sits entirely inaccessible because it arrives in bulk, in legacy formats, with no metadata, and cannot be manually reviewed at scale.</p>
-        <p>This project was initiated in December 2024 when the Associate Director for Information Governance at RIMS reached out directly, on recommendation from a senior colleague who identified the right person for the work. RIMS had been working with email archiving and e-discovery tools for several years and had developed a word frequency-based redaction strategy. The outreach was an explicit request for advanced data science and applied AI expertise to push that work further. The project was formally scoped in an April 2025 working meeting attended by the University Archivist, the Associate Director for Information Governance, and Dimuthu Tilakaratne, who now serves as Chief Data and Analytics Officer (CDAO) for the University of Illinois System. That meeting concluded with Tayler being tasked with designing and testing the full automated archival pipeline.</p>
+        <p>This project was initiated in December 2024 when the Associate Director for Information Governance at RIMS reached out directly, on recommendation from a senior colleague who identified the right person for the work. RIMS had been working with email archiving and e-discovery tools for several years and had developed a word frequency-based redaction strategy. The outreach was an explicit request for advanced data science and applied AI expertise to push that work further. The project was formally scoped in an April 2025 working meeting attended by the University Archivist, the Associate Director for Information Governance, and AITS analytics leadership. That meeting concluded with Tayler being tasked with designing and testing the full automated archival pipeline.</p>
         <p>The resulting pipeline takes raw <strong>.pst legacy archive files</strong>, converts them to structured data, extracts and cleans individual messages from email threads, detects and replaces all personally identifiable information using named entity recognition, and generates fully anonymized plain-language summaries of each message using a locally deployed large language model. The output is a dataset that can be made available to researchers without any manual review step.</p>
         <p>The pipeline was designed from first principles with privacy as a non-negotiable constraint: no data leaves the institution's environment at any stage, and the two-layer anonymization approach ensures both structured PII (names, phone numbers, emails) and unstructured contextual sensitivity are addressed.</p>
-        <blockquote style="border-left:3px solid var(--accent); padding-left:1.25rem; margin:1.5rem 0 0;">
-          <p style="font-style:italic; color:var(--text); font-size:0.92rem; line-height:1.7;">"Tayler also found novel solutions to these challenges by researching and identifying Python libraries and large language models that can be quickly leveraged. After meeting with Tayler, each of them was excited and inspired by her thoughts and engaged with her to develop solutions iteratively."</p>
-          <p style="font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-top:0.6rem;">Dimuthu Tilakaratne, CDAO, University of Illinois System · Performance Appraisal 2024 to 2025</p>
-        </blockquote>
       </div>
       <div>
         <div class="callout">
@@ -159,10 +155,6 @@
         <div class="callout" style="border-left-color: var(--muted2); margin-top: 1rem;">
           <div class="callout-label" style="color: var(--muted);">Privacy-First Design</div>
           <p>The entire pipeline runs on local infrastructure. No email content, no PII, and no archive data is sent to any external API or cloud service at any stage of processing. The Llama 3.2 model is deployed and queried entirely on-device via Ollama.</p>
-        </div>
-        <div class="callout" style="border-left-color: var(--accent3); margin-top: 1rem;">
-          <div class="callout-label" style="color: var(--accent3);">Performance Recognition</div>
-          <p>This project contributed to an <strong style="color:var(--text);">Extraordinary / Distinguished</strong> performance rating from Dimuthu Tilakaratne (now CDAO, University of Illinois System) in 2023 to 2024, and a subsequent <strong style="color:var(--text);">AITS Excellence Award finalist</strong> nomination. The work was cited specifically for bringing novel AI solutions to complex institutional challenges and inspiring stakeholder engagement.</p>
         </div>
       </div>
     </div>
