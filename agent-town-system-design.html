@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Town &middot; System Design &middot; Tayler Erbe</title>
+  <meta name="description" content="End-to-end system design of Agent Town, the 3D town that shows my AI agents' real work: where its data comes from, how the server turns it into one snapshot, how a command reaches the job queue, the design decisions and what is measured, live, built and not built." />
+  <link rel="stylesheet" href="assets/site.css" />
+  <style>
+    /* page-specific styles; shared tokens and components live in assets/site.css */
+    .hero-links { margin-top: var(--space-6); display: flex; gap: var(--space-4); flex-wrap: wrap; }
+    .diagram { background: var(--surface2); border: 1px solid var(--border); margin: var(--space-6) 0; }
+    .diagram-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 1.25rem; }
+    .diagram-scroll svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    .diagram figcaption { padding: 0.85rem 1.1rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); font-family: var(--font-mono); letter-spacing: 0.03em; }
+    .scroll-hint { display: none; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted); padding: 0 1.25rem 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    @media (max-width: 800px) { .scroll-hint { display: block; } }
+
+    /* SVG parts: colours come from the site tokens */
+    .d-frame { fill: none; stroke: var(--border); stroke-width: 1.5; }
+    .d-frame-dash { fill: none; stroke: var(--muted2); stroke-width: 1.3; stroke-dasharray: 5 4; }
+    .d-box { fill: var(--surface); stroke: var(--border); stroke-width: 1.2; }
+    .d-box-accent { fill: var(--accent-faint); stroke: var(--accent2); stroke-width: 1.2; }
+    .d-box-warm { fill: var(--coral-bg); stroke: var(--accent3); stroke-width: 1.2; }
+    .d-box-dash { fill: var(--surface); stroke: var(--muted2); stroke-width: 1.2; stroke-dasharray: 3 3; }
+    .d-line { fill: none; stroke: var(--muted); stroke-width: 1.3; }
+    .d-line-accent { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+    .d-line-warm { fill: none; stroke: var(--accent3); stroke-width: 1.5; }
+    .d-arrow { fill: var(--muted); }
+    .d-arrow-accent { fill: var(--accent); }
+    .d-arrow-warm { fill: var(--accent3); }
+    .diagram-scroll svg text { font-family: var(--font-body); }
+    .d-title { fill: var(--accent2); font-family: var(--font-mono) !important; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .d-label { fill: var(--text); font-size: 12px; }
+    .d-label-strong { fill: var(--white); font-size: 12.5px; }
+    .d-small { fill: var(--muted); font-size: 10.5px; }
+
+    .status-table td:first-child { white-space: nowrap; }
+    .links-line { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.04em; margin-top: var(--space-3); }
+    .links-line a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Site">
+    <a href="index.html" class="nav-logo">T.Erbe</a>
+    <ul class="site-nav-links">
+      <li class="nav-secondary"><a href="index.html#about">About</a></li>
+      <li><a href="index.html#projects">Projects</a></li>
+      <li class="nav-secondary"><a href="index.html#skills">Skills</a></li>
+      <li class="nav-secondary"><a href="index.html#experience">Experience</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li class="nav-secondary"><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Tayler Erbe &middot; Agent Town &middot; System Design &middot; 2026</div>
+    <h1>The Town Behind<br><span>the Characters</span></h1>
+    <p class="hero-desc">
+      Agent Town is the 3D town on my desktop where every one of my AI agents has a character and a building.
+      It looks like a game, but it is an operations console: every light, walk and animation comes from a real
+      job, model server or file. This page is the system design of the town itself &mdash; where its data comes
+      from, how one Python server turns that into a single snapshot, how a button press reaches the job queue,
+      the decisions behind it, and which claims are measured and which are not.
+    </p>
+
+    <div class="hero-links">
+      <a href="agent-city.html" class="btn-ghost">How the town was built &rarr;</a>
+      <a href="agent-architecture.html" class="btn-ghost">The agents it shows &rarr;</a>
+    </div>
+
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-label">Scope</div><div class="meta-value">Sources &rarr; one snapshot &rarr; 3D town &rarr; commands back to the queue</div></div>
+      <div class="meta-item"><div class="meta-label">Runs on</div><div class="meta-value">One workstation &middot; Python standard library server &middot; Three.js in the browser</div></div>
+      <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Running daily since Oct 2026 &middot; personal project, still being built</div></div>
+      <div class="meta-item"><div class="meta-label">Built by</div><div class="meta-value">Tayler Erbe</div></div>
+    </div>
+
+    <div class="toc">
+      <a href="#map"><span class="toc-num">01</span><span class="toc-name">The System Map</span></a>
+      <a href="#rhythm"><span class="toc-num">02</span><span class="toc-name">The Town's Rhythm</span></a>
+      <a href="#command"><span class="toc-num">03</span><span class="toc-name">Follow One Command</span></a>
+      <a href="#parts"><span class="toc-num">04</span><span class="toc-name">How Each Part Works</span></a>
+      <a href="#decisions"><span class="toc-num">05</span><span class="toc-name">Design Decisions</span></a>
+      <a href="#evidence"><span class="toc-num">06</span><span class="toc-name">What Is Proven</span></a>
+    </div>
+  </div>
+
+  <!-- 01 MAP -->
+  <section id="map">
+    <div class="section-header">
+      <div class="section-tag">01 / The System Map</div>
+      <h2 class="section-title">A projection, not a second system</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>The town owns almost nothing. The job queue, the agents' charters, my to-do list, the money ledger, the
+      security scans and the model servers already existed before there was a town. The server reads them,
+      builds one snapshot of the whole world, and the browser draws that snapshot. Read the top row left to right
+      for the data path. The one way back is the warm line: a command I confirm is written into the job queue,
+      under the queue's own lock, and the queue&rsquo;s scheduler stays the only thing that runs work.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 960 660" role="img" aria-labelledby="map-title map-desc">
+          <title id="map-title">System map of Agent Town</title>
+          <desc id="map-desc">Sources of truth on the left: the job queue, the agents' charters, to-dos and ventures, the money ledger, security scans, and the model servers and GPU. The town server reads them: build_world turns files and probes into one snapshot, a state model gives each agent one visible state, an event diff numbers what changed, the snapshot is cached and served by a standard-library HTTP server. Beside them: Needs Me ranks decisions by how much queued work each unblocks, the ledger counts verified money only, commands preview and confirm actions, controls write to the queue under its lock, sign-in accepts only this machine or the owner's own tailnet login, and read-only logs keep finished jobs and chats. The pages are the 3D town, the Desk, Talk and board rooms, the Done and Chat logs, the cafe DJ and the classic 2D city, used by Tayler on the desktop or over the tailnet from a phone or laptop. Commands go back to the job queue. Below: model servers (Qwen3 32B and Qwen3-VL 32B on vLLM, Ollama, ComfyUI, and Claude through the queue's lane), scheduled workers (the queue tick, the Overseer, Recon, the Income Scout, the Foreman, chat turns) that write into the sources, and work that is not built: cross-agent meetings, enforced autonomy levels, music streaming, and new terrain and water.</desc>
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow" /></marker>
+            <marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-accent" /></marker>
+            <marker id="ahw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-arrow-warm" /></marker>
+          </defs>
+
+          <!-- WRITE PATH (over the top) -->
+          <path d="M490 343 H500 V44 H100 V93" class="d-line-warm" marker-end="url(#ahw)" />
+          <text x="300" y="38" text-anchor="middle" class="d-small">the only write: a confirmed command, under the queue&rsquo;s lock</text>
+
+          <!-- SOURCES -->
+          <rect x="20" y="60" width="160" height="350" class="d-frame" />
+          <text x="30" y="80" class="d-title">Sources of truth</text>
+          <rect x="30" y="95" width="140" height="36" class="d-box-accent" />
+          <text x="100" y="110" text-anchor="middle" class="d-label-strong">Job queue</text>
+          <text x="100" y="124" text-anchor="middle" class="d-small">jobs, gates, run states</text>
+          <rect x="30" y="141" width="140" height="36" class="d-box" />
+          <text x="100" y="156" text-anchor="middle" class="d-label">Agent charters</text>
+          <text x="100" y="170" text-anchor="middle" class="d-small">who, tools, &ldquo;never&rdquo; rules</text>
+          <rect x="30" y="187" width="140" height="36" class="d-box" />
+          <text x="100" y="202" text-anchor="middle" class="d-label">To-dos &amp; ventures</text>
+          <text x="100" y="216" text-anchor="middle" class="d-small">plain JSON files</text>
+          <rect x="30" y="233" width="140" height="36" class="d-box" />
+          <text x="100" y="248" text-anchor="middle" class="d-label">Money ledger</text>
+          <text x="100" y="262" text-anchor="middle" class="d-small">append-only, evidence</text>
+          <rect x="30" y="279" width="140" height="36" class="d-box" />
+          <text x="100" y="294" text-anchor="middle" class="d-label">Security scans</text>
+          <text x="100" y="308" text-anchor="middle" class="d-small">newest scan folder</text>
+          <rect x="30" y="325" width="140" height="36" class="d-box" />
+          <text x="100" y="340" text-anchor="middle" class="d-label">Model servers, GPU</text>
+          <text x="100" y="354" text-anchor="middle" class="d-small">health probes</text>
+          <path d="M180 107 H208" class="d-line-accent" marker-end="url(#aha)" />
+
+          <!-- SERVER -->
+          <rect x="200" y="60" width="300" height="350" class="d-frame" />
+          <text x="210" y="80" class="d-title">Town server &middot; town.py</text>
+
+          <rect x="210" y="95" width="135" height="36" class="d-box-accent" />
+          <text x="277" y="110" text-anchor="middle" class="d-label-strong">build_world</text>
+          <text x="277" y="124" text-anchor="middle" class="d-small">files in, one snapshot out</text>
+          <path d="M277 131 V139" class="d-line" marker-end="url(#ah)" />
+          <rect x="210" y="141" width="135" height="36" class="d-box" />
+          <text x="277" y="156" text-anchor="middle" class="d-label">State model</text>
+          <text x="277" y="170" text-anchor="middle" class="d-small">nine visible states</text>
+          <path d="M277 177 V185" class="d-line" marker-end="url(#ah)" />
+          <rect x="210" y="187" width="135" height="36" class="d-box" />
+          <text x="277" y="202" text-anchor="middle" class="d-label">Event diff</text>
+          <text x="277" y="216" text-anchor="middle" class="d-small">numbered feed</text>
+          <path d="M277 223 V231" class="d-line" marker-end="url(#ah)" />
+          <rect x="210" y="233" width="135" height="36" class="d-box" />
+          <text x="277" y="248" text-anchor="middle" class="d-label">Snapshot cache</text>
+          <text x="277" y="262" text-anchor="middle" class="d-small">re-read only what changed</text>
+          <path d="M277 269 V277" class="d-line" marker-end="url(#ah)" />
+          <rect x="210" y="279" width="135" height="36" class="d-box" />
+          <text x="277" y="294" text-anchor="middle" class="d-label">HTTP server</text>
+          <text x="277" y="308" text-anchor="middle" class="d-small">standard library only</text>
+          <rect x="210" y="325" width="135" height="36" class="d-box" />
+          <text x="277" y="340" text-anchor="middle" class="d-label">Probes</text>
+          <text x="277" y="354" text-anchor="middle" class="d-small">refreshed every 10 s</text>
+          <path d="M210 343 H204 V122 H208" class="d-line" marker-end="url(#ah)" />
+          <path d="M170 343 H208" class="d-line" marker-end="url(#ah)" />
+
+          <rect x="355" y="95" width="135" height="36" class="d-box-accent" />
+          <text x="422" y="110" text-anchor="middle" class="d-label-strong">Needs Me</text>
+          <text x="422" y="124" text-anchor="middle" class="d-small">ranked by work unblocked</text>
+          <rect x="355" y="141" width="135" height="36" class="d-box" />
+          <text x="422" y="156" text-anchor="middle" class="d-label">Ledger totals</text>
+          <text x="422" y="170" text-anchor="middle" class="d-small">verified money only</text>
+          <rect x="355" y="187" width="135" height="36" class="d-box" />
+          <text x="422" y="202" text-anchor="middle" class="d-label">Read-only logs</text>
+          <text x="422" y="216" text-anchor="middle" class="d-small">done jobs, chats</text>
+          <rect x="355" y="233" width="135" height="36" class="d-box" />
+          <text x="422" y="248" text-anchor="middle" class="d-label">Sign-in check</text>
+          <text x="422" y="262" text-anchor="middle" class="d-small">this machine or my login</text>
+          <rect x="355" y="279" width="135" height="36" class="d-box-warm" />
+          <text x="422" y="294" text-anchor="middle" class="d-label-strong">Commands</text>
+          <text x="422" y="308" text-anchor="middle" class="d-small">preview, then confirm</text>
+          <path d="M422 315 V323" class="d-line-warm" marker-end="url(#ahw)" />
+          <rect x="355" y="325" width="135" height="36" class="d-box-warm" />
+          <text x="422" y="340" text-anchor="middle" class="d-label">Controls</text>
+          <text x="422" y="354" text-anchor="middle" class="d-small">queue lock, actor log</text>
+
+          <!-- PAGES -->
+          <rect x="520" y="60" width="200" height="350" class="d-frame" />
+          <text x="530" y="80" class="d-title">Pages &middot; browser</text>
+          <path d="M500 107 H528" class="d-line-accent" marker-end="url(#aha)" />
+          <rect x="530" y="95" width="180" height="36" class="d-box-accent" />
+          <text x="620" y="110" text-anchor="middle" class="d-label-strong">3D town</text>
+          <text x="620" y="124" text-anchor="middle" class="d-small">Three.js, 32 characters</text>
+          <rect x="530" y="141" width="180" height="36" class="d-box" />
+          <text x="620" y="156" text-anchor="middle" class="d-label">Desk</text>
+          <text x="620" y="170" text-anchor="middle" class="d-small">calendar, project cards, search</text>
+          <rect x="530" y="187" width="180" height="36" class="d-box" />
+          <text x="620" y="202" text-anchor="middle" class="d-label">Talk &amp; board rooms</text>
+          <text x="620" y="216" text-anchor="middle" class="d-small">chat with any agent</text>
+          <rect x="530" y="233" width="180" height="36" class="d-box" />
+          <text x="620" y="248" text-anchor="middle" class="d-label">Done log &middot; Chat log</text>
+          <text x="620" y="262" text-anchor="middle" class="d-small">kept for all time</text>
+          <rect x="530" y="279" width="180" height="36" class="d-box" />
+          <text x="620" y="294" text-anchor="middle" class="d-label">Caf&eacute; DJ</text>
+          <text x="620" y="308" text-anchor="middle" class="d-small">music suggestions, taste notes</text>
+          <rect x="530" y="325" width="180" height="36" class="d-box" />
+          <text x="620" y="340" text-anchor="middle" class="d-label">Classic &amp; 2D city</text>
+          <text x="620" y="354" text-anchor="middle" class="d-small">Canvas 2D, pixel art</text>
+
+          <!-- PEOPLE -->
+          <rect x="740" y="60" width="200" height="150" class="d-frame" />
+          <text x="750" y="80" class="d-title">People</text>
+          <rect x="750" y="95" width="180" height="62" class="d-box-accent" />
+          <text x="840" y="117" text-anchor="middle" class="d-label-strong">Tayler</text>
+          <text x="840" y="133" text-anchor="middle" class="d-small">desktop browser, or phone and</text>
+          <text x="840" y="147" text-anchor="middle" class="d-small">laptop over a private tailnet</text>
+          <path d="M712 126 H748" class="d-line-accent" marker-start="url(#aha)" marker-end="url(#aha)" />
+          <text x="840" y="180" text-anchor="middle" class="d-small">approves, pauses, asks,</text>
+          <text x="840" y="194" text-anchor="middle" class="d-small">records money with evidence</text>
+
+          <!-- MODELS -->
+          <rect x="20" y="440" width="290" height="170" class="d-frame" />
+          <text x="30" y="460" class="d-title">Models &middot; one GPU</text>
+          <path d="M100 440 V363" class="d-line" marker-end="url(#ah)" />
+          <rect x="30" y="475" width="130" height="36" class="d-box" />
+          <text x="95" y="490" text-anchor="middle" class="d-label">Qwen3 32B</text>
+          <text x="95" y="504" text-anchor="middle" class="d-small">vLLM &middot; on demand</text>
+          <rect x="170" y="475" width="130" height="36" class="d-box" />
+          <text x="235" y="490" text-anchor="middle" class="d-label">Qwen3-VL 32B</text>
+          <text x="235" y="504" text-anchor="middle" class="d-small">vLLM</text>
+          <rect x="30" y="521" width="130" height="36" class="d-box" />
+          <text x="95" y="536" text-anchor="middle" class="d-label">Ollama</text>
+          <text x="95" y="550" text-anchor="middle" class="d-small">small local models</text>
+          <rect x="170" y="521" width="130" height="36" class="d-box" />
+          <text x="235" y="536" text-anchor="middle" class="d-label">ComfyUI</text>
+          <text x="235" y="550" text-anchor="middle" class="d-small">video studio</text>
+          <rect x="30" y="567" width="270" height="34" class="d-box" />
+          <text x="165" y="582" text-anchor="middle" class="d-label">Claude</text>
+          <text x="165" y="595" text-anchor="middle" class="d-small">through the queue&rsquo;s lane, daily launch budget</text>
+
+          <!-- WORKERS -->
+          <rect x="330" y="440" width="280" height="170" class="d-frame" />
+          <text x="340" y="460" class="d-title">Scheduled workers</text>
+          <path d="M470 440 V424 H140 V412" class="d-line" marker-end="url(#ah)" />
+          <rect x="340" y="475" width="125" height="36" class="d-box-accent" />
+          <text x="402" y="490" text-anchor="middle" class="d-label-strong">Queue tick</text>
+          <text x="402" y="504" text-anchor="middle" class="d-small">every 15 min</text>
+          <rect x="475" y="475" width="125" height="36" class="d-box" />
+          <text x="537" y="490" text-anchor="middle" class="d-label">Overseer</text>
+          <text x="537" y="504" text-anchor="middle" class="d-small">hourly check-in</text>
+          <rect x="340" y="521" width="125" height="36" class="d-box" />
+          <text x="402" y="536" text-anchor="middle" class="d-label">Recon</text>
+          <text x="402" y="550" text-anchor="middle" class="d-small">public feeds, 6-hourly</text>
+          <rect x="475" y="521" width="125" height="36" class="d-box" />
+          <text x="537" y="536" text-anchor="middle" class="d-label">Income Scout</text>
+          <text x="537" y="550" text-anchor="middle" class="d-small">weekly report</text>
+          <rect x="340" y="567" width="125" height="34" class="d-box" />
+          <text x="402" y="582" text-anchor="middle" class="d-label">Foreman</text>
+          <text x="402" y="595" text-anchor="middle" class="d-small">local model only</text>
+          <rect x="475" y="567" width="125" height="34" class="d-box" />
+          <text x="537" y="582" text-anchor="middle" class="d-label">Chat turns</text>
+          <text x="537" y="595" text-anchor="middle" class="d-small">logged, read-only tools</text>
+
+          <!-- NOT BUILT -->
+          <rect x="630" y="440" width="310" height="170" class="d-frame-dash" />
+          <text x="640" y="460" class="d-title">Not built yet</text>
+          <rect x="640" y="475" width="140" height="36" class="d-box-dash" />
+          <text x="710" y="490" text-anchor="middle" class="d-label">Agent meetings</text>
+          <text x="710" y="504" text-anchor="middle" class="d-small">real cross-agent talk</text>
+          <rect x="790" y="475" width="140" height="36" class="d-box-dash" />
+          <text x="860" y="490" text-anchor="middle" class="d-label">Enforced autonomy</text>
+          <text x="860" y="504" text-anchor="middle" class="d-small">levels are notes today</text>
+          <rect x="640" y="521" width="140" height="36" class="d-box-dash" />
+          <text x="710" y="536" text-anchor="middle" class="d-label">Music streaming</text>
+          <text x="710" y="550" text-anchor="middle" class="d-small">suggestions only today</text>
+          <rect x="790" y="521" width="140" height="36" class="d-box-dash" />
+          <text x="860" y="536" text-anchor="middle" class="d-label">Terrain &amp; water</text>
+          <text x="860" y="550" text-anchor="middle" class="d-small">full replacement</text>
+
+          <!-- LEGEND -->
+          <path d="M30 636 H60" class="d-line-accent" marker-end="url(#aha)" />
+          <text x="68" y="640" class="d-small">data path (read)</text>
+          <path d="M190 636 H220" class="d-line-warm" marker-end="url(#ahw)" />
+          <text x="228" y="640" class="d-small">command path (the only write)</text>
+          <rect x="420" y="629" width="30" height="14" class="d-box-accent" />
+          <text x="458" y="640" class="d-small">core component</text>
+          <rect x="570" y="629" width="30" height="14" class="d-box-dash" />
+          <text x="608" y="640" class="d-small">not built</text>
+        </svg>
+      </div>
+      <div class="scroll-hint">Scroll sideways to see the whole map</div>
+      <figcaption>Logical data flow, drawn from the source code and its architecture notes. It is not a network diagram. Dashed boxes are designed or partly drafted, not delivered.</figcaption>
+    </figure>
+
+    <table class="dt">
+      <thead><tr><th scope="col">Place</th><th scope="col">What happens there</th></tr></thead>
+      <tbody>
+        <tr><td>Sources of truth</td><td>Files and services that existed before the town: the job queue and its per-job state files, agent charters, to-dos, the ventures list, the money ledger, security scan folders and the model servers. The town reads them; it writes only to the queue, and only through the queue&rsquo;s own lock.</td></tr>
+        <tr><td>Town server</td><td>One Python process using only the standard library. It builds the world snapshot, ranks what needs me, keeps the event feed and handles commands. It listens on this machine and its private tailnet address only, never on every interface.</td></tr>
+        <tr><td>Pages</td><td>The 3D town is the front door. The Desk, Talk, the logs, the caf&eacute; and the older 2D city are separate pages on the same server, reading the same snapshot.</td></tr>
+        <tr><td>Models</td><td>Local Qwen models on vLLM and Ollama, ComfyUI for video, and Claude through the job queue&rsquo;s lane. Only one ~30B model fits on the GPU at a time, so the town shows a stopped server as offline, not broken.</td></tr>
+        <tr><td>Scheduled workers</td><td>The queue tick, the Overseer, Recon, the Income Scout and the Foreman run on their own schedules and write into the sources. The town only shows what they did.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 02 RHYTHM -->
+  <section id="rhythm">
+    <div class="section-header">
+      <div class="section-tag">02 / The Town&rsquo;s Rhythm</div>
+      <h2 class="section-title">Five seconds to one week</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>Nothing in the town is on a timer of its own invention. Each rhythm below belongs to the system it
+      shows, and the town just keeps up with it.</p>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipeline-step"><div class="step-num">1</div><div><div class="step-title">At logon &middot; the server starts</div><div class="step-body">A scheduled task starts the town server when I log in. Nobody restarts it by hand; tests run on a spare port.</div></div></div>
+      <div class="pipeline-step"><div class="step-num">2</div><div><div class="step-title">Every 5 seconds &middot; the browser asks what changed</div><div class="step-body">The page asks for the world with the number of the last event it saw, gets back only the newer events, and animates them. One request at a time, with a timeout; if the server stops answering, the town says &ldquo;disconnected&rdquo; and keeps the last picture.</div></div></div>
+      <div class="pipeline-step"><div class="step-num">3</div><div><div class="step-title">Every 10 seconds &middot; the slow checks</div><div class="step-body">A background refresher probes the model servers and the GPU, so a page request never waits on a slow health check.</div></div></div>
+      <div class="pipeline-step"><div class="step-num">4</div><div><div class="step-title">Every 15 minutes &middot; the queue ticks</div><div class="step-body">The job queue&rsquo;s scheduler starts whatever is allowed to start, and ticks again after each job. When I press Run now, the town asks it to tick early; it never runs the job itself.</div></div></div>
+      <div class="pipeline-step"><div class="step-num">5</div><div><div class="step-title">Every hour &middot; the Overseer&rsquo;s round</div><div class="step-body">It visits every agent and gives a thumbs up or a flag, from failed runs, stuck runs, missed schedules and offline runtimes, and asks a local model whether the newest run did its job. It checks; it never restarts or deletes anything.</div></div></div>
+      <div class="pipeline-step"><div class="step-num">6</div><div><div class="step-title">Every 6 hours &middot; Recon</div><div class="step-body">Public news, income and job feeds are fetched (public feeds and official APIs only, no logins, no scraping), stored as untrusted text and summarised for the town&rsquo;s newsroom.</div></div></div>
+      <div class="pipeline-step"><div class="step-num">7</div><div><div class="step-title">Every week &middot; the Income Scout</div><div class="step-body">A queued job writes a report of possible income streams. Its finds wait in Needs Me for my yes or no.</div></div></div>
+      <div class="pipeline-step"><div class="step-num">8</div><div><div class="step-title">During GPU work &middot; the town steps aside</div><div class="step-body">When a protected GPU window opens for model work, the town&rsquo;s model polling is stopped for the whole window and started again only after the window is verified closed.</div></div></div>
+    </div>
+  </section>
+
+  <!-- 03 ONE COMMAND -->
+  <section id="command">
+    <div class="section-header">
+      <div class="section-tag">03 / Follow One Command</div>
+      <h2 class="section-title">From a tap to a walking character</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="kv">
+      <div class="k">Ask</div><div class="v">On my phone I tap an agent who is sleeping until next week and choose Run now.</div>
+      <div class="k">Preview</div><div class="v">The server answers with what will happen, which gate it will set aside, what it costs and whether it needs confirming. Nothing has changed yet.</div>
+      <div class="k">Sign-in</div><div class="v">The confirm request must come from this machine, or from a tailnet device whose login is mine. Anything else is refused with the reason.</div>
+      <div class="k">Confirm</div><div class="v">The confirmed request carries a fresh key. If the same key arrives again within 24 hours (a double tap, a retry), the stored answer comes back and no second job is made.</div>
+      <div class="k">Write</div><div class="v">Under the queue&rsquo;s lock, one date gate on one queued job is set aside, and the original is kept so it can be put back. Approval flags, dependencies and usage limits are never overridden.</div>
+      <div class="k">Run</div><div class="v">The queue ticks early and its scheduler starts the job in its lane, under the same launch budget as any other job.</div>
+      <div class="k">Shown</div><div class="v">The next snapshot sees the job running, the event diff gives it a number, and within five seconds the agent&rsquo;s character shows it at work. When the job ends, its finish or failure reaches the feed the same way.</div>
+      <div class="k">Kept</div><div class="v">Who did what, from which device, is in the actor log; the finished job goes into the Done log, which is never edited or pruned.</div>
+    </div>
+  </section>
+
+  <!-- 04 PARTS -->
+  <section id="parts">
+    <div class="section-header">
+      <div class="section-tag">04 / How Each Part Works</div>
+      <h2 class="section-title">The work behind each box</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">PROJECTION</span><span class="stage-name">Files and probes in, one snapshot out</span></div>
+      <div class="stage-body">
+        <code>build_world</code> is a pure function: files and a dictionary of probe results go in, one world comes
+        out &mdash; twelve districts, their buildings, about thirty agents, the models, the GPU, money, alerts and
+        what needs me. It re-reads only files whose modification time changed, so a warm request takes 50 to
+        100 ms over roughly 700 jobs and 1,400 state files.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">STATE MODEL</span><span class="stage-name">One visible state, decided in a fixed order</span></div>
+      <div class="stage-body">
+        Each agent carries plain fields (availability, runtime, run state, attention, next run). One function
+        turns them into exactly one visible state: blocked, waiting on me, working, queued, offline, paused,
+        scheduled soon, sleeping or idle, in that order of precedence. &ldquo;Sleeping&rdquo; only ever means a
+        future run is scheduled; a server that does not answer is offline, never asleep or done. Every pair of
+        states is tested.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">COMMANDS</span><span class="stage-name">Preview, confirm, and only through the queue</span></div>
+      <div class="stage-body">
+        Run now, assign a task, status check, prioritise, pause, resume, cancel, pause all and propose. Each has a
+        preview that changes nothing; anything that sets aside a gate, spends Claude usage, pauses or cancels
+        needs an explicit confirm. Running jobs are never touched. Propose turns free text into a structured
+        proposal on a local model and never executes it.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">NEEDS ME</span><span class="stage-name">Ranked by how much work each answer unblocks</span></div>
+      <div class="stage-body">
+        Everything waiting on me &mdash; security alerts, blocked agents, approvals, scout finds &mdash; is in one
+        list. Decisions are scored by the queued jobs they hold up, with extra weight for held GPU work and for
+        how long they have waited, and the calculation is shown on the card. The dependency graph is rebuilt
+        from the queue on every snapshot, never stored.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">MONEY</span><span class="stage-name">Untracked is not zero</span></div>
+      <div class="stage-body">
+        Money lives in an append-only ledger. Entries need evidence and stay pending until I mark them verified;
+        refunds and reversals are entries too, and duplicates are refused. Totals count verified money only. A
+        venture with no entries says &ldquo;no revenue recorded yet&rdquo;, not $0, and estimated costs appear
+        only when I configure the rates, labelled as estimates.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">THE TOWN</span><span class="stage-name">Three.js, no build step</span></div>
+      <div class="stage-body">
+        The 3D town is plain JavaScript modules and Three.js, served from the same machine, so it loads over the
+        tailnet without a CDN. Buildings were assembled by Blender scripts, characters generated from concept art
+        with Hunyuan3D and cleaned up in Blender. Animations come only from real events: a job finishing, a
+        model going down, a verified sale. The older 2D city is Canvas 2D with pixel art drawn in code.
+        <div class="links-line"><a href="agent-city.html">How the town was built &rarr;</a></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">CONVERSATIONS</span><span class="stage-name">Talk, board rooms, the caf&eacute;</span></div>
+      <div class="stage-body">
+        I can chat with any agent on a local model or Claude, or put several in a board room. Claude speakers
+        get read-only tools; every turn is saved, and the Chat log keeps current and archived conversations for
+        all time. The caf&eacute; DJ can only propose changes to its notes on my taste; nothing is saved until
+        I press Save.
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">WATCHERS</span><span class="stage-name">Checks that report, never act</span></div>
+      <div class="stage-body">
+        The Overseer rates every agent up, waiting, watch or down. Recon treats everything it fetches as
+        untrusted text that is stored and shown, never executed or obeyed. The Foreman picks one next task for a
+        sleeping department from that department&rsquo;s own open list, checked by number so it cannot invent
+        work; anything touching publishing, money, deleting or the live site waits for my approval.
+        <div class="links-line"><a href="agent-architecture.html">The agents and their gates &rarr;</a></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="stage-id">SAFETY</span><span class="stage-name">Small surface, nothing secret</span></div>
+      <div class="stage-body">
+        No passwords are stored and the town holds no API keys. Every action needs a same-origin header, this
+        machine&rsquo;s host name and a known actor. Static files are served from an allow-list; files shown in
+        the browser come only from allow-listed folders, and secrets are never printed.
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 DECISIONS -->
+  <section id="decisions">
+    <div class="section-header">
+      <div class="section-tag">05 / Design Decisions</div>
+      <h2 class="section-title">The choices that shaped the town</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <table class="dt">
+      <thead><tr><th scope="col">Decision</th><th scope="col">Why</th><th scope="col">What it costs</th></tr></thead>
+      <tbody>
+        <tr><td>The town is a projection</td><td>One source of truth per fact; the town can be restarted or rebuilt without losing anything</td><td>It can only show what some file or service records</td></tr>
+        <tr><td>The job queue is the only scheduler</td><td>Work never runs twice or around a gate because the dashboard asked</td><td>Run now can only move a date, not skip an approval</td></tr>
+        <tr><td>Standard-library server, no framework</td><td>Nothing to install or build; it loads over the tailnet when the internet does not</td><td>Routing, caching and auth are written by hand</td></tr>
+        <tr><td>Polling with an event number</td><td>Simple and robust; a missed poll costs nothing</td><td>Up to five seconds of delay; history is not replayed after a restart</td></tr>
+        <tr><td>Tailnet identity instead of passwords</td><td>Phone and laptop work without storing a password anywhere</td><td>Depends on Tailscale being installed and signed in</td></tr>
+        <tr><td>A deterministic visible state</td><td>The same facts always give the same picture, and it can be tested</td><td>Nuance is folded into nine states</td></tr>
+        <tr><td>Advancement from milestones, not job counts</td><td>A busy agent is not the same as a useful one; security and research earn recognition without revenue</td><td>The town grows slowly</td></tr>
+        <tr><td>New pages behind a flag</td><td>The old page stays until the new one is trusted</td><td>Several pages to keep working at once</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 06 EVIDENCE -->
+  <section id="evidence">
+    <div class="section-header">
+      <div class="section-tag">06 / What Is Proven</div>
+      <h2 class="section-title">Measured, live, built, not built</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>A town full of moving characters is easy to over-read. Each claim on this page falls into one of these
+      categories.</p>
+    </div>
+
+    <table class="dt status-table">
+      <thead><tr><th scope="col">Category</th><th scope="col">What it covers</th></tr></thead>
+      <tbody>
+        <tr><td>Measured</td><td>The automated suite: 377 passed, 10 skipped, 0 failed (19 and 26 Oct 2026). Warm snapshot requests of 50 to 100 ms over about 700 jobs and 1,400 state files (15 Oct 2026). Layout checks in headless Chromium from 390 to 1,440 px wide for the 2D city.</td></tr>
+        <tr><td>Live</td><td>The server, the 3D town, the Desk, Talk, the logs and the caf&eacute; on my desktop and over the tailnet; the hourly Overseer, 6-hourly Recon and weekly Income Scout.</td></tr>
+        <tr><td>Built, limited</td><td>Autonomy preferences and decision records are journal entries, marked not enforced. Park play is opt-in and cosmetic: it never changes an agent&rsquo;s work.</td></tr>
+        <tr><td>Not built</td><td>Real cross-agent meetings, enforced autonomy levels, music streaming, and a full terrain and water replacement.</td></tr>
+        <tr><td>Not measured</td><td>Time saved, Claude cost beyond the daily launch count, or how often I act on what the town shows. No revenue is claimed.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="back-section">
+    <a href="index.html" class="back-link">&#8592; Back to Portfolio</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer-meta">
+      <p>Tayler Erbe</p>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="index.html">Portfolio</a></li>
+      <li><a href="skyrule.html">Skyrule</a></li>
+      <li><a href="agent-city.html">Agent City</a></li>
+      <li><a href="agent-architecture.html">Agent Architecture</a></li>
+      <li><a href="resume.pdf">Resume (PDF)</a></li>
+      <li><a href="https://github.com/tayler-erbe" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://linkedin.com/in/tayler-erbe-194374141" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+<script src="assets/chat/chat.js?v=20261014" defer></script>
+</body>
+</html>
