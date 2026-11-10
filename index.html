@@ -23,6 +23,17 @@
     .portrait-caption { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); text-align: center; margin-top: 0.75rem; line-height: 1.5; }
     .about-body p { font-size: 1.05rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.2rem; }
     .about-body p strong { color: var(--text); font-weight: 500; }
+    .about-label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 1.8rem 0 0.6rem; }
+    .about-label:first-child { margin-top: 0; }
+    .about-body p.about-roles { color: var(--text); font-weight: 500; font-size: 1.1rem; }
+    .about-roles span { color: var(--muted2); margin: 0 0.3rem; }
+    .about-list { list-style: none; padding: 0; margin: 0 0 1.2rem; }
+    .about-list li { font-size: 1.02rem; color: var(--muted); line-height: 1.7; margin-bottom: 0.7rem; padding-left: 1.1rem; position: relative; }
+    .about-list li::before { content: '›'; position: absolute; left: 0; color: var(--accent2); font-weight: bold; }
+    .about-list li strong { color: var(--text); font-weight: 500; }
+    .about-evidence { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .about-evidence a { font-size: 0.85rem; color: var(--text); text-decoration: none; padding: 0.45rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent2); }
+    .about-evidence a:hover { border-color: var(--accent); }
     .sidebar-block { border-left: 2px solid var(--accent); padding-left: 1.25rem; margin-bottom: 2rem; }
     .sidebar-block-title { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
     .sidebar-block p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
@@ -133,10 +144,31 @@
         <div class="about-portrait"><img src="assets/portraits/portrait_green_lace.jpg" alt="Tayler Erbe" /><div class="portrait-caption">Data Scientist · AI Solutions, AITS</div></div>
       </div>
       <div class="about-body">
-        <p>I'm a <strong>data and AI engineer</strong> focused on designing, building, and optimizing end-to-end technical solutions.</p>
-        <p>My work spans <strong>data engineering</strong>, <strong>AI systems architecture</strong>, model evaluation, <strong>inference performance</strong>, and custom application development. I enjoy working directly with stakeholders to understand complex problems, translate their needs into technical requirements, and build practical systems that solve them.</p>
-        <p>With a multidisciplinary background in cognitive science, machine learning, and engineering, I approach problems from both a systems-level and an implementation perspective. I like to zoom out to understand the larger problem, then zoom in to engineer the details that make a solution work.</p>
-        <p>I'm particularly interested in <strong>forward-deployed engineering</strong>, <strong>AI solutions architecture</strong>, <strong>performance engineering</strong>, and <strong>technical consulting</strong>: roles where I can combine hands-on development with close collaboration and end-to-end ownership.</p>
+        <div class="about-label">Target Roles</div>
+        <p class="about-roles">Data Engineer <span>|</span> Performance Engineer <span>|</span> AI Solutions Architect <span>|</span> Forward-Deployed Engineer <span>|</span> AI Consultant</p>
+        <div class="about-label">Core Strengths</div>
+        <p>Systems thinking, multidisciplinary problem-solving, end-to-end solution engineering, rapid prototyping, stakeholder collaboration, technical architecture, and performance optimization.</p>
+        <div class="about-label">What I Do</div>
+        <ul class="about-list">
+          <li><strong>Data Engineering:</strong> Design and build ETL pipelines, data processing workflows, integrations, and scalable data systems.</li>
+          <li><strong>Performance Engineering:</strong> Develop benchmarking frameworks, evaluate AI models, measure inference throughput, accuracy, resource utilization, and cost, and optimize system performance.</li>
+          <li><strong>AI Solutions Architecture:</strong> Design end-to-end AI systems, including model selection, infrastructure, orchestration, evaluation, and deployment strategies.</li>
+          <li><strong>Forward-Deployed Engineering:</strong> Work directly with stakeholders to understand their problems, translate requirements into technical solutions, rapidly build custom applications, and deliver working systems.</li>
+          <li><strong>AI Consulting:</strong> Evaluate technical approaches, identify trade-offs, recommend practical architectures, and help organizations determine where and how AI can deliver value.</li>
+        </ul>
+        <div class="about-label">What Sets Me Apart</div>
+        <p>My background spans <strong>cognitive science, machine learning, data engineering, and software development</strong>. I approach problems with a multidisciplinary, systems-level perspective, moving between high-level architecture and detailed technical implementation.</p>
+        <p>I combine technical depth with strong stakeholder relationships. I enjoy understanding complex problems, building customized solutions, and owning the process from initial discovery through implementation and delivery.</p>
+        <div class="about-label">Evidence of My Work</div>
+        <div class="about-evidence">
+          <a href="https://github.com/tayler-erbe/enterprise-data-readiness-framework">Enterprise data readiness frameworks</a>
+          <a href="document-intelligence-evaluation.html">Document intelligence pipelines</a>
+          <a href="https://tayler-erbe.github.io/test-ocr-work/">OCR and vision model evaluations</a>
+          <a href="vllm-inference-throughput-evaluation.html">vLLM inference benchmarking</a>
+          <a href="legislative-pipeline.html">Legislative intelligence applications</a>
+          <a href="https://tayler-erbe.github.io/semantic-visualizations-for-access/brief/">AI-powered accessibility solutions</a>
+          <a href="#projects">Custom data engineering systems</a>
+        </div>
       </div>
       <div class="about-sidebar">
         <div class="sidebar-block"><div class="sidebar-block-title">Current Role</div><p>Data Scientist · AI Solutions Team<br>AITS, University of Illinois System<br>Nov 2023 – Present <span style="color:var(--muted2); font-size:0.85rem;">(team move to AI Solutions, Nov 2025)</span><br><br><span style="color:var(--muted2); font-size:0.8rem;">Previously: Data Engineer · Advanced Analytics (May 2022 – Nov 2023)</span></p></div>
@@ -526,7 +558,6 @@
           <div class="exp-highlight">Architected and deployed the <strong>Legislative Intelligence Platform</strong> to Azure App Service — the first production cloud AI deployment in team history</div>
           <div class="exp-highlight">Sole author of <strong>multi-document ESGC governance dossiers</strong> for the SPA Research Funding and Workforce Analytics platforms — leadership briefings, ROI defenses, master data inventories, stakeholder discovery</div>
           <div class="exp-highlight">Recruited, onboarded, and mentored <strong>7+ data science interns</strong>; one intern joined after attending a political science class presentation on legislative AI</div>
-          <div class="exp-highlight">Named <strong>AITS Excellence Award Finalist</strong> (2023–2024)</div>
           <div class="exp-highlight">Regular presenter to <strong>executive leadership, governance committees, and the Enterprise Architecture Committee</strong>; member, university-wide Generative AI Committee</div>
           <div class="exp-highlight">Architected the <strong>Linux-based AI execution environment</strong> supporting all production AI pipelines; built custom pipeline monitoring and alerting platform (MLflow/Airflow equivalent)</div>
           <div class="exp-highlight">Led production throughput engineering migrating from Ollama to vLLM continuous batching — <strong>6.22× speedup on the same GPU</strong></div>
