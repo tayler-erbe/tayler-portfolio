@@ -1688,7 +1688,8 @@ card(EX, "core-logistics", "Start date, location and logistics", [
     "earliest start date", "where are you based", "where is she located", "where's she based", "what city do you live in",
     "what time zone are you in", "are you willing to relocate", "would you relocate", "are you open to travel", "how much travel can you do",
     "do you need visa sponsorship", "does she need sponsorship", "are you a us citizen", "can you get a security clearance",
-    "do you have a security clearance", "is she remote",
+    "do you have a security clearance", "is she remote", "are you open to contract work", "do you take contract or freelance work",
+    "full time or contract", "do you do freelance consulting",
 ], ["start date", "notice", "availability", "location", "based", "relocate", "relocation", "travel", "sponsorship", "citizen", "clearance", "time zone"], [
     L("Email hello@taylererbe.com", "mailto:hello@taylererbe.com"),
     L("Resume (PDF)", "resume.pdf"),
@@ -1696,7 +1697,7 @@ card(EX, "core-logistics", "Start date, location and logistics", [
 I can start about two weeks after an offer, and sooner if needed. I'm based in San Diego, California, and I strongly
 prefer fully remote work; I'm also open to hybrid or in-office roles in San Diego, the Raleigh, North Carolina area or the
 Austin, Texas area. I'm not available for roles that require travel. I'm a U.S. citizen, so I don't need sponsorship, and
-I'm eligible for a security clearance, though I don't hold one today. For anything else about logistics, email me.
+I'm eligible for a security clearance, though I don't hold one today. I'm looking for a full-time role and I'm also open to contract work. For compensation or anything else about logistics, email me.
 """, sources=["jobhunter profile.json: city_state, willing_to_relocate, remote_preference, notice_period, earliest_start_date, travel, us_citizen"],
      nocanon=["contact"])
 

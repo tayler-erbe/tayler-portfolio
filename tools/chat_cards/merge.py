@@ -69,7 +69,13 @@ def main():
         problems.append("duplicate ids: %s" % sorted(dup))
         seen = set(); new_cards = [c for c in new_cards if not (c["id"] in seen or seen.add(c["id"]) or c["id"] in by_id)]
 
-    by_id.update({c["id"]: c for c in new_cards})   # patches may also target authored cards (e.g. extra phrasings for ex-*)
+    by_id.update({c["id"]: c for c in new_cards})
+    bulk = os.environ.get("BULK", os.path.join(HERE, "phrasings_bulk.json"))   # bulk phrasing expansion, {card id: [phrasings]}
+    if bulk and os.path.exists(bulk):
+        for cid, qs in json.load(open(bulk, encoding="utf-8")).items():
+            if cid in by_id:
+                patches.setdefault(cid, {}).setdefault("add_questions", [])
+                patches[cid]["add_questions"] = patches[cid]["add_questions"] + qs   # patches may also target authored cards (e.g. extra phrasings for ex-*)
     for cid, p in patches.items():
         if cid not in by_id:
             problems.append("patch for unknown card %s" % cid); continue
@@ -91,6 +97,22 @@ def main():
     extra = os.path.join(HERE, "synonyms_extra.json")   # extra alias groups (the "keyword net"), each kept only if tests improve
     for g in (json.load(open(extra, encoding="utf-8")) if os.path.exists(extra) else []):
         if g not in kb["synonyms"]: kb["synonyms"].append(g)
+    # every non-personal answer gets at least one place to go and see the work it talks about
+    RULES = [(r"agent", [("Agent architecture", "agent-architecture.html")]), (r"skyrule", [("Skyrule", "skyrule.html")]),
+             (r"legislat|\bbill", [("Legislative pipeline", "legislative-pipeline.html")]),
+             (r"local model|open.weight|self.host|small model|open source", [("Choosing a local model (guide)", "choosing-local-models-guide.html")]),
+             (r"procure|messy data", [("Procurement intelligence", "procurement-intelligence.html")]),
+             (r"monitor|pipeline", [("Applied AI Lab", "https://tayler-erbe.github.io/document-intelligence-lab/")])]
+    FUN = re.compile(r"^(personal-|answer-fun|answer-q6|persona-(dessert|drinks|movies|vibe))")
+    for c in kb["cards"]:
+        if c.get("links") or c.get("section") not in ("answers", "opinions") or FUN.match(c["id"]):
+            continue
+        text = (c["title"] + " " + c.get("answer", "")).lower()
+        links = [l for pat, ls in RULES if re.search(pat, text) for l in ls][:2]
+        links = links or [("My projects", "index.html#projects")]
+        if c["section"] == "opinions" or re.match(r"^(persona-|answer-(op|li|q))", c["id"]):
+            links.append(("My writing on Medium", "https://medium.com/@tayler.erbe"))
+        c["links"] = [{"label": a, "url": b} for a, b in links[:3]]
     kb["built"] = datetime.date.today().isoformat()
     out = a.out or KB
     with open(out, "w", encoding="utf-8") as f:
