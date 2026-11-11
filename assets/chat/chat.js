@@ -12,11 +12,11 @@
   // words that say how she feels about a thing, not what the thing is: a match on these alone is never an answer
   // ("favorite burrito" must not answer with the favorite-bands card when no card mentions burritos)
   var GENERIC = { favorite: 1, favourite: 1, fav: 1, like: 1, love: 1, best: 1, type: 1, kind: 1, prefer: 1, enjoy: 1, thing: 1, most: 1 };
-  var MIN_COVER = 0.4, MIN_SCORE = 2.5, RELATED_RATIO = 0.45, UNKNOWN_W = 0.6, ARTICLE_PRIOR = 0.7, ANSWER_CREDIT = 0.6;
+  var MIN_COVER = 0.4, MIN_SCORE = 10, RELATED_RATIO = 0.45, UNKNOWN_W = 0.6, ARTICLE_PRIOR = 0.7, ANSWER_CREDIT = 0.6;
   var PARENT_SLACK = 0.02, PARENT_RATIO = 0.3;   // see the parent rule in search()
   // meaning-based search (optional, loaded lazily): BM25 answers alone when it is sure (exact phrasing, or a confident match with
   // cover >= GATE_COVER and score >= GATE_SCORE); otherwise BM25 and embedding scores are fused. Tuned on the blind dev half only.
-  var HYBRID_W = 0.5, GATE_COVER = 0.7, GATE_SCORE = 25, EMB_TAU = 0.75, EMB_FLOOR = 0.3, H_PARENT_RATIO = 0.9, AGREE_K = 3;
+  var HYBRID_W = 0.5, GATE_COVER = 0.7, GATE_SCORE = 25, EMB_TAU = 0.8, EMB_FLOOR = 0.3, H_PARENT_RATIO = 0.9, AGREE_K = 3;
 
   function fold(s) {
     s = String(s || "").toLowerCase();
@@ -324,7 +324,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111101";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111103";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -527,12 +527,23 @@
         return h("li", null, [chip(r.card.title, function () { show(r.card); })]);
       }))]);
   }
+  function counts() {                             // live size of the answer set, for the fallback text
+    var a = 0, q = 0;
+    engine.kb.cards.forEach(function (c) { if (c.answer && c.state !== "PENDING") { a++; q += (c.questions || []).length; } });
+    var f = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); };
+    return { answers: f(a), questions: f(q) };
+  }
   function fallbackView(res) {
-    var fb = engine.kb.fallback;
+    var fb = engine.kb.fallback, n = counts();
+    var fill = function (t) { return String(t || "").replace(/\{answers\}/g, n.answers).replace(/\{questions\}/g, n.questions); };
+    var ls = (fb.links || []).map(function (l) {   // {query} in a link (the "send this question" mail link) becomes the visitor's question
+      return { label: l.label, url: l.url.replace("{query}", encodeURIComponent(res.query || "")) };
+    });
     var wrap = h("article", { class: "ask-card ask-card-fallback", "data-card": "fallback" }, [
-      fb.title ? h("h3", { class: "ask-card-title", text: fb.title }) : null,
-      fb.answer ? h("p", { class: "ask-answer", text: fb.answer }) : null,
-      links(fb.links)]);
+      fb.title ? h("h3", { class: "ask-card-title", text: fill(fb.title) }) : null,
+      fb.answer ? h("p", { class: "ask-answer", text: fill(fb.answer) }) : null,
+      fb.note ? h("p", { class: "ask-answer ask-note", text: fill(fb.note) }) : null,
+      links(ls)]);
     var block = h("div", { class: "ask-block" }, [wrap]);
     if (res.related && res.related.length) block.appendChild(relatedView(res.related.filter(function (r) { return r.cover > 0.2; })) || h("span"));
     block.appendChild(starters());

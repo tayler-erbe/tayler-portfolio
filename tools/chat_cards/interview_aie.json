@@ -1,0 +1,2617 @@
+{
+ "family": "aie",
+ "cards": [
+  {
+   "id": "aie-design-rag",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing a RAG system end to end",
+   "questions": [
+    "walk me through how you would design a rag system end to end",
+    "design a retrieval augmented generation pipeline from ingestion to answer",
+    "rag system design question",
+    "how would you build question answering over internal documents",
+    "how do you make an llm cite its sources",
+    "how does she architect rag with citations",
+    "ingest chunk embed retrieve generate walk me through it",
+    "how would you build a chatbot that answers from our documents with citations",
+    "how do you ground llm answers in source documents",
+    "rag architecture end to end",
+    "what are the components of a rag pipeline",
+    "how do you attach the source passage to every answer"
+   ],
+   "tags": [
+    "retrieval augmented generation",
+    "citations",
+    "grounding",
+    "provenance",
+    "evidence by id",
+    "knowledge base",
+    "document qa",
+    "pipeline design"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "File archiving and search",
+     "url": "file-archiving-smart-search.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I design it as a funnel where every stage can be checked on its own. Ingest with a stable ID per document, so any answer traces back to its source; in the archive search the Box file_id rides through all eight stages. Chunk to the size the model handles well, which I measure rather than assume. Embed with one model, L2-normalize, and pick the FAISS index for the scale. Retrieve with a calibrated threshold plus structured filters, so the LLM only sees a few dozen candidates. For citations I don't let the model quote. In Evidence Desk the model returns block IDs and the label, and code copies the exact text and checks its hash, which removed every copy failure. I measure retrieval coverage separately, because when the right block never arrives, no prompt can fix it.",
+   "sources": [
+    "work_history.md:133",
+    "work_history.md:688",
+    "work_history.md:949",
+    "work_history.md:950",
+    "page:file-archiving-smart-search.html",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-hybrid-retrieval",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Hybrid retrieval: exact, keyword and vector together",
+   "questions": [
+    "how do you design hybrid retrieval",
+    "hybrid search keyword plus vector",
+    "do you combine keyword search with semantic search",
+    "bm25 plus embeddings",
+    "how do you blend lexical and semantic scores",
+    "when do vectors fail and keywords win",
+    "how does she combine exact matching with embeddings",
+    "dense versus sparse retrieval",
+    "have you used bm25",
+    "why not rely on embeddings alone for search",
+    "how do you handle part numbers and identifiers in semantic search",
+    "keyword overlap blended with cosine similarity"
+   ],
+   "tags": [
+    "hybrid",
+    "bm25",
+    "tf-idf",
+    "lexical",
+    "sparse",
+    "dense",
+    "exact match",
+    "blend weight",
+    "reranking",
+    "filters"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    }
+   ],
+   "answer": "I use hybrid retrieval whenever exact signals exist, because vectors are good at meaning and weak on identifiers. In procurement the exact tier, a dictionary keyed on manufacturer and part number, answers in under 2ms and always runs; FAISS covers only what it misses, since semantic matches alone carry too many false positives for numbers people will act on. In the HERDS classifier I blend a semantic score with a keyword-overlap score at 0.75 to 0.25, which beat either signal alone on the validation set, with a 0.12 floor before any label is assigned. The legislative platform pairs MiniLM and FAISS search with structured filters and keyword matching on raw extracted text. I haven't run BM25 itself in production; I'd tune its weight the same way, on labeled queries.",
+   "sources": [
+    "work_history.md:133",
+    "work_history.md:748",
+    "page:procurement-intelligence.html",
+    "page:research-proposal-processing.html",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "aie-vector-index",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Choosing a vector index: flat, IVF or HNSW",
+   "questions": [
+    "flat vs ivf vs hnsw",
+    "which faiss index would you use and why",
+    "how do you choose a vector index",
+    "exact versus approximate nearest neighbor search",
+    "what does nprobe do",
+    "indexflatip or ivfflat",
+    "how do you scale vector search to millions of vectors",
+    "why normalize embeddings before indexing",
+    "how does she pick an ann index",
+    "vector index trade offs recall and latency",
+    "how big was your faiss index",
+    "when would you use hnsw"
+   ],
+   "tags": [
+    "faiss",
+    "ivfflat",
+    "nlist",
+    "nprobe",
+    "hnsw",
+    "indexflatip",
+    "ann",
+    "l2 normalization",
+    "cosine",
+    "recall"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "File archiving and search",
+     "url": "file-archiving-smart-search.html"
+    }
+   ],
+   "answer": "I pick the index for the scale and the recall I need. For the legacy archive, thousands of summaries, I used IndexFlatIP over L2-normalized MiniLM embeddings, so inner product equals cosine and search is exact; the HNSW version persists to disk and loads instantly with no database server. At 5.19 million product vectors, about an 8GB index, exhaustive search stops making sense, so procurement uses IVFFlat with 4,096 lists and nprobe 64, returning candidates in 75 to 110ms. nprobe is the recall dial: probe more lists for better recall and slower queries. I build indexes offline once and rebuild only when descriptions change, not prices. And I keep vectors out of the main table: at five million rows, 384-dimension embeddings are roughly 7.5 GB that almost nothing reads.",
+   "sources": [
+    "work_history.md:687",
+    "work_history.md:688",
+    "work_history.md:745",
+    "work_history.md:749",
+    "work_history.md:875",
+    "page:file-archiving-smart-search.html",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "aie-llm-serving",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Serving LLMs: continuous batching, KV cache and concurrency",
+   "questions": [
+    "how do you serve llms efficiently",
+    "continuous batching",
+    "what is continuous batching and why does it matter",
+    "kv cache and concurrency",
+    "throughput versus latency when serving a model",
+    "how do you choose the concurrency level for an inference server",
+    "head of line blocking in llm serving",
+    "how does she tune vllm",
+    "inference server tuning",
+    "why was ollama slow",
+    "how many concurrent requests should a gpu handle",
+    "explain the kv cache in production terms"
+   ],
+   "tags": [
+    "vllm",
+    "ollama",
+    "batching",
+    "kv cache",
+    "concurrency",
+    "p99",
+    "ttft",
+    "itl",
+    "inference serving",
+    "throughput"
+   ],
+   "links": [
+    {
+     "label": "Image throughput study",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    }
+   ],
+   "answer": "Most throughput problems I've seen live in the serving layer. On our L4, Ollama handled one request at a time: throughput stayed flat at about 9 images a minute from concurrency 1 to 8 while p50 latency rose 8.18x and the GPU sat at 28 to 31%. vLLM's continuous batching took the same card to 55.4 images a minute at concurrency 8 and 96 to 97% utilization. The KV cache is the next limit. Mistral with 3,000-token chunks saw p99 grow from 15s to 74s between concurrency 1 and 24, head-of-line blocking from cache pressure, so it was dropped. I choose the operating point by sweeping concurrency: for Llama 3.1 8B, quality held within 0.6 points from 1 to 24, so 12 to 24 became purely a throughput and latency call.",
+   "sources": [
+    "work_history.md:639",
+    "work_history.md:640",
+    "page:vllm-inference-throughput-evaluation.html",
+    "page:archival-image-throughput-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-gpu-memory-sizing",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Fitting a model on a GPU: quantization and VRAM budgeting",
+   "questions": [
+    "how do you fit a model on a gpu",
+    "vram budgeting for llms",
+    "will this model fit on my gpu",
+    "how much vram does a 7b model need",
+    "how do you size context length against memory",
+    "kv cache memory arithmetic",
+    "running a 32b model on one gpu",
+    "out of memory when loading a model what do you do",
+    "how does she decide quantization and context size",
+    "gpu memory planning for inference",
+    "awq or fp8 or q4 which to choose",
+    "sharing one gpu between several models"
+   ],
+   "tags": [
+    "vram",
+    "quantization",
+    "awq",
+    "fp8",
+    "q4_k_m",
+    "memory",
+    "context length",
+    "kv cache",
+    "gpu",
+    "oom"
+   ],
+   "links": [
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Choosing a local model",
+     "url": "choosing-local-models-guide.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I budget VRAM as weights plus KV cache plus runtime overhead, then check the real allocation. AWQ is how a 7 to 8B model fits our 22.5 GB L4 with room to batch: about 4 GB at idle, leaving roughly 18 GB for KV cache and co-resident pipelines. On my personal RTX 5090 I serve AWQ and FP8 models through vLLM, Qwen3 32B AWQ among them, and I sized a context change from 4,096 to 16,384 tokens with KV-cache arithmetic and a benchmark before adopting it. Two lessons came from failures. Ollama's keep_alive held about 6 GB and blocked vLLM's cache allocation, and right-sizing one model's allocation freed about 15 GB so the archival pipeline could share the server. The format matters too: the same 32B model accepted 3 groups on vLLM with AWQ and 1 on Ollama with Q4_K_M.",
+   "sources": [
+    "work_history.md:65",
+    "work_history.md:113",
+    "work_history.md:1141",
+    "page:vllm-inference-throughput-evaluation.html",
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-slo-capacity",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Latency SLOs and capacity planning",
+   "questions": [
+    "how do you set latency and throughput slos for an llm pipeline",
+    "service level objectives for inference",
+    "how would you plan capacity for an llm workload",
+    "p99 latency targets",
+    "how do you know if one gpu is enough",
+    "how does she translate a workload into hardware requirements",
+    "throughput target versus measured throughput",
+    "how do you project production load from a benchmark",
+    "what is your process for an slo gate",
+    "how many bills per second can the pipeline handle",
+    "processing window and throughput requirement",
+    "how do you size hardware from measurements",
+    "how many gpus does this workload need",
+    "hardware requirements from a benchmark"
+   ],
+   "tags": [
+    "slo",
+    "sla",
+    "capacity",
+    "p99",
+    "throughput",
+    "latency",
+    "sizing",
+    "procurement",
+    "a100",
+    "l4"
+   ],
+   "links": [
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "I write the SLO down before the run and project it against the real corpus, not the test sample. For the legislative pipeline the 50-state target was about 75,000 bills a week in an 18-hour processing window: 1.157 bills a second sustained, 2.41 at peak. Llama 3.1 8B on one L4 measured 0.88 chunks a second at concurrency 24; at 2.40 chunks per bill on the real length distribution, that's 0.367 bills a second. That passes the Illinois workload with 2.05x headroom and misses the national target by 3.16x, so the hardware ask became specific: about three L4s or one A100-class card for steady state, about seven L4s or H100-class hardware for bursts. I track p99 as well as the mean, because the tail is what blocks a batch queue.",
+   "sources": [
+    "work_history.md:292",
+    "page:vllm-inference-throughput-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-prompt-versioning",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Prompt engineering and prompt versioning",
+   "questions": [
+    "how do you version prompts",
+    "prompt versioning",
+    "what is your prompt engineering approach",
+    "how do you manage prompt changes in production",
+    "how do you keep track of which prompt produced which output",
+    "do you treat prompts like code",
+    "how does she write prompts for extraction",
+    "prompt management",
+    "prompt regression when a prompt changes",
+    "prompt design principles",
+    "how do you structure a prompt for multiple questions",
+    "prompt templates and versions",
+    "prompt hygiene",
+    "how do you change a prompt without breaking the pipeline"
+   ],
+   "tags": [
+    "prompt engineering",
+    "prompt version",
+    "immutable id",
+    "provenance",
+    "protocol version",
+    "bundled prompts",
+    "templates",
+    "change control",
+    "prompt changes",
+    "breaking change"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "Generation model screen",
+     "url": "generation-model-evaluation.html"
+    }
+   ],
+   "answer": "I treat a prompt like code with a version, because a silent prompt edit invalidates every comparison after it. In Skyrule, my personal project, the generation prompt gets a new immutable id on every change, and in the document evaluation any new prompt or variant became a new protocol version with its own frozen cases. The extraction schemas I design carry model-version and prompt-version columns, so every stored value says what produced it. On the craft side, I bundle related questions in one prompt so earlier answers give context to later ones, state rejection rules explicitly, and ask for output only, with no preamble. When a validator rejected acceptable text in a Skyrule pilot, fixing the prompt and the check together raised plan acceptance from 6 of 31 to 14 of 31.",
+   "sources": [
+    "work_history.md:940",
+    "work_history.md:1018",
+    "work_history.md:1146",
+    "work_history.md:1157",
+    "page:file-archiving-smart-search.html",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "aie-eval-harness",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing an evaluation framework for LLM systems",
+   "questions": [
+    "how do you design an eval harness",
+    "evaluation harness for llms",
+    "how do you build an llm evaluation pipeline",
+    "code based scoring versus llm as a judge",
+    "how do you regression test an llm system",
+    "frozen test cases",
+    "how do you make llm evals reproducible",
+    "how does she evaluate llm systems",
+    "how do you score model outputs automatically",
+    "eval infrastructure for comparing models",
+    "what goes into a good eval framework",
+    "how do you compare runs across machines",
+    "what is your llm testing setup",
+    "automated evaluation of generative ai output",
+    "code based grading or a model as grader"
+   ],
+   "tags": [
+    "evals",
+    "harness",
+    "frozen cases",
+    "answer keys",
+    "conformance",
+    "regression",
+    "llm-as-judge",
+    "reproducibility",
+    "fingerprint",
+    "denominator"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    }
+   ],
+   "answer": "I build the evaluation so the numbers can't drift between runs. Cases are frozen and hashed before any model sees them; every request, client setting and scorer is fingerprinted, and the merge tool refuses rows that fail the check. That's how two machines, two coding assistants and weeks of runs produced 40,975 scored rows in one report. Scoring is code against answer keys wherever a key exists: character error, TEDS, relaxed accuracy, numeric recall. Failures and truncations stay in the denominator as zero. I use a model as grader only where judgment can't be computed, and I check it first: two independent Opus passes agreed on 60 of 60 cells, and Skyrule's grader must clear 85% agreement at the Wilson lower bound. Regression means rerunning the same frozen suite and comparing cell by cell.",
+   "sources": [
+    "work_history.md:939",
+    "work_history.md:940",
+    "work_history.md:1180",
+    "page:vllm-inference-throughput-evaluation.html",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-agent-design",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing an agent: tools, memory, permissions and guardrails",
+   "questions": [
+    "how do you design an ai agent",
+    "agent design tools memory permissions",
+    "how do you give an agent memory",
+    "how do you limit what an agent can do",
+    "least privilege for ai agents",
+    "how does she build guardrails for agents",
+    "agent architecture walk me through it",
+    "how do you schedule agent jobs",
+    "claude code subagents and hooks",
+    "how do agents remember decisions",
+    "what permissions should an agent have",
+    "how do you keep an agent from going off the rails",
+    "how do you build an autonomous agent safely",
+    "agents with tool access"
+   ],
+   "tags": [
+    "agents",
+    "subagents",
+    "hooks",
+    "memory",
+    "permissions",
+    "least privilege",
+    "job queue",
+    "guardrails",
+    "ownership map",
+    "scope"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    }
+   ],
+   "answer": "I design agents around what they may not do. In my personal projects each Claude Code agent has a written charter and a scope generated from a machine-readable ownership map, and pre-execution hooks refuse any file write or shell command outside it, so staying in its lane is enforced, not requested. Memory is files with rules a model won't hold on its own: each memory names a source file whose hash is stored, near-duplicates are refused, and an append-only decision log is searched before anyone asks me a question. Work runs through one job queue with lanes, dependencies, three attempts by default and finish checks that decide done by evidence rather than exit code. A weekly usage budget caps launches, and nothing is pushed or published without my explicit go.",
+   "sources": [
+    "work_history.md:1137",
+    "work_history.md:1138",
+    "work_history.md:1139",
+    "work_history.md:1160",
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aie-multi-agent",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Multi-agent coordination and its failure modes",
+   "questions": [
+    "how do multiple agents coordinate",
+    "multi agent coordination",
+    "what goes wrong in multi agent systems",
+    "multi agent failure modes",
+    "how do agents hand work to each other",
+    "how does she stop agents stepping on each other",
+    "agent to agent communication",
+    "what broke in your multi agent setup",
+    "lessons from running many agents",
+    "how do you debug a multi agent system",
+    "race conditions between agents",
+    "how do you orchestrate a team of agents",
+    "how do several agents work together",
+    "how do agents share state"
+   ],
+   "tags": [
+    "multi-agent",
+    "coordination",
+    "handoffs",
+    "orchestration",
+    "concurrency",
+    "locking",
+    "failure modes",
+    "agents",
+    "single writer",
+    "shared state"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    }
+   ],
+   "answer": "In Skyrule, my personal project, agents don't talk to each other in real time; they coordinate through owned files, queue dependencies and dated handoff documents, so every exchange leaves a record a new session can read. The failures I've hit were mostly coordination and control problems. On Windows, a hook that blocked by exit code only produced a warning, so the guard now denies through an explicit decision. A usage-limit detector matched an agent's own report and paused a lane for a day. A job launched from a chat session died with its console, so jobs now launch only from the scheduled task. A shared status log got a single locking writer, tested with four writers at once. Shell writes are still guarded by heuristics, so an ownership audit runs before every merge.",
+   "sources": [
+    "work_history.md:1159",
+    "work_history.md:1160",
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aie-multimodal-pipeline",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Building multimodal pipelines: vision models, OCR and layout",
+   "questions": [
+    "how would you design a multimodal document pipeline",
+    "vision language model versus ocr",
+    "when do you use a vlm instead of tesseract",
+    "layout detection for documents",
+    "how do you pick vision models for different document parts",
+    "how does she combine ocr and vision models",
+    "reading charts with a vision model",
+    "table extraction with vision language models",
+    "multimodal pipeline design",
+    "do bigger vision models read documents better",
+    "docLayout yolo layout masking",
+    "image understanding pipeline design",
+    "ocr or a vision model for scanned forms"
+   ],
+   "tags": [
+    "multimodal",
+    "vlm",
+    "qwen3-vl",
+    "ocr",
+    "layout",
+    "doclayout-yolo",
+    "tables",
+    "charts",
+    "teds",
+    "vision"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "I split a document into extraction types and route each to what measured best, because no single model wins. In my October evaluation, Qwen3-VL 8B on a 12 GB laptop read prose crops at about 1.2% character error, matching the 32B models. On fresh financial tables the small PaddleOCR-VL-1.6 parser beat Qwen3-VL 32B, 0.852 against 0.762 TEDS. For charts the method mattered as much as the model: self-check lifted one model 26.5 points and sank another 43.5. DocLayout-YOLO finds tables and figures, but masking them before page OCR raised word F1 while cutting numeric recall from 0.872 to 0.694, so it stays experimental. For archive photographs I used LLaVA descriptions instead of Tesseract, since the archive held photographs, not just scanned text.",
+   "sources": [
+    "work_history.md:943",
+    "work_history.md:944",
+    "work_history.md:945",
+    "page:document-intelligence-evaluation.html",
+    "page:file-archiving-smart-search.html"
+   ]
+  },
+  {
+   "id": "aie-model-routing",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Model routing: deterministic first, then semantic, then LLM",
+   "questions": [
+    "model routing",
+    "how do you route tasks between models",
+    "deterministic then semantic then llm",
+    "when should you not use an llm",
+    "how do you decide which model handles which task",
+    "tiered ai pipeline design",
+    "how does she route requests to cheaper models",
+    "cascade of models from cheap to expensive",
+    "rules first then ml then llm",
+    "how do you avoid sending everything to the llm",
+    "funnel architecture for ai",
+    "routing per task to different models",
+    "cheap model for easy tasks and a strong model for hard ones"
+   ],
+   "tags": [
+    "routing",
+    "cascade",
+    "tiers",
+    "funnel",
+    "deterministic",
+    "graceful degradation",
+    "cheapest model",
+    "triage",
+    "easy tasks",
+    "hard tasks"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "My rule is to do everything deterministic before any model runs, then send each task to the cheapest model that clears its bar. Procurement is the clearest example: an exact dictionary lookup on manufacturer and part number answers in under 2ms, FAISS narrows six million rows to a median of 44 candidates in 75 to 110ms, and only then does a 7B model judge equivalence, in 5 to 8 seconds. If the LLM is offline, the exact tier still returns. The archival build follows the same order: free filters first, and no file reaches enrichment unless triage selected it. In Skyrule, my personal project, routing comes from measurement on my own GPU: Claude models for design, review and audit, local Qwen models for bulk generation and grading, small models for utilities.",
+   "sources": [
+    "work_history.md:748",
+    "work_history.md:749",
+    "work_history.md:750",
+    "work_history.md:866",
+    "work_history.md:1140",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "aie-caching",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Caching strategies for LLM applications",
+   "questions": [
+    "caching strategies for llm apps",
+    "how do you cache llm responses",
+    "prompt hash cache",
+    "do you cache embeddings and indexes",
+    "cache invalidation for ai pipelines",
+    "how does she use caching",
+    "precomputing results for faster ai apps",
+    "offline index builds",
+    "semantic cache or response cache",
+    "how do you make repeat queries free",
+    "st cache data in streamlit",
+    "cache first scoring",
+    "how do you cut down repeated llm calls"
+   ],
+   "tags": [
+    "caching",
+    "prompt hash",
+    "content hash",
+    "ttl",
+    "precompute",
+    "offline",
+    "st.cache_data",
+    "incremental",
+    "invalidation",
+    "repeated calls"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I cache at three levels: model responses, expensive artifacts and computed results. Procurement caches LLM responses by prompt hash, so a repeated query costs nothing. Indexes and embeddings are built offline once: FAISS indexes live as files on disk, the research pipeline caches its taxonomy embeddings and vocabulary, and browse categories are pre-indexed at API startup in about 30 seconds so browsing is instant. On the legislative platform, live impact scoring is cache-first: each bill and prompt pair is scored once and read instantly after, and nightly rescoring uses content hashes so only changed bills are re-evaluated. Streamlit data loads sit behind st.cache_data with a one-hour TTL, so the 4 AM rescore shows up the same day. Every cache has an explicit invalidation key: prompt hash, content hash or TTL.",
+   "sources": [
+    "work_history.md:148",
+    "work_history.md:164",
+    "work_history.md:165",
+    "work_history.md:757",
+    "work_history.md:766",
+    "page:research-proposal-processing.html",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "aie-retries-rollback",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Retries, idempotent writes and rollback",
+   "questions": [
+    "retries and timeouts in ai pipelines",
+    "idempotent writes",
+    "how do you make a rerun safe",
+    "how do you roll back a bad pipeline write",
+    "poison pill records",
+    "retry ceiling",
+    "how does she handle retries",
+    "resumable batch processing",
+    "what happens if the job dies halfway",
+    "exactly once writes to a database",
+    "reliability engineering for llm pipelines",
+    "how do you stop a bad record failing forever"
+   ],
+   "tags": [
+    "retries",
+    "timeouts",
+    "idempotency",
+    "rollback",
+    "merge",
+    "checkpoint",
+    "resume",
+    "poison pill",
+    "dead letter"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I design every write so a rerun is harmless and every failure is bounded. The research proposals pipeline inserts with WHERE NOT EXISTS or MERGE, checks the row count it wrote against what it attempted and raises if they differ, and prints the exact rollback SQL on every run. Long jobs checkpoint and resume rather than restart: the legislative extractor flushes in batches and can be killed without double-writing. Retries need a ceiling. One malformed bill truncated, failed to parse, was never written, reappeared as new and failed again for six days; the fix was a length guard plus a retry limit that parks the record instead of reprocessing it forever. My job queue gives three attempts by default and flags runs that exceed a time limit set per lane.",
+   "sources": [
+    "work_history.md:250",
+    "work_history.md:284",
+    "work_history.md:442",
+    "work_history.md:443",
+    "page:research-proposal-processing.html",
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aie-observability",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Monitoring AI pipelines and catching silent failures",
+   "questions": [
+    "how do you monitor ai pipelines",
+    "observability for llm pipelines",
+    "how do you detect silent failures",
+    "sentinel rows",
+    "how do you know a pipeline stopped running",
+    "how does she monitor production pipelines",
+    "grafana dashboards for pipelines",
+    "alert fatigue",
+    "what metrics do you track for ai jobs",
+    "how do you catch a job that reports success with no output",
+    "pipeline health checks",
+    "monitoring the monitor",
+    "monitoring a model pipeline in production"
+   ],
+   "tags": [
+    "monitoring",
+    "observability",
+    "alerting",
+    "logging",
+    "grafana",
+    "prometheus",
+    "sentinel",
+    "silence threshold",
+    "health check",
+    "model pipeline"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I monitor for absence as much as for errors, because AI pipelines usually fail quietly. Every pipeline writes the same Parquet log schema, with PIPELINE_START and PIPELINE_END sentinel rows sharing a run ID; a start with no end, or no successful run inside the window, raises a silent-pipeline alert. Root failures are separated from the cascade they cause, and only critical ones send email, so alerts stay readable. Then I audit the monitor itself. On the legislative pipeline a stage reported success while producing zero output, so completion now requires a non-zero count, and alert delivery turned out never to be verified. Quarterly jobs get their own silence threshold, 2,400 hours with matching Grafana panels, instead of alerting for 89 days straight.",
+   "sources": [
+    "work_history.md:249",
+    "work_history.md:252",
+    "work_history.md:485",
+    "work_history.md:487",
+    "work_history.md:488",
+    "work_history.md:491",
+    "work_history.md:817"
+   ]
+  },
+  {
+   "id": "aie-ai-security",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Security for AI applications",
+   "questions": [
+    "security for ai apps",
+    "how do you secure an llm application",
+    "prompt injection",
+    "threat modeling for ai systems",
+    "dependency scanning",
+    "bandit semgrep pip-audit",
+    "how does she handle secrets in ai projects",
+    "how do you protect api keys",
+    "ai application security practices",
+    "how do you defend against prompt injection",
+    "api hardening for a model service",
+    "secret scanning"
+   ],
+   "tags": [
+    "security",
+    "threat model",
+    "prompt injection",
+    "secrets",
+    "bandit",
+    "semgrep",
+    "pip-audit",
+    "rate limits",
+    "cors",
+    "least privilege"
+   ],
+   "links": [
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I start from a threat model and keep data where it belongs. In Skyrule, my personal project, a security function can block any merge or release that weakens a control. Its first pass produced the threat model, an IP-protection plan that keeps valuable logic server-side behind per-account rate limits, and scans with Bandit, Semgrep, pip-audit and a history-wide secret scan, which found no credentials. I locked down the internal API on a reviewed branch: authentication on every route, no prompt exposure, closed CORS and rate limits. I haven't built a dedicated prompt-injection filter; my control is privilege, since no agent can push or publish and write scope is enforced by hooks. At work, secrets sit in platform configuration with rotation through secondary keys, and training code was scrubbed of an embedded key before external review.",
+   "sources": [
+    "work_history.md:118",
+    "work_history.md:174",
+    "work_history.md:1138",
+    "work_history.md:1149",
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aie-testing-ai-code",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Testing the code around models",
+   "questions": [
+    "how do you test llm applications",
+    "testing ai code",
+    "how do you unit test something non deterministic",
+    "mutation testing for validators",
+    "synthetic fixtures for testing",
+    "how does she test ai systems",
+    "protected tests",
+    "how do you test the checks themselves",
+    "test strategy for an llm pipeline",
+    "how do you test without real data",
+    "golden inputs for scorers",
+    "ci for machine learning code",
+    "tests for an llm based system",
+    "do your validation checks actually work"
+   ],
+   "tags": [
+    "testing",
+    "pytest",
+    "mutation testing",
+    "fixtures",
+    "synthetic data",
+    "protected tests",
+    "ci",
+    "golden",
+    "validators",
+    "llm based system"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    }
+   ],
+   "answer": "I test the deterministic code around the model as strictly as any software, and I test the checks themselves. In Skyrule, my personal project, each validator check is tested three ways: it must catch the defects I named (8 of 8 in v7), its false-alarm rate on previously accepted claims is reported, and mutation testing caught 21 of 21 deliberate breaks. CI proves 14 protected tests actually ran, because a silently skipped test leaves the build green. For the archival manifest I committed a 50-row synthetic fixture covering every format and status, plus a deliberately broken copy that trips each rule, so the suite runs with no data or credentials. My evaluation scorers are checked on golden inputs, and accessibility fixes were verified in a headless browser on the production Streamlit build.",
+   "sources": [
+    "work_history.md:200",
+    "work_history.md:877",
+    "work_history.md:939",
+    "work_history.md:1145",
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aie-deployment",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "CI/CD and deploying AI applications",
+   "questions": [
+    "ci cd for ai applications",
+    "how do you deploy your apps",
+    "azure app service deployment",
+    "oryx build local git",
+    "github actions for deployment",
+    "how does she deploy to production",
+    "deployment problems you have fixed",
+    "how do you schedule pipelines in production",
+    "jupyterhub scheduler and cron",
+    "azure functions deployment",
+    "container keeps crashing on startup",
+    "release process for a model app",
+    "what does your deployment pipeline look like",
+    "problems deploying to azure",
+    "walk through how your code gets deployed"
+   ],
+   "tags": [
+    "deployment",
+    "ci/cd",
+    "azure",
+    "app service",
+    "oryx",
+    "github actions",
+    "cron",
+    "azure functions",
+    "release",
+    "deployment pipeline"
+   ],
+   "links": [
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I deploy through whatever the environment allows and fix what breaks on the way. The legislative app ships to Azure App Service through Local Git and the Oryx build. I resolved a .deployment file that blocked Oryx, SCM basic auth and dynamic port binding, and fixed an outage where the startup command reinstalled dependencies on every boot and killed the container with exit code 127. The university tenant blocks standard zip deploys, so Azure Functions deploy through Cloud Shell with a remote build. Scheduled work runs on cron and the JupyterHub Scheduler, payroll processing runs on GitHub Actions, and Actions workflows maintain the RIMS project board. After a function deploy I restart, wait for warm-up, then trigger, because stale workers can serve old code and look like a regression.",
+   "sources": [
+    "work_history.md:73",
+    "work_history.md:75",
+    "work_history.md:148",
+    "work_history.md:168",
+    "work_history.md:169",
+    "work_history.md:232",
+    "work_history.md:524",
+    "work_history.md:903"
+   ]
+  },
+  {
+   "id": "aie-api-app-design",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "API and app design for AI services",
+   "questions": [
+    "how do you design an api for an ai service",
+    "fastapi design",
+    "how did you structure the fastapi endpoints",
+    "streamlit multi page app architecture",
+    "how does she structure a streamlit app",
+    "graceful degradation in an api",
+    "what endpoints would an llm service expose",
+    "separating retrieval from generation endpoints",
+    "app architecture for an ai dashboard",
+    "how do you keep an ai app responsive",
+    "st navigation thin router",
+    "designing a model serving api",
+    "what makes a good api for an llm tool"
+   ],
+   "tags": [
+    "fastapi",
+    "pydantic",
+    "endpoints",
+    "streamlit",
+    "st.navigation",
+    "api design",
+    "degradation",
+    "health check",
+    "router",
+    "llm backed tool"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "I design the API around tiers that can fail independently. The procurement FastAPI service has 10 endpoints: /health, /candidates for retrieval alone with no LLM, /compare for the full three-tier pipeline, browse and autocomplete routes pre-indexed at startup, and /trends over a precomputed savings table. If the LLM is down, exact matches and semantic candidates still return, so the service never returns nothing, and every result downloads as CSV for independent checking. The legislative Streamlit app uses st.navigation with app.py as a thin router, content in a pages folder, one auth gate and a shared accessible theme, plus pyarrow column pruning and cached loads for the Basic tier. Generation and display deploy separately, so a failed deep dive can't take down nightly scoring.",
+   "sources": [
+    "work_history.md:72",
+    "work_history.md:74",
+    "work_history.md:237",
+    "work_history.md:238",
+    "work_history.md:756",
+    "work_history.md:758"
+   ]
+  },
+  {
+   "id": "aie-data-contracts",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Data contracts and schema validation",
+   "questions": [
+    "data contracts",
+    "schema validation in pipelines",
+    "how do you enforce a schema between pipeline stages",
+    "parquet manifest design",
+    "column ownership",
+    "how does she design schemas for ai pipelines",
+    "output contract",
+    "deterministic ids for files",
+    "how do you keep stages independent",
+    "how do you validate data between stages",
+    "manifest schema",
+    "pydantic or schema checks",
+    "how do you stop one stage from breaking the next",
+    "keeping output the same shape on every run"
+   ],
+   "tags": [
+    "data contract",
+    "schema",
+    "manifest",
+    "parquet",
+    "validation",
+    "column ownership",
+    "blake2b",
+    "fixture",
+    "logging contract",
+    "same shape"
+   ],
+   "links": [
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I write the contract before the code, enforce it in code and give every column an owner. The RIMS archival manifest is 116 columns, one row per file path, and each stage owns the columns it writes, so stages can be rerun or replaced independently. Keys are deterministic: file_uid is a blake2b hash of source and normalized path, so a re-crawl joins cleanly. Status columns stay null until a stage runs, which makes the work queue a query and separates not processed from processed and found nothing. The schema is validated against a synthetic fixture and a deliberately broken twin. The retirement rebuild froze its output contract at 4 files, 21 sheets and 436 columns, checked on every run, and every pipeline shares one Parquet logging schema.",
+   "sources": [
+    "work_history.md:476",
+    "work_history.md:782",
+    "work_history.md:871",
+    "work_history.md:873",
+    "work_history.md:874",
+    "work_history.md:877"
+   ]
+  },
+  {
+   "id": "aie-python-performance",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Python performance and memory",
+   "questions": [
+    "python performance optimization",
+    "how do you vectorize pandas code",
+    "how do you speed up a slow python pipeline",
+    "memory optimization in python",
+    "pyarrow column pruning",
+    "how does she make python faster",
+    "row by row versus vectorized",
+    "pandas performance tips",
+    "how do you reduce startup time and ram",
+    "dataframe fragmentation",
+    "itertuples dictionary lookup",
+    "processing millions of rows in pandas",
+    "how do you reduce memory usage in a pipeline"
+   ],
+   "tags": [
+    "python",
+    "pandas",
+    "vectorization",
+    "pyarrow",
+    "memory",
+    "performance",
+    "rapidfuzz",
+    "regex",
+    "profiling",
+    "memory use"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "I look at the shape of the work first, then push it into vectorized or precomputed form. Labeling 1.39 million legislative action rows one at a time wasn't runnable in the nightly window, so pass one applies combined regex with str.contains across the whole column, resolving 85 to 90% of rows in under 30 seconds, and rapidfuzz runs only on the remainder. In procurement, building a dictionary with itertuples takes about 90 seconds at startup and replaces a 1,700ms DataFrame scan per query with a lookup under 2ms. On Azure's Basic tier, pyarrow column pruning and cached loads kept the app within the tier's limits. Sharing one sentence encoder instead of loading two saved about 500MB and 30 seconds of startup. And adding about a hundred columns one at a time fragments a DataFrame, harmless at five rows and severe at five million.",
+   "sources": [
+    "work_history.md:74",
+    "work_history.md:345",
+    "work_history.md:748",
+    "work_history.md:878",
+    "page:research-proposal-processing.html"
+   ]
+  },
+  {
+   "id": "aie-reembedding",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Choosing an embedding model and when to re-embed",
+   "questions": [
+    "when do you re-embed",
+    "when should you rebuild embeddings",
+    "how do you choose an embedding model for a domain",
+    "changing embedding models",
+    "embedding drift",
+    "how does she decide when to rebuild the index",
+    "what do you embed raw text or summaries",
+    "embedding versioning",
+    "can you mix embedding models in one index",
+    "re-indexing strategy",
+    "how do you keep embeddings consistent across components",
+    "switching embedding models"
+   ],
+   "tags": [
+    "embeddings",
+    "re-embed",
+    "reindex",
+    "minilm",
+    "bge-small",
+    "semantic space",
+    "versioning",
+    "rebuild",
+    "summaries",
+    "switching models"
+   ],
+   "links": [
+    {
+     "label": "File archiving and search",
+     "url": "file-archiving-smart-search.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "I choose an embedding model for the domain vocabulary and the scale, then keep one semantic space per index. The archive search uses all-MiniLM-L6-v2 both to pick representative sentences before summarization and to index the summaries, so selection and search agree. Procurement uses bge-small-en-v1.5 at 384 dimensions over 5.19 million rows, with a cosine threshold of 0.85 that leaves a median of 44 candidates. The procurement index is built offline and reused; it needs rebuilding only when product descriptions change significantly, not when prices change. I also embed LLM summaries rather than raw text where text is noisy: summaries are clean and consistently phrased, which improved recall.",
+   "sources": [
+    "work_history.md:686",
+    "work_history.md:745",
+    "page:file-archiving-smart-search.html",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "aie-scaling-honest",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Multi-GPU and distributed inference: where I stand",
+   "questions": [
+    "multi gpu inference",
+    "distributed inference experience",
+    "have you scaled inference beyond one gpu",
+    "tensor parallelism",
+    "have you run models across several gpus",
+    "does she have distributed systems experience",
+    "scaling llm serving horizontally",
+    "gpu cluster experience",
+    "have you deployed models on kubernetes at scale",
+    "what is your experience with large scale inference infrastructure",
+    "gpu clusters or single gpus"
+   ],
+   "tags": [
+    "multi-gpu",
+    "distributed",
+    "kubernetes",
+    "k8s",
+    "tensor parallel",
+    "cluster",
+    "horizontal scaling",
+    "containers",
+    "a100",
+    "h100"
+   ],
+   "links": [
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Docker and Kubernetes",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Honestly, my serving experience is single-GPU, and Kubernetes and multi-GPU inference are areas I'm expanding into, not ones I've run in production. What I have done is size for scale from measurements. The legislative SLO gate showed one L4 falls 3.16x short of the national target, and I laid out the options for leadership: a second L4 for parallel processing, an A100 80GB to unlock 70B-class models, or cloud GPUs on demand, each to be requested only when evaluation evidence supports it. I run containers on Azure App Service, where I tuned start-time limits and fixed a crash loop, and I isolated vLLM in its own environment on an air-gapped server. For Skyrule, my personal project, I chose a stateless FastAPI container as the hosting design.",
+   "sources": [
+    "work_history.md:66",
+    "work_history.md:158",
+    "work_history.md:1121",
+    "work_history.md:1161",
+    "work_history.md:1427",
+    "page:vllm-inference-throughput-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-git-workflow",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Git workflow and code review",
+   "questions": [
+    "git workflow",
+    "branching strategy",
+    "what is your code review process",
+    "pull request workflow",
+    "how do you do code reviews",
+    "how does she use git on a team",
+    "branch per issue",
+    "how do you review a teammate's code",
+    "github issues and project boards",
+    "how do you keep a repository clean",
+    "git hygiene",
+    "how do you organize work in github"
+   ],
+   "tags": [
+    "git",
+    "github",
+    "pull requests",
+    "code review",
+    "branches",
+    "issues",
+    "project board",
+    "worktree",
+    "repository hygiene"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I work branch per issue with a pull request to main, even for notebooks, so review happens before work lands. On the RIMS archival build I set that convention for an engineer on her first project, with issues that carry an owner, dependencies and explicit done-when criteria, a Blocked column that names a person and a date, and type:decision labels holding the reasoning. In review I check behavior as well as the diff: for 29 pull requests from a cloud coding agent on Skyrule, my personal project, I fetched each into an isolated archive, ran the full suite and the regression checks, and verified ancestry before reporting a merge. I clean history before it goes public: one notebook carried 377 MB of embedded outputs, including email content, which I stripped first.",
+   "sources": [
+    "work_history.md:900",
+    "work_history.md:901",
+    "work_history.md:904",
+    "work_history.md:906",
+    "work_history.md:1152"
+   ]
+  },
+  {
+   "id": "aie-pii-pipeline",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "PII in an LLM pipeline: two-layer anonymization",
+   "questions": [
+    "how do you handle pii in an llm pipeline",
+    "two layer anonymization",
+    "presidio and an llm",
+    "how do you de-identify text before an llm sees it",
+    "redaction pipeline design",
+    "how does she anonymize emails",
+    "pii detection and placeholder substitution",
+    "should the llm be the privacy control",
+    "over redaction false positives",
+    "anonymization strategies",
+    "privacy preserving nlp pipeline",
+    "removing personal data before text reaches a model",
+    "rule based redaction combined with an llm"
+   ],
+   "tags": [
+    "pii",
+    "presidio",
+    "anonymization",
+    "redaction",
+    "placeholders",
+    "de-identification",
+    "privacy",
+    "local llm",
+    "ssn",
+    "personal data"
+   ],
+   "links": [
+    {
+     "label": "Email archiving",
+     "url": "email-archiving.html"
+    }
+   ],
+   "answer": "I anonymize in two layers so the LLM never has to be the privacy control. In the email archive, Microsoft Presidio first detects structured PII such as names, phone numbers, emails and SSNs, and replaces it with typed placeholders like <PERSON1>, keeping the mapping separately. Then a local Llama 3.2 model writes a summary, instructed to generalize any remaining personal detail. Placeholder text produced more coherent summaries than raw text with names still in it. The model runs locally through Ollama. The failure to watch for is over-redaction: in the RIMS build the redaction layer labeled ZIP+4 codes as social security numbers and chart axis labels as card numbers, which would have stripped research data from the reading-room copy. So I check what gets removed, not only what survives.",
+   "sources": [
+    "work_history.md:593",
+    "work_history.md:595",
+    "work_history.md:597",
+    "work_history.md:601",
+    "work_history.md:602",
+    "work_history.md:854",
+    "page:email-archiving.html"
+   ]
+  },
+  {
+   "id": "aie-design-doc-extraction",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "System design: extracting data from scanned PDFs with tables",
+   "questions": [
+    "design a document extraction service for scanned pdfs",
+    "system design pdf extraction with tables",
+    "how would you build an invoice or contract extraction system",
+    "how would you extract tables from scanned documents at scale",
+    "design an ocr pipeline for mixed documents",
+    "how would she design document processing for scanned packets",
+    "intelligent document processing system design",
+    "how do you handle unreadable pages",
+    "extraction service with human review",
+    "structured data from scanned forms",
+    "extracting line items from scanned purchase orders"
+   ],
+   "tags": [
+    "idp",
+    "document ai",
+    "ocr",
+    "tables",
+    "scanned",
+    "pdf",
+    "layout",
+    "evidence",
+    "review queue",
+    "numeric recall"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "I'd build it as a queue of pages routed by content type, with evidence attached to every field. Intake identifies each file and page, and a native spreadsheet is parsed directly when the original exists. Scanned pages go through layout detection, then tables to a table model, prose to OCR and charts to a chart route, one model resident on the GPU at a time, with checkpoints and bounded retries. From my evaluation I'd start tables on PaddleOCR-VL-1.6, at 0.852 TEDS and 97.4% numeric recall on fresh financial tables. Fields come out by evidence ID, so code copies and hash-checks the source text, and unread pages are flagged, never skipped. Numbers get their own gate, since no model reached my 99% bar, so it ships review-assisted: a reviewer sees each value beside its page.",
+   "sources": [
+    "work_history.md:943",
+    "work_history.md:949",
+    "work_history.md:950",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-design-product-search",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "System design: semantic search over millions of products",
+   "questions": [
+    "design semantic search over millions of products",
+    "product matching system design",
+    "how would you build product search for a large catalog",
+    "how would you find the same product across vendors",
+    "entity resolution across product catalogs",
+    "how would she design a price comparison system",
+    "search over six million rows",
+    "catalog matching with embeddings and an llm",
+    "design a recommendation for cheaper equivalent products",
+    "ecommerce search system design",
+    "matching the same item across suppliers",
+    "search for an online store with millions of products"
+   ],
+   "tags": [
+    "product search",
+    "catalog",
+    "entity resolution",
+    "matching",
+    "faiss",
+    "ivfflat",
+    "unit price",
+    "e-commerce",
+    "funnel",
+    "suppliers"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Code on GitHub",
+     "url": "https://github.com/tayler-erbe/procurement_intelligence_system_design"
+    }
+   ],
+   "answer": "I've built close to this: price comparison over 6,068,888 catalog rows from four distributors. First fix the data. A pack-size field covering 99.9% of rows turned prices into unit prices and removed 49.1% of the apparent savings. Then an exact tier, a dictionary on manufacturer and part number, answering in under 2ms. Then embeddings: bge-small-en-v1.5 into a FAISS IVFFlat index of 5.19 million vectors, nprobe 64, with a cosine floor of 0.85, returning a median of 44 candidates in 75 to 110ms. A 7B model judges equivalence only on those candidates and returns JSON, and prices are compared in code. Offline index builds, response caching and a 30-query eval set round it out.",
+   "sources": [
+    "work_history.md:741",
+    "work_history.md:743",
+    "work_history.md:745",
+    "work_history.md:746",
+    "work_history.md:748",
+    "work_history.md:749",
+    "work_history.md:753",
+    "work_history.md:763",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "aie-silent-degradation",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Debugging a model that silently degrades in production",
+   "questions": [
+    "how do you debug a model that silently degrades",
+    "model performance dropped in production what do you do",
+    "silent degradation in production",
+    "how do you investigate model drift",
+    "outputs got worse but nothing errored",
+    "how does she debug production ml issues",
+    "production model behaving strangely",
+    "what do you check first when a model degrades",
+    "data drift or infrastructure problem",
+    "production incident with an ml pipeline",
+    "troubleshooting declining quality in a live ai system"
+   ],
+   "tags": [
+    "drift",
+    "degradation",
+    "incident",
+    "root cause",
+    "production",
+    "monitoring",
+    "regression",
+    "debugging",
+    "declining",
+    "troubleshoot"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I start by asking whether the inputs, the infrastructure or the model changed, and I check output volume and shape before trusting a green status. Three real cases. An extraction stage failed silently for 11 nights; the cause was a kernel update that disabled the GPU driver, and I protected the catch-up so no data was skipped. A six-day repeating alarm traced to one malformed bill retried forever. And nightly scoring formatted inputs differently from training, fixed with a shared input module verified byte-identical on 36,028 inputs. Aggregate metrics can hide individual faults, too: a high AUC concealed a probability trail where stalled bills kept their peak score, which surfaced only once users could see the trail.",
+   "sources": [
+    "work_history.md:112",
+    "work_history.md:193",
+    "work_history.md:205",
+    "work_history.md:250",
+    "work_history.md:389"
+   ]
+  },
+  {
+   "id": "aie-serving-choice",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Ollama, vLLM or a hosted API",
+   "questions": [
+    "ollama vs vllm",
+    "ollama or vllm or a hosted api",
+    "when would you use groq",
+    "vllm versus hosted models",
+    "how does she choose between local serving and an api",
+    "azure openai or local llama",
+    "which inference backend would you use",
+    "hybrid local and cloud inference",
+    "gpt-4.1 versus local models in one platform",
+    "self hosted inference versus managed inference",
+    "which serving engine do you prefer",
+    "run llama yourself or pay for an api"
+   ],
+   "tags": [
+    "ollama",
+    "vllm",
+    "groq",
+    "azure openai",
+    "gpt-4o-mini",
+    "gpt-4.1",
+    "hosted api",
+    "on-prem",
+    "hybrid inference",
+    "serving engine"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Image throughput study",
+     "url": "archival-image-throughput-evaluation.html"
+    }
+   ],
+   "answer": "I choose by data sensitivity, volume and latency. Ollama is simple to run and fine for one request at a time, but on our L4 it serialized requests. vLLM is what I use for volume, because continuous batching took the same card from about 9 to 55.4 images a minute; on an air-gapped server I staged the weights by hand to get it. Hosted APIs fit low-latency, user-facing work on non-sensitive data. The legislative platform is deliberately hybrid: bulk extraction and scoring on on-prem vLLM at no marginal cost, gpt-4o-mini on Azure OpenAI for in-app briefings, GPT-4.1 behind the Copilot chatbot, and Groq's hosted Llama for briefings, degrading gracefully without a key. Sensitive archives stay on local models only.",
+   "sources": [
+    "work_history.md:64",
+    "work_history.md:77",
+    "work_history.md:138",
+    "work_history.md:157",
+    "work_history.md:246",
+    "work_history.md:639",
+    "work_history.md:640"
+   ]
+  },
+  {
+   "id": "aie-gpu-profiling",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Profiling GPU utilization and telemetry",
+   "questions": [
+    "how do you profile gpu utilization",
+    "gpu telemetry",
+    "how do you know if the gpu is the bottleneck",
+    "nvidia smi monitoring during a benchmark",
+    "use method utilization saturation errors",
+    "how does she measure gpu usage",
+    "low gpu utilization what does it mean",
+    "gpu power and vram sampling",
+    "is my gpu idle or busy",
+    "how do you diagnose an underused gpu",
+    "is a slow job limited by the gpu",
+    "gpu metrics during inference"
+   ],
+   "tags": [
+    "gpu",
+    "nvidia-smi",
+    "telemetry",
+    "utilization",
+    "saturation",
+    "use method",
+    "power",
+    "vram",
+    "profiling",
+    "gpu bound"
+   ],
+   "links": [
+    {
+     "label": "Image throughput study",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    }
+   ],
+   "answer": "I sample GPU utilization, VRAM and power in the same window as the workload, because averages from separate runs hide the signature I'm looking for. On the archival image job, one-second nvidia-smi sampling showed 28 to 31% utilization with VRAM and power flat while latency climbed, which meant the GPU was waiting on serialized requests; a faster card would have recovered nothing. After the move to vLLM the same card ran at 96 to 97%, 19 to 20 GB of VRAM and 71 to 72W, against about 27W before. I apply the USE method (utilization, saturation, errors) and preflight every run to confirm the GPU is idle first, at 3 MiB used. Longer sweeps also track temperature and KV cache against alarms; the L4 peaked at 70°C.",
+   "sources": [
+    "work_history.md:294",
+    "work_history.md:295",
+    "work_history.md:639",
+    "work_history.md:640",
+    "page:archival-image-throughput-evaluation.html",
+    "page:vllm-inference-throughput-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-ai-coding-assistants",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Building responsibly with AI coding assistants",
+   "questions": [
+    "how do you use ai coding assistants responsibly",
+    "rules for using copilot or claude code at work",
+    "do you let ai write your code",
+    "how do you keep ai assistants away from sensitive data",
+    "how does she use coding agents safely",
+    "ai assisted development governance",
+    "codex and claude code in your workflow",
+    "what can an ai assistant see in your projects",
+    "guardrails for ai pair programming",
+    "how do you trust code an assistant wrote",
+    "what limits do you set on ai tools that write code"
+   ],
+   "tags": [
+    "coding assistants",
+    "claude code",
+    "codex",
+    "copilot",
+    "governance",
+    "privacy gate",
+    "review",
+    "second model",
+    "ai tools",
+    "write code"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I use AI coding assistants heavily and give them explicit limits. For the document evaluation I set the rule that assistants write and orchestrate code only: local models and OCR engines do all the reading and judging, assistants see aggregate metrics, and no work document leaves approved storage. A privacy gate script in the repository denies institutional identifiers before anything is committed. In my personal projects, agents work inside hook-enforced scopes, a quality agent can block a release in writing, and every done claim needs re-runnable evidence. I review agent pull requests the way I'd review anyone's: isolated checkout, full test suite, regression checks. For judgment calls an independent second model reviews generated text only, never private inputs.",
+   "sources": [
+    "work_history.md:934",
+    "work_history.md:954",
+    "work_history.md:955",
+    "work_history.md:1138",
+    "work_history.md:1151",
+    "work_history.md:1152",
+    "work_history.md:1158"
+   ]
+  },
+  {
+   "id": "aie-eval-dataset",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "What a good evaluation dataset looks like",
+   "questions": [
+    "what does a good evaluation dataset look like",
+    "how do you build an eval set",
+    "gold set",
+    "golden dataset for llm evaluation",
+    "how many examples do you need in an eval set",
+    "how does she build test sets",
+    "held out test set for llms",
+    "how do you label evaluation data",
+    "edge cases in an eval set",
+    "how do you avoid overfitting to your eval set",
+    "building test cases for an llm feature",
+    "what makes a benchmark trustworthy",
+    "creating ground truth for evaluation"
+   ],
+   "tags": [
+    "eval set",
+    "gold set",
+    "held-out",
+    "labels",
+    "edge cases",
+    "test set",
+    "annotation",
+    "benchmark",
+    "ground truth",
+    "ground truth"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "A good evaluation set looks like real traffic, includes the hard cases on purpose and is frozen before anyone tunes against it. The procurement set has 30 hand-curated queries covering exact matches, vague natural language, part-number lookups and edge cases like pack size, concentration mismatch and accessories, each with an expected tier, price range and minimum alternatives. Development and held-out sets stay separate: the document evaluation froze 2,181 held-out cases and used them once. Splits happen at the level that prevents leakage: the legislative model holds out a whole General Assembly session. And labels need a definition first: in the archival image pilot 58 of 79 flags were ambiguous, so the RIMS build requires a written appraisal policy and a 300 to 500 file hand-labeled gold set before triage work.",
+   "sources": [
+    "work_history.md:763",
+    "work_history.md:885",
+    "work_history.md:939",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "aie-maintainable-ai",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Keeping an AI system maintainable for the next engineer",
+   "questions": [
+    "how do you keep ai code maintainable",
+    "how do you make a system easy for the next engineer",
+    "code organization for ml projects",
+    "technical debt in ai systems",
+    "how does she structure code for maintainability",
+    "how do you avoid single points of failure in code",
+    "what makes a pipeline maintainable",
+    "how do you write code other people can own",
+    "project structure for a data pipeline",
+    "how would a new engineer pick up your system",
+    "code someone else can take over",
+    "keeping ml code from becoming a mess"
+   ],
+   "tags": [
+    "maintainability",
+    "tech debt",
+    "modules",
+    "readme",
+    "decision log",
+    "contracts",
+    "fixtures",
+    "documentation",
+    "ownership",
+    "take over"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I write systems so the next engineer can change them without me in the room. Contracts live in code: a schema module with validation, fixtures that run with no data or credentials, an output contract checked on every run. Decisions are recorded with their reasons, in type:decision issues on the RIMS build and an append-only log in my personal projects. Code is single-responsibility service modules under thin controllers, SQL lives in versioned files instead of inside a tool, and config is parameterized with a committed .example template so secrets stay out. Each inherited proof of concept got a README saying what's reusable and what's known to be broken. On the legislative app I wrote an Accessibility Guide with patterns, scripts and a decision log for future contributors.",
+   "sources": [
+    "work_history.md:203",
+    "work_history.md:791",
+    "work_history.md:877",
+    "work_history.md:898",
+    "work_history.md:901",
+    "work_history.md:1153",
+    "page:research-proposal-processing.html"
+   ]
+  },
+  {
+   "id": "aie-vllm-airgap",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Standing up vLLM on an air-gapped server: why, and what broke",
+   "questions": [
+    "why did you move from ollama to vllm",
+    "why vllm 0.6.6",
+    "what broke when you deployed vllm",
+    "how did you run vllm on an air gapped server",
+    "air gapped model deployment",
+    "how did she get model weights onto a server without huggingface access",
+    "vllm dependency problems",
+    "how do you diagnose a blocked network connection to huggingface",
+    "what went wrong standing up the inference server",
+    "offline model staging",
+    "why not just buy a bigger gpu instead of changing the server",
+    "vllm installation issues transformers mistral_common",
+    "vllm behind a firewall",
+    "problems installing vllm",
+    "server cannot reach hugging face"
+   ],
+   "tags": [
+    "vllm",
+    "air-gapped",
+    "huggingface",
+    "tls",
+    "scp",
+    "conda",
+    "dependency drift",
+    "keep_alive",
+    "offline",
+    "staging"
+   ],
+   "links": [
+    {
+     "label": "Image throughput study",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    }
+   ],
+   "answer": "I moved to vLLM because the measurements said the server was the bottleneck: Ollama held throughput flat across concurrency with the L4 28 to 31% busy, so a bigger GPU would have bought nothing. The server is air-gapped, and curl -v showed the block was specific: GitHub, PyPI and the Ollama registry worked, HuggingFace died at the TLS handshake. That turned no internet into no HuggingFace, so I stage weights on a laptop, copy them over with scp and point vLLM at the local path. Three things broke in the 0.6.6 stand-up: mistral_common had moved an import, transformers was a major version ahead, and Ollama's keep_alive held about 6 GB that vLLM's KV cache needed. I fixed them in order and isolated vLLM in its own conda environment. Result: 6.22x throughput on the same card.",
+   "sources": [
+    "work_history.md:61",
+    "work_history.md:63",
+    "work_history.md:64",
+    "work_history.md:65",
+    "work_history.md:66",
+    "work_history.md:639",
+    "work_history.md:642"
+   ]
+  },
+  {
+   "id": "aie-legislative-model-choice",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Why Llama 3.1 8B AWQ at 1,200 tokens and concurrency 12 to 24",
+   "questions": [
+    "why llama 3.1 8b for the legislative pipeline",
+    "why chunk size 1200",
+    "why not mistral or qwen for extraction",
+    "how did you pick the production extraction model",
+    "why concurrency 12 to 24",
+    "how did she choose the model for bill extraction",
+    "why did qwen and mistral get eliminated",
+    "what was the six stage evaluation funnel",
+    "why not a 14b model with full context",
+    "quality adjusted throughput",
+    "llama 3.1 8b awq production configuration"
+   ],
+   "tags": [
+    "llama 3.1 8b",
+    "awq",
+    "chunk size",
+    "1200",
+    "mistral",
+    "qwen",
+    "funnel",
+    "parse-ok",
+    "p99",
+    "elimination"
+   ],
+   "links": [
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Each alternative failed a specific stage that Llama passed. On parse-OK, Llama 3.1 8B led at every chunk size, 85.0 to 92.5%, peaking at 1,200 tokens, while no Mistral or Qwen cell reached 73%. A blind rubric review on 60 cells confirmed the ranking. Qwen went out because its own parse-OK misranked its chunk sizes; its peak was valid JSON full of None. Mistral went out on the tail: with 3,000-token prompts its p99 grew from 15s to 74s by concurrency 24 under KV cache pressure. A 14B model given whole bills scored 45.0%. At 1,200 tokens the median bill of 1,051 tokens is one chunk, and quality held within 0.6 points from concurrency 1 to 24, so 12 to 24 is where the GPU is used well.",
+   "sources": [
+    "page:vllm-inference-throughput-evaluation.html",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "aie-validator-design",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing validators for generated text",
+   "questions": [
+    "how do you design an llm output validator",
+    "validator design for generated text",
+    "how does the claim validator work",
+    "brief then prose generation",
+    "how does she check generated claims",
+    "how did the validator evolve across versions",
+    "how do you stop false alarms in a validator",
+    "canary run for llm generation",
+    "how do you gate a large generation run",
+    "code checks on every generated claim",
+    "validator v7",
+    "automated checks for generated sentences",
+    "testing a new validation rule"
+   ],
+   "tags": [
+    "validator",
+    "claims",
+    "false alarm",
+    "mutation testing",
+    "canary",
+    "acceptance gate",
+    "generation",
+    "checks",
+    "receipts",
+    "generated sentences"
+   ],
+   "links": [
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    },
+    {
+     "label": "Generation model screen",
+     "url": "generation-model-evaluation.html"
+    }
+   ],
+   "answer": "In Skyrule, my personal project, code lays out what two people's traits support, the local model plans a reading claim by claim, code validates every claim, then the model writes one sentence per approved claim and code checks again. I iterated the validator through seven versions from my own reviews, adding checks for truncated claims, causal leaps, wrong-person attribution and contradictions. Each new check must catch the defects I named (8 of 8 in v7), report its false-alarm rate on previously accepted claims, and survive mutation testing, 21 of 21 deliberate breaks caught. Checks can be too strict: an over-literal one rejected good text, and fixing it raised plan acceptance from 6 to 14 of 31. Canary 1 failed its check at 18 of 50, so five wording habits became new checks before any full run.",
+   "sources": [
+    "work_history.md:1145",
+    "work_history.md:1146",
+    "work_history.md:1155"
+   ]
+  },
+  {
+   "id": "aie-scale-10x",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "What breaks first at 10x scale",
+   "questions": [
+    "what would break first at 10x scale",
+    "what happens to your pipeline at ten times the volume",
+    "scaling bottlenecks in the legislative pipeline",
+    "where would the system fall over under more load",
+    "how does she think about scaling a pipeline",
+    "50 state expansion what breaks",
+    "scale limits of a single gpu pipeline",
+    "what fails when the corpus grows",
+    "how would you scale the platform to more states",
+    "if traffic grew tenfold",
+    "bottleneck when workload multiplies"
+   ],
+   "tags": [
+    "scale",
+    "10x",
+    "bottleneck",
+    "gpu",
+    "kv cache",
+    "long tail",
+    "memory",
+    "app service",
+    "growth",
+    "tenfold"
+   ],
+   "links": [
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "GPU throughput breaks first, and I know by how much. The 50-state target is about seven times Illinois volume, and one L4 running Llama 3.1 8B at concurrency 24 falls 3.16x short of the steady-state SLO and 6.57x short of peak burst. Next is the length tail: 12% of bills exceed 10,000 tokens and the longest is over a million, so chunk counts per bill, and KV cache pressure if chunks grow, rise faster than bill counts. Uniform chunking is the next thing I'd change, with adaptive tiers by bill length. On the app side, memory already bit once: semantic search failed under memory pressure until the tier moved to Premium v3 and loads became selective. The data pipeline itself scales, because ingestion is hash-based and only changed sessions download.",
+   "sources": [
+    "work_history.md:148",
+    "work_history.md:253",
+    "page:vllm-inference-throughput-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-batch-vs-online",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Batch versus real-time inference",
+   "questions": [
+    "batch versus real time inference",
+    "online vs offline inference",
+    "when do you precompute model outputs",
+    "how do you split work between batch jobs and live requests",
+    "how does she decide what runs nightly versus on demand",
+    "nightly batch scoring",
+    "real time llm scoring",
+    "hybrid batch and online architecture",
+    "latency sensitive versus throughput sensitive workloads",
+    "on demand inference versus scheduled jobs",
+    "request time or ahead of time"
+   ],
+   "tags": [
+    "batch",
+    "online",
+    "real-time",
+    "nightly",
+    "on-demand",
+    "precompute",
+    "hybrid",
+    "latency",
+    "cost",
+    "request time"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "I split by who is waiting and what it costs. On the legislative platform, heavy work runs as batch on institution-owned GPU: nightly feature extraction and impact scoring on vLLM, at no marginal cost, with nobody waiting. User-facing requests go to managed inference on Azure OpenAI, where latency matters. The two meet in one result schema. A user's prompt against a single bill can be scored live, stored and read instantly afterward, and the nightly batch writes the same long-format table, one row per user, prompt and bill, so either path can fill a cell. The split began as a workaround when the campus network blocked the server from the database, and became a deliberate design. Features are extracted once per bill, so adding a user never re-extracts the corpus.",
+   "sources": [
+    "work_history.md:242",
+    "work_history.md:243",
+    "work_history.md:245",
+    "work_history.md:246",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "aie-token-budgets",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Token budgets, context limits and truncation",
+   "questions": [
+    "how do you set max tokens",
+    "token budgets for llm calls",
+    "what happens when llm output gets truncated",
+    "output budget and context window limits",
+    "how does she handle truncation",
+    "max_tokens too low",
+    "how do you limit user input length for a prompt",
+    "reasoning models running out of tokens",
+    "context window budgeting",
+    "partial outputs from an llm",
+    "how many output tokens to allow",
+    "responses getting cut off"
+   ],
+   "tags": [
+    "max_tokens",
+    "truncation",
+    "output budget",
+    "context window",
+    "tokens",
+    "reasoning",
+    "thinking",
+    "input limits",
+    "cut off",
+    "output tokens"
+   ],
+   "links": [
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "I treat the token budget as part of the design, because truncation fails quietly. When Qwen 2.5 14B got whole 5,000-token bills, too little room was left to finish an 11-field JSON: 54% of outputs were partial, averaging 1.2 missing fields, with zero outright failures. In the document evaluation every task had a fixed budget, from 300 to 6,000 tokens, and a truncated answer scored zero instead of being rerun with more room. That rule exposed a thinking build that spent its budget on hidden reasoning, so it was removed. A hosted model first tested at a 600-token budget truncated; raising the budget alone changed nothing, while enabling reasoning did. For user-written profile context, I set explicit length limits and explained them to users.",
+   "sources": [
+    "work_history.md:217",
+    "work_history.md:940",
+    "work_history.md:951",
+    "page:vllm-inference-throughput-evaluation.html",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "aie-proxy-metrics",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Validating a cheap metric before tuning on it",
+   "questions": [
+    "how do you know your automated metric reflects quality",
+    "proxy metrics for llm quality",
+    "is parse rate a good quality metric",
+    "offline metric versus real quality",
+    "how does she validate an evaluation metric",
+    "when does an automated metric mislead you",
+    "metric validity",
+    "parse ok as a proxy",
+    "does structural validity mean the answer is right",
+    "can you trust a single quality number",
+    "does the quality metric measure what you think",
+    "valid json with wrong answers",
+    "structurally valid output with wrong content"
+   ],
+   "tags": [
+    "proxy",
+    "metric validity",
+    "parse-ok",
+    "rubric",
+    "off-section drift",
+    "substantive quality",
+    "goodhart",
+    "validation",
+    "valid json",
+    "quality metric"
+   ],
+   "links": [
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Quality review",
+     "url": "vllm-qualitative-review.html"
+    }
+   ],
+   "answer": "I validate a cheap metric against a careful one before I tune on it. Parse-OK rate, the share of outputs that parse into every field, is fast and scales, so I tested it twice on the legislative sweep. Across models it held: a blind rubric review on 60 cells ranked the three models the same way, and two independent scoring passes agreed on all 60. Within a model it failed. In every informative pair the smaller chunk size scored at least as well on substance, even where parse-OK disagreed, because larger chunks produced confident answers about the wrong section of the bill. For Qwen, the parse-OK peak was valid JSON full of the string None. So parse-OK ranks models for me, and chunk sizes need substantive review.",
+   "sources": [
+    "page:vllm-inference-throughput-evaluation.html",
+    "page:vllm-qualitative-review.html"
+   ]
+  }
+ ],
+ "add_questions": {
+  "iv-chunking": [
+   "what is lost in the middle",
+   "how do you handle documents longer than the context window",
+   "does a bigger context window remove the need for chunking",
+   "chunk overlap and boundary artifacts"
+  ],
+  "iv-structured-output": [
+   "json schema forcing",
+   "parse ok rate",
+   "how do you handle invalid json from a model"
+  ],
+  "iv-hallucination": [
+   "how do you design a system so the llm cannot invent facts",
+   "generation separated from verification"
+  ],
+  "iv-cost": [
+   "cost per request for an llm feature",
+   "how do you budget llm spend",
+   "cost per successful result"
+  ],
+  "iv-similarity-thresholds": [
+   "how do you calibrate a similarity threshold for retrieval"
+  ]
+ },
+ "replace_answers": {
+  "iv-chunking": {
+   "answer": "I treat chunk size as a measured parameter, measured on the real length distribution. On the legislative pipeline every 7B-class model degraded past roughly 2,000 tokens, which let me choose chunk size separately from the model. The vLLM sweep then showed what parse rates hid: larger chunks caused off-section drift, where the model answers confidently about a neighboring section of the bill. Llama 3.1 8B at 1,200 tokens stayed on-chunk and reached 92.5% parse-OK, while a 14B model given whole 5,000-token bills scored 45.0%, so more context made things worse. I also check boundary artifacts: a dip at 4,000 tokens turned out to be thin tail chunks. When a document must be summarized whole, I compress it semantically first, keeping the 250 most representative sentences rather than truncating the head.",
+   "sources": [
+    "work_history.md:301",
+    "page:vllm-inference-throughput-evaluation.html",
+    "page:file-archiving-smart-search.html"
+   ]
+  },
+  "iv-structured-output": {
+   "answer": "I get reliable structured output by forcing a schema, counting parse status as its own quality signal and keeping code responsible for anything exact. Every chunk is marked OK, PARTIAL or EMPTY, so malformed output is counted rather than silently absorbed. On the archival images, one combined prompt returning JSON for all six fields was 1.61x faster than three calls and parsed 100% on five fields and 94% on the title. In the document evaluation, schema forcing, temperature 0 and fixed token budgets were fingerprinted for every model, and truncated answers scored zero instead of being retried. Two lessons stuck. Valid JSON isn't a correct answer: one model returned every field as the string None. And when an answer must quote a source, the model returns block IDs and code copies the text.",
+   "sources": [
+    "work_history.md:297",
+    "work_history.md:638",
+    "work_history.md:939",
+    "work_history.md:949",
+    "page:vllm-inference-throughput-evaluation.html"
+   ]
+  },
+  "iv-hallucination": {
+   "answer": "My main defense is architectural: the model proposes, code verifies, and anything that must be exact never comes from generation. In procurement the LLM only judges product equivalence on about 50 pre-filtered candidates, and savings are computed in code from its JSON. In my document evaluation the model returns evidence block IDs, and code copies the text and checks its hash, which removed every quote-copy failure. In Skyrule, my personal project, a local model plans a reading claim by claim, code validates each claim, and only approved claims become sentences; that validator went through seven versions and catches 8 of 8 named defects. For archival images I added an evidence gate that makes the model say where in the frame it sees something, which fixed a false swastika report on a 1920s football-crowd photograph.",
+   "sources": [
+    "work_history.md:750",
+    "work_history.md:854",
+    "work_history.md:949",
+    "work_history.md:1145"
+   ]
+  },
+  "iv-cost": {
+   "answer": "I count cost per successful result rather than per call, and I set budgets before spending. In my Skyrule generation screen, a personal project, the better configuration used about a quarter of the output tokens per accepted group, and about half the model calls. Hosted spend has hard caps: the second-model review ledger is capped at $30, and image jobs for my picture books, also a personal project, carried a per-job dollar cap and used the Batch API at half price, 170 pictures for about $3.54. On-prem, the cheapest lever was the serving stack: continuous batching cut a 22-hour job to 3.7 hours on the same GPU. For procurement I estimated about $77 a month on Azure with gpt-4o-mini, and response caching by prompt hash makes repeat queries free.",
+   "sources": [
+    "work_history.md:642",
+    "work_history.md:764",
+    "work_history.md:766",
+    "work_history.md:1158",
+    "work_history.md:1257",
+    "page:generation-model-evaluation.html"
+   ]
+  }
+ },
+ "tests": [
+  [
+   "how would you architect a retrieval augmented generation application",
+   "aie-design-rag"
+  ],
+  [
+   "how do you build a document chatbot that shows where each answer came from",
+   "aie-design-rag"
+  ],
+  [
+   "design rag for a company knowledge base",
+   "aie-design-rag|iv-retrieval-choices"
+  ],
+  [
+   "should search use keywords or embeddings or both",
+   "aie-hybrid-retrieval"
+  ],
+  [
+   "do you mix sparse and dense retrieval",
+   "aie-hybrid-retrieval"
+  ],
+  [
+   "how would you add lexical matching to a vector search system",
+   "aie-hybrid-retrieval"
+  ],
+  [
+   "approximate nearest neighbour index choice for five million embeddings",
+   "aie-vector-index"
+  ],
+  [
+   "how would you tune an ivf index",
+   "aie-vector-index"
+  ],
+  [
+   "do you use pinecone or faiss and which index type",
+   "aie-vector-index|tech-vector-dbs"
+  ],
+  [
+   "how do you get more throughput out of an inference server",
+   "aie-llm-serving"
+  ],
+  [
+   "what limits how many requests a gpu can batch",
+   "aie-llm-serving"
+  ],
+  [
+   "llm serving performance tuning",
+   "aie-llm-serving"
+  ],
+  [
+   "how much gpu memory do you need for a quantized model",
+   "aie-gpu-memory-sizing"
+  ],
+  [
+   "how do you work out whether a model and its context fit in memory",
+   "aie-gpu-memory-sizing"
+  ],
+  [
+   "what quantization formats have you used to fit models on a card",
+   "aie-gpu-memory-sizing|iv-quantization"
+  ],
+  [
+   "how would you decide how many gpus a pipeline needs",
+   "aie-slo-capacity|ex-capacity-planning"
+  ],
+  [
+   "how would you define a latency budget for a model service",
+   "aie-slo-capacity"
+  ],
+  [
+   "capacity planning for national scale",
+   "aie-slo-capacity|ex-capacity-planning|vllm-eval-slo"
+  ],
+  [
+   "how do you track prompt changes over time",
+   "aie-prompt-versioning"
+  ],
+  [
+   "what does good prompt hygiene look like to you",
+   "aie-prompt-versioning"
+  ],
+  [
+   "how do you avoid breaking things when you edit a prompt",
+   "aie-prompt-versioning"
+  ],
+  [
+   "what does your llm testing setup look like",
+   "aie-eval-harness|iv-validating-llm-output"
+  ],
+  [
+   "how do you build automated evaluation for generative ai",
+   "aie-eval-harness"
+  ],
+  [
+   "should you grade llm output with code or with another model",
+   "aie-eval-harness|iv-llm-as-judge"
+  ],
+  [
+   "how would you architect an autonomous agent safely",
+   "aie-agent-design"
+  ],
+  [
+   "what controls do you put on an llm agent with tool access",
+   "aie-agent-design"
+  ],
+  [
+   "how do you keep ai agents under control",
+   "aie-agent-design|ex-agent-guardrails"
+  ],
+  [
+   "how do you get several ai agents to work together",
+   "aie-multi-agent"
+  ],
+  [
+   "what failure modes have you seen with agent teams",
+   "aie-multi-agent"
+  ],
+  [
+   "how do agents share state without conflicts",
+   "aie-multi-agent"
+  ],
+  [
+   "should we use ocr or a vision language model for scanned forms",
+   "aie-multimodal-pipeline"
+  ],
+  [
+   "how do you decide which vision model reads which part of a page",
+   "aie-multimodal-pipeline"
+  ],
+  [
+   "have you used llava",
+   "iv-multimodal-experience|aie-multimodal-pipeline"
+  ],
+  [
+   "how do you decide when a task needs an llm at all",
+   "aie-model-routing"
+  ],
+  [
+   "what does a tiered model pipeline look like",
+   "aie-model-routing"
+  ],
+  [
+   "how do you pick a cheap model for easy work and a strong one for hard work",
+   "aie-model-routing"
+  ],
+  [
+   "how would you reduce repeated llm calls in an app",
+   "aie-caching"
+  ],
+  [
+   "what do you precompute versus compute at request time",
+   "aie-caching|aie-batch-vs-online"
+  ],
+  [
+   "how do you keep cached ai results fresh",
+   "aie-caching"
+  ],
+  [
+   "how do you make batch jobs safe to rerun",
+   "aie-retries-rollback"
+  ],
+  [
+   "what is your approach to retry logic",
+   "aie-retries-rollback"
+  ],
+  [
+   "how do you make pipelines fault tolerant",
+   "aie-retries-rollback|iv-fault-tolerant-pipelines"
+  ],
+  [
+   "how would you monitor a model pipeline in production",
+   "aie-observability|iv-production-mlops"
+  ],
+  [
+   "what alerts do you set up for scheduled ai jobs",
+   "aie-observability"
+  ],
+  [
+   "observability experience",
+   "aie-observability|ex-monitoring"
+  ],
+  [
+   "how do you keep an ai product secure",
+   "aie-ai-security"
+  ],
+  [
+   "what security scanning do you run on python code",
+   "aie-ai-security"
+  ],
+  [
+   "how do you handle credentials in llm apps",
+   "aie-ai-security"
+  ],
+  [
+   "how do you write tests for an llm based system",
+   "aie-testing-ai-code"
+  ],
+  [
+   "how do you know your validation checks actually work",
+   "aie-testing-ai-code"
+  ],
+  [
+   "do you write unit tests for your code",
+   "iv-automated-testing|aie-testing-ai-code"
+  ],
+  [
+   "walk me through your deployment pipeline",
+   "aie-deployment"
+  ],
+  [
+   "how do you ship code changes to a live ai app",
+   "aie-deployment"
+  ],
+  [
+   "what went wrong the first time you deployed to azure",
+   "aie-deployment|tech-azure"
+  ],
+  [
+   "what does a good api for an llm backed tool look like",
+   "aie-api-app-design"
+  ],
+  [
+   "how did you organize the pages of your streamlit app",
+   "aie-api-app-design"
+  ],
+  [
+   "how do you design endpoints so the app still works when the model is down",
+   "aie-api-app-design"
+  ],
+  [
+   "how do you stop one pipeline stage breaking another",
+   "aie-data-contracts|rims-pipeline"
+  ],
+  [
+   "how would you design the table every stage of a pipeline writes to",
+   "aie-data-contracts"
+  ],
+  [
+   "how do you make sure outputs keep the same shape every run",
+   "aie-data-contracts"
+  ],
+  [
+   "how do you handle a pandas job that is too slow",
+   "aie-python-performance"
+  ],
+  [
+   "how do you cut memory use in a data pipeline",
+   "aie-python-performance"
+  ],
+  [
+   "how have you made a slow pipeline faster",
+   "aie-python-performance|iv-optimisation-examples"
+  ],
+  [
+   "what triggers rebuilding a vector index",
+   "aie-reembedding"
+  ],
+  [
+   "how do you handle switching to a new embedding model",
+   "aie-reembedding"
+  ],
+  [
+   "which embedding models have you used",
+   "iv-embedding-model-choices|aie-reembedding"
+  ],
+  [
+   "have you worked with gpu clusters or only single cards",
+   "aie-scaling-honest"
+  ],
+  [
+   "can you run inference on multiple gpus",
+   "aie-scaling-honest"
+  ],
+  [
+   "have you used kubernetes",
+   "tech-containers|aie-scaling-honest"
+  ],
+  [
+   "how do you structure branches and reviews",
+   "aie-git-workflow"
+  ],
+  [
+   "what does good pull request practice look like",
+   "aie-git-workflow"
+  ],
+  [
+   "how do you review ai generated code",
+   "iv-review-ai-generated-code|aie-git-workflow"
+  ],
+  [
+   "how would you strip personal data before sending text to a model",
+   "aie-pii-pipeline"
+  ],
+  [
+   "how do you combine rule based redaction with an llm",
+   "aie-pii-pipeline"
+  ],
+  [
+   "how do you handle sensitive data",
+   "iv-privacy-approach|aie-pii-pipeline"
+  ],
+  [
+   "how would you architect extraction of line items from scanned purchase orders",
+   "aie-design-doc-extraction"
+  ],
+  [
+   "walk me through building a pdf table extraction product",
+   "aie-design-doc-extraction"
+  ],
+  [
+   "design a system that reads scanned contracts and pulls out fields",
+   "aie-design-doc-extraction"
+  ],
+  [
+   "how would you match identical items sold by different suppliers",
+   "aie-design-product-search"
+  ],
+  [
+   "build a semantic product finder for a huge catalogue",
+   "aie-design-product-search"
+  ],
+  [
+   "design search for an online store with millions of items",
+   "aie-design-product-search"
+  ],
+  [
+   "your production model got worse overnight how do you find out why",
+   "aie-silent-degradation"
+  ],
+  [
+   "how would you troubleshoot declining quality in a live ai system",
+   "aie-silent-degradation"
+  ],
+  [
+   "how do you find failures that look like success",
+   "iv-story-silent-failures|aie-silent-degradation|aie-observability"
+  ],
+  [
+   "which serving engine do you prefer and why",
+   "aie-serving-choice"
+  ],
+  [
+   "would you run llama yourself or pay for an api",
+   "aie-serving-choice"
+  ],
+  [
+   "should we self host or use an api",
+   "ex-local-vs-hosted|aie-serving-choice"
+  ],
+  [
+   "how do you tell whether a slow job is limited by the gpu",
+   "aie-gpu-profiling"
+  ],
+  [
+   "what gpu metrics do you collect during inference",
+   "aie-gpu-profiling"
+  ],
+  [
+   "how would you check if a graphics card is underused",
+   "aie-gpu-profiling"
+  ],
+  [
+   "what limits do you put on ai tools that write code for you",
+   "aie-ai-coding-assistants"
+  ],
+  [
+   "how do you use claude code without exposing private documents",
+   "aie-ai-coding-assistants"
+  ],
+  [
+   "do you code with ai",
+   "tech-claude|aie-ai-coding-assistants"
+  ],
+  [
+   "how would you put together test cases for an llm feature",
+   "aie-eval-dataset"
+  ],
+  [
+   "what makes a benchmark set trustworthy",
+   "aie-eval-dataset"
+  ],
+  [
+   "how do you create ground truth for evaluating a model",
+   "aie-eval-dataset"
+  ],
+  [
+   "how do you design code so someone else can take it over",
+   "aie-maintainable-ai"
+  ],
+  [
+   "what do you do to keep ml code from becoming a mess",
+   "aie-maintainable-ai"
+  ],
+  [
+   "how do you hand over a system to another team",
+   "iv-handover-documentation|aie-maintainable-ai"
+  ],
+  [
+   "how did you get vllm working behind a firewall",
+   "aie-vllm-airgap"
+  ],
+  [
+   "what integration problems did you hit installing vllm",
+   "aie-vllm-airgap"
+  ],
+  [
+   "how do you deploy open models when the server cannot reach hugging face",
+   "aie-vllm-airgap"
+  ],
+  [
+   "what made you settle on 1,200 token chunks",
+   "aie-legislative-model-choice"
+  ],
+  [
+   "why did llama beat qwen and mistral in your evaluation",
+   "aie-legislative-model-choice|vit-llama-dominates"
+  ],
+  [
+   "why did you reverse the mistral recommendation",
+   "iv-story-changed-recommendation|aie-legislative-model-choice"
+  ],
+  [
+   "how do you build automated checks for llm generated sentences",
+   "aie-validator-design"
+  ],
+  [
+   "what do you test a new validation rule against",
+   "aie-validator-design"
+  ],
+  [
+   "how do you validate claims in generated content before release",
+   "aie-validator-design|skyrule-validator"
+  ],
+  [
+   "where are the scaling limits of your system",
+   "aie-scale-10x"
+  ],
+  [
+   "if traffic grew tenfold what would you fix first",
+   "aie-scale-10x"
+  ],
+  [
+   "what is the bottleneck when the workload multiplies",
+   "aie-scale-10x"
+  ],
+  [
+   "should llm calls happen at request time or ahead of time",
+   "aie-batch-vs-online"
+  ],
+  [
+   "how do you combine scheduled scoring with live scoring",
+   "aie-batch-vs-online"
+  ],
+  [
+   "what runs offline and what runs live in your platform",
+   "aie-batch-vs-online"
+  ],
+  [
+   "how do you decide how many output tokens to allow",
+   "aie-token-budgets"
+  ],
+  [
+   "what do you do when responses get cut off",
+   "aie-token-budgets"
+  ],
+  [
+   "how do thinking models behave under a fixed token limit",
+   "aie-token-budgets"
+  ],
+  [
+   "how do you check that a quality metric measures what you think",
+   "aie-proxy-metrics"
+  ],
+  [
+   "valid json but wrong answers how do you catch that",
+   "aie-proxy-metrics"
+  ],
+  [
+   "when is a parse success rate misleading",
+   "aie-proxy-metrics"
+  ],
+  [
+   "should we fine tune a model or just use retrieval",
+   "ex-fine-tuning"
+  ],
+  [
+   "is it better to prompt engineer or fine tune",
+   "ex-fine-tuning"
+  ],
+  [
+   "what chunking strategy do you use for very long documents",
+   "iv-chunking"
+  ],
+  [
+   "what is the lost in the middle problem in long context",
+   "iv-chunking"
+  ],
+  [
+   "how do you force an llm to return valid json",
+   "iv-structured-output"
+  ],
+  [
+   "how do you stop a model from inventing facts in its answers",
+   "iv-hallucination|aie-design-rag"
+  ],
+  [
+   "what does each llm request cost you",
+   "iv-cost|ex-cost-of-llms"
+  ],
+  [
+   "how do you calibrate a cosine cutoff for retrieval",
+   "iv-similarity-thresholds|iv-rag-evaluation"
+  ]
+ ],
+ "gaps": []
+}

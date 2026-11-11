@@ -1,0 +1,1539 @@
+{
+ "family": "con",
+ "cards": [
+  {
+   "id": "con-readiness-assessment",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "How I assess AI readiness: the 0 to 4 method",
+   "questions": [
+    "how do you assess an organization's ai readiness",
+    "walk me through your ai readiness assessment method",
+    "how do you score data readiness",
+    "what are the levels in your readiness framework",
+    "what deterministic checks do you run for readiness",
+    "how does she measure whether a warehouse is ready for ai",
+    "ai readiness assessment",
+    "what does ai-ready mean for a table",
+    "how do you decide which tables to fix first",
+    "how do you prioritize data documentation work",
+    "what signals feed the readiness score",
+    "how is the readiness score computed",
+    "which datasets should we document first before ai",
+    "how do you rank tables by readiness and value"
+   ],
+   "tags": [
+    "readiness",
+    "maturity",
+    "scorecard",
+    "datasets",
+    "tables",
+    "document",
+    "rank",
+    "owner",
+    "priority",
+    "levels"
+   ],
+   "links": [
+    {
+     "label": "Data readiness framework",
+     "url": "https://github.com/tayler-erbe/enterprise-data-readiness-framework"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "I score readiness per table, not per organization, because the question is whether people and AI tools can use each table correctly today. Every table gets one level: 0 undocumented, 1 described, 2 usable, 3 governed, 4 AI-ready, and it only reaches a level when it passes every check for that level and those below. Most checks are deterministic, so code scores them the same way every time: description coverage, placeholder or encoding-damage flags, a stated grain, documented keys and join paths, coded columns linked to a lookup, a named owner, usage rules such as validity windows, and for level 4, entry in the semantic layer plus verified questions that pass. Priority is value times gap, with value taken from query logs and dependent reports. The output is a ranked work list per owner. Status: research done, prototype scorer next.",
+   "sources": [
+    "repo:enterprise-data-readiness-framework/docs/framework.md",
+    "repo:enterprise-data-readiness-framework/docs/roadmap.md",
+    "repo:enterprise-data-readiness-framework/README.md"
+   ]
+  },
+  {
+   "id": "con-semantic-layer",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Should we put text-to-SQL or Copilot on our warehouse?",
+   "questions": [
+    "should we use text to sql on our data warehouse",
+    "will snowflake cortex analyst work on our data",
+    "should we turn on databricks genie or power bi copilot",
+    "why do ai query tools give wrong answers on enterprise data",
+    "what is a semantic layer and why does it matter for ai",
+    "how would you pilot a semantic layer",
+    "how do you measure whether a semantic layer improved accuracy",
+    "what has to exist before natural language querying works",
+    "how does she evaluate text to sql readiness",
+    "how would you make a warehouse usable by ai query tools",
+    "can we point an llm straight at our database",
+    "how do you prove documentation improves ai query accuracy",
+    "text to sql on a warehouse"
+   ],
+   "tags": [
+    "text to sql",
+    "warehouse",
+    "database",
+    "cortex",
+    "genie",
+    "copilot",
+    "semantic layer",
+    "verified questions",
+    "documenting",
+    "accuracy"
+   ],
+   "links": [
+    {
+     "label": "Data readiness framework",
+     "url": "https://github.com/tayler-erbe/enterprise-data-readiness-framework"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "Not until there's a semantic layer under it. These tools are only as accurate as the definitions, joins and verified questions they're given; the vendors' own numbers show it, with Databricks reporting 84.5% against 52.4% and Snowflake about twice the accuracy of a plain model once that layer exists. Most warehouses can't supply it because nobody has written down what each table means in machine-usable form. The pilot I'd run is one subject area, about 50 tables, 4 to 6 weeks: a readiness heatmap, owner work lists, a semantic layer for the top 10 to 15 tables, and 50 verified questions asked against raw tables and then with the layer. That before-and-after accuracy is the deciding number. I'd export through the Open Semantic Interchange where supported, so the layer isn't locked to one platform.",
+   "sources": [
+    "repo:enterprise-data-readiness-framework/README.md",
+    "repo:enterprise-data-readiness-framework/docs/roadmap.md",
+    "repo:enterprise-data-readiness-framework/docs/framework.md",
+    "kb:persona-overhyped"
+   ]
+  },
+  {
+   "id": "con-ai-drafted-metadata",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Can AI write our missing metadata?",
+   "questions": [
+    "can ai write the missing metadata for our tables",
+    "should we let an llm generate data dictionary descriptions",
+    "how reliable are ai generated column descriptions",
+    "what are the failure modes of ai drafted documentation",
+    "how do you use llms to document a data warehouse",
+    "do ai written descriptions improve text to sql",
+    "how does she handle ai drafted metadata",
+    "draft then confirm workflow",
+    "what does the model see when drafting metadata for sensitive tables",
+    "should ai generated descriptions be published to the catalog"
+   ],
+   "tags": [
+    "metadata",
+    "data dictionary",
+    "catalog",
+    "descriptions",
+    "steward",
+    "unconfirmed",
+    "privacy tiers",
+    "enrichment"
+   ],
+   "links": [
+    {
+     "label": "Data readiness framework",
+     "url": "https://github.com/tayler-erbe/enterprise-data-readiness-framework"
+    }
+   ],
+   "answer": "Yes as drafts, never as fact. In my framework AI does two jobs: it extracts rules hidden in prose descriptions into structured fields, and it drafts descriptions for undocumented tables from names, types, comments and lookups. Every draft is labeled AI-inferred, unconfirmed, carries a confidence note, goes to the owner's work list, and changes no score until a person confirms it. The research backs that split: grounded drafts were accepted by data stewards 87 to 88% of the time as is or with minor edits, while fully automatic descriptions recovered only about a third of the text-to-SQL gain human-written ones gave. What the model sees depends on the privacy tier: sample rows for open code tables, profile statistics for internal ones, metadata only for restricted tables, on owned hardware with open-weight models.",
+   "sources": [
+    "repo:enterprise-data-readiness-framework/docs/framework.md",
+    "repo:enterprise-data-readiness-framework/research/papers.md"
+   ]
+  },
+  {
+   "id": "con-use-case-scoring",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "How I score and rank AI use cases",
+   "questions": [
+    "how do you score ai use cases",
+    "what criteria do you use to rank ai initiatives",
+    "how do you identify high value ai use cases",
+    "which ai projects should be killed",
+    "how do you decide which ai projects to fund",
+    "how do you sequence an ai roadmap",
+    "use case prioritization",
+    "how does she rank a portfolio of ai agents",
+    "how do you decide what to build first",
+    "how do you weigh value against data readiness",
+    "what framework do you use to prioritize ai work",
+    "how do you order an ai roadmap",
+    "how do you choose among ai opportunities"
+   ],
+   "tags": [
+    "prioritization",
+    "framework",
+    "opportunities",
+    "roadmap",
+    "order",
+    "kill criteria",
+    "adoption cost",
+    "sequencing",
+    "rank",
+    "pick"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "Two gates first: real business impact and data that's ready. If either fails, the project doesn't start. After that I rank by value and cost of adoption, not technical interest. On the legislative platform I sequenced the roadmap that way: one intake mailbox covers two of the three most-cited stakeholder pain points, and the only behavior change it asks is adding an address to a CC line. For Sponsored Programs, I prepared a ranked portfolio of nine AI agents across the proposal-to-cash lifecycle, with governance rules: human review, deterministic financial calculations and field-level provenance. I also separate problems that get blurred together, like a payables FAQ chatbot and a procurement price-comparison tool, so effort goes to the right one. And I flag schema decisions that are free now and expensive to retrofit later.",
+   "sources": [
+    "kb:persona-kill-projects",
+    "work_history.md:268",
+    "work_history.md:269",
+    "work_history.md:270",
+    "work_history.md:977",
+    "work_history.md:733"
+   ]
+  },
+  {
+   "id": "con-build-vs-buy",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Build vs buy vs partner: how I decide",
+   "questions": [
+    "build vs buy",
+    "how do you decide whether to build or buy an ai solution",
+    "build versus buy versus partner",
+    "when would you recommend a vendor platform over a custom build",
+    "should we use an off the shelf tool or build in house",
+    "how did you evaluate preservation software for the archival pipeline",
+    "make or buy decision for ai",
+    "how does she structure a build or buy analysis",
+    "what should never be outsourced to a vendor",
+    "when is it worth building custom ai",
+    "should we license a product or develop our own",
+    "which components should come from vendors",
+    "what should a company keep in house as its own advantage"
+   ],
+   "tags": [
+    "vendor",
+    "license",
+    "develop",
+    "buy",
+    "proprietary",
+    "in-house",
+    "off-the-shelf",
+    "advantage",
+    "adopt",
+    "commodity"
+   ],
+   "links": [
+    {
+     "label": "Data readiness framework",
+     "url": "https://github.com/tayler-erbe/enterprise-data-readiness-framework"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Adopt what's mature, build only the gap, and keep whatever compounds in-house. On the archival pipeline I directed a rubric-scored evaluation of Siegfried, DROID, BitCurator, ExifTool, Apache Tika, Docling, the NSRL set, ePADD, Preservica and Archivematica, with the deliverable being what to adopt, what to skip and what still needed writing. The integration rule: professional tools plug into the pipeline so their updates arrive free, and where the University already holds a license we use it. The readiness research split the same way: data quality monitoring and OpenMetadata coverage metrics are mature, so adopt; the readiness ladder, owner work lists and local-model enrichment don't exist, so build. On the legislative platform, bill data is a commodity any vendor sells, but a model of the institution's own interpretive stance can't be bought.",
+   "sources": [
+    "work_history.md:887",
+    "work_history.md:888",
+    "repo:enterprise-data-readiness-framework/research/README.md",
+    "work_history.md:276"
+   ]
+  },
+  {
+   "id": "con-vision-api-vs-finetune",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Archival images: vendor moderation API, fine-tuning, or tuning what we have?",
+   "questions": [
+    "would you use a vendor vision api or fine tune a model for archival images",
+    "should we send our images to a cloud vision api",
+    "should we fine tune llava for sensitive image screening",
+    "google vision safesearch aws rekognition or azure content moderator",
+    "vendor apis versus fine tuning for image classification",
+    "how did you lay out the options for sensitive image flagging",
+    "why did semantic similarity beat llava",
+    "what was the cheapest next step for the image pipeline",
+    "how does she decide between hosted apis and local models for images",
+    "is a custom vision model worth training for an archive",
+    "would you use openai or another api to classify photos"
+   ],
+   "tags": [
+    "vision api",
+    "rekognition",
+    "safesearch",
+    "content moderator",
+    "fine-tuning",
+    "llava",
+    "photos",
+    "custom trained",
+    "openai",
+    "archives"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Choosing a local model",
+     "url": "choosing-local-models-guide.html"
+    }
+   ],
+   "answer": "I laid it out as a ladder by investment. Cheapest: tune the similarity threshold between 0.35 and 0.55 on a labeled validation set, since semantic similarity already beat LLaVA on historically contextual imagery and LLaVA added latency without accuracy gains. Middle: Google Vision SafeSearch, AWS Rekognition or Azure Content Moderator, the fastest path to reliable nudity and violence detection, with cost and procurement as the constraints. Top: fine-tune LLaVA on labeled University images for domain-specific content such as historical racialized performance and Indigenous cultural materials; most accurate long term, but it needs a labeled training set first. Two things narrowed it later. The production program's privacy position excludes hosted AI services, and 73% of flagged images were ambiguous, so a written appraisal policy and a gold set come before any training.",
+   "sources": [
+    "page:archival-image-intelligence.html",
+    "work_history.md:631",
+    "work_history.md:921",
+    "work_history.md:885"
+   ]
+  },
+  {
+   "id": "con-business-case-roi",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Building an ROI case with real numbers",
+   "questions": [
+    "how do you build an roi case for an ai platform",
+    "walk me through an roi analysis you wrote",
+    "how did you compute the payback threshold",
+    "how do you defend the roi of an ai project",
+    "how did you re-scope the proposal from 480 hours to 237",
+    "how do you make an roi estimate conservative",
+    "business case for ai",
+    "how does she calculate return on investment for ai",
+    "how do you quantify benefits that are hard to measure",
+    "what goes into your roi defense",
+    "payback period for an ai platform",
+    "how do you show leadership an ai platform pays for itself",
+    "how did you reduce project hours without losing features",
+    "how do you justify an ai investment to finance"
+   ],
+   "tags": [
+    "roi",
+    "payback",
+    "pays for itself",
+    "cfo",
+    "investment",
+    "hours",
+    "re-scope",
+    "break even",
+    "scrutiny",
+    "defensible"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I build it around a break-even threshold and then try to break it. For the Research Funding platform, 480 AITS hours at $47 an hour came to about $22,560 against a sponsored research base of roughly $1.5 billion a year, so 1x recovery needed a funding uplift of 0.0015%. I checked it against half the adoption, double the hours and a smaller base, and the threshold still sat comfortably below any plausible outcome. Later I re-scoped it to 237 hours across eight roles, under the 250-hour work-request threshold, by reusing the production ingestion pipeline, existing NLP outputs and the validated on-prem inference pattern, without cutting functionality. The workforce case used labor benchmarks: turnover at 50 to 60% of salary, about $269 per vacant workday, giving $155K to $169K a year in benefits, labeled as benchmarks, not guaranteed savings.",
+   "sources": [
+    "work_history.md:1001",
+    "work_history.md:1005",
+    "work_history.md:1006",
+    "work_history.md:1011",
+    "work_history.md:972",
+    "work_history.md:974",
+    "work_history.md:1074",
+    "work_history.md:1080",
+    "work_history.md:1083"
+   ]
+  },
+  {
+   "id": "con-savings-estimate",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Making a savings estimate defensible",
+   "questions": [
+    "how do you make a savings estimate defensible",
+    "how did you get from $317,583 to $161,564",
+    "why did the procurement savings drop by half",
+    "how do you avoid inflated roi numbers",
+    "what is pack size normalization",
+    "how did she validate the procurement savings figure",
+    "how do you compute unit price across vendors",
+    "why does exact matching come first in a savings analysis",
+    "what would increase the confirmed savings",
+    "how do you report a floor versus a ceiling",
+    "how do you make leadership trust a savings number",
+    "what correction changed the savings headline",
+    "how do you compare prices across different pack quantities"
+   ],
+   "tags": [
+    "savings",
+    "pack size",
+    "unit price",
+    "qsu",
+    "headline",
+    "trust",
+    "correction",
+    "floor",
+    "procurement",
+    "prices"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "Compute it from the most defensible matches, in code, normalized per unit. In procurement I matched 42,052 products as identical across four distributors on exact manufacturer plus part number, which is the tier I'd build a business case on. The raw spread looked like $317,583 in savings. Then I found the platform's qsu field, quantity sold as, populated on 6,068,599 of 6,068,888 rows; dividing price by qsu gave true unit prices and removed $156,019, 49.1% of the figure, as pack-size inflation. That left $161,564, which I present as the floor, not the ceiling. The model never does the arithmetic: the LLM's one job is equivalence judgment, returned as JSON, and savings are calculated deterministically in code. The next lever is data, not modeling: prior-year purchase quantities from the two catalog-only distributors could multiply the confirmed figure.",
+   "sources": [
+    "work_history.md:742",
+    "work_history.md:743",
+    "work_history.md:748",
+    "work_history.md:750",
+    "work_history.md:753",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "con-tco-cost-advice",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "On-prem versus cloud: total cost of ownership",
+   "questions": [
+    "on prem or cloud for ai workloads",
+    "how do you compare on premises and cloud costs for llms",
+    "total cost of ownership",
+    "tco for llm deployment",
+    "how did you decide on the app service tier",
+    "basic versus premium v3 app service",
+    "should we run inference on our own gpus or a managed service",
+    "how does she think about cloud versus on prem cost",
+    "what does the procurement tool cost to run in azure",
+    "how do you keep cloud costs down for an ai app",
+    "why a hybrid inference split",
+    "self host or pay for an llm api on cost",
+    "how did you justify the azure tier upgrade",
+    "what drives the running cost of an llm app"
+   ],
+   "tags": [
+    "tco",
+    "azure",
+    "upgrade",
+    "tier",
+    "operating cost",
+    "running cost",
+    "self host",
+    "api",
+    "hybrid",
+    "cheaper"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "I split by workload shape. On the legislative platform, heavy batch inference runs on institution-owned GPU hardware at no marginal cost, and managed Azure OpenAI with gpt-4o-mini handles low-latency in-app requests, with results cached per bill and prompt so each pair is scored once. For the web tier I wrote a cost and scaling analysis of Basic against Premium v3: the app has a memory-bound ML startup profile, and on Basic it showed a crash loop, semantic search failing under memory pressure and cold-start cache loss, so I recommended the upgrade with the cost laid out. For procurement, the designed production path is App Service B3, the 8 GB floor for the FAISS index, plus Blob Storage and gpt-4o-mini, estimated at about $77 a month. What I haven't measured: GPU purchase cost against a hosted service, and I say so in the document evaluation.",
+   "sources": [
+    "work_history.md:246",
+    "work_history.md:157",
+    "work_history.md:165",
+    "work_history.md:172",
+    "work_history.md:253",
+    "work_history.md:764",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "con-hardware-advice",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Sizing hardware: measure before buying",
+   "questions": [
+    "should we buy more gpus for ai",
+    "how do you advise on gpu purchases",
+    "do we need new hardware to run llms",
+    "what can a single l4 run",
+    "when is it time to upgrade from an l4 to an a100",
+    "how did you decide not to request hardware",
+    "how do you tell if the gpu is the bottleneck",
+    "hardware advice for llm inference",
+    "how does she size infrastructure for a client",
+    "what upgrade paths did you give leadership",
+    "would a bigger gpu make it faster",
+    "what should we check before buying a gpu",
+    "how do you know if more gpu will help",
+    "when would an a100 be worth recommending",
+    "why was the gpu mostly idle"
+   ],
+   "tags": [
+    "gpu",
+    "bigger gpu",
+    "buy",
+    "faster",
+    "speed up",
+    "l4",
+    "a100",
+    "vram",
+    "utilization",
+    "serving stack"
+   ],
+   "links": [
+    {
+     "label": "GPU throughput evaluation",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "vLLM model evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    }
+   ],
+   "answer": "Measure first, and check the serving layer before the card. Our server has one L4 with 23 GB of VRAM and 62 GB of RAM: 7B to 14B models run at full speed, 20B to 30B models fit quantized, and 70B-class is out. I took the position that hardware shouldn't be requested on principle; candidates that fit run a roughly 500-bill test first, since a well-prompted 14B with a strong parser often beats a poorly controlled 70B. The upgrade paths were a second L4, an A100 80GB only if 14B to 30B prove insufficient, or on-demand cloud GPU. The archival images showed why: under Ollama throughput sat flat near 9 images a minute with the GPU at 28 to 31%, so a faster card would have recovered nothing. vLLM on the same L4 reached 55.4 images a minute, a 6.22x speedup.",
+   "sources": [
+    "work_history.md:1114",
+    "work_history.md:1119",
+    "work_history.md:1120",
+    "work_history.md:1121",
+    "work_history.md:639",
+    "work_history.md:640",
+    "work_history.md:642"
+   ]
+  },
+  {
+   "id": "con-eval-decision-rule",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Running a model evaluation that a client can act on",
+   "questions": [
+    "how do you run a model evaluation for a client decision",
+    "how do you make a model comparison decision ready",
+    "what is a pre registered decision rule",
+    "how do you know a model really beat the baseline",
+    "how do you make an evaluation reproducible across machines",
+    "what is a conformance contract",
+    "how does she design a model bake off",
+    "what is the minimum useful improvement",
+    "why confirm on fresh cases",
+    "how do you stop an evaluation from being tuned to pass",
+    "how do you make benchmark results comparable across teams or machines",
+    "how do you prevent cherry picking in a model comparison",
+    "how do you design an evaluation nobody can dispute",
+    "how do you merge evaluation results from two machines"
+   ],
+   "tags": [
+    "evaluation",
+    "comparison",
+    "comparable",
+    "cherry picking",
+    "pre-registration",
+    "decision rule",
+    "confirmation",
+    "conformance",
+    "benchmark runs",
+    "dispute"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "Choosing a local model",
+     "url": "choosing-local-models-guide.html"
+    }
+   ],
+   "answer": "I write the decision rule before the run: the primary measure, the minimum useful improvement, the interval method, and what a pass earns. The interval's lower bound has to clear the minimum, and a screening win earns a confirmation on fresh cases, not adoption. In the document intelligence evaluation, vote3 was pre-registered as the single confirmatory method before the held-out run, and failed or truncated answers stayed in the denominator as zero. Results came from two machines, so I wrote a conformance contract: SHA-256 fingerprints of the frozen case manifests, every request, the client settings and the scorers, and a merge tool that refuses any export that fails. 40,975 scored rows merged. The outcome was routing per task for the prototype, explicitly not production approval.",
+   "sources": [
+    "page:choosing-local-models-guide.html",
+    "work_history.md:939",
+    "work_history.md:940",
+    "work_history.md:947"
+   ]
+  },
+  {
+   "id": "con-vendor-claims",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Evaluating vendor and model claims",
+   "questions": [
+    "how do you evaluate vendor claims about ai",
+    "do you trust ai vendor benchmarks",
+    "how do you test a vendor's accuracy numbers",
+    "a vendor says their model is the best, how do you verify",
+    "what do you do when a vendor model underperforms in testing",
+    "how did you reassess nemotron",
+    "how do you compare a hosted model against local options fairly",
+    "how does she check whether a vendor model really performs",
+    "how do you avoid rejecting a model too early",
+    "vendor due diligence for llms",
+    "how do you verify a supplier's accuracy claim",
+    "how do you check an ai sales pitch",
+    "how do you give a model a fair test before rejecting it",
+    "how do you test a hosted model fairly"
+   ],
+   "tags": [
+    "vendor",
+    "supplier",
+    "hosted",
+    "claims",
+    "verify",
+    "fair",
+    "reassessment",
+    "configuration",
+    "benchmarks",
+    "writing off"
+   ],
+   "links": [
+    {
+     "label": "Choosing a local model",
+     "url": "choosing-local-models-guide.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "Vendor numbers and benchmark scores build a shortlist; the client's own task decides. In my generation screen, the model with the highest IFEval score of the four completed, 0.900, accepted 0 of 20 task groups, while the lowest scorer accepted the most. It cuts the other way too. A deployed Nemotron configuration scored 1 of 12 and 5 of 12 on a contract diagnostic against 5 and 9 for local Qwen3 32B, with truncation at a 600-token budget. I treated that as a configuration question: 192 requests across eight configurations, one mechanism at a time. Budget alone changed nothing; reasoning on at 16,000 tokens lifted it, and on 60 fresh documents strict correctness went from 3 to 13 of 30 on CUAD. That supports enabling reasoning, not a cross-model winner.",
+   "sources": [
+    "page:choosing-local-models-guide.html",
+    "work_history.md:951",
+    "work_history.md:952"
+   ]
+  },
+  {
+   "id": "con-platform-evaluation",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Platform evaluation and migration planning",
+   "questions": [
+    "how do you evaluate analytics platforms",
+    "how do you plan a platform migration",
+    "knime sas watson evaluation",
+    "why go straight from knime to python",
+    "have you evaluated ibm watson",
+    "how do you plan a migration without breaking production",
+    "migration planning",
+    "how do you decide whether to rebuild or migrate a workflow",
+    "how does she verify a migrated system matches the old one",
+    "what is an output contract",
+    "how do you move a team off an old analytics tool",
+    "how do you prove a rebuilt workflow matches the original",
+    "re-platform or port"
+   ],
+   "tags": [
+    "migration",
+    "platform",
+    "old tool",
+    "re-platform",
+    "port",
+    "rebuilt",
+    "same results",
+    "parity",
+    "knime",
+    "legacy"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Evaluate against the work the platform carries, and plan so nothing is built twice. I've led evaluations and migration planning across KNIME, SAS, IBM Watson and open-source stacks, and I'm moving legacy KNIME workflows to version-controlled Python for reproducibility. When the retirement report was lost with its KNIME environment, the usual argument for staying, preserving working logic, no longer applied, so I went straight to Python. Acceptance was exact reconciliation against past output, but only after checking the HR tables were effective-dated and reconstructable. I froze the spec as a machine-checked contract, 4 files, 21 sheets, 436 columns, validated on every run. For the archival pipeline, Office automation can't run on the Linux GPU server, so porting to Tika and headless LibreOffice became a prerequisite with output parity checked.",
+   "sources": [
+    "work_history.md:1334",
+    "work_history.md:55",
+    "work_history.md:780",
+    "work_history.md:781",
+    "work_history.md:782",
+    "work_history.md:890",
+    "work_history.md:1415"
+   ]
+  },
+  {
+   "id": "con-rag-vs-finetune",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Prompting, retrieval or fine-tuning: which lever first?",
+   "questions": [
+    "when should we fine tune a model",
+    "rag versus fine tuning",
+    "what order do you try prompting retrieval and fine tuning",
+    "is fine tuning worth it for our use case",
+    "how do you decide if retrieval will fix the problem",
+    "how does she decide when to fine tune",
+    "what are the risks of fine tuning on automatic checks",
+    "can we fine tune on one gpu",
+    "how would you validate a fine tuned model",
+    "retrieval or training to fix wrong facts",
+    "what to try before changing model weights",
+    "when should we train a model on our own examples"
+   ],
+   "tags": [
+    "fine-tuning",
+    "rag",
+    "retrieval",
+    "training",
+    "weights",
+    "lora",
+    "qlora",
+    "prompting",
+    "levers",
+    "customize"
+   ],
+   "links": [
+    {
+     "label": "Choosing a local model",
+     "url": "choosing-local-models-guide.html"
+    }
+   ],
+   "answer": "Cheapest lever first. Fix the instructions and checks, including contradictions between rules; switch or route models when a candidate passes a pre-registered rule and its confirmation; add retrieval or tools when the gap is missing or changing knowledge; fine-tune only when the best prompt and model still miss the bar and you can produce enough representative examples. In one screen a prompt review found a rule banning the phrase each other while another rule required it, and every model was tested under that conflict. LoRA or QLoRA can make some 27B runs feasible on a 32 GB card, but measure it. The main risk is a model that learns the checks instead of the job, so split before training, hold out cases, and run a regression suite on what the checks can't see.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "con-should-we-use-llm",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Should we use an LLM or an agent for this?",
+   "questions": [
+    "should we use an llm for this",
+    "should we use an ai agent for this process",
+    "how do you answer should we use x for y",
+    "can we just give the data to an ai assistant to find savings",
+    "when does a task need an llm",
+    "how do you decide where the llm sits in a pipeline",
+    "should we search millions of rows with an llm",
+    "how does she decide whether a problem needs generative ai",
+    "should an agent process every file",
+    "where should the model go in a three tier design",
+    "a client wants generative ai in every workflow",
+    "should an agent handle every document",
+    "how much of the pipeline should the llm touch",
+    "is an agent the right choice for a process"
+   ],
+   "tags": [
+    "llm",
+    "agent",
+    "every workflow",
+    "search",
+    "genai",
+    "funnel",
+    "cheaper",
+    "design question",
+    "pipeline",
+    "rpa"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "I ask what in the task actually needs interpretation. Same-shape input and output is a workflow or plain code; ambiguous judgment on fuzzy inputs may need a model. Then I put the model last and narrow. In procurement the instinct is to hand the data to an assistant and ask it to find savings. That fails, because the data quality problem comes first. The design was exact manufacturer and part-number match in under 2 ms, then bge-small embeddings and FAISS narrowing 6 million rows to about 44 candidates in 75 to 110 ms, then qwen2.5:7b judging equivalence on that short list. For an archival appraisal agent, I put agentic loops at folder and collection level, not per file, since an agent loop costs many calls where a classification costs one: hours versus weeks at corpus scale.",
+   "sources": [
+    "kb:persona-agent-vs-workflow",
+    "work_history.md:739",
+    "work_history.md:748",
+    "work_history.md:749",
+    "work_history.md:750",
+    "work_history.md:922"
+   ]
+  },
+  {
+   "id": "con-deterministic-first",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "When rules beat ML",
+   "questions": [
+    "when does a deterministic solution beat ai",
+    "when would you recommend rules instead of a model",
+    "why did you replace ai chart descriptions with rules",
+    "when is a rules based system better than an llm",
+    "rules based versus machine learning",
+    "why did you retire the macro economic features",
+    "should a model extract facts that are already in file headers",
+    "deterministic versus generative",
+    "how does she decide to use plain code instead of ai",
+    "how do you handle huge outlier documents",
+    "when is simple logic better than machine learning",
+    "when does a client not need an llm",
+    "why remove market indicator features",
+    "should a model extract facts from file headers"
+   ],
+   "tags": [
+    "deterministic",
+    "rules",
+    "hand written",
+    "safer",
+    "no llm",
+    "computed",
+    "file header",
+    "features",
+    "plain code",
+    "heuristics"
+   ],
+   "links": [
+    {
+     "label": "Charts without guesswork",
+     "url": "https://github.com/tayler-erbe/semantic-visualizations-for-access"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "When the answer can be computed, compute it. My first accessible chart descriptions used AI; I rebuilt them so every description is calculated by rules from the chart's own data, because AI still gets chart facts wrong, about 1 in 5 numbers in one 2026 study. On the archival pipeline, facts already in a file header are phrased by a model, never discovered by one. In the retirement model I retired the unemployment, DJI and NASDAQ features on structure alone: they vary by time but not by person, so they can't change anyone's rank in a ranking report, and with 21 annual anchors the model can dress a year effect up as a market effect. And about 5% of bills were amendment-heavy outliers over 100,000 tokens; the fix was preprocessing them to the latest changes.",
+   "sources": [
+    "repo:semantic-visualizations-for-access/README.md",
+    "work_history.md:869",
+    "work_history.md:805",
+    "kb:persona-outlier-bills"
+   ]
+  },
+  {
+   "id": "con-governance-risk",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "What goes into an AI risk assessment",
+   "questions": [
+    "what goes into an ai risk assessment",
+    "what is in your ai risk register",
+    "how do you do an ai risk assessment",
+    "what governance controls do you put on ai systems",
+    "how do you govern machine generated outputs",
+    "ai governance framework",
+    "what risks did you design around on the legislative platform",
+    "what does a master data inventory contain",
+    "how does she document ai risk for a governance committee",
+    "model risk management",
+    "what is your governance position on the archival pipeline",
+    "how do you identify risks in an ai deployment",
+    "what documents does a governance board review"
+   ],
+   "tags": [
+    "governance",
+    "risk register",
+    "risks",
+    "identify",
+    "board",
+    "documents",
+    "data inventory",
+    "controls",
+    "audit",
+    "deployment"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "A risk register, a data inventory and controls that live in code. My governance proposals cover resource constraints, long-term support, adoption, LLM output quality, privacy and security, vendor concerns and accessibility, each with a mitigation tied to existing resources. The master data inventory classifies every source by sensitivity, documents every field the AI layer reads, and states the data boundary. On the archival pipeline the position is enforced in code: sensitivity outranks ranking, nothing is deleted, exclusion is a manifest decision, and machine proposals are distinguished from human judgments in an append-only log. On the legislative platform I designed around a specific risk: an AI misstating a named colleague's position inside a FOIA-able system, so users can correct their own characterization before others see it.",
+   "sources": [
+    "work_history.md:999",
+    "work_history.md:1014",
+    "work_history.md:1015",
+    "work_history.md:855",
+    "work_history.md:852",
+    "work_history.md:868",
+    "work_history.md:225"
+   ]
+  },
+  {
+   "id": "con-people-scoring-controls",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Controls for models that score people",
+   "questions": [
+    "what controls do you put on models that score employees",
+    "how do you handle fairness in hr models",
+    "should an ai model rank employees",
+    "how do you keep a retirement risk score from being misused",
+    "can the output be labeled projected retirements",
+    "is a model score a probability",
+    "how does she design ai that affects people's careers",
+    "fairness review for workforce analytics",
+    "how do you stop stakeholders reading a ranking as a forecast",
+    "what decisions should never be fully automated",
+    "why not show a rank as a percentage",
+    "how do you make an employee risk model safe",
+    "should hr flag employees likely to retire with a model"
+   ],
+   "tags": [
+    "fairness",
+    "employees",
+    "hr",
+    "rank",
+    "percentage",
+    "probability",
+    "risk bands",
+    "calibration",
+    "human oversight",
+    "safe"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "Treat them as decision support with layered review, and never let a ranking pose as a probability. Hiring, firing and anything affecting someone's livelihood keep a human accountable. The workforce plan put a fairness check across demographic groups before any individual-level output could be used, with interpretable heuristic fallbacks. On the retirement report, the column labeled probability had never been one: the top bin predicted 42.5% where 5.6% retired. I replaced it with two observed-rate bands, Elevated at 6.3% and Lower at 0.4%, with cut points frozen on earlier years and tested on later ones; a three-band version collapsed prospectively. The output may not be called projected retirements, and whether to rank resemblance or forecast departures is the business's policy choice.",
+   "sources": [
+    "kb:persona-augmentation",
+    "work_history.md:1055",
+    "work_history.md:797",
+    "work_history.md:799",
+    "work_history.md:800",
+    "work_history.md:826",
+    "work_history.md:828"
+   ]
+  },
+  {
+   "id": "con-privacy-compliance",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Privacy and compliance design: FERPA, HIPAA and PII",
+   "questions": [
+    "how do you design ai around ferpa and hipaa",
+    "can we use ai on student records",
+    "how do you keep pii safe in an ai system",
+    "what is a data boundary statement",
+    "should sensitive documents go to a hosted llm",
+    "what does the model see under each privacy tier",
+    "how do you handle health or student data with llms",
+    "privacy by design for ai",
+    "does running locally make a system compliant",
+    "how does she handle regulated data in ai pipelines",
+    "is self hosting enough for privacy compliance",
+    "what does a privacy office need for an ai system"
+   ],
+   "tags": [
+    "ferpa",
+    "hipaa",
+    "pii",
+    "privacy office",
+    "self hosting",
+    "privacy tiers",
+    "data boundary",
+    "compliance",
+    "regulated",
+    "nagpra"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Email archiving",
+     "url": "email-archiving.html"
+    }
+   ],
+   "answer": "Write the data boundary first, then design so the model never sees more than its tier allows. For the Research Funding platform the boundary statement said no new source queries, no extended access, and no document content leaving the on-prem environment for inference. My readiness framework tiers what a model sees: sample rows for open tables, profile statistics for internal ones, metadata only for restricted tables like medical or financial aid, nothing for excluded ones. The image taxonomy maps each category to its basis: FERPA for student records, HIPAA for health records, NAGPRA for human remains. For email, Presidio replaces entities with typed placeholders before a local model summarizes. Local processing is an architectural option; access control, encryption, logging and retention still have to be implemented and verified.",
+   "sources": [
+    "work_history.md:989",
+    "work_history.md:1015",
+    "repo:enterprise-data-readiness-framework/docs/framework.md",
+    "page:archival-image-intelligence.html",
+    "work_history.md:597",
+    "work_history.md:602",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "con-accuracy-bar",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Is it accurate enough to run unattended?",
+   "questions": [
+    "how do you decide if an ai system is accurate enough",
+    "how do you set an acceptance threshold for extraction",
+    "when can an ai pipeline run without human review",
+    "what accuracy bar do you use for numbers",
+    "how accurate will the ai be on our documents",
+    "why is your document pipeline review assisted",
+    "how do you communicate an ai system's error rate",
+    "what does it mean that no model passed promotion",
+    "how does she decide between unattended and human review",
+    "how do you handle hallucination risk in a client deployment",
+    "what accuracy can we expect on our documents",
+    "what threshold lets you remove human review",
+    "how do you tell a client extraction is not production ready",
+    "can numeric extraction run without a human checking"
+   ],
+   "tags": [
+    "accuracy",
+    "expect",
+    "threshold",
+    "human review",
+    "unattended",
+    "production ready",
+    "numeric recall",
+    "acceptance target",
+    "hallucination",
+    "promotion"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "Charts without guesswork",
+     "url": "https://github.com/tayler-erbe/semantic-visualizations-for-access"
+    }
+   ],
+   "answer": "Set the bar before the run, then report against it. For document intelligence the acceptance target for numbers was 99% recall. Every model recovered 96.5% of the numbers in prose crops, and the best table route reached 97.4%, so numeric extraction is review-assisted, not unattended, and the first round recorded that no model or pipeline passed promotion. A small model matching a large one was published next to that gap. Layout masking raised word F1 from 0.814 to 0.881 but cut numeric recall from 0.872 to 0.694, so it stayed experimental. Institutional readiness is gated on a human-labeled set of about 100 documents, 20 double-labeled. For users, I state accuracy as decisions: the bill model is right on about 75% of the bills it flags.",
+   "sources": [
+    "work_history.md:943",
+    "work_history.md:945",
+    "work_history.md:946",
+    "work_history.md:957",
+    "work_history.md:960",
+    "page:document-intelligence-evaluation.html",
+    "work_history.md:194"
+   ]
+  },
+  {
+   "id": "con-pilot-acceptance",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing a pilot with acceptance criteria",
+   "questions": [
+    "how do you design an ai pilot",
+    "what acceptance criteria do you set for a pilot",
+    "how do you structure a proof of concept",
+    "how do you decide when a pilot is ready to scale",
+    "how long should an ai pilot be",
+    "pilot design",
+    "what gates do you put between proof of concept and production",
+    "how does she define done for a pilot",
+    "should a pilot use synthetic data",
+    "what is a canary or test recipient gate",
+    "how do you write exit criteria for a pilot",
+    "what earns a proof of concept more funding",
+    "how do you test an ai idea small first",
+    "what prerequisites come before building triage"
+   ],
+   "tags": [
+    "pilot",
+    "poc",
+    "trial",
+    "exit criteria",
+    "acceptance criteria",
+    "funding",
+    "small",
+    "gate",
+    "pass condition",
+    "synthetic data"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Data readiness framework",
+     "url": "https://github.com/tayler-erbe/enterprise-data-readiness-framework"
+    }
+   ],
+   "answer": "Each pilot proves one thing the next stage depends on, with a pass condition written down first. The readiness pilot is one subject area, about 50 tables, 4 to 6 weeks, and passes only if the same 50 verified questions score better with the semantic layer than against raw tables. The workforce proof of concept ran on synthetic data mirroring the warehouse HR tables, so the pipeline was demonstrated before connecting to production data, which is planned under governance review. On the archival build, a written appraisal policy and a 300 to 500 file gold set are prerequisites for triage, and the free-filter reduction rate has to be measured, not assumed. The legislative digest was held behind a dry-run flag and test-recipient redirect until scoring was verified.",
+   "sources": [
+    "repo:enterprise-data-readiness-framework/docs/roadmap.md",
+    "page:hr-workforce-analytics.html",
+    "work_history.md:885",
+    "work_history.md:881",
+    "work_history.md:163",
+    "work_history.md:231"
+   ]
+  },
+  {
+   "id": "con-measuring-success",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Choosing KPIs for an AI initiative",
+   "questions": [
+    "what kpis do you use for ai projects",
+    "how do you measure the success of an ai initiative",
+    "success metrics for ai",
+    "why not report auc to leadership",
+    "how do you measure what a prediction is worth",
+    "what metrics prove a semantic layer worked",
+    "how does she define success criteria for a platform",
+    "kpis",
+    "how do you measure business impact of a model",
+    "what success measures were in the governance proposal",
+    "what to track after an ai launch",
+    "what metric to show executives instead of auc",
+    "how do you know the ai investment was worth it"
+   ],
+   "tags": [
+    "kpi",
+    "metrics",
+    "track",
+    "launch",
+    "executives",
+    "auc",
+    "worth",
+    "precision",
+    "lead time",
+    "success criteria"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Data readiness framework",
+     "url": "https://github.com/tayler-erbe/enterprise-data-readiness-framework"
+    }
+   ],
+   "answer": "Measure value in use, defined before the build. For bill prediction, AUC wasn't the KPI; I built a validation method around the precision of each call and the days of warning before the floor vote, with safeguards against counting predictions made after the outcome was known. On the held-out 103rd General Assembly that's 75.1% precision and 76.2% recall at a 0.70 threshold, median 21 days' warning. For the Research Funding platform, success meant sponsor approval of the feature schema, validated samples before full-corpus processing, and repeatable scheduled processing after launch. For data readiness, it's verified-question accuracy before and after the semantic layer. On the retirement report I report precision and recall at every candidate threshold, because flag volume is a policy choice.",
+   "sources": [
+    "work_history.md:188",
+    "work_history.md:194",
+    "work_history.md:975",
+    "repo:enterprise-data-readiness-framework/docs/framework.md",
+    "work_history.md:796"
+   ]
+  },
+  {
+   "id": "con-estimating-effort",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Estimating effort, timelines and compute",
+   "questions": [
+    "how do you estimate effort for an ai project",
+    "how long will an ai project take",
+    "how do you estimate compute time for a large job",
+    "how do you build a project estimate in hours",
+    "how did you project 40 days for the email archive",
+    "effort estimation",
+    "how do you estimate staffing for an ai build",
+    "how do you handle uncertainty in estimates",
+    "how does she size a project by phase and role",
+    "what speedups did you project for the email pipeline",
+    "how many weeks does a machine learning build take",
+    "how do you predict batch llm runtime",
+    "how do you produce an hours estimate",
+    "how long will a gpu batch job take"
+   ],
+   "tags": [
+    "estimate",
+    "weeks",
+    "hours",
+    "runtime",
+    "predict",
+    "timeline",
+    "staffing",
+    "throughput",
+    "projection",
+    "batch"
+   ],
+   "links": [
+    {
+     "label": "Email archiving",
+     "url": "email-archiving.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "By phase and role for people, from measured rates for compute, with assumptions marked provisional. The Research Funding plan had hours per activity across four phases, 80, 160, 140 and 100, for 480 hours over three months; the re-scope was 237 hours over about ten weeks, 138 of them development. For compute I time a real sample: the email pipeline measured 347.80 seconds per 10 rows, which projects to about 966 hours for 100,000 messages. I traced the cause, Ollama CLI reloading the model on every call, and listed options with estimates: persistent serving 5 to 10x, parallelism 4 to 8x, cloud APIs 100x or more. The legislative model choice was framed against an 11,673-bill, roughly 155-hour run, so the evaluation was sized to that risk.",
+   "sources": [
+    "work_history.md:993",
+    "work_history.md:970",
+    "work_history.md:974",
+    "work_history.md:606",
+    "work_history.md:607",
+    "work_history.md:608",
+    "work_history.md:609",
+    "work_history.md:279",
+    "work_history.md:895"
+   ]
+  },
+  {
+   "id": "con-feature-schema-scoping",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Deciding what an LLM should extract",
+   "questions": [
+    "how do you decide what fields an llm should extract",
+    "should the llm extract data that is already structured",
+    "how did you scope the research funding feature schema",
+    "herds or an llm taxonomy",
+    "how do you choose between an existing taxonomy and an llm taxonomy",
+    "how do you design an extraction schema with a stakeholder",
+    "how does she avoid paying for redundant llm inference",
+    "how do you scope new data sources up front",
+    "how do you lock the schema before the build",
+    "where should llm outputs be stored relative to existing tables",
+    "should the model extract every field",
+    "reuse a standard classification or create new categories",
+    "how to avoid duplicating database columns with llm extraction"
+   ],
+   "tags": [
+    "schema",
+    "fields",
+    "extract",
+    "agree",
+    "business owner",
+    "taxonomy",
+    "herds",
+    "duplicating",
+    "database",
+    "structured"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Lock the schema with the stakeholder before the build, and never pay for inference to reproduce a column that exists. For the Research Funding platform, every candidate feature was marked already structured, unknown, or not, and whether the LLM should extract it, yes, no or hybrid. Sponsor mapping was deterministic with LLM-assisted matching only for the long tail. On taxonomy I gave three options, anchor on HERDS, an independent LLM taxonomy, or a hybrid, and recommended the hybrid: HERDS as the broad anchor already classifying proposals, LLM themes as finer leaves, reconciled with sentence embeddings. LLM outputs were designed into sibling tables joined on FILE_DATA_ID, with model and prompt version per row. I also put ten candidate data sources on the table at design time, since adding them later costs more.",
+   "sources": [
+    "work_history.md:1025",
+    "work_history.md:1020",
+    "work_history.md:1027",
+    "work_history.md:985",
+    "work_history.md:1018",
+    "work_history.md:1026"
+   ]
+  }
+ ],
+ "add_questions": {
+  "persona-open-vs-closed": [
+   "should our company use open source or closed ai models",
+   "open weight or proprietary llm for sensitive data",
+   "would you recommend an open source model to a client"
+  ]
+ },
+ "replace_answers": {},
+ "tests": [
+  [
+   "what makes a table count as level 4 in your scheme",
+   "con-readiness-assessment"
+  ],
+  [
+   "how do you audit a warehouse before an ai project starts",
+   "con-readiness-assessment|ex-data-readiness"
+  ],
+  [
+   "which documentation gaps get fixed first and why",
+   "con-readiness-assessment"
+  ],
+  [
+   "our bi vendor is pitching natural language queries, should we turn it on",
+   "con-semantic-layer|ex-data-readiness"
+  ],
+  [
+   "why does genie get our joins wrong",
+   "con-semantic-layer|ex-data-readiness|persona-schema"
+  ],
+  [
+   "what would a semantic layer pilot look like in practice",
+   "con-semantic-layer|con-pilot-acceptance"
+  ],
+  [
+   "can a model fill in our missing column descriptions",
+   "con-ai-drafted-metadata"
+  ],
+  [
+   "what share of llm drafted descriptions do stewards accept",
+   "con-ai-drafted-metadata"
+  ],
+  [
+   "who confirms metadata that a model writes",
+   "con-ai-drafted-metadata"
+  ],
+  [
+   "how do you choose which ai projects go first",
+   "con-use-case-scoring|persona-first-use-case"
+  ],
+  [
+   "what gates must an ai idea pass before you work on it",
+   "con-use-case-scoring|persona-kill-projects"
+  ],
+  [
+   "how did you rank the nine agents for sponsored programs",
+   "con-use-case-scoring"
+  ],
+  [
+   "when should we just purchase a tool instead of coding one",
+   "con-build-vs-buy"
+  ],
+  [
+   "which preservation tools did you evaluate for the archive",
+   "con-build-vs-buy"
+  ],
+  [
+   "what part of an ai system should stay proprietary to us",
+   "con-build-vs-buy"
+  ],
+  [
+   "would you send archive photos to openai for classification",
+   "con-vision-api-vs-finetune|con-privacy-compliance|aii-third-party-apis"
+  ],
+  [
+   "did llava beat embedding similarity for sensitive images",
+   "con-vision-api-vs-finetune|aii-next-steps"
+  ],
+  [
+   "is a custom trained vision model worth it for the archives",
+   "con-vision-api-vs-finetune|aii-third-party-apis"
+  ],
+  [
+   "what was the break even uplift for the research funding platform",
+   "con-business-case-roi"
+  ],
+  [
+   "how did the workforce benefits estimate get built",
+   "con-business-case-roi"
+  ],
+  [
+   "how do you make an roi argument hold up under scrutiny",
+   "con-business-case-roi|iv-earn-stakeholder-trust"
+  ],
+  [
+   "why is $161,564 the number you report",
+   "con-savings-estimate|ex-cost-savings"
+  ],
+  [
+   "how do you stop pack sizes from distorting a price comparison",
+   "con-savings-estimate|procure-problem|procurement"
+  ],
+  [
+   "is the procurement savings figure a minimum or maximum",
+   "con-savings-estimate"
+  ],
+  [
+   "when does running models in house beat managed cloud inference on cost",
+   "con-tco-cost-advice|ex-local-vs-hosted"
+  ],
+  [
+   "what did the app service tier analysis conclude",
+   "con-tco-cost-advice|fde-hosting-sizing"
+  ],
+  [
+   "what would the procurement system cost per month on azure",
+   "con-tco-cost-advice|ex-cost-savings|procure-stack"
+  ],
+  [
+   "is one l4 enough for our llm workload",
+   "con-hardware-advice|ex-capacity-planning|aie-slo-capacity"
+  ],
+  [
+   "when would you recommend an a100",
+   "con-hardware-advice|ex-capacity-planning"
+  ],
+  [
+   "why was the gpu only thirty percent busy",
+   "con-hardware-advice|ait-hardware-not-bottleneck"
+  ],
+  [
+   "what do you write down before running a model comparison",
+   "con-eval-decision-rule|ex-honest-evaluation"
+  ],
+  [
+   "how do you merge results from a laptop and a desktop run",
+   "con-eval-decision-rule"
+  ],
+  [
+   "what does a screening win earn in your process",
+   "con-eval-decision-rule|ex-choosing-model-process"
+  ],
+  [
+   "do leaderboard scores predict how a model does on our task",
+   "con-vendor-claims|ex-public-benchmarks"
+  ],
+  [
+   "why did nemotron score so badly at first",
+   "con-vendor-claims"
+  ],
+  [
+   "how do you test a hosted model before writing it off",
+   "con-vendor-claims"
+  ],
+  [
+   "why skip rebuilding the workflow in knime first",
+   "con-platform-evaluation|index-knime|fde-legacy-recovery"
+  ],
+  [
+   "what platforms have you compared for analytics work",
+   "con-platform-evaluation"
+  ],
+  [
+   "how do you check a migration reproduces the old outputs",
+   "con-platform-evaluation"
+  ],
+  [
+   "when is it time to train on our own examples",
+   "con-rag-vs-finetune|ex-fine-tuning"
+  ],
+  [
+   "what usually fixes a model before fine tuning does",
+   "con-rag-vs-finetune|ex-fine-tuning"
+  ],
+  [
+   "what goes wrong when you tune a model on automated checks",
+   "con-rag-vs-finetune|ex-fine-tuning"
+  ],
+  [
+   "is an agent the right tool for this process",
+   "con-should-we-use-llm|persona-agent-vs-workflow"
+  ],
+  [
+   "where does the language model belong in a search pipeline",
+   "con-should-we-use-llm|ex-where-ai-adds-value"
+  ],
+  [
+   "should every file go through an agent loop",
+   "con-should-we-use-llm"
+  ],
+  [
+   "why compute chart descriptions instead of generating them",
+   "con-deterministic-first|ex-where-ai-adds-value|ex-accessibility"
+  ],
+  [
+   "when is a hand written rule safer than a model",
+   "con-deterministic-first|ex-where-ai-adds-value"
+  ],
+  [
+   "should a model read metadata from a file header",
+   "con-deterministic-first"
+  ],
+  [
+   "what belongs in an ai risk register",
+   "con-governance-risk"
+  ],
+  [
+   "how do you document risk for a governance submission",
+   "con-governance-risk|ex-governance-docs"
+  ],
+  [
+   "what governance rules are enforced in the archival code",
+   "con-governance-risk|fde-data-boundary"
+  ],
+  [
+   "should hr use a model to flag who might retire",
+   "con-people-scoring-controls"
+  ],
+  [
+   "how do you build fairness into workforce predictions",
+   "con-people-scoring-controls|hr-equity"
+  ],
+  [
+   "why replace the probability column with risk bands",
+   "con-people-scoring-controls|iv-story-retirement-rebuild|ads-calibration"
+  ],
+  [
+   "how do you design an ai pipeline for student records",
+   "con-privacy-compliance|ex-privacy"
+  ],
+  [
+   "what does a model see for restricted tables",
+   "con-privacy-compliance|con-ai-drafted-metadata"
+  ],
+  [
+   "does local inference make us compliant",
+   "con-privacy-compliance"
+  ],
+  [
+   "can extraction of numbers run without anyone checking",
+   "con-accuracy-bar|ex-uncertainty"
+  ],
+  [
+   "why did layout masking stay experimental",
+   "con-accuracy-bar|aie-multimodal-pipeline"
+  ],
+  [
+   "what bar does numeric extraction have to clear",
+   "con-accuracy-bar"
+  ],
+  [
+   "what pass condition would you set for a pilot",
+   "con-pilot-acceptance"
+  ],
+  [
+   "how do you stage a go live so nothing reaches real users too early",
+   "con-pilot-acceptance|fde-safe-rollout"
+  ],
+  [
+   "what has to exist before triage development starts",
+   "con-pilot-acceptance"
+  ],
+  [
+   "how do you show a prediction model is useful to the business",
+   "con-measuring-success|iv-explain-non-technical|ads-measuring-model-impact"
+  ],
+  [
+   "what success measures did you define for the research funding platform",
+   "con-measuring-success"
+  ],
+  [
+   "what kpi would you use for a semantic layer",
+   "con-measuring-success|con-semantic-layer"
+  ],
+  [
+   "how do you size the timeline of an ai project by phase",
+   "con-estimating-effort"
+  ],
+  [
+   "how did you estimate the email archive processing time",
+   "con-estimating-effort|ea-scaling-estimates|email-performance"
+  ],
+  [
+   "how do you forecast how long a gpu batch will run",
+   "con-estimating-effort"
+  ],
+  [
+   "how do you choose which fields an extraction model should produce",
+   "con-feature-schema-scoping"
+  ],
+  [
+   "why a hybrid of herds and llm themes",
+   "con-feature-schema-scoping"
+  ],
+  [
+   "how do you agree an extraction schema with the business owner",
+   "con-feature-schema-scoping"
+  ],
+  [
+   "what would you tell a client deciding between proprietary and open models",
+   "persona-open-vs-closed|ex-local-vs-hosted"
+  ],
+  [
+   "how would you help a client pick the right llm for their use case",
+   "ex-choosing-model-process|iv-choose-between-models|con-eval-decision-rule"
+  ]
+ ],
+ "gaps": [
+  "Independent consulting (does she take freelance or contract work): no public source; no card.",
+  "Behavioural topics dropped per the 11 Nov update: why consulting, presenting to executives, telling a client no, hype management as a story, discovery, deliverables, change management, scope creep, translation, credibility, recommendation that changed/was reversed, researching a domain, frameworks, legal stakeholders, capability transfer, resistant stakeholders, where AI creates value, advising a team starting with genAI. Technical content from several was folded into the remaining cards.",
+  "Open vs closed advice: routed to persona-open-vs-closed via add_questions.",
+  "Model selection process: covered by ex-choosing-model-process and iv-choose-between-models; ex- cards cannot take add_questions (merge.py patches only kb_base), so tests accept them.",
+  "Fine-tuning of an archival image model: never done; con-vision-api-vs-finetune says so via the lever order and the gold-set prerequisite.",
+  "HIPAA: only a taxonomy grounding and health-related content handling; no covered-entity compliance work claimed.",
+  "SAS and IBM Watson: sources only say she led evaluations including them (work_history.md:1334, 1415); no findings available.",
+  "On-prem GPU purchase cost versus hosted API total cost: never measured (stated in the document intelligence page); the TCO card says so."
+ ]
+}

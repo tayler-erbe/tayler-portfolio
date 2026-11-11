@@ -1,0 +1,1903 @@
+{
+ "family": "ade",
+ "cards": [
+  {
+   "id": "ade-anti-join-cdc",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Incremental change detection with an anti-join",
+   "questions": [
+    "how do you detect new records when the source has no change feed",
+    "how does the proposal pipeline know which documents are new",
+    "anti-join change detection",
+    "how do you do incremental loads without cdc",
+    "why compute the delta in python instead of a database link",
+    "why not use a dblink between the two oracle databases",
+    "what happens when there are no new documents",
+    "how does she find only the net-new attachments",
+    "incremental processing of only new ids",
+    "delta as the work queue",
+    "change data capture without a change feed",
+    "how do you avoid reprocessing the whole corpus every night",
+    "how do you find records that haven't been processed yet",
+    "how does each run pick up only unprocessed attachments"
+   ],
+   "tags": [
+    "unprocessed",
+    "already processed",
+    "cdc",
+    "delta",
+    "anti-join",
+    "set difference",
+    "work queue",
+    "dblink",
+    "security zone",
+    "net-new"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "GitHub: proposal pipeline",
+     "url": "https://github.com/tayler-erbe/research-proposal-processing"
+    }
+   ],
+   "answer": "When a source gives me no change feed, I compute the delta myself and make the delta the work queue. For research proposals, the pipeline queries Kuali for every current proposal and award attachment ID, queries the destination tables for IDs already processed, and anti-joins the two sets in Python. Only net-new document IDs move on to BLOB retrieval. I chose that over a database link because the two Oracle databases sit in different security zones, and a cross-zone dblink is operationally expensive and policy-sensitive. Diffing in Python keeps the boundary intact and lets the pipeline run from anywhere with credentials to both sides. An empty delta is a normal outcome: the stage logs SUCCESS and exits cleanly, so the monitor doesn't mistake a quiet day for a failure. The limit is that an ID anti-join sees new records, not edits; where content changes matter, as with legislation, I compare content hashes instead.",
+   "sources": [
+    "work_history.md:411-413",
+    "page:research-proposal-processing.html",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ade-idempotent-writes",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Rollback SQL and post-write verification on database writes",
+   "questions": [
+    "what does the auto generated rollback sql look like",
+    "how do you verify rows were actually written to the database",
+    "post-write row count verification",
+    "how do you undo a bad write to a production table",
+    "how is the writeback to oracle made safe to rerun",
+    "insert where not exists or merge",
+    "how do you guard a truncate in production",
+    "what happens if fewer rows land than you attempted",
+    "how does she make database writes reversible",
+    "rollback plan for a pipeline write",
+    "dry run and confirm production flags",
+    "how do you make writeback idempotent"
+   ],
+   "tags": [
+    "rollback",
+    "writeback",
+    "merge",
+    "truncate",
+    "dry_run",
+    "row count",
+    "runtimeerror",
+    "file_data_id",
+    "undo"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "GitHub: proposal pipeline",
+     "url": "https://github.com/tayler-erbe/research-proposal-processing"
+    }
+   ],
+   "answer": "I make a write safe to repeat and cheap to undo before I worry about anything else. In the research proposals pipeline every insert into the Oracle staging tables is INSERT WHERE NOT EXISTS or a MERGE, so re-running an already processed batch is a no-op. After each write the pipeline queries the destination database and compares the confirmed row count with the count it attempted; a shortfall raises a RuntimeError inside the run, not in a dashboard a week later. Every run prints its rollback SQL to the log: DELETE statements carrying the exact FILE_DATA_ID list and an UPDATE_TIMESTAMP filter, so recovery doesn't require reading code. The one operation that can't be idempotent, the production TRUNCATE, is double-gated behind dry_run=False and confirm_production=True, both set explicitly. That's a little ceremony per run, and it's cheap next to a half-written table.",
+   "sources": [
+    "work_history.md:439-443",
+    "page:research-proposal-processing.html"
+   ]
+  },
+  {
+   "id": "ade-point-in-time-extract",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Point-in-time extraction from the data warehouse",
+   "questions": [
+    "how do you build a historical training set from mutable warehouse tables",
+    "effective dated reads",
+    "point in time snapshots from the edw",
+    "how did you build the retirement training panel",
+    "as of date extraction from hr tables",
+    "why not read the current row for historical examples",
+    "anchor dates and label windows",
+    "what is anchor safety",
+    "how does she avoid corrupting history with current data",
+    "person year panel construction",
+    "time based train test split on panel data",
+    "warehouse data definition problems you found",
+    "how do you keep current records from leaking into historical training rows",
+    "what check aborts the run when the training panel looks broken"
+   ],
+   "tags": [
+    "leakage",
+    "guardrail",
+    "abort",
+    "effective dating",
+    "slowly changing",
+    "edw",
+    "warehouse",
+    "snapshot",
+    "yearly"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "If source rows are mutable, I read them as of the date I'm modeling, never as of today. Rebuilding the retirement risk forecast, I built a training panel the original never had: annual point-in-time snapshots from 2005 onward, each anchor capturing exactly who was active that day and labeling them forward twelve months. That came to 4,891 person-year rows across 622 people at a 2.4% base rate. Every anchor uses strict effective-dated reads; current rows read as of today would have corrupted every historical example while looking correct. The last usable anchor sits twelve months before the run date, so a missing retirement is a true negative, not an unfinished window. Splits are by anchor year only. SQL lives in version-controlled files with shared cohort CTEs, and the run aborts if the panel returns fewer than 30 positives. I also logged a defect for the warehouse team: two incompatible service-year definitions.",
+   "sources": [
+    "work_history.md:780",
+    "work_history.md:786-794"
+   ]
+  },
+  {
+   "id": "ade-rate-limited-api",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Design: incremental loads from a rate-limited API",
+   "questions": [
+    "how would you design incremental loads from an api with rate limits",
+    "how do you handle api rate limits in ingestion",
+    "what do you do when an api returns 429",
+    "polite polling design",
+    "how many api calls does the legislative run make",
+    "per host backoff",
+    "how do you avoid hammering a source",
+    "how does she ingest from rate limited sources",
+    "when do you save the cursor or hash in an incremental load",
+    "backoff that froze the loop",
+    "designing an api ingestion job that respects quotas",
+    "throttling and retry design for api pulls",
+    "how would you schedule a daily pull against an api with request caps",
+    "how do you keep a poller or scraper from being blocked by a site"
+   ],
+   "tags": [
+    "requests per minute",
+    "blocked",
+    "scraper",
+    "poller",
+    "vendor api",
+    "rate limit",
+    "429",
+    "403",
+    "backoff",
+    "throttle"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "I'd let the cheapest possible call decide whether any expensive call happens. On the legislative pipeline that's one LegiScan hash check per run, then downloads only for sessions whose hash changed: 2 to 4 calls on a normal day instead of a full pull. Second, politeness belongs in the client, not in each caller. In my personal Drop Radar project, which polls about 40 sources, each source has its own interval, hosts are spaced, and a 403 or 429 triggers per-host backoff. A bug taught me the third rule: back off by skipping the blocked host, never by sleeping, because a sleeping backoff froze the whole loop for up to an hour. Fourth, persist the hash or cursor only after the data has landed, so a failed run retries rather than skips. On a shared LLM server I also rate-limited calls and gated the full run behind a five-case sanity check.",
+   "sources": [
+    "work_history.md:381",
+    "work_history.md:1429",
+    "work_history.md:1198",
+    "work_history.md:1208",
+    "work_history.md:735",
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "ade-manifest-design",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Manifest design: one row per path, pointers and derived fields",
+   "questions": [
+    "walk me through the rims manifest schema",
+    "why one row per file path instead of one row per unique file",
+    "why keep embeddings and text out of the manifest",
+    "how wide is the manifest",
+    "why is the layer field derived",
+    "partitioned parquet manifest",
+    "what does null mean in a stage status column",
+    "how do you make the work queue a query",
+    "what bugs did schema testing find",
+    "nan is truthy bug",
+    "dataframe fragmentation from adding columns one at a time",
+    "how did she design the archival pipeline manifest",
+    "why keep vectors and text as references outside the table",
+    "how does a stage know which files are still waiting for it",
+    "the central table every stage reads and writes"
+   ],
+   "tags": [
+    "references",
+    "central table",
+    "manifest",
+    "116 columns",
+    "pointer",
+    "status column",
+    "derived field",
+    "fragmentation",
+    "nan",
+    "parquet"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "The RIMS manifest is one row per file path, 116 columns, written as partitioned Parquet, and a few choices in it do most of the work. One row per path, never collapsed: a file in three places is three archival facts, so deduplication is recorded in duplicate_of and duplicate_count instead of deleting rows. Per-stage status columns are null until that stage runs, so the queue is a query (WHERE s03_status IS NULL) and 'not reached' differs from 'found nothing'. Extracted text and embeddings live outside as pointers, because 384-dimension vectors at five million rows is about 7.5 GB in a column almost nothing reads. The layer field is recomputed from decision columns, never typed in, so it can't drift. Schema testing caught two bugs I kept as teaching examples: NaN is truthy, which put every row in layer 0, and adding a hundred columns one at a time fragments a DataFrame.",
+   "sources": [
+    "work_history.md:870-878",
+    "work_history.md:1409"
+   ]
+  },
+  {
+   "id": "ade-file-identity-dedup",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "File identity, deduplication and quarantine instead of delete",
+   "questions": [
+    "how do you deduplicate files in an archive",
+    "blake2b file uid",
+    "content addressing in your pipeline",
+    "why quarantine instead of deleting files",
+    "nsrl known file filtering",
+    "what files get filtered before anything expensive runs",
+    "how do you make re-crawls produce stable ids",
+    "free filter tier",
+    "how much does the filter tier remove",
+    "how does she handle duplicate files without losing provenance",
+    "zero byte files lock files and thumbs.db",
+    "exact duplicate detection by hash",
+    "do you delete files the pipeline excludes",
+    "skipping system files and known software before processing"
+   ],
+   "tags": [
+    "system files",
+    "exclude",
+    "dedup",
+    "hash",
+    "blake2b",
+    "sha-256",
+    "sha-1",
+    "nsrl",
+    "quarantine",
+    "disposal"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I separate identity from content, and I record deduplication as a decision rather than a deletion. Each manifest row gets a deterministic file_uid, a blake2b hash over the source identifier plus the normalized path, so re-crawling an accession yields identical keys and successive manifest generations join cleanly. Content duplicates are found by hash, but the rows stay and carry duplicate_of and duplicate_count. The free-filter tier drops NSRL known files, zero-byte files, lock files, .DS_Store and Thumbs.db, caches, node_modules and .git internals before anything expensive runs. Exclusion is written into the manifest, never applied as a removal, so every disposal is auditable and reversible, which is what retention obligations require. The 40 to 70% reduction from that tier is a working estimate in an explicit assumptions table, and I required it to be measured on a complete drive before anyone sizes hardware on it.",
+   "sources": [
+    "work_history.md:868",
+    "work_history.md:872-873",
+    "work_history.md:880-881",
+    "work_history.md:895",
+    "work_history.md:1409"
+   ]
+  },
+  {
+   "id": "ade-preservation-tools",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Format identification: adopting preservation tools instead of rebuilding them",
+   "questions": [
+    "how do you identify file formats",
+    "siegfried and droid",
+    "have you used bitcurator",
+    "pronom format identification",
+    "build or adopt digital preservation tools",
+    "which preservation tools did you evaluate",
+    "apache tika exiftool docling evaluation",
+    "why not write your own format detector",
+    "archivematica and preservica",
+    "how does she decide between existing tools and custom code in the archive pipeline",
+    "forensic disk imaging",
+    "source adapter for drives shares and box"
+   ],
+   "tags": [
+    "format id",
+    "pronom",
+    "droid",
+    "siegfried",
+    "bitcurator",
+    "exiftool",
+    "tika",
+    "epadd",
+    "archivematica",
+    "preservation"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "My default is to plug proven preservation software into the pipeline rather than write a first-pass layer myself. For the RIMS build I directed a structured evaluation of Siegfried and DROID for PRONOM format identification, BitCurator for write-blocked forensic acquisition and disk imaging, ExifTool, Apache Tika, Docling, the NSRL Reference Data Set, ePADD, Preservica and Archivematica, scored against a rubric. The deliverable was a recommendation: what to adopt, what to skip, and what genuinely remains to be written. The reasoning is maintenance. If professional software sits behind an adapter, its updates arrive for free, and where the university already holds a license we use it. The stage boundary makes that possible: stage 01 takes a root path and walks it, whether it's a mounted drive, an SMB share, a forensic image or a Box folder. Facts in a file header are read, never inferred by a model.",
+   "sources": [
+    "work_history.md:887-889",
+    "work_history.md:893",
+    "work_history.md:869",
+    "work_history.md:1409"
+   ]
+  },
+  {
+   "id": "ade-heterogeneous-extraction",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Text extraction across 15+ file types",
+   "questions": [
+    "how do you extract text from many different file types",
+    "15 file types extraction",
+    "legacy doc xls ppt extraction",
+    "why move from win32 com to tika and libreoffice",
+    "headless libreoffice conversion",
+    "what happens to corrupted or unknown files",
+    "how do you route files to extractors",
+    "office automation on a linux server",
+    "how did she handle obscure file extensions",
+    "text extraction fallbacks",
+    "output parity when porting an extractor",
+    "mixed format archive extraction"
+   ],
+   "tags": [
+    "extraction",
+    "tika",
+    "libreoffice",
+    "com automation",
+    "pypdf2",
+    "python-docx",
+    "striprtf",
+    "fallback",
+    "routing",
+    "formats"
+   ],
+   "links": [
+    {
+     "label": "File archiving and search",
+     "url": "file-archiving-smart-search.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I route every file to an extractor by type and make sure nothing is silently dropped. The legacy file archive covered 15+ types: PyPDF2 for PDFs, python-docx for .docx, BeautifulSoup for HTML, striprtf for RTF, zipfile for archives, a local vision model for images, and column structure for spreadsheets. Corrupted and custom-extension files fell back to filename cleanup, extension inference and folder-level summarization. The weak point was legacy Office: .doc, .xls and .ppt went through Win32 COM automation, which can't run on Colab or the Linux GPU server, can't be parallelized safely, and hangs on malformed files. So for the unified pipeline, porting that path to Apache Tika plus headless LibreOffice is a prerequisite rather than cleanup, with output parity checked against the proof of concept on the same files. Every extraction loop checkpoints per batch and resumes without redoing finished files.",
+   "sources": [
+    "work_history.md:657-672",
+    "work_history.md:684",
+    "work_history.md:890",
+    "page:file-archiving-smart-search.html"
+   ]
+  },
+  {
+   "id": "ade-bad-records",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Handling bad records without dropping them",
+   "questions": [
+    "what do you do with records that fail to parse",
+    "do you drop bad rows",
+    "how do you handle misnamed files",
+    "magic byte validation",
+    "rejection bucket with reason codes",
+    "documents with too little text",
+    "how do you handle null blobs",
+    "poison pill record",
+    "what happens when one record fails every night",
+    "how does she deal with malformed input",
+    "dead letter handling in a batch pipeline",
+    "skipped documents still flow to the output",
+    "where do unprocessable records end up",
+    "a corrupt input fails the job every night"
+   ],
+   "tags": [
+    "corrupt",
+    "unprocessable",
+    "failing record",
+    "bad records",
+    "malformed",
+    "dead letter",
+    "reject",
+    "reason code",
+    "magic bytes",
+    "skipped"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "A bad record should become a counted, labeled row, not an exception that kills the batch or a row that quietly disappears. In the research proposals pipeline a four-byte magic-number check catches DOCX files misnamed as .pdf, and they go to a rejection bucket with a reason code. Null BLOBs are counted against the expected total and logged as warnings. Documents with fewer than 40 valid words after cleaning are marked SUCCESSFULLY_PARSED=N and still flow to the output beside the parsed ones. The monitor applies the same rule to itself: an unreadable log becomes a synthetic LOG_READ_FAILED record that can alert. The opposite failure needs a guard too. One malformed bill failed, was never written, reappeared as a delta and failed again for six days; the remedy I specified is a length guard plus a retry ceiling that parks it. That's a dead-letter queue by another name.",
+   "sources": [
+    "work_history.md:417",
+    "work_history.md:430",
+    "work_history.md:475",
+    "work_history.md:250",
+    "page:research-proposal-processing.html"
+   ]
+  },
+  {
+   "id": "ade-email-ingestion",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Email ingestion at scale, and what I'd change",
+   "questions": [
+    "how did you ingest 44,677 email files",
+    "parsing eml files at scale",
+    "pst to eml conversion",
+    "how do you parse mime emails",
+    "exploding email threads into messages",
+    "how did 44,677 files become 79,676 messages",
+    "what would you change about the email ingestion",
+    "why was email summarization so slow",
+    "email header extraction with regex",
+    "folder hierarchy as metadata",
+    "how did she build the email ingestion stage",
+    "email pipeline data engineering",
+    "how did you get decades of outlook mail into a dataframe",
+    "one row per message from reply chains"
+   ],
+   "tags": [
+    "outlook",
+    "reply chain",
+    "dataframe",
+    "mailbox",
+    "eml",
+    "pst",
+    "readpst",
+    "mime",
+    "email",
+    "thread"
+   ],
+   "links": [
+    {
+     "label": "Email archiving",
+     "url": "email-archiving.html"
+    }
+   ],
+   "answer": "The email archive was a parsing problem first and an AI problem second. A 20-year PST export became 44,677 .eml files with readpst, keeping the folder hierarchy. I walked the tree with os.walk, parsed single-part and multipart MIME with Python's email library, kept text/plain parts with a UTF-8 fallback, and stored the folder path as queryable Folder_N columns. Splitting threads on the Original Message delimiter exploded the files into 79,676 message rows, and regex header extraction gave each From, Sent, To, Cc and Subject. Output was written in batches to CSV, resuming from the existing row count. What I'd change: summarization ran at about 34.78 seconds per email because the Ollama CLI reloaded the model on every call, so 100,000 rows projected to roughly 40 days. I'd serve the model persistently over HTTP and key resume on a row ID hash rather than a row count.",
+   "sources": [
+    "work_history.md:569",
+    "work_history.md:572-579",
+    "work_history.md:598",
+    "work_history.md:606-609",
+    "work_history.md:912",
+    "page:email-archiving.html"
+   ]
+  },
+  {
+   "id": "ade-logging-contract",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "The logging contract behind pipeline monitoring",
+   "questions": [
+    "what columns are in your pipeline log schema",
+    "explain the logging contract",
+    "pipeline_start and pipeline_end sentinel rows",
+    "why do all pipelines log the same schema",
+    "what is upstream_failed",
+    "run id shared across stages",
+    "how do you onboard a new pipeline to monitoring",
+    "structured parquet logs",
+    "what does a pipeline log row contain",
+    "how does she standardize pipeline logging",
+    "logging when a process is killed mid run",
+    "log schema design for etl",
+    "how do you tell the root failure from stages skipped because of it",
+    "how do you know a run started but never finished"
+   ],
+   "tags": [
+    "root cause",
+    "cascade",
+    "skipped",
+    "log schema",
+    "run_id",
+    "sentinel",
+    "parquet",
+    "upstream_failed",
+    "traceback",
+    "event_time"
+   ],
+   "links": [
+    {
+     "label": "Medium: pipelines failing silently",
+     "url": "https://medium.com/@tayler.erbe/i-got-tired-of-pipelines-failing-silently-so-i-built-my-own-monitoring-system-e8224fe22387"
+    },
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    }
+   ],
+   "answer": "Centralized monitoring only works if every pipeline logs the same way, so the log schema is a contract. Each pipeline writes a Parquet log with workflow_name, a run_id shared by every stage of one execution, script_name and script_order, a status (SUCCESS, FAILED, UPSTREAM_FAILED, PIPELINE_START, PIPELINE_END), an is_success flag, UTC event times and durations, and on failure the error type, message, traceback and failure stage. The START and END sentinel rows make silence detectable: a run with a start and no end is incomplete. UPSTREAM_FAILED separates the root cause from the cascade it caused, so one failure doesn't read as five. The retirement pipeline rewrites its log after every event, so a process killed mid-run still records the attempt. Onboarding a new pipeline is one path added to a config list, with no new monitor code.",
+   "sources": [
+    "work_history.md:472",
+    "work_history.md:476-485",
+    "work_history.md:489",
+    "work_history.md:502",
+    "work_history.md:818"
+   ]
+  },
+  {
+   "id": "ade-silence-severity",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Silence thresholds and alert severity tiers",
+   "questions": [
+    "how do you decide which pipeline failures send an alert",
+    "severity tiers critical warning info",
+    "silence threshold for pipelines",
+    "48 hour silence rule",
+    "2400 hour threshold for quarterly jobs",
+    "how do you avoid alert fatigue",
+    "how does the monitor detect a missed run",
+    "why sendmail instead of smtp",
+    "how often does the monitor run",
+    "per pipeline silence override",
+    "how does she alert on pipelines that stopped running",
+    "monitoring jobs with different cadences",
+    "how do you notice a job that never ran",
+    "stopping a quarterly job from alerting constantly",
+    "which failures send an email"
+   ],
+   "tags": [
+    "never ran",
+    "missed schedule",
+    "paging",
+    "email alert",
+    "alert fatigue",
+    "severity",
+    "silence",
+    "threshold",
+    "quarterly",
+    "sendmail"
+   ],
+   "links": [
+    {
+     "label": "Medium: pipelines failing silently",
+     "url": "https://medium.com/@tayler.erbe/i-got-tired-of-pipelines-failing-silently-so-i-built-my-own-monitoring-system-e8224fe22387"
+    }
+   ],
+   "answer": "Alerts are tiered by status and age so only actionable failures interrupt anyone. CRITICAL is a FAILED or LOG_READ_FAILED record in the last 24 hours, WARNING is a failure within 7 days, INFO is anything older plus UPSTREAM_FAILED cascade rows. Only CRITICAL sends email, but that email carries the WARNING and INFO rows as context. Silence is detected separately from failure: the monitor computes hours since each pipeline's last successful run and flags any past its threshold. The standard is 48 hours. A quarterly pipeline would breach that two days after every run and then alert for 89 days, so the retirement pipeline has a per-pipeline override of 2,400 hours, with matching Grafana targets. Mail goes through the server's local sendmail, because outbound SMTP isn't available there. The monitor itself runs on cron every 30 to 60 minutes.",
+   "sources": [
+    "work_history.md:469",
+    "work_history.md:473",
+    "work_history.md:487-498",
+    "work_history.md:817"
+   ]
+  },
+  {
+   "id": "ade-monitor-audit",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Auditing the monitor: drift, rosters and unverified alerts",
+   "questions": [
+    "have you audited your own monitoring",
+    "monitoring configuration drift",
+    "how do you know your alerts are actually delivered",
+    "pipeline roster declared or inferred",
+    "what was wrong with the health check",
+    "how can a monitor report green on a failing job",
+    "unfalsifiable success signal",
+    "documented schedule didn't match the actual run time",
+    "what did the july 2026 reliability audit find",
+    "how does she check the monitoring itself",
+    "alerting that never sent",
+    "monitor thresholds never imported",
+    "what did reviewing your health checks turn up"
+   ],
+   "tags": [
+    "review",
+    "audit",
+    "drift",
+    "roster",
+    "alert delivery",
+    "return value",
+    "false green",
+    "health check",
+    "reliability"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Medium: pipelines failing silently",
+     "url": "https://medium.com/@tayler.erbe/i-got-tired-of-pipelines-failing-silently-so-i-built-my-own-monitoring-system-e8224fe22387"
+    }
+   ],
+   "answer": "A monitor is a pipeline too, so I audit it like one. My July 2026 audit of the legislative pipeline found four things. Stages emitted a success record while producing zero output, so a failing job reported green; the fix I specified makes completion require a non-zero output count. The roster was inferred from whatever happened to log, and the two most broken stages weren't in it; it should be declared. Configuration had drifted: a documented 6 AM schedule for a job that ran at 4 AM, thresholds defined but never imported. And delivery was never verified: the code handed mail to the transport without checking the return value, and sender and recipient domains differed, so a month of 'alerts sent' could have been alerts never delivered. In my Drop Radar personal project, a watcher raises an alarm when no source has been checked for 30 minutes; it fired 34 minutes into a real outage.",
+   "sources": [
+    "work_history.md:249-252",
+    "work_history.md:381",
+    "work_history.md:1207",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ade-orchestration-choice",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Scheduling choices: cron, JupyterHub Scheduler and timer Functions, not Airflow",
+   "questions": [
+    "why didn't you use airflow",
+    "why cron instead of an orchestrator",
+    "how are your pipelines scheduled",
+    "jupyterhub scheduler for production",
+    "timer triggered azure functions",
+    "how do you handle dependencies between pipeline stages",
+    "when would you adopt a dag orchestrator",
+    "why build monitoring instead of adopting airflow",
+    "what scheduler runs the quarterly report",
+    "how does she orchestrate pipelines",
+    "decoupling jobs so one failure doesn't take down another",
+    "orchestration trade-offs"
+   ],
+   "tags": [
+    "airflow",
+    "dag",
+    "cron",
+    "scheduler",
+    "orchestrator",
+    "azure functions",
+    "timer trigger",
+    "dependencies",
+    "prefect",
+    "dagster"
+   ],
+   "links": [
+    {
+     "label": "Medium: pipelines failing silently",
+     "url": "https://medium.com/@tayler.erbe/i-got-tired-of-pipelines-failing-silently-so-i-built-my-own-monitoring-system-e8224fe22387"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I matched each scheduler to where the job runs and put the real investment into knowing whether jobs did their work. The proposals pipeline and the monitor run on cron; the retirement report runs on cron at 06:00 on the first day of each quarter; the daily legislative rescore runs on the JupyterHub Scheduler at 4 AM; weekly digests and nightly impact scoring are timer-triggered Azure Functions. I haven't run Airflow in production. As the one person productionalizing that server, the gap I felt was observability, so I built the alerting and run-tracking layer myself. Dependencies inside a pipeline are explicit stages under one logger, with cascade status, and I decouple jobs that shouldn't share fate: the bill investigator is separate so it can't take down nightly scoring, and heavy jobs moved off JupyterHub after an out-of-memory failure. If cross-pipeline dependencies multiplied, a DAG orchestrator is where I'd go.",
+   "sources": [
+    "work_history.md:54",
+    "work_history.md:148",
+    "work_history.md:154",
+    "work_history.md:207",
+    "work_history.md:237",
+    "work_history.md:398",
+    "work_history.md:465",
+    "work_history.md:469",
+    "work_history.md:811"
+   ]
+  },
+  {
+   "id": "ade-batch-vs-streaming",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Batch versus streaming ingestion",
+   "questions": [
+    "batch or streaming ingestion",
+    "when would you use streaming instead of batch",
+    "have you built real time ingestion",
+    "near real time data pipeline",
+    "websocket ingestion versus polling",
+    "how do you choose ingestion cadence",
+    "have you used kafka",
+    "event driven ingestion",
+    "arrival log latency measurement",
+    "does she build streaming pipelines",
+    "polling intervals per source",
+    "daily batch versus continuous ingestion",
+    "how did you measure alert latency from post to phone"
+   ],
+   "tags": [
+    "phone",
+    "alert latency",
+    "streaming",
+    "kafka",
+    "real time",
+    "latency",
+    "websocket",
+    "gateway",
+    "polling",
+    "cadence"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I pick the cadence from when the data stops being useful. Almost all my institutional work is batch: research proposals run on a schedule where 'nothing new' is a valid outcome, the legislative rescore runs daily, and the retirement report runs quarterly. Bills move over days and that report is read quarterly, so seconds buy nothing. My personal Drop Radar project is the opposite case: limited releases sell out in minutes, so it polls about 40 sources on per-source intervals that tighten inside known drop windows. Its Discord feed moved from 10-second REST polling to the official Gateway over a standard-library websocket with heartbeat, resume and dead-connection detection, so posts arrive in about a second, with polling as automatic fallback. An arrival log records each alert's upstream post, detection and send times. I haven't run Kafka or a managed streaming platform in production.",
+   "sources": [
+    "work_history.md:413",
+    "work_history.md:381",
+    "work_history.md:811",
+    "work_history.md:1198",
+    "work_history.md:1203",
+    "work_history.md:1207",
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "ade-backfills",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Backfills, catch-up and reprocessing",
+   "questions": [
+    "how do you run a backfill",
+    "how did you backfill nine legislative sessions",
+    "single command backfill runner",
+    "reprocessing after an outage",
+    "how did you catch up after the gpu driver failure",
+    "incremental rescoring by content hash",
+    "how do you reprocess only what changed",
+    "155 hour extraction run",
+    "how do you make a long backfill safe to interrupt",
+    "how does she handle catch-up after missed runs",
+    "historical reload of a corpus",
+    "11 night silent extraction failure",
+    "how would you reload years of history",
+    "the pipeline was down for days, how do you recover the missed data",
+    "rescoring only the records that changed"
+   ],
+   "tags": [
+    "reload",
+    "downtime",
+    "missed data",
+    "recover",
+    "backfill",
+    "catch-up",
+    "reprocess",
+    "content hash",
+    "rescore",
+    "outage"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "A backfill should be one command and safe to kill. For the legislative corpus I built a single-command session backfill runner, so each additional General Assembly session is one invocation rather than a hand-staged chain; four full sessions went through every stage with all artifacts verified in Azure. The extractor flushes in batches and can be killed and restarted without double-writing, which an 11,673-bill run of roughly 155 hours requires, and each evaluation configuration wrote to its own isolated path so runs couldn't share state. When extraction silently stopped for 11 nights after a kernel update disabled the GPU driver, I protected the catch-up so no data was skipped. For routine reprocessing, nightly impact scoring keys on a content hash per bill, so only changed bills are re-evaluated, and the passage model trains on nine sessions while the application serves four.",
+   "sources": [
+    "work_history.md:112",
+    "work_history.md:149",
+    "work_history.md:164",
+    "work_history.md:205",
+    "work_history.md:256-257",
+    "work_history.md:279",
+    "work_history.md:283-284",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ade-design-nightly-millions",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Design: ingesting and classifying millions of documents nightly",
+   "questions": [
+    "how would you build a pipeline to ingest and classify millions of documents nightly",
+    "design a nightly document classification pipeline",
+    "system design for large scale document ingestion",
+    "how would you process millions of files every night",
+    "architecture for classifying a huge document corpus",
+    "how do you keep inference cost down on millions of documents",
+    "cheap deterministic filtering before inference",
+    "how would she design document ingestion at scale",
+    "nightly batch classification design",
+    "what would you build first for a big document pipeline",
+    "tens of millions of files and one gpu, where do you start",
+    "architecture for high volume document classification"
+   ],
+   "tags": [
+    "high volume",
+    "gpu",
+    "system design",
+    "millions",
+    "documents",
+    "classification",
+    "triage",
+    "filtering",
+    "throughput",
+    "vllm"
+   ],
+   "links": [
+    {
+     "label": "vLLM throughput study",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I'd build it the way I designed the RIMS archival pipeline: cheap deterministic work first, expensive inference only on what survives. Inventory from metadata before downloading, as our Box ingest does with name, size, SHA-1, path and timestamps. A free-filter tier drops exact duplicates, NSRL known files and junk at zero cost. A manifest with one row per file and per-stage status columns makes each night's work queue a query and every run resumable. Classification runs on the survivors through a batching server: moving to vLLM continuous batching gave 6.22x on the same L4, taking 12,125 images from about 22 hours to 3.7. Writes stay idempotent, every stage logs to the shared contract, and silence alerts. The honest scale note: the unified system has run 2,375 real files in about 21 seconds on 4 vCPU; I haven't run millions nightly, and I'd measure the filter's reduction rate before sizing hardware.",
+   "sources": [
+    "work_history.md:636-642",
+    "work_history.md:843",
+    "work_history.md:866-868",
+    "work_history.md:874",
+    "work_history.md:880-881",
+    "work_history.md:892"
+   ]
+  },
+  {
+   "id": "ade-design-restartable",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Design: making a pipeline restartable after a crash",
+   "questions": [
+    "how would you make a pipeline restartable after a crash mid run",
+    "design for restart",
+    "what state do you persist so a job can resume",
+    "how do you resume without double writing",
+    "crash recovery for batch jobs",
+    "how do you avoid stale files from a previous run",
+    "resume from row count or record id",
+    "checkpoint design",
+    "how would she design crash safe pipelines",
+    "what happens if the server reboots during a run",
+    "exactly once processing in batch",
+    "what has to be true so the next run just works after a failure",
+    "how do you stop a resumed job from processing a record twice",
+    "what do you store to resume a failed batch job"
+   ],
+   "tags": [
+    "twice",
+    "left off",
+    "halfway",
+    "3 am",
+    "restart",
+    "resume",
+    "checkpoint",
+    "crash",
+    "exactly once",
+    "status column"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I design so a crash costs at most one batch and a restart needs no human decisions. Three mechanisms do most of it. State lives in the data: in the RIMS manifest a null stage status means not reached, so a restart queries for nulls, and 'processed, found nothing' isn't confused with 'never ran'. Work is flushed in batches and writes are idempotent: the legislative extractor can be killed and restarted without double-writing, and the proposal writes are WHERE NOT EXISTS or MERGE. And the log is rewritten after every event, so a killed process still records that it started. I clear temp directories at the start of each run so stale files can't contaminate the new one, and I cap retries so a poison record gets parked instead of failing forever. My early resumable CSVs resumed from a row count; I'd key resume on record ID hashes now, so a reordered input can't skip or repeat rows.",
+   "sources": [
+    "work_history.md:250",
+    "work_history.md:284",
+    "work_history.md:440",
+    "work_history.md:447",
+    "work_history.md:598",
+    "work_history.md:609",
+    "work_history.md:818",
+    "work_history.md:874"
+   ]
+  },
+  {
+   "id": "ade-storage-formats",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Storage formats: Parquet, CSV or a database",
+   "questions": [
+    "why parquet instead of csv",
+    "when do you write to a database instead of files",
+    "how do you choose a storage format",
+    "parquet versus csv versus database",
+    "how do you store lists and dicts in parquet",
+    "why did the prototype use json instead of the csvs",
+    "what format are your pipeline outputs",
+    "where do user profiles and sessions live",
+    "blob storage as an exchange layer",
+    "how does she choose file formats for pipelines",
+    "columnar storage choices"
+   ],
+   "tags": [
+    "parquet",
+    "csv",
+    "json",
+    "oracle",
+    "cosmos",
+    "blob",
+    "columnar",
+    "storage",
+    "format",
+    "ttl"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I choose storage by who reads it and how. Parquet is my default for intermediates, gold outputs and logs: typed, columnar and cheap to prune, which is why the nine session files and every pipeline log are Parquet. Writing it has a catch: lists and dicts must be normalized to JSON strings first, an explicit step in the proposals pipeline. CSV appeared in early prototypes where append-and-resume was the point, but text-heavy CSVs get big fast: 263 MB and 209 MB pipeline CSVs couldn't be parsed in a browser, so that prototype read a 5 MB pre-processed JSON. When analysts query results next to existing financial data, results belong in the database, so proposal output lands in Oracle staging tables. User state with expiry, like sessions and sign-in tokens, sits in Cosmos DB with TTL policies, and Blob Storage is the exchange layer between the server and the cloud app.",
+   "sources": [
+    "work_history.md:155",
+    "work_history.md:243",
+    "work_history.md:383",
+    "work_history.md:386",
+    "work_history.md:437",
+    "work_history.md:440",
+    "work_history.md:474",
+    "work_history.md:598",
+    "page:research-proposal-processing.html"
+   ]
+  },
+  {
+   "id": "ade-lineage-provenance",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Data lineage and provenance in my pipelines",
+   "questions": [
+    "how do you track data lineage",
+    "how can you trace an output row back to its source",
+    "provenance in your pipelines",
+    "append only decision log",
+    "how do you pin model versions for reproducibility",
+    "audit trail for pipeline outputs",
+    "why keep the raw labeled history",
+    "how does she keep outputs traceable",
+    "reviewer decisions stamped with names",
+    "lineage from production view to raw text",
+    "how do you show where one number in an output came from",
+    "recording who changed a decision and when"
+   ],
+   "tags": [
+    "analyst",
+    "who changed",
+    "where it came from",
+    "lineage",
+    "provenance",
+    "audit trail",
+    "append-only",
+    "run_id",
+    "digest",
+    "traceability"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I want any output row traceable to its source without reading code. In the proposals pipeline, three staging tables let engineering follow a production row back through its NLP annotations to the original extracted text, and PDF metadata is saved to Parquet for audit. Every pipeline run carries a run_id shared across its stages. In the archive work, search results return the original Box path, the RIMS manifest keeps a deterministic blake2b file_uid, and reviewer decisions go to an append-only log where changing your mind adds an entry pointing at the first; 481 reviewer decisions came back stamped with the reviewer's name. In the legislative pipeline, raw model output sits beside each standardized field, the raw labeled action history is kept so the leakage guard can be re-derived, and evaluated model versions were pinned by blob digest, because re-pulling 'latest' fetches a moved tag.",
+   "sources": [
+    "work_history.md:317",
+    "work_history.md:346",
+    "work_history.md:421",
+    "work_history.md:478",
+    "work_history.md:690",
+    "work_history.md:851-852",
+    "work_history.md:873",
+    "page:research-proposal-processing.html",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ade-cost-footprint",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Cost and footprint of data pipelines",
+   "questions": [
+    "how much do your pipelines cost to run",
+    "local versus cloud for data pipelines",
+    "why run batch processing on premises",
+    "how do you keep pipeline costs down",
+    "cost of the procurement deployment",
+    "how did you free gpu memory for another pipeline",
+    "app service tier analysis",
+    "per document cost of the proposal pipeline",
+    "how does she think about pipeline infrastructure cost",
+    "footprint of the archival pipeline",
+    "keeping the compute bill for pipelines reasonable",
+    "which workloads stay on your own servers and which go to the cloud"
+   ],
+   "tags": [
+    "compute bill",
+    "servers",
+    "etl cost",
+    "cost",
+    "footprint",
+    "on-prem",
+    "cloud",
+    "marginal cost",
+    "tier",
+    "sizing"
+   ],
+   "links": [
+    {
+     "label": "vLLM throughput study",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "I put heavy batch work on hardware the institution already owns and pay for cloud only where latency needs it. The proposals NLP runs entirely on the Linux server with no external API calls, so there's no per-document cost. On the legislative platform, bulk inference runs on the on-premises GPU at no marginal cost while managed cloud inference handles low-latency requests in the app. Before asking for hardware I measure: moving to vLLM recovered 6.22x throughput on the same L4, and right-sizing the language model's GPU allocation freed about 15 GB so the archival pipeline could share the server. Where cloud is the answer, I size from the workload: a written Basic versus Premium v3 analysis for a memory-bound app, and an estimated $77 a month for the procurement deployment design. The unified archival system processed 2,375 files in about 21 seconds on 4 vCPU.",
+   "sources": [
+    "work_history.md:113",
+    "work_history.md:172",
+    "work_history.md:246",
+    "work_history.md:459",
+    "work_history.md:642",
+    "work_history.md:764",
+    "work_history.md:843"
+   ]
+  },
+  {
+   "id": "ade-metadata-normalization",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Metadata extraction and normalization to archival standards",
+   "questions": [
+    "how do you extract file metadata",
+    "exif tiff iptc extraction",
+    "dublin core mapping",
+    "how do you normalize metadata to a standard",
+    "should a model infer metadata",
+    "metadata crosswalk",
+    "how did you build the image metadata pipeline",
+    "iptcinfo3 and tifffile",
+    "how does she handle metadata for archives",
+    "metadata before download",
+    "technical metadata from tiff and jpeg files",
+    "would you let an llm fill in file dates and formats",
+    "making extracted metadata usable by a library catalog"
+   ],
+   "tags": [
+    "jpeg",
+    "catalog",
+    "library",
+    "file dates",
+    "metadata",
+    "exif",
+    "iptc",
+    "tiff",
+    "dublin core",
+    "crosswalk"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I extract metadata from the file before asking any model about it, and I map it to a standard the receiving system already speaks. For 12,125 archival images I built a metadata pipeline with tifffile, Pillow and iptcinfo3 pulling file-level, EXIF/TIFF and IPTC fields: filename, size, format, MIME type, dimensions, resolution, compression, object name, caption and keywords. Every output field maps to IPTC Core and Dublin Core, so records move into library cataloguing systems without transformation work. The RIMS build made that a standing rule: for facts already in a file header, a model is used only to phrase them, never to discover them. Inventory metadata comes first as well. Box ingest builds the manifest from name, size, SHA-1, path and timestamps before a byte is downloaded. A metadata crosswalk is one of the open work items tracked in that build.",
+   "sources": [
+    "work_history.md:633",
+    "work_history.md:844",
+    "work_history.md:869",
+    "work_history.md:892",
+    "page:archival-image-intelligence.html"
+   ]
+  },
+  {
+   "id": "ade-knime-to-python",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Migrating a KNIME workflow into a production Python package",
+   "questions": [
+    "how do you migrate knime workflows to python",
+    "what changes when you move a knime workflow to python",
+    "knime to python migration engineering",
+    "how did you productionize the rebuilt retirement pipeline",
+    "externalized sql in version control",
+    "deployment preflight script",
+    "how do you structure a rebuilt pipeline as a package",
+    "output contract validation on every run",
+    "floating point check failed at 225 rows",
+    "how did she replace the knime workflow",
+    "visual workflow tool to code",
+    "moving a drag and drop workflow tool into maintainable code"
+   ],
+   "tags": [
+    "low-code",
+    "drag and drop",
+    "maintainable",
+    "knime",
+    "migration",
+    "python package",
+    "preflight",
+    "version control",
+    "sql files",
+    "output contract"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I treat a KNIME migration as removing a single point of failure, not translating nodes. The retirement workflow was lost with its KNIME server, so the Python rebuild is a modular package: configuration, warehouse extraction, panel construction, report logic, writer, output-contract validation, age adjustment, structured logging and email delivery, under one entry point and a shell runner. Every SQL query moved into version-controlled files with shared cohort CTEs. A preflight script checks the Oracle client, credentials, imports, project files, distribution list and directory permissions before the first scheduled run, not at 6 AM on a quarter boundary. Each run validates against a frozen contract of 4 files, 21 sheets and 436 columns; a float equality check that passed at 224 rows and failed at 225 became a tolerance with a printed drift. Delivery failure raises. It runs quarterly on cron in about six minutes, registered with the monitor.",
+   "sources": [
+    "work_history.md:55",
+    "work_history.md:770",
+    "work_history.md:782",
+    "work_history.md:791",
+    "work_history.md:810-819"
+   ]
+  },
+  {
+   "id": "ade-matching-data-prep",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Preparing six million catalog rows for matching",
+   "questions": [
+    "how did you prepare the procurement data for matching",
+    "unifying vendor files into one schema",
+    "manufacturer name normalization",
+    "how did you clean six million catalog rows",
+    "blocked fuzzy clustering",
+    "llm canonicalization of names",
+    "multi vendor data preparation",
+    "converting vendor exports to parquet",
+    "how does she prep data for entity matching",
+    "schema mapping across distributors",
+    "the same manufacturer spelled many ways across vendors",
+    "getting supplier catalogs into a comparable shape"
+   ],
+   "tags": [
+    "suppliers",
+    "spelling variants",
+    "record linkage",
+    "entity resolution",
+    "normalization",
+    "rapidfuzz",
+    "blocking",
+    "canonicalization",
+    "schema",
+    "vendors"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "Before any matching, I made four vendors look like one table. The procurement work grew from a single 4 MB file, where I first cleaned encoding errors and phantom columns, to six files of about 1.1 GB across four distributors, converted to Parquet and mapped into one 12-column unified schema. Manufacturer names were normalized in three passes: programmatic cleanup took 3,205 names to 2,949, blocked fuzzy clustering with rapidfuzz grouped variants without comparing every pair, and an LLM canonicalized what remained, with a five-case sanity check gating the full run and rate-limited calls on the shared server. Then I checked field completeness before writing comparison logic, which is how the qsu pack-size field turned up. Only after that did exact manufacturer plus part-number matching run, confirming 42,052 identical products across 6,068,888 rows.",
+   "sources": [
+    "work_history.md:732",
+    "work_history.md:734-735",
+    "work_history.md:741-742",
+    "page:procurement-intelligence.html"
+   ]
+  },
+  {
+   "id": "ade-gold-publish",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Publishing per-session Parquet files to the gold layer",
+   "questions": [
+    "how do you publish pipeline outputs to azure",
+    "overwrite safe upload of session parquets",
+    "why save the hash after the upload",
+    "what schema do the prediction parquets have",
+    "multi session parquet management",
+    "how does the app see the daily rescore",
+    "gold layer upload design",
+    "how do you know a session's artifacts are complete",
+    "how does she publish data to blob storage",
+    "overwrite versus append for outputs"
+   ],
+   "tags": [
+    "gold",
+    "blob",
+    "upload",
+    "overwrite",
+    "schema",
+    "publish",
+    "cache ttl",
+    "sessions",
+    "artifacts"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "The daily legislative run republishes nine per-session Parquet files to Azure gold, and the ordering is what makes that safe: hash check, conditional download, parse, label, rebuild history, rescore, build the active-bills snapshot, upload with overwrite, then save the hash. Because the hash is saved last, a run that fails before upload leaves the old hash in place and the next run reprocesses that session instead of skipping it. Whole-file overwrite keeps gold simple: each file is a complete replacement with a fixed schema (bill_id as Int64, bill_number, y_prob, n_actions, bill_year, momentum, generated_at). The app's one-hour cache TTL makes the 4 AM rescore visible the same day. A session only counted as done once gold features, Explorer metadata, FAISS index and config were verified present in Azure.",
+   "sources": [
+    "work_history.md:97",
+    "work_history.md:148-149",
+    "work_history.md:381",
+    "work_history.md:383"
+   ]
+  },
+  {
+   "id": "ade-proposal-nlp-chain",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Fitting NLP output into Oracle: the 11-step proposal chain",
+   "questions": [
+    "walk me through the 11 step nlp chain",
+    "what are the 11 steps of the proposal nlp pipeline",
+    "why truncate keywords to 500 to 1000 characters",
+    "how do you store list columns in parquet",
+    "what is successfully_parsed",
+    "40 word minimum threshold",
+    "real word vocabulary cache",
+    "keybert batch size",
+    "how do you fit nlp output to database column limits",
+    "how does she shape nlp output for a relational table",
+    "what happens between loading proposal text and writing keywords to oracle",
+    "how are proposals turned into keywords step by step"
+   ],
+   "tags": [
+    "keywords",
+    "oracle columns",
+    "nlp chain",
+    "truncation",
+    "column limits",
+    "vocabulary cache",
+    "keybert",
+    "lda",
+    "tf-idf",
+    "staging"
+   ],
+   "links": [
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "GitHub: proposal pipeline",
+     "url": "https://github.com/tayler-erbe/research-proposal-processing"
+    }
+   ],
+   "answer": "The 11-step chain in the proposals pipeline is as much data engineering as NLP. Step 1 loads the intermediate Parquet and validates that every row has a FILE_DATA_ID. Step 2 loads resources once, including a real-word vocabulary built from NLTK and WordNet and cached to disk, so later runs skip the rebuild. Cleaning, lemmatization and real-word filtering produce a valid-word count per document, and anything under 40 is flagged SUCCESSFULLY_PARSED=N but kept. Keyword extraction runs TF-IDF, KeyBERT in batches of 32 and LDA, then merges them. Steps 7 to 9 fit the output to the database: keyword strings truncated to 500 to 1,000 characters for column limits, and the output column schema enforced. Step 10 converts lists and dicts to JSON strings for Parquet and concatenates parsed and skipped rows. Step 11 builds the staging tables.",
+   "sources": [
+    "work_history.md:424-438",
+    "work_history.md:457"
+   ]
+  },
+  {
+   "id": "ade-stage-boundary-checks",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Data quality checks at stage boundaries",
+   "questions": [
+    "what data quality checks run between stages",
+    "do your stages write counts",
+    "how do you measure parse failures",
+    "parse status ok partial empty",
+    "coverage checks on a training corpus",
+    "how do you detect a partial join",
+    "health check output in cron logs",
+    "data quality metrics per document",
+    "how does she check data between pipeline steps",
+    "what do you log at each stage boundary",
+    "what numbers do you capture after each step",
+    "noticing that only a fraction of records matched a join"
+   ],
+   "tags": [
+    "fraction",
+    "match rate",
+    "partial join",
+    "data quality",
+    "row counts",
+    "coverage",
+    "parse_status",
+    "alpha ratio",
+    "validation",
+    "checks"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Research proposal processing",
+     "url": "research-proposal-processing.html"
+    }
+   ],
+   "answer": "Every stage boundary writes counts, not just frames, because several defects I've caught were plausible output with the wrong number of rows behind it. The proposals run prints intermediate row counts, column counts, parse success rates and database confirmation counts, and saves per-document metadata such as document type, alpha ratio and content length to Parquet. The legislative join-key failure surfaced through row-count validation between stages. For LLM extraction I made parse_status (OK, PARTIAL, EMPTY) a first-class per-chunk column, so parse failures are counted instead of absorbed. Beyond counts, I check coverage against what should exist: a corpus with 1.2% passed-bill coverage was large and wrong. And a partial join is a failure signal, not a result; before the fix only about 8,820 of 50,501 bills matched, by numeric collision.",
+   "sources": [
+    "work_history.md:113",
+    "work_history.md:297",
+    "work_history.md:382",
+    "work_history.md:420-421",
+    "work_history.md:446",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ade-multi-source-alignment",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Aligning a new state or source to an existing pipeline",
+   "questions": [
+    "how would you add a new state to the legislative pipeline",
+    "schema alignment across sources",
+    "multi state config",
+    "what broke when you extended to california",
+    "state specific text cleaning",
+    "two tier taxonomy federal and state",
+    "onboarding a new data source",
+    "how does she generalize a pipeline to new sources",
+    "source specific procedural stage map",
+    "florida new york texas data",
+    "how is state specific logic kept apart from shared code"
+   ],
+   "tags": [
+    "state-specific",
+    "shared code",
+    "multi-state",
+    "config.json",
+    "california",
+    "schema alignment",
+    "new source",
+    "taxonomy",
+    "normalization",
+    "generalize"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I make the source-specific parts configuration and the shared parts code, and I assume the new source breaks the definitions until I've checked. The legislative pipeline takes a multi-state config.json, and the taxonomy is two tiers: 42 universal federal categories plus a state layer, with Illinois adding 21 keyword augmentations and 5 state-only categories. California still needed its own procedural stage map, built from an iterative audit of unlabeled actions, and text cleaning added after the first run to strip journal page numbers and legislator names that dominated the features. The definition broke too: California's reached-vote target first captured committee votes, 80.4% of roll calls, which made it trivial; restricting it to floor votes fixed that. Florida, New York and Texas data is extracted with pipelines ready. Within Illinois, the trap was two ID spaces for one bill.",
+   "sources": [
+    "work_history.md:147",
+    "work_history.md:149",
+    "work_history.md:342",
+    "work_history.md:394-395"
+   ]
+  },
+  {
+   "id": "ade-medallion-layers",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Bronze, silver and gold layers in the legislative pipeline",
+   "questions": [
+    "do you use a medallion architecture",
+    "bronze silver gold layers",
+    "how are the legislative pipeline layers organized",
+    "why isolate silver paths per profile",
+    "what lives in the gold layer",
+    "raw versus standardized data layers",
+    "layered data architecture",
+    "how does she structure pipeline layers",
+    "how are raw, cleaned and curated data separated",
+    "how did you stop evaluation runs overwriting each other"
+   ],
+   "tags": [
+    "curated",
+    "cleaned",
+    "overwriting",
+    "medallion",
+    "lakehouse",
+    "bronze",
+    "silver",
+    "gold",
+    "layers"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "The legislative pipeline is layered Bronze, Silver, Gold: Bronze is ingested source, Silver is chunked text and LLM feature extraction, Gold is the standardized features the application reads. The layering earns its keep three ways. Isolation: during the model evaluation each configuration wrote to its own Silver paths, chunks_<profile> and features_<profile>, so no two grid cells shared state and the grid was reproducible. Recoverability: raw model output survives standardization, and keyword matching runs against the raw value first, so normalization never silently destroys a match. A clean publish boundary: Gold lives in Azure per session, with features, Explorer metadata, FAISS index and config verified before a session counts as done. Extraction happens once per bill upstream, while per-user scoring reads Gold, so adding a user never re-extracts the corpus.",
+   "sources": [
+    "work_history.md:97",
+    "work_history.md:149",
+    "work_history.md:283",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ade-llm-stage",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Running LLM extraction as a pipeline stage",
+   "questions": [
+    "how do you treat an llm step inside a data pipeline",
+    "llm extraction as a pipeline stage",
+    "how do you make llm extraction restartable",
+    "parse status for llm output",
+    "pinning model versions in a pipeline",
+    "bounding llm input with chunking",
+    "data engineering around llm extraction",
+    "how does she productionize llm extraction in a pipeline",
+    "making a multi day llm batch job behave like etl",
+    "which model version produced the extracted features",
+    "llm responses that don't parse"
+   ],
+   "tags": [
+    "model version",
+    "multi-day",
+    "unparseable",
+    "llm stage",
+    "extraction",
+    "chunking",
+    "parse_status",
+    "schema",
+    "pinning",
+    "digest"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I treat an LLM step like any other unreliable upstream: bounded input, typed output, counted failures and restartability. In the legislative pipeline, text is normalized and chunked before extraction, so a one-line amendment and a 400-page act arrive in the same shape. The model emits a 15-field structured schema parsed downstream, and each chunk carries parse_status as OK, PARTIAL or EMPTY, so parse failures are a measured rate instead of silent nulls. The extractor flushes in batches and can be killed and restarted without double-writing, which a roughly 155-hour run over 11,673 bills requires. Raw output is kept beside the standardized field. And I pin what produced it: evaluated model versions were recorded by blob digest. The research proposals pipeline keeps the LLM out for now; its semantic phase is scaffolded but not built.",
+   "sources": [
+    "work_history.md:279",
+    "work_history.md:284-285",
+    "work_history.md:297",
+    "work_history.md:317",
+    "work_history.md:449-452",
+    "page:legislative-pipeline.html"
+   ]
+  }
+ ],
+ "add_questions": {},
+ "replace_answers": {
+  "iv-test-data-pipelines": {
+   "answer": "I test pipelines with data I fabricate, contracts I freeze and checks that run in production. For the RIMS manifest I committed a 50-row synthetic fixture covering every format class, status value, path flag, duplicate case, nested-archive depth and suspect date, plus a deliberately broken variant that trips each validation rule, so the suite runs with no drive, no Box access and no credentials. It caught NaN being truthy in Python, which had put every row in layer 0. The retirement rebuild validates its output against a frozen contract on every run, and a preflight script checks the Oracle client, credentials, imports, files and directory permissions before the first scheduled run. A float equality check that passed at 224 rows and failed at 225 became a tolerance with a printed drift. In production the checks are post-write row counts and magic-byte checks on inputs, and when I fixed train and serve skew I verified 36,028 inputs byte-identical.",
+   "tags": [
+    "fake data",
+    "fixtures",
+    "synthetic"
+   ],
+   "add_questions": [
+    "testing an etl job without production data",
+    "what fabricated data do you test pipelines with"
+   ],
+   "sources": [
+    "work_history.md:877-878",
+    "work_history.md:813-814",
+    "work_history.md:442",
+    "work_history.md:193",
+    "page:research-proposal-processing.html"
+   ]
+  }
+ },
+ "tests": [
+  [
+   "how did you figure out which proposal attachments still needed processing each run",
+   "ade-anti-join-cdc|rpp-architecture|fde-oracle-integration"
+  ],
+  [
+   "computing a diff of ids between source and target tables",
+   "ade-anti-join-cdc|rpp-architecture"
+  ],
+  [
+   "no cdc available, how would you load incrementally",
+   "ade-anti-join-cdc|ade-rate-limited-api"
+  ],
+  [
+   "if the oracle insert only lands 90 of 100 rows what does your pipeline do",
+   "ade-idempotent-writes|aie-retries-rollback"
+  ],
+  [
+   "how would you back out a load that wrote bad data",
+   "ade-idempotent-writes|aie-retries-rollback|rpp-observability"
+  ],
+  [
+   "making a rerun of a database load harmless",
+   "ade-idempotent-writes|aie-retries-rollback|iv-fault-tolerant-pipelines"
+  ],
+  [
+   "how do you stop today's hr record leaking into a 2010 training example",
+   "ade-point-in-time-extract|ads-dataset-reconstruction|hr-effective-dating"
+  ],
+  [
+   "building yearly snapshots from slowly changing employee data",
+   "ade-point-in-time-extract|hr-effective-dating"
+  ],
+  [
+   "what guardrail stops a broken roster from producing a plausible report",
+   "ade-point-in-time-extract|ads-production-monitoring"
+  ],
+  [
+   "the vendor api caps requests per minute, how would you structure the daily pull",
+   "ade-rate-limited-api"
+  ],
+  [
+   "how do you keep a scraper or poller from getting blocked",
+   "ade-rate-limited-api"
+  ],
+  [
+   "what's the cheapest way to tell whether an api dataset changed",
+   "ade-rate-limited-api|legis-ingestion|fde-legiscan-ingestion"
+  ],
+  [
+   "why did you store vectors as references rather than in the main table",
+   "ade-manifest-design|aie-vector-index"
+  ],
+  [
+   "how does each stage know which files it still has to process",
+   "ade-manifest-design|ade-design-restartable"
+  ],
+  [
+   "walk me through the archival pipeline's central table design",
+   "ade-manifest-design|aie-data-contracts|arc-rims-architecture"
+  ],
+  [
+   "how do you give every file a stable identifier across re-scans",
+   "ade-file-identity-dedup|ade-manifest-design|aie-data-contracts"
+  ],
+  [
+   "do you ever delete files the pipeline rejects",
+   "ade-file-identity-dedup|arc-triage-quarantine"
+  ],
+  [
+   "filtering out operating system and known software files before processing",
+   "ade-file-identity-dedup|arc-triage-quarantine"
+  ],
+  [
+   "would you build your own file type detection for an archive",
+   "ade-preservation-tools|fde-build-vs-buy"
+  ],
+  [
+   "what tools tell you what format a file really is",
+   "ade-preservation-tools"
+  ],
+  [
+   "how did you choose the digital preservation tooling",
+   "ade-preservation-tools"
+  ],
+  [
+   "an archive has word, excel, powerpoint, pdf and odd extensions, how do you get text out",
+   "ade-heterogeneous-extraction|fas-pipeline|fas-file-types"
+  ],
+  [
+   "why couldn't the office extraction run on the gpu server",
+   "ade-heterogeneous-extraction"
+  ],
+  [
+   "what's your fallback when a file won't open",
+   "ade-heterogeneous-extraction|ade-bad-records|fas-legacy-office"
+  ],
+  [
+   "a pdf in the source system is actually a word file, what happens",
+   "ade-bad-records|iv-data-quality-examples|rpp-text-extraction"
+  ],
+  [
+   "where do records go that your pipeline can't process",
+   "ade-bad-records"
+  ],
+  [
+   "one corrupt input keeps failing the nightly job, how do you stop it",
+   "ade-bad-records|aie-retries-rollback"
+  ],
+  [
+   "walk me through getting two decades of outlook mail into a table",
+   "ade-email-ingestion|email-ingestion|ea-mime-handling"
+  ],
+  [
+   "what was the bottleneck in the email archive and how would you fix it",
+   "ade-email-ingestion|ea-ollama-cli-bottleneck|email-performance"
+  ],
+  [
+   "turning reply chains into one row per message",
+   "ade-email-ingestion|ea-record-counts|email-ingestion"
+  ],
+  [
+   "what fields does every job write so your monitor can read it",
+   "ade-logging-contract|fde-reusable-contracts|job-monitoring"
+  ],
+  [
+   "how do you tell the stage that broke from the stages that were skipped because of it",
+   "ade-logging-contract"
+  ],
+  [
+   "how do you know a run started but never finished",
+   "ade-logging-contract|aie-observability|ade-silence-severity"
+  ],
+  [
+   "a job only runs four times a year, how do you stop it paging you constantly",
+   "ade-silence-severity|fde-reusable-contracts|aie-observability"
+  ],
+  [
+   "which failures actually trigger an email from your monitor",
+   "ade-silence-severity"
+  ],
+  [
+   "how do you notice a scheduled job that simply never ran",
+   "ade-silence-severity|aie-observability|job-monitoring"
+  ],
+  [
+   "how would you know if your alerting system had stopped sending alerts",
+   "ade-monitor-audit|aie-observability"
+  ],
+  [
+   "your dashboards are all green but data is missing, what do you check",
+   "ade-monitor-audit|aie-observability|leg-defect-health-check|iv-story-silent-failures"
+  ],
+  [
+   "what did you find when you reviewed your pipeline health checks",
+   "ade-monitor-audit|leg-defect-health-check|iv-story-silent-failures"
+  ],
+  [
+   "would you use airflow if you rebuilt your pipelines",
+   "ade-orchestration-choice|tech-orchestration-mlops|index-mlflow-airflow"
+  ],
+  [
+   "what triggers each of your production jobs",
+   "ade-orchestration-choice"
+  ],
+  [
+   "how do you keep one scheduled job's failure from breaking another",
+   "ade-orchestration-choice"
+  ],
+  [
+   "how do you decide between scheduled loads and real-time feeds",
+   "ade-batch-vs-streaming|aie-batch-vs-online"
+  ],
+  [
+   "do you have experience with streaming data platforms",
+   "ade-batch-vs-streaming|ex-real-time"
+  ],
+  [
+   "how did you measure how fast alerts reached the phone",
+   "ade-batch-vs-streaming|ex-real-time"
+  ],
+  [
+   "you need to reload ten years of history, how do you approach it",
+   "ade-backfills"
+  ],
+  [
+   "the pipeline was down for a week and a half, how do you recover the missed data",
+   "ade-backfills"
+  ],
+  [
+   "how do you avoid rescoring everything when only a few records changed",
+   "ade-backfills|aie-caching"
+  ],
+  [
+   "design a system that classifies every new document in a large repository each night",
+   "ade-design-nightly-millions"
+  ],
+  [
+   "you have tens of millions of files and one gpu, where do you start",
+   "ade-design-nightly-millions|ex-capacity-planning"
+  ],
+  [
+   "how would you architect a high volume document classification job",
+   "ade-design-nightly-millions|aie-multimodal-pipeline"
+  ],
+  [
+   "the job died at 3 am halfway through, what has to be true so tomorrow's run just works",
+   "ade-design-restartable|iv-fault-tolerant-pipelines"
+  ],
+  [
+   "how do you guarantee a resumed job doesn't process a record twice",
+   "ade-design-restartable|iv-fault-tolerant-pipelines|aie-retries-rollback"
+  ],
+  [
+   "what do you store to pick up where a failed batch job left off",
+   "ade-design-restartable|iv-fault-tolerant-pipelines"
+  ],
+  [
+   "is csv ever the right output format for you",
+   "ade-storage-formats"
+  ],
+  [
+   "what do you keep in a relational database versus object storage",
+   "ade-storage-formats"
+  ],
+  [
+   "why are your logs and outputs columnar files",
+   "ade-storage-formats"
+  ],
+  [
+   "if an analyst questions one number in the output, how do you show where it came from",
+   "ade-lineage-provenance|iv-reproducibility"
+  ],
+  [
+   "how do you record who changed a decision and when",
+   "ade-lineage-provenance"
+  ],
+  [
+   "what makes your pipeline outputs auditable",
+   "ade-lineage-provenance|iv-reproducibility|persona-auditable"
+  ],
+  [
+   "how do you keep the compute bill for etl reasonable",
+   "ade-cost-footprint|iv-cost"
+  ],
+  [
+   "which workloads do you keep on your own servers and which go to the cloud",
+   "ade-cost-footprint|aie-batch-vs-online|ex-local-vs-hosted"
+  ],
+  [
+   "what does it cost per document to run your nlp pipeline",
+   "ade-cost-footprint"
+  ],
+  [
+   "how do you get technical metadata out of tiff and jpeg files",
+   "ade-metadata-normalization|aii-metadata"
+  ],
+  [
+   "would you use an llm to fill in file dates and formats",
+   "ade-metadata-normalization|con-deterministic-first"
+  ],
+  [
+   "how do you make extracted metadata usable by a library catalog",
+   "ade-metadata-normalization|aii-metadata"
+  ],
+  [
+   "what would you do differently from the original low-code workflow when rewriting it",
+   "ade-knime-to-python|fde-legacy-recovery|index-knime"
+  ],
+  [
+   "how do you check a scheduled job is configured right before its first real run",
+   "ade-knime-to-python|fde-deployment-checks"
+  ],
+  [
+   "moving a drag and drop analytics workflow into maintainable code",
+   "ade-knime-to-python|index-knime|ex-modernization"
+  ],
+  [
+   "the same manufacturer is spelled ten ways across vendors, how do you fix it",
+   "ade-matching-data-prep"
+  ],
+  [
+   "how do you get several suppliers' catalogs into a comparable shape",
+   "ade-matching-data-prep|ex-matching"
+  ],
+  [
+   "data cleaning steps before record linkage",
+   "ade-matching-data-prep|ex-matching"
+  ],
+  [
+   "why overwrite whole files instead of appending new rows each day",
+   "ade-gold-publish"
+  ],
+  [
+   "what columns does each published prediction file carry",
+   "ade-gold-publish"
+  ],
+  [
+   "what if the upload step fails after the download succeeded",
+   "ade-gold-publish|fde-legiscan-ingestion"
+  ],
+  [
+   "what happens between loading the text and writing proposal keywords to oracle",
+   "ade-proposal-nlp-chain|rpp-stage-walkthrough"
+  ],
+  [
+   "how did you handle keyword strings longer than the database column",
+   "ade-proposal-nlp-chain"
+  ],
+  [
+   "step by step, how are proposals turned into keywords and classifications",
+   "ade-proposal-nlp-chain|rpp-stage-walkthrough|rpp-keywords|research-proposals"
+  ],
+  [
+   "what numbers do you capture after each step to know the data is right",
+   "ade-stage-boundary-checks|iv-test-data-pipelines"
+  ],
+  [
+   "how would you notice that only a fraction of records matched in a join",
+   "ade-stage-boundary-checks|leg-defect-join-key|fde-legiscan-ingestion"
+  ],
+  [
+   "how do you count llm extraction failures",
+   "ade-stage-boundary-checks|ade-llm-stage"
+  ],
+  [
+   "what would it take to run your bill pipeline for another legislature",
+   "ade-multi-source-alignment|legis-california"
+  ],
+  [
+   "when you add a data source, what do you expect to break",
+   "ade-multi-source-alignment"
+  ],
+  [
+   "how is state-specific logic separated from shared pipeline code",
+   "ade-multi-source-alignment"
+  ],
+  [
+   "explain how raw, cleaned and curated data are separated in your bill pipeline",
+   "ade-medallion-layers"
+  ],
+  [
+   "do you follow a lakehouse style layering",
+   "ade-medallion-layers"
+  ],
+  [
+   "how did you keep evaluation runs from overwriting each other's outputs",
+   "ade-medallion-layers|vorig-pipeline-resume|ade-backfills"
+  ],
+  [
+   "how do you make a multi-day llm batch job behave like a normal etl step",
+   "ade-llm-stage|ade-backfills"
+  ],
+  [
+   "how do you keep track of which model version produced your extracted features",
+   "ade-llm-stage|ade-lineage-provenance"
+  ],
+  [
+   "what do you do about llm responses that don't parse in a pipeline",
+   "ade-llm-stage|iv-structured-output|ade-stage-boundary-checks"
+  ],
+  [
+   "how do you write tests for an etl job without touching production data",
+   "iv-test-data-pipelines|aie-testing-ai-code"
+  ],
+  [
+   "what fake data do you use to test your pipelines",
+   "iv-test-data-pipelines|aie-testing-ai-code"
+  ],
+  [
+   "what keeps the nightly scoring inputs identical to the training inputs",
+   "ads-train-serve-skew|iv-test-data-pipelines|iv-reproducibility"
+  ],
+  [
+   "how did you discover the bill training data was missing passed bills",
+   "ads-dataset-reconstruction|leg-status-filter-bug|legis-data-corrections|fde-validating-customer-data"
+  ],
+  [
+   "how did you build the 5 million vector index for products",
+   "aie-vector-index|proc-faiss-index|aie-design-product-search"
+  ]
+ ],
+ "gaps": [
+  "Streaming platforms (Kafka, Kinesis, Spark Structured Streaming): no production experience in the sources; answered honestly inside ade-batch-vs-streaming.",
+  "Airflow, Dagster or Prefect in production: none in the sources; ade-orchestration-choice says so.",
+  "Data warehouse modeling (star schemas, dbt, slowly changing dimension design) and EDW loads she owns: the sources show reads from the EDW and Oracle staging-table writes, not warehouse modeling.",
+  "OCR fallback inside a production text extraction stage: OCR appears only as a proposed design step for archives and in separate OCR evaluations, so the extraction card does not claim it.",
+  "Measured IVF recall versus exact search at nprobe 64 for the 5.19M-vector procurement index: not in the sources.",
+  "Legislative ingestion deduplication: listed as productionalization work underway (work_history.md:82), so not described as done.",
+  "Formal data contracts negotiated with other teams (SLAs, schema registries): only the warehouse data-definition defect report is sourced."
+ ]
+}

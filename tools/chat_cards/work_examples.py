@@ -20,9 +20,11 @@ TECH = ("tools", "Tools and platforms")
 CARDS = []
 
 
-def card(sec, cid, title, questions, tags, links, answer, **extra):
+def card(sec, cid, title, questions, tags, links, answer, sources=None, **extra):
     c = {"id": cid, "section": sec[0], "section_label": sec[1], "title": title, "questions": questions,
          "tags": tags, "links": links, "state": "CLEAN", "answer": " ".join(answer.split())}
+    if sources:
+        c["sources"] = sources
     c.update(extra)
     CARDS.append(c)
 
@@ -105,7 +107,7 @@ card(EX, "ex-predictive-models-list", "Every kind of predictive model I've built
     L("Legislative pipeline", "legislative-pipeline.html"),
 ], """
 Classification: bill passage prediction (75.1% precision, 76.2% recall on a held-out Assembly) and UIC
-enrollment risk (about 82% accuracy), where I compared Random Forest, tree ensembles, H2O and CatBoost. Forecasting:
+enrollment risk (about 82% accuracy), where the team compared Random Forest, tree ensembles, H2O and CatBoost. Forecasting:
 ARIMA with exponential smoothing for ten-year enrollment projections, and the quarterly retirement-risk forecast I
 rebuilt in Python. Workforce modeling: Random Forest promotion prediction, Markov chain career simulation and graph
 community detection, plus designs for XGBoost and logistic regression departure risk and a learning-to-rank readiness
@@ -124,8 +126,7 @@ card(EX, "ex-forecasting", "Forecasting and time-series work", [
     L("UIC enrollment forecasting", "uic-enrollment.html"),
     L("HR workforce analytics", "hr-workforce-analytics.html"),
 ], """
-Yes. For UIC I built ten-year enrollment projections by department and college with ARIMA and exponential smoothing,
-alongside the classifier that flags students at risk of leaving. For HR, I rebuilt the quarterly retirement-risk
+Yes. For UIC I led a project that paired the classifier I built, which flags students at risk of leaving, with ten-year enrollment projections by department and college from ARIMA and exponential smoothing models built by teammates. For HR, I rebuilt the quarterly retirement-risk
 forecast in Python after its KNIME platform was retired. I delivered the overdue report the same day, corrected
 long-standing statistical defects, and it now runs on a monitored quarterly schedule. The HR workforce platform also
 includes workforce growth forecasting with BLS and O*NET outlook data.
@@ -146,7 +147,7 @@ card(EX, "ex-classification", "Classification models I've built", [
 ], """
 Three examples. Bill passage: a classifier I tuned for precision and warning time, 75.1% precision and 76.2% recall
 at a 0.70 threshold on a held-out Assembly. UIC enrollment: a model that flags students at risk of discontinuing,
-about 82% accuracy, grouped into high, medium and low tiers for advisors. There I chose H2O over CatBoost because its
+about 82% accuracy, grouped into high, medium and low tiers for advisors. There the team's comparison chose H2O over CatBoost because its
 error stayed under 5% for every class, while CatBoost missed 47.71% of the Discontinued class, the one that mattered
 most. Research proposals: every SPA proposal and award is classified into HERDS research fields automatically.
 """)
@@ -352,7 +353,7 @@ card(EX, "ex-local-vs-hosted", "Local models vs hosted APIs", [
 ], """
 It depends on the data and the job, and I've shipped both. Sensitive data stays local: the email archive, legacy
 files and archival images never touch an external API. The legislative platform uses local Llama for bulk extraction and
-GPT-4.1 on Azure for the citation-backed chatbot. Local is not automatically worse. On 60 fresh contract documents, local
+a GPT-4.1 Copilot agent for the citation-backed chatbot. Local is not automatically worse. On 60 fresh contract documents, local
 Qwen3 32B answered 18 of 30 entailment questions against 12 for a hosted model. Starting on-prem also let the team
 experiment freely after a short Azure run got expensive fast.
 """)
@@ -396,7 +397,7 @@ The research proposals pipeline. It connects to live Oracle databases and pulls 
 runs an 11-step NLP chain (TF-IDF, KeyBERT and LDA fusion, then HERDS classification) and writes structured results back
 to Oracle. It runs unattended on a cron schedule, with idempotent writes and a printed rollback. It covers every SPA
 research proposal and award across UIUC and UIC, and it's the foundation for the Research Proposal Intelligence
-platform supporting the System's ~$517M annual research portfolio. I designed and built it solo, start to production.
+platform supporting the System's ~$517M annual research portfolio. I scoped, designed and built it end to end.
 """)
 
 card(EX, "ex-document-processing", "How I process documents", [
@@ -414,8 +415,7 @@ card(EX, "ex-document-processing", "How I process documents", [
 ], """
 I treat a document as several extraction problems: running text, tables, charts, flattened spreadsheets and clause
 evidence, each with its own test. My production proposal pipeline turns attachments into annotated, classified text
-analysts can query by research field. The next step, in my Lab, reads proposals and awards with local models and shows
-the evidence for every value. The model picks block IDs and code copies the source text, so nothing is paraphrased. The
+analysts can query by research field. The next step is a system design in my Lab for reading proposals and awards with local models and showing the evidence for every value. The model picks block IDs and code copies the source text, so nothing is paraphrased. The
 intake pipeline design runs one stage and one model at a time on a single GPU, with nothing overwritten. That one is
 design only so far: tested on fictional documents, accuracy not yet measured.
 """)
@@ -454,8 +454,7 @@ card(EX, "ex-forward-deployed", "Forward-deployed work with stakeholders", [
     L("HR workforce analytics", "hr-workforce-analytics.html"),
     L("Drop Radar", "drop-radar.html"),
 ], """
-Most of my work starts with someone's problem. RIMS reached out in December 2024, and I scoped the email archive with the
-University Archivist. Since August 2026 I've led the production build with the University Library, mentoring their
+Most of my work starts with someone's problem. RIMS reached out in December 2024, and the email archive was scoped in a working meeting with the University Archivist. Since August 2026 I've led the production build with the University Library, mentoring their
 engineer toward full ownership. When HR lost its retirement-risk report with its KNIME platform, I rebuilt it in Python
 and delivered the overdue report the same day. Outside work, I built Drop Radar for my husband over one weekend. He
 judged the early alerts low-value, so I reset the design within a day and built in a weekly feedback check-in.
@@ -655,9 +654,8 @@ card(EX, "ex-structured-extraction", "Structured extraction with LLMs", [
     L("vLLM sweep", "vllm-inference-throughput-evaluation.html"),
 ], """
 The legislative pipeline extracts 12+ structured signals per bill with Llama 3.1 8B AWQ on vLLM, and those signals
-feed search, trends and the prediction model. I ran 11,673-bill extractions unattended after setting acceptance criteria
-first, and I chose chunk size 1200 because it was the only setting where Llama cleared 80% parse-OK at every size.
-Procurement normalizes pack sizes into JSON with qwen2.5:7b. Proposals and awards extract narrative facts with the
+feed search, trends and the prediction model. Before committing the 11,673-bill, roughly 155-hour unattended backfill, I declared acceptance criteria before any evaluation run, and on vLLM I chose chunk size 1200 because it gave the highest parse-OK of any configuration, 92.5%. Llama was also the only model above 80% at every chunk size.
+Procurement normalizes pack sizes into JSON with qwen2.5:7b. My proposals-and-awards design extracts narrative facts with the
 evidence beside every value.
 """)
 
@@ -694,7 +692,7 @@ card(EX, "ex-cost-savings", "Saving money and showing ROI", [
     L("Procurement intelligence", "procurement-intelligence.html"),
     L("Throughput study", "archival-image-throughput-evaluation.html"),
 ], """
-Procurement found $161,564 in defensible, unit-normalized savings across four distributors, after I removed the 49.1%
+Procurement found $161,564 in defensible, unit-normalized savings, counting only products where two of the four distributors had prior-year purchase quantities, after I removed the 49.1%
 pack-size inflation from the raw $317,583. The tool's estimated production cost is about $77 a month. The vLLM migration
 cut a 22-hour job to 3.7 hours on the same GPU, with no new hardware. For bill prediction I reported what leadership can
 use, not just an AUC: right about 75% of the time when it flags a bill, typically three weeks before the vote. I show the
@@ -783,8 +781,7 @@ card(EX, "ex-monitoring", "Monitoring and observability", [
 I built a job execution monitor for every scheduled pipeline on our analytics server. Each pipeline writes structured
 Parquet logs, and the monitor reads them every 30 to 60 minutes. It catches script failures, cascade failures, missed
 runs and pipelines that have gone silent, then emails a diagnostic with the traceback. It works like a lightweight
-MLflow or Airflow equivalent. In Drop Radar, a source only counts as healthy when something actually arrived in the last
-24 hours. Running without errors isn't enough. For my agents, Agent City is a 3D town that shows me what they're doing.
+MLflow or Airflow equivalent. In Drop Radar, the Discord feed only counts as healthy when a followed post actually arrived in the last 24 hours. Running without errors isn't enough. For my agents, Agent City is a 3D town that shows me what they're doing.
 """)
 
 card(EX, "ex-data-readiness", "Is your data ready for AI?", [
@@ -848,7 +845,7 @@ card(EX, "ex-semantic-search", "Semantic search", [
     L("Legacy file search", "file-archiving-smart-search.html"),
     L("Legislative platform", "legislative-pipeline.html"),
 ], """
-Legacy file search makes whole hard drives and Box folders searchable without anyone opening each file. I extract 15+
+Legacy file search makes a Box archive of institutional files searchable without anyone opening each file. I extract 15+
 file types, summarize them with LLaMA (LLaVA for images), embed the summaries into a 384-dimensional FAISS HNSW index,
 and return exact Box paths for a plain-language query. The legislative platform uses hybrid FAISS and keyword search.
 Procurement searches 5.19 million product embeddings.
@@ -862,7 +859,7 @@ card(EX, "ex-topic-modeling", "Topic modeling", [
     L("Email archiving", "email-archiving.html"),
     L("Research proposal processing", "research-proposal-processing.html"),
 ], """
-Yes, in two production-scale pipelines. In email archiving, LDA found topics across the archive and Llama 3.2 turned
+Yes, in two pipelines. In email archiving, LDA found topics across the archive and Llama 3.2 turned
 each topic's keywords into a title of five words or fewer, so archivists could read them. In research proposals, LDA
 is fused with TF-IDF and KeyBERT so the keywords agree across methods before HERDS classification.
 """)
@@ -952,8 +949,7 @@ card(EX, "ex-poc-to-production", "Taking a proof of concept to production", [
 ], """
 The RIMS pipeline started as three separate proofs of concept: email archiving, archival images and legacy file
 search. I'm now leading the production build that unifies them into one eight-stage pipeline the Library will own. The
-legislative work went from prototype to a platform delivered to IGPA on Azure, with the prediction model validated on
-a held-out Assembly first. On the way, the throughput fix (22 hours to 3.7) is what made production runs practical.
+legislative work went from prototype to a platform delivered to IGPA on Azure, and the prediction model was then validated on a held-out Assembly. On the way, the throughput fix (22 hours to 3.7) is what made production runs practical.
 """)
 
 card(EX, "ex-modernization", "Migrating and modernizing legacy systems", [
@@ -966,7 +962,7 @@ card(EX, "ex-modernization", "Migrating and modernizing legacy systems", [
     L("Throughput study", "archival-image-throughput-evaluation.html"),
 ], """
 When the retirement-risk forecast was lost with its KNIME platform, I rebuilt it end to end in Python, corrected its
-statistical defects and put it on a monitored quarterly schedule. I've led KNIME-to-Python migration more broadly. I
+statistical defects and put it on a monitored quarterly schedule. KNIME-to-Python migration is part of my work more broadly. I
 migrated inference from Ollama to vLLM for a 6.22x speedup on the same GPU. The archival work is part of the university's
 ERP modernization.
 """)
@@ -1064,7 +1060,7 @@ card(EX, "ex-unstructured-data", "Working with messy, unstructured data", [
     L("Procurement intelligence", "procurement-intelligence.html"),
     L("Legacy file search", "file-archiving-smart-search.html"),
 ], """
-It's most of what I do: 44,677 email files, 12,125 historical images, whole hard drives of 15+ file types, 22,700 pages of
+It's most of what I do: 44,677 email files, 12,125 historical images, legacy archives of 15+ file types, 22,700 pages of
 early print, and 6 million catalog rows with inconsistent pack sizes. The bill dataset was missing every resolved bill
 until I rebuilt it. My rule is to clean and match deterministically first and use AI only where judgment is needed. I
 wrote about it on Medium as "stop throwing AI at your messy data".
@@ -1153,7 +1149,7 @@ card(EX, "ex-solo-and-team", "Working solo and on a team", [
 ], ["team", "solo", "collaboration", "interns", "ownership"], [
     L("Experience", "index.html#experience"),
 ], """
-Both. I designed and built the research proposals pipeline solo, from start to production. I've functionally led the
+Both. I scoped, designed and built the research proposals pipeline end to end. I've functionally led the
 Advanced Analytics team since early 2023, after major departures, and have recruited and mentored 7+ interns. On the RIMS
 build I lead across two organizations, AITS and the University Library. On my personal projects I'm the only human, and
 I run 29 AI agents.
@@ -1187,7 +1183,7 @@ bootstrap intervals and McNemar tests with Holm correction. I change one thing a
 """)
 
 # ----------------------------------------------------------------------------------------------------------------
-# Tools and platforms: "have you worked with X?"
+# Tools and platforms: "have you worked with X?"  (facts: jobhunter master/work_history.md, cited by line)
 # ----------------------------------------------------------------------------------------------------------------
 
 card(TECH, "tech-aws", "Have I worked with AWS?", [
@@ -1198,58 +1194,74 @@ card(TECH, "tech-aws", "Have I worked with AWS?", [
     "have you used sagemaker",
     "have you used amazon bedrock",
     "aws or azure",
-], ["aws", "amazon", "cloud", "sagemaker", "bedrock"], [
-    L("Legislative platform on Azure", "legislative-pipeline.html"),
+    "are you familiar with aws services",
+], ["aws", "amazon", "cloud", "sagemaker", "bedrock", "s3", "ec2", "lambda"], [
+    L("Legislative platform", "legislative-pipeline.html"),
 ], """
-No, my cloud work has been on Microsoft Azure, not AWS. I architected and deployed the Legislative Intelligence
-Platform to Azure App Service with Azure Blob Storage. It was our team's first production cloud AI deployment, and its
-chatbot runs on GPT-4.1. Most of my other systems run on our own Linux servers and local NVIDIA GPUs. The cloud concepts
-carry over, and I'd pick up AWS's versions quickly.
-""")
+My AWS exposure is academic; my production cloud work is on Microsoft Azure. There I designed and run a multi-service
+system for the Legislative Intelligence Platform: App Service for the web app, Azure Functions for scheduled jobs, Cosmos DB
+for user data, Communication Services for email, Blob Storage and Azure OpenAI. I also diagnosed and fixed its production
+issues myself, including a container crash loop and an enterprise SSO restriction on deployments. The concepts map closely
+(Functions to Lambda, Blob to S3, Cosmos to DynamoDB), and getting more hands-on AWS time is something I'd welcome.
+""", sources=["work_history.md:1405", "work_history.md:150-175"])
 
 card(TECH, "tech-gcp", "Have I worked with Google Cloud?", [
     "have you worked with google cloud",
     "gcp experience",
     "have you used vertex ai",
     "have you used bigquery",
-], ["gcp", "google cloud", "vertex", "bigquery", "cloud"], [
-    L("Legislative platform on Azure", "legislative-pipeline.html"),
+    "do you know google cloud platform",
+], ["gcp", "google cloud", "vertex", "bigquery", "colab", "cloud"], [
+    L("Legislative platform", "legislative-pipeline.html"),
 ], """
-Google Cloud isn't part of the work in my portfolio. My cloud deployment experience is on Azure: App Service and Blob
-Storage for the legislative platform. Most of my AI runs on our own Linux servers and local NVIDIA GPUs.
-""")
+Not in production. I've used Google Colab with a T4 GPU as a shared development environment, but my production cloud
+work is on Microsoft Azure: App Service, Azure Functions, Cosmos DB, Blob Storage, Communication Services and Azure
+OpenAI behind the Legislative Intelligence Platform. Most of my heavy AI work runs on self-managed Linux GPU servers,
+which keeps the skills portable across clouds.
+""", sources=["work_history.md:1415", "work_history.md:150-175"])
 
 card(TECH, "tech-azure", "Azure experience", [
     "have you worked with azure",
     "azure experience",
     "what azure services have you used",
     "have you deployed to the cloud",
-    "what cloud platforms have you used",
-    "which cloud providers have you used",
     "microsoft azure experience",
     "microsoft azure",
     "do you know azure well",
-], ["azure", "cloud", "app service", "blob storage", "deployment"], [
+    "what cloud platforms have you used",
+    "which cloud providers have you used",
+    "azure functions",
+    "cosmos db",
+    "azure openai",
+], ["azure", "cloud", "app service", "functions", "cosmos", "blob storage", "azure openai", "serverless", "deployment"], [
     L("Legislative platform", "legislative-pipeline.html"),
-    L("Procurement: stack", "procurement-intelligence.html#stack"),
+    L("Legislative web application", "legislative-web-application.html"),
 ], """
-Yes. I architected and deployed the Legislative Intelligence Platform to Azure App Service with Azure Blob Storage. It
-was delivered to IGPA in August 2026 as our team's first production cloud AI deployment, with a GPT-4.1 chatbot. I designed
-procurement intelligence to deploy on Azure App Service B3 with Blob Storage for its index files, at about $77 a month.
-""")
+Yes, in production. For the Legislative Intelligence Platform, our team's first production multi-service cloud AI
+deployment, I designed, provisioned and operate App Service for the web app, timer-triggered Azure Functions for weekly
+digests and nightly impact scoring, Cosmos DB for user data with TTL policies, Communication Services for passwordless
+magic-link sign-in and email, Blob Storage for the data, and Azure OpenAI for on-demand briefings. I set up the deployment
+pipeline from scratch, fixed a production outage caused by a startup command reinstalling dependencies on every container
+boot, and wrote the cost and scaling analysis for the tier upgrade.
+""", sources=["work_history.md:69-86", "work_history.md:150-175"])
 
 card(TECH, "tech-containers", "Docker and Kubernetes", [
     "have you used docker",
     "have you used kubernetes",
     "container experience",
     "k8s experience",
-], ["docker", "kubernetes", "containers", "k8s", "deployment"], [
+    "do you have experience with docker",
+    "have you worked with kubernetes",
+    "containerized deployment",
+], ["docker", "kubernetes", "containers", "k8s", "containerization", "deployment"], [
     L("Running AI in production", "legislative-pipeline.html#prod"),
 ], """
-Containers and Kubernetes aren't part of the work shown in my portfolio. My production systems run as scheduled jobs on
-our Linux analytics servers, as an Azure App Service application, and with GPU model serving through vLLM and Ollama. I
-built the monitoring and execution environment around them myself.
-""")
+My container experience is with managed platforms rather than Kubernetes. The legislative app runs as a container on Azure
+App Service, where I tuned container start-time limits, startup commands and cold starts, and fixed a crash loop where the
+container died on boot. Kubernetes and running my own containerized model deployments are areas I'm actively expanding
+into. My GPU serving so far has been vLLM and Ollama on Linux servers, including isolated environments on an air-gapped
+institutional machine.
+""", sources=["work_history.md:158", "work_history.md:168-171", "work_history.md:1427", "work_history.md:59-66"])
 
 card(TECH, "tech-big-data-platforms", "Spark, Databricks and Snowflake", [
     "have you used spark",
@@ -1258,14 +1270,17 @@ card(TECH, "tech-big-data-platforms", "Spark, Databricks and Snowflake", [
     "big data tools",
     "pyspark experience",
     "data warehouse experience",
-], ["spark", "databricks", "snowflake", "big data", "warehouse", "pyspark"], [
+    "do you know spark",
+    "snowflake experience",
+], ["spark", "databricks", "snowflake", "big data", "warehouse", "pyspark", "distributed"], [
     L("Data readiness framework", "https://github.com/tayler-erbe/enterprise-data-readiness-framework"),
 ], """
-Not hands-on in the work I've published. I've processed my larger datasets with pandas, pyarrow and Parquet batch
-pipelines: 6 million catalog rows, 5.19 million embeddings, and 117,722 bills. I work against Oracle and our enterprise
-data warehouse. My Enterprise Data Readiness Framework studies how Snowflake Cortex Analyst and Databricks Genie depend on
-a semantic layer, and it's designed to publish one that works in either.
-""")
+Not hands-on. I've handled my larger workloads with pandas, pyarrow and partitioned Parquet: 6 million catalog rows and
+5.19 million embeddings for procurement, and 117,722 bills for the passage model, with column pruning and vectorized
+passes to keep them fast. My data comes from Oracle and the institution's enterprise data warehouse. My Enterprise Data
+Readiness Framework studies how Snowflake Cortex Analyst and Databricks Genie depend on a semantic layer, and it's designed
+to publish one that works in either.
+""", sources=["work_history.md:1402", "page:procurement-intelligence.html", "readme:enterprise-data-readiness-framework"])
 
 card(TECH, "tech-dl-frameworks", "PyTorch, TensorFlow and Hugging Face", [
     "have you used pytorch",
@@ -1276,51 +1291,62 @@ card(TECH, "tech-dl-frameworks", "PyTorch, TensorFlow and Hugging Face", [
 ], ["pytorch", "tensorflow", "hugging face", "transformers", "deep learning", "sentence transformers"], [
     L("Archival image intelligence", "archival-image-intelligence.html"),
 ], """
-I work mostly at the applied and serving level: open-weight models from Hugging Face served through vLLM and Ollama, and
-sentence-transformers embedding models like all-MiniLM-L6-v2, all-mpnet-base-v2 and bge-small-en-v1.5. I used PyTorch for
-cosine similarity in the archival image work. TensorFlow isn't part of my published work.
-""")
+I work mostly at the applied and serving layer: Hugging Face Transformers and open-weight models served through vLLM and
+Ollama, and sentence-transformers embedding models such as MiniLM, all-mpnet-base-v2 and bge-small-en-v1.5. I used PyTorch
+for the similarity scoring in the archival image work. I've staged Hugging Face weights onto an air-gapped server by hand,
+and run a beta deployment on Hugging Face Spaces. TensorFlow isn't part of my work.
+""", sources=["work_history.md:1396", "work_history.md:1405", "work_history.md:63", "page:archival-image-intelligence.html"])
 
 card(TECH, "tech-langchain", "LangChain and LLM frameworks", [
     "have you used langchain",
     "have you used llamaindex",
     "llm frameworks",
     "what orchestration framework do you use",
-], ["langchain", "llamaindex", "frameworks", "orchestration"], [
+    "do you use langchain",
+    "have you used haystack",
+], ["langchain", "llamaindex", "haystack", "frameworks", "orchestration"], [
     L("Agent architecture", "agent-architecture.html"),
-    L("Drop Radar", "drop-radar.html"),
+    L("Legacy file search", "file-archiving-smart-search.html"),
 ], """
-I haven't used LangChain or LlamaIndex in my published work. I build orchestration directly in Python: my own job queue
-and GPU scheduler for 29 agents, FAISS retrieval, and JSON schemas enforced on model output. Drop Radar is standard-library
-Python with nothing extra to install. That keeps every step visible and testable.
-""")
+I haven't used LangChain or LlamaIndex in production. I explored Haystack for the legacy file search (FAISS document store
+plus an embedding retriever) to check that the design was portable across frameworks, then kept the pipeline in plain
+Python. That's my usual choice: a backend-agnostic router between Ollama and vLLM, FAISS retrieval, JSON schemas enforced
+on output, and my own job queue for agents. Fewer layers means every step stays visible and testable.
+""", sources=["work_history.md:692", "work_history.md:61", "page:agent-architecture.html"])
 
 card(TECH, "tech-openai", "OpenAI and GPT models", [
     "have you used openai",
     "have you used chatgpt",
     "openai api experience",
-], ["openai", "gpt", "gpt-4.1", "chatgpt", "api"], [
+    "have you used the openai api",
+    "hosted llm apis",
+    "have you used groq",
+], ["openai", "gpt", "gpt-4.1", "gpt-4o-mini", "azure openai", "chatgpt", "api", "groq"], [
     L("Legislative platform", "legislative-pipeline.html"),
 ], """
-Yes. The legislative platform's Copilot chatbot runs on GPT-4.1 and gives citation-backed answers. I also use ChatGPT as an
-independent second opinion. For Drop Radar I ran the big decisions past it as an outside consultant and adopted its
-strongest ideas. I tested the open-weight GPT-OSS 20B in two of my local evaluations.
-""")
+Yes. The legislative platform's Copilot chatbot runs on GPT-4.1 with citation-backed answers, and I integrated Azure OpenAI
+(gpt-4o-mini) for on-demand executive briefings and nightly impact scoring, while heavy batch extraction stays on local
+models. I've used the Groq API for open-weights Llama inference for briefings, and the OpenAI image API in personal
+projects. I've used ChatGPT since soon after its public release, and I tested the open-weight GPT-OSS 20B in two of my
+evaluations.
+""", sources=["work_history.md:1396", "work_history.md:155", "work_history.md:1397", "page:generation-model-evaluation.html"])
 
 card(TECH, "tech-claude", "Claude and Claude Code", [
     "have you used claude",
     "have you used claude code",
     "anthropic experience",
     "do you code with ai",
-], ["claude", "claude code", "anthropic", "ai coding", "agents"], [
+    "do you use claude code",
+], ["claude", "claude code", "anthropic", "ai coding", "agents", "subagents", "hooks"], [
     L("Agent architecture", "agent-architecture.html"),
     L("vLLM qualitative review", "vllm-qualitative-review.html"),
 ], """
-Heavily. My 29 agents run on Claude Code, mostly Claude Sonnet, with local models for some seats. Drop Radar's
-self-improving agent is a Claude Code agent. For the legislative model sweep, Claude Opus graded output quality in two
-independent passes that agreed on 60 of 60. In my newer evaluations, code scores accuracy instead of a model. AI coding
-assistants write and run my evaluation harnesses, and I review their code.
-""")
+Heavily. In my personal projects I run 29 agents on Claude Code, with subagents, pre-execution hooks, scoped permissions and
+persistent memory, coordinated through my own job queue. Drop Radar's self-improving maintenance agent is a Claude Code
+agent. For the legislative model sweep, Claude Opus graded output quality in two independent passes that agreed on 60 of 60;
+in my newer evaluations I score with code instead of a model. AI assistants write and run my evaluation harnesses, and I
+review what they produce.
+""", sources=["work_history.md:1419", "page:agent-architecture.html", "page:drop-radar.html", "page:vllm-qualitative-review.html"])
 
 card(TECH, "tech-open-models", "Open-weight models I've used", [
     "what open source models have you used",
@@ -1328,57 +1354,62 @@ card(TECH, "tech-open-models", "Open-weight models I've used", [
     "have you used qwen",
     "have you used mistral",
     "which llms have you worked with",
+    "which open source llms have you used",
 ], ["open weight", "llama", "qwen", "mistral", "gemma", "llava", "nemotron", "models"], [
-    L("Models I've used in production", "legislative-pipeline.html#modelsel"),
     L("Document intelligence", "document-intelligence-evaluation.html"),
+    L("vLLM multi-model sweep", "vllm-inference-throughput-evaluation.html"),
 ], """
-In production: Llama 3.1 8B AWQ for legislation, Llama 3.2 for email summaries, LLaVA for images, and qwen2.5:7b for
-procurement. Skyrule runs Qwen3-32B with AWQ and FP8 on vLLM. In my evaluations I've also run Mistral, Qwen 2.5,
-Qwen3-VL 8B and 32B, Qwen2.5-VL, Qwen3.8 27B, Qwen 3.6 35B-A3B, Gemma 4, GPT-OSS 20B, Nemotron 3 Nano, Nemotron 3.5
-Parse, PaddleOCR-VL-1.6 and olmOCR-2.
-""")
+In my work systems: Llama 3.1 8B AWQ for legislative extraction, Llama 3.2 for de-identified email summaries, LLaVA for images,
+and qwen2.5:7b for procurement equivalence. My personal Skyrule stack runs Qwen3-32B with AWQ and FP8 on vLLM. In my
+evaluations I've run Mistral 7B, Qwen 2.5, Qwen3-VL 8B and 32B, Qwen2.5-VL 7B and 32B, Qwen3.8 27B, Qwen 3.6 35B-A3B,
+Gemma 4, GPT-OSS 20B, Nemotron 3 Nano, Nemotron 3.5 Parse, PaddleOCR-VL-1.6 and olmOCR-2.
+""", sources=["work_history.md:1396", "page:document-intelligence-evaluation.html", "page:generation-model-evaluation.html"])
 
 card(TECH, "tech-vector-dbs", "Vector databases", [
     "have you used pinecone",
     "have you used chromadb",
     "have you used faiss",
     "vector store experience",
-], ["vector database", "faiss", "pinecone", "chroma", "embeddings", "hnsw"], [
-    L("My retrieval choices", "file-archiving-smart-search.html"),
+    "do you use pinecone",
+], ["vector database", "faiss", "pinecone", "chroma", "haystack", "embeddings", "hnsw", "ivf"], [
+    L("Procurement intelligence", "procurement-intelligence.html"),
+    L("Legacy file search", "file-archiving-smart-search.html"),
 ], """
-FAISS, in every retrieval system I've built. That includes HNSW indexes for legacy file search, 5.19 million vectors for
-procurement, and hybrid FAISS search for legislation. I haven't used a hosted vector database like Pinecone. FAISS
-indexes built offline and stored as files have kept costs low and data local. ChromaDB is one option in the email
-archive's semantic-search roadmap.
-""")
+FAISS is my default, and I pick the index for the scale. IndexFlatIP with L2-normalized vectors for exact cosine search on
+smaller collections, HNSW for the legacy file archive, and IVFFlat with 4,096 lists and nprobe 64 for the 5.19 million
+procurement embeddings. I've also worked with Pinecone and explored Haystack's FAISS document store. For most of my
+projects, local FAISS indexes built offline and stored as files keep the data on our hardware and the running cost near
+zero.
+""", sources=["work_history.md:1399", "work_history.md:692", "page:file-archiving-smart-search.html"])
 
 card(TECH, "tech-bi-tools", "Tableau and Power BI", [
     "have you used tableau",
     "have you used power bi",
     "bi tools experience",
     "business intelligence tools",
-], ["tableau", "power bi", "bi", "dashboards", "streamlit"], [
-    L("HR workforce analytics", "hr-workforce-analytics.html"),
+    "do you know power bi",
+], ["tableau", "power bi", "bi", "dashboards", "streamlit", "plotly"], [
     L("Legislative web application", "legislative-web-application.html"),
+    L("HR workforce analytics", "hr-workforce-analytics.html"),
 ], """
-My production dashboards are built in code: a Streamlit application on Azure for the legislative platform, and an HTML
-and FastAPI dashboard for procurement. The HR workforce platform plan includes Power BI and Tableau dashboard prototypes
-and a build phase for them. My data readiness framework also covers how Power BI Copilot depends on a good semantic layer.
-""")
+I'm familiar with Power BI, but my production dashboards are built in code. The legislative platform is a multi-page
+Streamlit and Plotly application on Azure, with a shared colorblind-safe theme, seven linked trend views and a personalized
+workspace. Procurement has an HTML and FastAPI spending dashboard. The HR workforce platform plan includes Power BI and
+Tableau dashboard prototypes, and my data readiness framework covers how Power BI Copilot depends on a good semantic layer.
+""", sources=["work_history.md:1411", "work_history.md:69-77", "page:hr-workforce-analytics.html"])
 
 card(TECH, "tech-ml-libraries", "Machine learning libraries", [
     "have you used scikit learn",
     "have you used xgboost",
     "which ml libraries do you use",
     "have you used h2o",
-], ["scikit-learn", "xgboost", "h2o", "catboost", "random forest", "libraries"], [
+], ["scikit-learn", "xgboost", "h2o", "catboost", "random forest", "histgradientboosting", "libraries"], [
     L("UIC enrollment: models", "uic-enrollment.html#models"),
     L("HR workforce analytics", "hr-workforce-analytics.html"),
 ], """
-scikit-learn for Random Forest and tree ensembles. H2O and CatBoost compared head to head for UIC enrollment. ARIMA with
-exponential smoothing for forecasting. NetworkX for graph communities. XGBoost, logistic regression and LambdaMART in the
-HR succession designs. pandas, numpy and pyarrow underneath all of it.
-""")
+Mostly scikit-learn: Random Forest, tree ensembles and HistGradientBoostingClassifier. On the UIC enrollment project the team compared H2O and CatBoost head to head and used ARIMA with exponential smoothing for forecasting, and I've used NetworkX for graph communities. The
+HR succession designs use XGBoost, logistic regression and LambdaMART. Underneath it all are pandas, numpy and pyarrow.
+""", sources=["work_history.md:1390", "page:uic-enrollment.html", "page:hr-workforce-analytics.html"])
 
 card(TECH, "tech-orchestration-mlops", "Airflow, MLflow and MLOps tooling", [
     "have you used airflow",
@@ -1386,14 +1417,16 @@ card(TECH, "tech-orchestration-mlops", "Airflow, MLflow and MLOps tooling", [
     "mlops tools",
     "workflow orchestration tools",
     "scheduling experience",
-], ["airflow", "mlflow", "mlops", "orchestration", "scheduling", "cron"], [
+    "do you use airflow",
+], ["airflow", "mlflow", "mlops", "orchestration", "scheduling", "cron", "prometheus", "grafana"], [
     L("Medium: monitoring", "https://medium.com/@tayler.erbe/i-got-tired-of-pipelines-failing-silently-so-i-built-my-own-monitoring-system-e8224fe22387"),
 ], """
-Our production pipelines run on cron on Linux, and I built the monitoring and alerting platform myself. It does what
-Airflow or MLflow would do for us: structured Parquet logs from every stage, and detection of failures, cascades, missed
-runs and silent pipelines, with diagnostic emails. For my agents I built an autonomous job queue and GPU scheduler that
-has run 650+ unattended jobs. I use GitHub Actions for CI.
-""")
+Our production pipelines run on cron and the JupyterHub Scheduler on Linux, and I built the monitoring layer that an
+Airflow or MLflow setup would otherwise provide: a Parquet logging contract for every stage, start and end sentinel rows so
+a silent pipeline is detected, severity-tiered alerts, and per-pipeline silence thresholds for quarterly jobs. I've also
+used Prometheus and Grafana, and GitHub Actions for board automation and one-click pipeline runs. For my agents I built an autonomous job queue and GPU scheduler that
+has launched 2,400+ unattended jobs since October 2, 2026.
+""", sources=["work_history.md:1408", "work_history.md:1413", "work_history.md:1415", "work_history.md:473", "page:index.html"])
 
 card(TECH, "tech-hardware", "GPUs and hardware I've used", [
     "what gpus have you used",
@@ -1401,30 +1434,32 @@ card(TECH, "tech-hardware", "GPUs and hardware I've used", [
     "have you used nvidia gpus",
     "have you used an a100",
     "have you used h100",
-], ["gpu", "nvidia", "l4", "l40s", "rtx 5090", "hardware", "cuda"], [
+    "what gpu do you use",
+], ["gpu", "nvidia", "l4", "l40s", "rtx 5090", "t4", "hardware", "cuda"], [
     L("Throughput study", "archival-image-throughput-evaluation.html"),
-    L("Document intelligence: hardware", "document-intelligence-evaluation.html"),
+    L("Document intelligence", "document-intelligence-evaluation.html"),
 ], """
-At work, an NVIDIA L4 (24 GB) on our Linux servers. That's where I did the vLLM migration and the multi-model sweep, with
-GPU telemetry at 1 to 2 Hz. At home, an RTX 5090 (32 GB) runs Skyrule's vLLM stack and my model evaluations. I sized the
-document work for an L4 or L40S. For larger needs I estimate rather than guess: the legislative pipeline would need about
-one A100-class GPU for steady state, or H100-class hardware for peak bursts.
-""")
+At work, an NVIDIA L4 (24 GB) on an air-gapped institutional Linux server, where I stood up vLLM and did the throughput
+migration and model sweep with GPU telemetry. At home, an RTX 5090 (32 GB) runs my personal Skyrule stack and my model
+evaluations, and I've used a 12 GB laptop GPU and Colab T4s. I sized the document work for an L4 or L40S. For bigger needs I
+estimate from measurements: the legislative pipeline would need about one A100-class GPU for steady state, or H100-class
+hardware for peak bursts.
+""", sources=["work_history.md:59-66", "page:document-intelligence-evaluation.html", "work_history.md:1415", "page:vllm-inference-throughput-evaluation.html"])
 
 card(TECH, "tech-integrations", "APIs and system integrations", [
     "what apis have you integrated",
     "integration experience",
     "have you worked with apis",
     "have you used the box api",
-], ["apis", "integrations", "box", "oracle", "telegram", "discord", "imap"], [
+], ["apis", "integrations", "box", "oracle", "legiscan", "telegram", "discord", "imap"], [
     L("Legacy file search", "file-archiving-smart-search.html"),
     L("Drop Radar", "drop-radar.html"),
 ], """
-Oracle through cx_Oracle, for live reads and writeback. The Box API, for legacy file search. Azure services. At home,
-Drop Radar integrates the Telegram Bot API, the Discord REST and Gateway APIs, read-only IMAP email, Shopify product
-feeds, RSS, Pushover and ntfy. All of it is written on the Python standard library.
-""")
-
+At work: Oracle through cx_Oracle and python-oracledb for live reads and writeback, the Box SDK for legacy files, the
+LegiScan API with hash-based incremental downloads (2 to 4 calls a run instead of the full dataset), and Azure services.
+In personal projects: the Telegram Bot API, Discord's REST and Gateway APIs, read-only IMAP, Shopify feeds, and the Etsy
+and Printify APIs.
+""", sources=["work_history.md:1402", "work_history.md:1396", "work_history.md:1432", "page:drop-radar.html", "work_history.md:1421"])
 
 # ----------------------------------------------------------------------------------------------------------------
 # Changes to existing cards (applied by merge.py)
@@ -1452,3 +1487,55 @@ PATCHES = {
         "add_questions": ["what are your two websites", "do you have another website", "what is your second website"],
     },
 }
+
+# the "no good match" message. chat.js fills {answers} and {questions} with live counts, and {query} in a link with the
+# visitor's question. Nothing is stored or sent unless the visitor presses the email button.
+FALLBACK = {
+    "title": "Tayler hasn't answered that one yet",
+    "answer": "Sorry, there isn't an answer for that question yet. Send it to Tayler with the button below and she'll add it "
+              "to her list of questions to answer.",
+    "note": "This isn't a live AI chatbot. No model runs when you ask; your question is matched against {answers} answers "
+            "(about {questions} ways of asking) that were prepared ahead of time from Tayler's own sources: her work history, "
+            "her project case studies, her Medium articles and LinkedIn posts, and questions she has answered herself since "
+            "August 2026. She keeps adding more. Nothing you type is stored or sent anywhere unless you choose to email it.",
+    "links": [
+        {"label": "Send this question to Tayler", "url": "mailto:hello@taylererbe.com?subject=A%20question%20for%20Ask%20about%20Tayler&body={query}"},
+        {"label": "Resume (PDF)", "url": "resume.pdf"},
+    ],
+}
+
+PATCHES["chatbot-how-built"] = {
+    "answer": "This chat searches pre-written answer cards in your browser. Your question is matched by keyword ranking "
+              "(BM25 with a synonym table) and, once a small embedding model loads, by meaning as well. No AI model writes "
+              "anything while you use it, and there is no server, tracking or cookies; your questions never leave the page. "
+              "Every answer is built from my own sources: my work history, my case studies, my Medium writing and questions "
+              "I've answered myself. The wording was drafted with AI help, first a local model on my GPU and later Claude, "
+              "and each answer is checked against those sources before it goes in.",
+}
+
+# the old answer read as if a fairness audit had been run on real employees; the page shows it as a designed view in a
+# proof of concept (HR workforce analytics page: "Succession dashboard prototype: ... equity audit"; work_history.md:1082)
+PATCHES["hr-equity"] = {
+    "answer": "Fairness is designed into the HR workforce platform rather than added at the end, but it is still a proof of "
+              "concept, so no audit has been run on real employee decisions. The succession dashboard prototype includes an "
+              "equity audit view meant to check whether succession and promotion recommendations are proportionally "
+              "distributed across demographic groups and to flag patterns for review before anyone uses them. Each "
+              "recommendation carries an interpretable rationale, such as \"high tenure and a high move rate in a "
+              "high-growth job family\", top candidate lists are reviewed for demographic balance, and the validation "
+              "phase includes a fairness review across groups.",
+}
+
+# routing: phrasings an interviewer uses that landed on a weaker card in the blind test (11 Nov 2026)
+for _cid, _qs in {
+    "aie-multimodal-pipeline": ["how do you handle images and scanned pages", "scanned pages in a pipeline", "images in a document pipeline"],
+    "iv-quantization": ["what did quantization cost you in quality", "quantization quality trade-off", "what quantization have you used"],
+    "ads-validation-strategy": ["how do you validate a model on time based data", "temporal validation", "validating on time ordered data"],
+    "ads-small-data-power": ["how do you handle a small dataset", "not enough data to model", "working with very little data"],
+    "iv-interpretable-models": ["how do you explain a model's predictions", "explaining individual predictions"],
+    "ads-measuring-model-impact": ["most impactful model you have built", "your most impactful model"],
+    "con-platform-evaluation": ["how have you evaluated vendors", "vendor and platform evaluation"],
+    "iv-similarity-thresholds": ["setting a similarity threshold for retrieval", "cosine similarity threshold for retrieval"],
+    "aie-api-app-design": ["fastapi or flask", "which web framework do you use for ai services", "fastapi vs streamlit"],
+    "ads-bill-threshold": ["how do you pick a decision threshold", "choosing a classification threshold", "operating point for a classifier"],
+}.items():
+    PATCHES.setdefault(_cid, {}).setdefault("add_questions", []).extend(_qs)

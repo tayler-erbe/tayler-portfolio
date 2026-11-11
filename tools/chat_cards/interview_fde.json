@@ -1,0 +1,1770 @@
+{
+ "family": "fde",
+ "cards": [
+  {
+   "id": "fde-design-no-internet",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Design: deploying an LLM pipeline into a network with no internet",
+   "questions": [
+    "how would you deploy an llm pipeline into a customer network with no internet",
+    "design an llm deployment for an offline customer network",
+    "how would you run llms inside a client's firewall",
+    "how would you architect ai for an air gapped customer",
+    "llm deployment with no egress",
+    "what would you need to run models on prem for a customer",
+    "how would she deploy ai where cloud apis are forbidden",
+    "on prem llm deployment design",
+    "how do you get models into a disconnected environment",
+    "how would you handle alerting and updates with no internet",
+    "design for a customer that forbids hosted ai"
+   ],
+   "tags": [
+    "air-gapped",
+    "offline",
+    "no egress",
+    "on-premises",
+    "self-hosted",
+    "data boundary",
+    "sendmail",
+    "local inference",
+    "disconnected"
+   ],
+   "links": [
+    {
+     "label": "vLLM throughput study",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I'd design it the way the archival pipeline is built, where hosted AI services are excluded outright. First, map the network precisely, because \"no internet\" is usually narrower than that; ours blocked Hugging Face only, so model weights come in through a documented staging path and get pinned by digest so a moved tag can't change the model. Serve with vLLM on the customer's GPU for continuous batching, behind a backend router so either vLLM or Ollama can serve by config. Keep embeddings, the vector index, extracted text and originals inside the network. Order the pipeline so cheap deterministic filters run first and the model only sees what survives. Make every long job checkpoint and resume, and route alerts through whatever the host allows; on our server that's local sendmail, since SMTP is locked down. Then get written confirmation from the customer's privacy office that local open-weight processing is acceptable.",
+   "sources": [
+    "work_history.md:921",
+    "work_history.md:63",
+    "work_history.md:64",
+    "work_history.md:317",
+    "work_history.md:62",
+    "work_history.md:866",
+    "work_history.md:284",
+    "work_history.md:468",
+    "work_history.md:927"
+   ]
+  },
+  {
+   "id": "fde-oracle-integration",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Design: integrating with a client's Oracle databases",
+   "questions": [
+    "writing model output back to an oracle schema",
+    "how would you integrate with a client's oracle warehouse",
+    "how do you read from and write back to oracle safely",
+    "oracle integration design",
+    "how does the research proposal pipeline talk to oracle",
+    "how do you do incremental loads from oracle",
+    "how do you make an oracle writeback reversible",
+    "how did you handle oracle native network encryption",
+    "cx_oracle or python oracledb thick mode",
+    "how would she connect to an enterprise data warehouse",
+    "how do you avoid reprocessing the whole oracle table every run",
+    "post write verification against oracle",
+    "reading blobs out of oracle"
+   ],
+   "tags": [
+    "schema",
+    "oracle",
+    "warehouse",
+    "blob",
+    "anti-join",
+    "rollback",
+    "writeback",
+    "thick mode",
+    "change detection",
+    "effective dating"
+   ],
+   "links": [
+    {
+     "label": "Research proposal pipeline",
+     "url": "research-proposal-processing.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "Read narrowly, write reversibly, verify inside the run. The research proposals pipeline does change detection with an anti-join between attachment IDs in the source Kuali tables and those already processed, so each run touches only new documents and \"nothing new\" exits cleanly as a success. It pulls BLOBs in batches of 20, converts them to PDF, tolerates null or unconvertible files as logged warnings, and keeps credentials in a YAML config, never in code. Before every write it prints rollback SQL with the exact IDs and timestamp filter; afterward it counts rows in the destination and raises if the count falls short. The warehouse for the retirement report required Oracle Native Network Encryption, which thin mode can't negotiate, so it runs python-oracledb in thick mode, documented for Windows and Linux. All SQL lives in version-controlled files, and historical reads are effective-dated, never the current row.",
+   "sources": [
+    "work_history.md:411",
+    "work_history.md:413",
+    "work_history.md:416",
+    "work_history.md:417",
+    "work_history.md:418",
+    "work_history.md:442",
+    "work_history.md:443",
+    "work_history.md:790",
+    "work_history.md:791",
+    "work_history.md:789"
+   ]
+  },
+  {
+   "id": "fde-box-integration",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Ingesting from Box and other customer file stores",
+   "questions": [
+    "how did you ingest files from box",
+    "how do you build an inventory from box without downloading everything",
+    "box api integration design",
+    "how does the archival pipeline read from box",
+    "why is box a poor fit for ingest",
+    "how do you handle a customer's file share as a source",
+    "how did she crawl box folders",
+    "box metadata sha1 deduplication",
+    "source adapter for drives, smb shares and box",
+    "how do you resume a crawl when colab reclaims the session",
+    "ingesting a customer's shared drive"
+   ],
+   "tags": [
+    "box",
+    "box sdk",
+    "sha-1",
+    "manifest",
+    "source adapter",
+    "smb",
+    "disk image",
+    "ingest",
+    "inventory",
+    "checkpoint"
+   ],
+   "links": [
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Legacy file search",
+     "url": "file-archiving-smart-search.html"
+    }
+   ],
+   "answer": "I build the inventory from Box metadata before downloading a byte. The archival ingest constructs the manifest from name, size, SHA-1, path and timestamps alone, so inventory, deduplication and structural filtering all run first, and it checkpoints so a reclaimed Colab session resumes instead of restarting. Stage 01 sits behind a source-adapter boundary: it takes a root path and walks it, whether that's a mounted drive, an SMB share, a forensic disk image or a Box folder. Ingest and delivery are separate layers on purpose, because Box is a poor fit for the first and a good fit for the second. The earlier file-search proof of concept used the Box SDK to enumerate and download a whole folder while keeping every Box path, so search results link back to the original file. One finding mattered: our Box accessions were extracts copied from drives, so numbers derived from them stay provisional.",
+   "sources": [
+    "work_history.md:892",
+    "work_history.md:893",
+    "work_history.md:655",
+    "work_history.md:658",
+    "work_history.md:894",
+    "work_history.md:895"
+   ]
+  },
+  {
+   "id": "fde-legiscan-ingestion",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Ingesting from an external API: LegiScan",
+   "questions": [
+    "how does the legislative pipeline pull data from legiscan",
+    "how do you avoid re downloading the whole dataset every day",
+    "legiscan api integration",
+    "hash based incremental download",
+    "how does the daily pipeline know what changed",
+    "what was the join key bug in the prediction tab",
+    "how did different id spaces break your join",
+    "how did she ingest legislation data",
+    "external api ingestion design",
+    "why bill_number as a secondary join key",
+    "daily refresh from a third party api"
+   ],
+   "tags": [
+    "legiscan",
+    "api",
+    "incremental",
+    "hash check",
+    "change detection",
+    "join key",
+    "id space",
+    "ilga",
+    "daily refresh"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "The daily job starts with a LegiScan hash check, one API call regardless of bill count, and downloads only the sessions whose hash changed. Then it parses the JSON bill files, labels the new actions, rescores changed bills, builds an active-bills snapshot and uploads the session parquets to Azure Blob before saving the new hash. The integration bug worth knowing: the deployed prediction tab matched almost nothing. Older CSVs came from bulk exports with 5-digit internal IDs, while the server parsed real 7-digit LegiScan bill IDs from JSON, so only about 8,820 of 50,501 bills joined, and those by numeric collision. I deleted the stored CSVs, rebuilt everything from the JSON source, and added bill_number as a stable secondary join key in every prediction parquet, then verified it on live data.",
+   "sources": [
+    "work_history.md:381",
+    "work_history.md:148",
+    "work_history.md:356",
+    "work_history.md:382"
+   ]
+  },
+  {
+   "id": "fde-azure-tenant-deploy",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Deploying into a locked-down Azure tenant",
+   "questions": [
+    "single sign on blocked the deployment endpoint",
+    "how did you deploy to azure when sso blocked the deployment endpoint",
+    "zip deploy failed because of the enterprise tenant",
+    "azure deployment restrictions in a university tenant",
+    "how did you deploy azure functions with remote build",
+    "why did you move off flex consumption",
+    "what azure deployment blockers did you hit",
+    "how did she get code onto app service",
+    "oryx build problems on app service",
+    "scm basic auth and entra sso",
+    "deploying with azure cloud shell",
+    "enterprise azure tenant constraints"
+   ],
+   "tags": [
+    "single sign on",
+    "azure",
+    "entra",
+    "sso",
+    "scm",
+    "oryx",
+    "cloud shell",
+    "zip deploy",
+    "function app",
+    "tenant"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "The university Entra tenant enforces SSO on the deployment (SCM) endpoint, which breaks standard zip-deploy and publish-profile paths. The reliable route turned out to be Azure Cloud Shell with a remote build (az functionapp deployment source config-zip with build-remote), after sorting out cross-subscription defaults and file-share provisioning. Subscription-level resource-provider permissions also blocked the Flex Consumption plan, so I hosted the Function App on the existing App Service plan instead. The web app had its own blockers when I first deployed it: a .deployment file stopping the Oryx build, missing dependency installation, SCM basic auth configuration and dynamic port binding. There was no existing deployment infrastructure, so I configured environment variables, the startup command and the Local Git plus Oryx pipeline from scratch. I operate it with the Azure CLI for deploys, log inspection and live diagnostics.",
+   "sources": [
+    "work_history.md:169",
+    "work_history.md:154",
+    "work_history.md:73",
+    "work_history.md:75",
+    "work_history.md:175"
+   ]
+  },
+  {
+   "id": "fde-firewall-cosmos",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Re-architecting around a campus firewall",
+   "questions": [
+    "the campus firewall blocked cosmos db what did you do",
+    "why does impact scoring run through blob storage",
+    "how did you re architect around the firewall",
+    "on prem server can't reach the cloud database",
+    "explain the cosmos to blob export design",
+    "why azure functions export profiles to blob",
+    "how did she work around tls termination at the network boundary",
+    "hybrid on prem and cloud data path",
+    "network constraint discovered mid build",
+    "how do batch and on demand scores share one schema"
+   ],
+   "tags": [
+    "firewall",
+    "cosmos db",
+    "blob",
+    "tls termination",
+    "azure functions",
+    "parquet",
+    "hybrid",
+    "network constraint",
+    "data path"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Mid-build I found the analytics server could reach Blob Storage but not Cosmos DB: the Cosmos endpoint was terminated at the TLS level at the campus boundary. That meant the on-prem pipeline couldn't read user prompts or write scores. I re-architected the data path around it. A serverless function exports user profiles and impact prompts from Cosmos to Blob; the server scores them against the local Llama model on vLLM; results go back to Blob as a long-format parquet, one row per user, prompt and bill; and the web app reads them through a dedicated loader with per-user filtering and cached reads. I kept a cache-first live path in the app that scores one bill on demand and writes the same schema, so batch and on-demand results are interchangeable. The split became a deliberate property: heavy batch inference on owned GPU hardware, low-latency requests on managed cloud inference.",
+   "sources": [
+    "work_history.md:170",
+    "work_history.md:242",
+    "work_history.md:243",
+    "work_history.md:244",
+    "work_history.md:245",
+    "work_history.md:246"
+   ]
+  },
+  {
+   "id": "fde-app-service-failures",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "App Service failure modes: crash loops, cold starts, stale workers",
+   "questions": [
+    "why did the container die on startup",
+    "the page kept refreshing in production",
+    "what failure modes did you hit on azure app service",
+    "why did the container keep crashing",
+    "exit code 127 on app service",
+    "how did you fix cold starts on the streamlit app",
+    "why upgrade from basic to premium v3",
+    "stale function workers serving old code",
+    "how do you know new code is actually live after a deploy",
+    "what broke in production on azure",
+    "how did she fix the crash loop",
+    "semantic search failing under memory pressure",
+    "deployment looked like a regression"
+   ],
+   "tags": [
+    "container",
+    "app service",
+    "crash loop",
+    "exit code 127",
+    "cold start",
+    "premium v3",
+    "always on",
+    "stale workers",
+    "startup command",
+    "memory"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "Three are worth describing. First, an outage: the startup command reinstalled dependencies on every container boot, the install failed, and the container died with exit code 127. Users saw a page that kept refreshing. I changed it to a launch-only command with dependencies baked into the Oryx build. Second, a reliability cluster: semantic search failing under memory pressure and cache loss on cold start. I traced those to a shared cause, loaded columns and sessions selectively, configured always-on and start-time limits, and wrote a tier analysis that moved the plan from Basic to Premium v3 for the platform's memory-bound startup. Third, after a Functions deploy, output that read like a code regression was really stale workers serving the previous code. The standing remedy is restart, wait for warm-up, then trigger, plus a one-glance test that the new code is genuinely live.",
+   "sources": [
+    "work_history.md:168",
+    "work_history.md:253",
+    "work_history.md:171",
+    "work_history.md:172",
+    "work_history.md:99",
+    "work_history.md:232"
+   ]
+  },
+  {
+   "id": "fde-backend-router",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "A pluggable inference backend router",
+   "questions": [
+    "why did you build a pluggable inference backend",
+    "how does the backend router switch between ollama and vllm",
+    "backend agnostic inference service",
+    "how do you swap the serving stack without code changes",
+    "why design around serving infrastructure instead of the model",
+    "ollama vs vllm config flag",
+    "how did she make the pipeline backend agnostic",
+    "inference abstraction layer",
+    "how would you support multiple llm backends at a customer",
+    "what does the router buy you"
+   ],
+   "tags": [
+    "router",
+    "backend",
+    "abstraction",
+    "ollama",
+    "vllm",
+    "config flag",
+    "serving",
+    "portability",
+    "swap"
+   ],
+   "links": [
+    {
+     "label": "vLLM throughput study",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "The legislation pipeline had a backend-agnostic service module from day one: a router picks Ollama or vLLM by a config flag, and the pipeline code never changes. I built it before vLLM was even deployable, because the lesson from the earlier summarization pipeline was that serving infrastructure is the lever to design around, not the model. Once vLLM was serving, the extraction model re-evaluation ran on it in May 2026. The image work showed why the serving layer matters: on the same L4, Ollama serialized requests with throughput flat at about 9 images per minute and the GPU 28 to 31% busy, while vLLM scaled to 55.4 images per minute at concurrency 8, a 6.22x speedup on the same hardware.",
+   "sources": [
+    "work_history.md:62",
+    "work_history.md:639",
+    "work_history.md:640",
+    "work_history.md:642"
+   ]
+  },
+  {
+   "id": "fde-magic-link-auth",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Passwordless magic-link authentication",
+   "questions": [
+    "how did you build authentication for the legislative app",
+    "explain the magic link sign in",
+    "how are magic link tokens secured",
+    "why passwordless authentication",
+    "how do sessions survive container restarts",
+    "hmac signed tokens with ttl",
+    "how did she restrict sign in to university emails",
+    "why did you remove the admin password",
+    "auth design for an internal app",
+    "how does email delivery work for sign in links"
+   ],
+   "tags": [
+    "authentication",
+    "auth",
+    "magic link",
+    "passwordless",
+    "hmac",
+    "ttl",
+    "session",
+    "sso",
+    "login"
+   ],
+   "links": [
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Sign-in is a magic link built end to end. The app accepts only university email domains, issues an HMAC-signed one-time token, stores it in Cosmos DB with a TTL so it expires on its own, and sends the link through Azure Communication Services from a verified sender domain. A successful sign-in creates a server-side session record with a configurable multi-day TTL. One gate governs every page, and sessions are restored from the URL so a login survives a page refresh or a container recycle, which matters on App Service. Early on there was also a legacy admin password for demos. I removed it entirely, so university magic-link sign-in is the only route in. The same managed email service delivers the digests, so one verified domain covers both.",
+   "sources": [
+    "work_history.md:160",
+    "work_history.md:161",
+    "work_history.md:156",
+    "work_history.md:254"
+   ]
+  },
+  {
+   "id": "fde-cosmos-schema",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Cosmos DB schema for user data and scoring",
+   "questions": [
+    "how did you design the cosmos db schema",
+    "what lives in cosmos db in the legislative platform",
+    "partition key design for user data",
+    "how do you avoid rescoring every bill every night",
+    "content hash incremental rescoring",
+    "cache first scoring per bill and prompt",
+    "how did she model user profiles and saved items",
+    "ttl policies in cosmos",
+    "document database design for an internal app",
+    "how do the live app and the nightly scorer share data"
+   ],
+   "tags": [
+    "cosmos db",
+    "nosql",
+    "partition key",
+    "ttl",
+    "schema",
+    "incremental",
+    "content hash",
+    "cache",
+    "document database"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Cosmos DB is the platform's user-data store: profiles, magic-link tokens, sessions, saved items (tracked bills, categories, impact prompts) and impact-scoring results, with partition keys designed per container and TTL policies so tokens and sessions expire without cleanup jobs. The live app and the nightly scorer share incremental-write patterns and one result schema. The nightly function rescores only bills whose content hash changed, so a quiet night costs almost nothing. The in-app path is cache-first: a bill and prompt pair is scored once, stored, and read instantly after that. Profiles feed the model directly, so I put explicit limits on profile and prompt length to keep user-written context from silently truncating the prompt, and documented why for users. Once the campus firewall cut the server off from Cosmos, batch results moved to Blob with the same shape.",
+   "sources": [
+    "work_history.md:155",
+    "work_history.md:164",
+    "work_history.md:165",
+    "work_history.md:217",
+    "work_history.md:243"
+   ]
+  },
+  {
+   "id": "fde-rapid-apps",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Stack choices for building custom apps fast",
+   "questions": [
+    "what stack do you use to build custom apps fast",
+    "streamlit or fastapi for an internal tool",
+    "why streamlit for the legislative platform",
+    "how did you structure the multi page streamlit app",
+    "why a vanilla html client with no framework",
+    "how fast can you build a custom tool",
+    "what is her go to stack for internal tools",
+    "rapid application stack",
+    "how do you prototype a ui before committing",
+    "how do non technical users trigger your pipelines",
+    "frontend choices for data apps"
+   ],
+   "tags": [
+    "stack",
+    "streamlit",
+    "fastapi",
+    "html",
+    "javascript",
+    "st.navigation",
+    "prototype",
+    "internal tools",
+    "github actions"
+   ],
+   "links": [
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "I pick the stack that gets a working tool to users fastest without creating a deployment I can't support. For data-heavy internal apps that's Python end to end: the legislative platform is a multi-page Streamlit app using st.navigation, with app.py as a thin router, pages in their own folder, a shared accessible theme and one central auth gate. For procurement I built a FastAPI service with 10 endpoints and a vanilla HTML and JavaScript client with no framework, so it runs as a local file or deployed. To prove an interaction first, I prototype in a standalone HTML page, as I did with the bill prediction view over 6,556 bills, fed by a 5 MB JSON because the raw CSVs were too big for a browser. For payroll the interface is a Box folder: staff upload files and a GitHub Actions workflow runs the pipeline in one click.",
+   "sources": [
+    "work_history.md:72",
+    "work_history.md:756",
+    "work_history.md:766",
+    "work_history.md:386",
+    "work_history.md:521",
+    "work_history.md:524"
+   ]
+  },
+  {
+   "id": "fde-safe-rollout",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Safely rolling out automated AI email",
+   "questions": [
+    "how did you roll out the ai email digests safely",
+    "dry run flag and test recipient redirect",
+    "how do you stop an automated job from emailing real users by mistake",
+    "how do you gate go live for an automated feature",
+    "how did you verify the digests were personalized",
+    "staged rollout for ai generated messages",
+    "how did she test the digest before launch",
+    "kill switch for automated emails",
+    "how do you deploy a feature that acts on its own",
+    "relevance threshold too loose in the digest"
+   ],
+   "tags": [
+    "rollout",
+    "dry run",
+    "feature flag",
+    "gate",
+    "staging",
+    "email",
+    "digest",
+    "canary",
+    "go-live"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Anything that acts on its own gets two gates. The weekly digest function runs behind a dry-run flag and a test-recipient redirect, so every digest can be inspected before a real recipient sees one. I verified personalization end to end across multiple users on July 11, 2026: the same bill appeared in different digests framed differently, as a data-governance obligation for one reader and an AI-ethics question for another, which showed it wasn't keyword matching. Review also caught over-reach: a speed-limit bill rated high-impact for an AI-ethics reader because of an incidental AI-camera provision, so I flagged threshold tightening rather than ship a tenuous inference. Then I held the switch until stakeholders were onboarded in person, because an unexplained autonomous AI email is a worse first impression than none. Before launch I validated digest output against stored profiles and built a pre-launch checklist.",
+   "sources": [
+    "work_history.md:163",
+    "work_history.md:227",
+    "work_history.md:230",
+    "work_history.md:231",
+    "work_history.md:233",
+    "work_history.md:208"
+   ]
+  },
+  {
+   "id": "fde-gpu-server-ops",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Operating a shared GPU server",
+   "questions": [
+    "sharing a gpu across pipelines",
+    "how do you operate a shared gpu server",
+    "a kernel update disabled the gpu driver what happened",
+    "how did you free gpu memory for another pipeline",
+    "two pipelines sharing one gpu",
+    "jupyterhub out of memory failure",
+    "how do you run multiple ml workloads on one l4",
+    "how did she handle the 11 night silent extraction failure",
+    "gpu memory contention",
+    "running vllm alongside other jobs",
+    "how do you protect a catch up run so no data is skipped"
+   ],
+   "tags": [
+    "shared gpu",
+    "pipelines",
+    "concurrent workloads",
+    "l4",
+    "vram",
+    "kernel",
+    "driver",
+    "jupyterhub",
+    "oom",
+    "shared server"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "One L4 with 23 GB of VRAM serves several concurrent workloads, so memory and the host itself are the things to watch. From August 24 to September 3, 2026, legislative extraction failed silently for 11 nights; the cause was a server kernel update that disabled the GPU driver. I documented the cause for the system administrators, protected the catch-up so no data would be skipped, and restored the nightly scoring job. In early September I freed roughly 15 GB of shared GPU memory by right-sizing the language model's allocation, so the archival pipeline could run on the same server. Earlier, Ollama's keep_alive policy had been holding about 6 GB and blocking vLLM's cache. When the shared JupyterHub went down from an out-of-memory failure, I restored it and moved heavy jobs off it so it wouldn't recur.",
+   "sources": [
+    "work_history.md:1114",
+    "work_history.md:205",
+    "work_history.md:206",
+    "work_history.md:207",
+    "work_history.md:65"
+   ]
+  },
+  {
+   "id": "fde-deployment-topology",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "How the legislative platform is deployed",
+   "questions": [
+    "what runs in the cloud and what runs on the server",
+    "what schedule does the daily pipeline run on",
+    "walk me through how the legislative platform is deployed",
+    "what runs on prem and what runs in azure",
+    "deployment topology of the legislative platform",
+    "how is the daily pipeline scheduled",
+    "how does the app pick up the nightly rescore",
+    "which azure services does the platform use",
+    "how did she split work between the gpu server and the cloud",
+    "what's the production footprint",
+    "how fresh is the data in the app",
+    "explain the server to azure data flow"
+   ],
+   "tags": [
+    "schedule",
+    "daily",
+    "cloud",
+    "topology",
+    "azure",
+    "on-prem",
+    "blob",
+    "functions",
+    "jupyterhub scheduler",
+    "app service"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "Heavy work runs on-prem, user-facing work runs in Azure, and Blob Storage is the seam. On the Linux server with the L4: ingestion, chunking, LLM feature extraction, standardization, embeddings and the FAISS index, plus a daily prediction job scheduled through JupyterHub Scheduler at 4 AM that rescores changed bills and uploads session parquets to Blob. In Azure: the Streamlit app on App Service, reading Blob with a one-hour cache TTL so the morning rescore is visible the same day; a Function App on the same plan for weekly digests and nightly impact scoring; Cosmos DB for user data; Communication Services for sign-in links and email; and Azure OpenAI gpt-4o-mini for on-demand briefings. Batch inference on owned hardware has no marginal cost, and managed cloud inference handles low-latency in-app requests. I designed, provisioned and operate all of it.",
+   "sources": [
+    "work_history.md:148",
+    "work_history.md:153",
+    "work_history.md:154",
+    "work_history.md:155",
+    "work_history.md:156",
+    "work_history.md:157",
+    "work_history.md:158",
+    "work_history.md:246"
+   ]
+  },
+  {
+   "id": "fde-hardening-poc",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "What changes between a demo and production",
+   "questions": [
+    "what changes between a proof of concept and production",
+    "how do you harden a prototype",
+    "what did you add to make the legislative platform production grade",
+    "production readiness checklist for an ai app",
+    "what breaks when a prototype meets real users",
+    "beta to production what did you fix",
+    "how does she harden a system before release",
+    "making a pilot reliable",
+    "unfalsifiable success signal",
+    "poison pill retry loop",
+    "idempotent extraction for multi night runs"
+   ],
+   "tags": [
+    "hardening",
+    "production readiness",
+    "idempotent",
+    "retry",
+    "monitoring",
+    "accessibility",
+    "authentication",
+    "beta",
+    "reliability"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "Production means the system tells the truth about itself, survives bad inputs, and can be run by someone other than me. Between the approved February 2026 beta and the production version delivered to IGPA on August 11, 2026, I replaced a shared admin password with magic-link sign-in, made extraction idempotent so a multi-night run can be killed and restarted without double-writing, and audited the pipeline's own monitoring. The audit found a success signal that reported green on zero output, and one malformed bill that truncated, failed to parse, reappeared as a delta and failed again for six days. The fixes: completion requires a non-zero output count, and a length guard plus a retry ceiling parks a record that keeps failing. Then QA's accessibility review: all 26 findings resolved across five deployments, and 21 defects resubmitted, each with a written root cause and fix.",
+   "sources": [
+    "work_history.md:93",
+    "work_history.md:107",
+    "work_history.md:254",
+    "work_history.md:284",
+    "work_history.md:249",
+    "work_history.md:250",
+    "work_history.md:181",
+    "work_history.md:201"
+   ]
+  },
+  {
+   "id": "fde-handoff-architecture",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing a system to be handed off",
+   "questions": [
+    "how do you design a system so the customer can own it",
+    "handoff architecture",
+    "what makes a pipeline transferable to another team",
+    "how did you structure the archival build for handover",
+    "design contracts and column ownership",
+    "seed issues with acceptance criteria",
+    "how do you make components independently replaceable",
+    "runbooks and preflight checks for the receiving team",
+    "how did she set up the repository for the library",
+    "how do you write a schema contract",
+    "what documentation ships with your systems"
+   ],
+   "tags": [
+    "handoff",
+    "handover",
+    "design contract",
+    "schema",
+    "column ownership",
+    "runbook",
+    "seed issues",
+    "repository",
+    "maintainability"
+   ],
+   "links": [
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I design the handoff into the architecture, so the receiving team inherits contracts instead of one person's memory. On the archival build, each of the eight stages has a named owner, a gate condition that defines done, and a stated dependency, and the manifest schema assigns every column to exactly one stage, so the Library's engineer can take over one stage at a time without touching the others. The repository is the single source of truth: design docs, owner-assigned worksheets, a README for each proof of concept stating what's reusable and what's known to be broken, and 23 seed issues across five milestones, each with dependencies and \"done when\" criteria. Board maintenance runs through GitHub Actions. For the retirement report the runbook is executable: a preflight script checks the database client, credentials, imports and directories before the first scheduled run.",
+   "sources": [
+    "work_history.md:865",
+    "work_history.md:871",
+    "work_history.md:898",
+    "work_history.md:902",
+    "work_history.md:903",
+    "work_history.md:813"
+   ]
+  },
+  {
+   "id": "fde-deployment-checks",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Checks that let you ship fast without breaking things",
+   "questions": [
+    "what checks do you build into a deployment",
+    "how do you ship quickly without breaking production",
+    "output contracts and preflight checks",
+    "how do you catch a broken release before users do",
+    "how do you validate a scheduled job before its first run",
+    "regression control for customer pipelines",
+    "how does she keep quality up when moving fast",
+    "how do you test a pipeline without production credentials",
+    "headless browser testing of the deployed app",
+    "machine checkable output contract"
+   ],
+   "tags": [
+    "preflight",
+    "output contract",
+    "fixture",
+    "regression",
+    "validation",
+    "tests",
+    "rollback",
+    "headless browser",
+    "ci"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I make checks cheap enough to run every time. On the retirement rebuild I froze the report as a machine-checkable output contract (4 files, 21 sheets, 436 columns) validated against two earlier production outputs on every run, plus a preflight script that verifies the Oracle client, credentials, imports and distribution list before the first scheduled run, not at 6 AM on a quarter boundary. That contract caught its own bug: a floating-point equality check that passed at 224 rows and failed at 225, now a tolerance with a printed drift. On the archival build, a 50-row synthetic fixture and a deliberately broken variant let the whole suite run with no drive, no Box access and no credentials. Database writes print rollback SQL and verify row counts. Accessibility fixes were checked in a headless browser running the production Streamlit version.",
+   "sources": [
+    "work_history.md:782",
+    "work_history.md:813",
+    "work_history.md:814",
+    "work_history.md:877",
+    "work_history.md:442",
+    "work_history.md:443",
+    "work_history.md:200"
+   ]
+  },
+  {
+   "id": "fde-validating-customer-data",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Validating a customer's data before building on it",
+   "questions": [
+    "the data was an extract rather than the real source",
+    "how do you validate a customer's data before building",
+    "how do you check the data is what the client says it is",
+    "what checks do you run on a new dataset",
+    "the training corpus was missing records how did you find it",
+    "how did you discover the accessions were extracts",
+    "data definition conflicts in a warehouse",
+    "how does she verify source data",
+    "incomplete corpus detection",
+    "two incompatible definitions of the same field",
+    "how do you mark numbers provisional"
+   ],
+   "tags": [
+    "extract",
+    "source data",
+    "data validation",
+    "data quality",
+    "profiling",
+    "completeness",
+    "provisional",
+    "definitions",
+    "status filter",
+    "coverage"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I check coverage against what should exist, beyond what happened to load. The legislative training corpus looked complete until I measured passed-bill coverage: 1.2%. The cause was a status filter dropping every resolved bill; rebuilding took the corpus from 46,815 to 117,722 bills and coverage to 100%. The same audit found resolutions pooled with bills, which inflated the success rate to 30.4% from a true 13.2%. On the archival build, the Box accessions turned out to be extracts copied from drives: no system files, possibly flattened folders, original filesystem metadata gone. They're fine to build and test against but can't validate the reduction rate, so every derived number is marked provisional until a full drive is processed. In the HR warehouse I found two incompatible service-year definitions, which can mix age as of today with service as of another date, and logged it for the warehouse team.",
+   "sources": [
+    "work_history.md:189",
+    "work_history.md:113",
+    "work_history.md:894",
+    "work_history.md:895",
+    "work_history.md:786"
+   ]
+  },
+  {
+   "id": "fde-scoping-poc",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Scoping a proof of concept for a customer",
+   "questions": [
+    "what do you leave out of a first release",
+    "how do you scope a proof of concept",
+    "what goes into version one",
+    "how would you scope a pilot for a customer",
+    "what did the first legislative prototype include",
+    "what do you defer to version 2",
+    "minimum viable product for an ai system",
+    "how small should a poc be",
+    "how does she decide what's out of scope",
+    "prototype before committing to the production app",
+    "keeping v1 from precluding v2"
+   ],
+   "tags": [
+    "poc",
+    "mvp",
+    "pilot",
+    "v1",
+    "scope",
+    "prototype",
+    "defer",
+    "version 2"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "Version one answers the customer's core question end to end on real data, once. The legislative proof of concept in February 2026 was a one-time run across ten years of Illinois legislation with a small Llama 3.2 3B pipeline: feature extraction, standardization, dashboards and vector search. IGPA approved it, and only then did I rebuild ingestion, chunking, extraction and embedding for production on the L4 server. For bill prediction I prototyped the monitoring view as a standalone HTML page over 6,556 active bills before committing it to Streamlit; that prototype defined the interaction model that shipped. On the archival build I deferred a local appraisal agent to version 2 with one constraint: no version 1 decision may preclude it. It came with a finding that matters for v1 too: agent loops belong at folder level rather than per file, where many model calls per file would turn hours into weeks.",
+   "sources": [
+    "work_history.md:93",
+    "work_history.md:95",
+    "work_history.md:386",
+    "work_history.md:922"
+   ]
+  },
+  {
+   "id": "fde-legacy-recovery",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Reverse engineering a lost legacy system",
+   "questions": [
+    "recovering an undocumented legacy workflow",
+    "how would you reverse engineer a legacy system with no documentation",
+    "the knime workflow was lost how did you rebuild it",
+    "how did you recover the retirement report",
+    "inheriting a system whose author left",
+    "why rebuild in python instead of knime",
+    "how do you reconstruct a spec from outputs",
+    "sql forensics from server logs",
+    "how did she recover institutional knowledge from a lost system",
+    "how do you onboard into a customer system with no code",
+    "migrating off a decommissioned platform"
+   ],
+   "tags": [
+    "undocumented",
+    "documentation",
+    "legacy",
+    "knime",
+    "reverse engineering",
+    "forensics",
+    "migration",
+    "spec",
+    "decommissioned",
+    "recovery"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "Order the recovery by how fast the evidence decays. When the KNIME environment was decommissioned, the retirement workflow, its SQL, model and documentation went with it. I did SQL forensics first, from server job-history snapshots and DEBUG logs that record executed SQL verbatim, because query text disappears soonest. I reconstructed the specification from surviving output workbooks, a 2022 stakeholder presentation and recovered handoff notes, then froze it as a machine-checkable contract. I skipped a like-for-like KNIME rebuild: with the workflow gone, the usual reason to stay in KNIME didn't apply, and rebuilding twice would have been waste. Recovery surfaced knowledge that lived nowhere in code, like an employee class code that means retiree and must be excluded. The Python rebuild reproduced the legacy bracket figures 120 of 120 across two runs, and the overdue report went out the same day.",
+   "sources": [
+    "work_history.md:770",
+    "work_history.md:779",
+    "work_history.md:781",
+    "work_history.md:782",
+    "work_history.md:783",
+    "work_history.md:785",
+    "work_history.md:821"
+   ]
+  },
+  {
+   "id": "fde-accessibility-qa",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Getting an app through QA accessibility review",
+   "questions": [
+    "how did you get the platform through accessibility review",
+    "how did you fix 26 accessibility findings",
+    "wcag remediation on a streamlit app",
+    "how do you test accessibility of a deployed app",
+    "axe core zero violations",
+    "keyboard trap and contrast failures",
+    "how did she respond to the qa audit",
+    "accessible charts in streamlit",
+    "screen reader issues you fixed",
+    "how do you prepare an app for qa testing"
+   ],
+   "tags": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "axe-core",
+    "qa",
+    "screen reader",
+    "contrast",
+    "keyboard",
+    "audit"
+   ],
+   "links": [
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "QA's audit returned 26 findings. I resolved all of them across five deployments between September 15 and October 2, 2026, and verified each fix in a headless browser running the production Streamlit version rather than in local code, plus a custom 14-check console tool. That reached zero automated violations on all seven pages with axe-core, the engine behind QA's Accessibility Insights, confirmed on the live site. A page-by-page walkthrough found about two dozen more issues: five contrast failures, a keyboard trap and a word cloud that rendered blank. One chart crashed and was rebuilt as accessible SVG with a data table. Reviewing QA's own screenshots and screen-reader videos surfaced three defects no earlier pass caught, and I resubmitted 21 with root cause and fix. I wrote an Accessibility Guide into the codebase for future contributors.",
+   "sources": [
+    "work_history.md:181",
+    "work_history.md:199",
+    "work_history.md:200",
+    "work_history.md:201",
+    "work_history.md:203"
+   ]
+  },
+  {
+   "id": "fde-reusable-contracts",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing for reuse across deployments",
+   "questions": [
+    "how do you design for reuse across customers",
+    "how do you avoid one off builds",
+    "standard logging contract for every pipeline",
+    "how do you onboard a new pipeline into monitoring",
+    "multi state config architecture",
+    "how did reuse cut the spa work request hours",
+    "how does she make customer specific work generalize",
+    "quarterly pipeline silence threshold",
+    "what's reusable in her systems",
+    "configuration over code"
+   ],
+   "tags": [
+    "reuse",
+    "contract",
+    "config",
+    "template",
+    "logging schema",
+    "multi-state",
+    "generalize",
+    "platform"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    },
+    {
+     "label": "Research proposal pipeline",
+     "url": "research-proposal-processing.html"
+    }
+   ],
+   "answer": "I keep the customer-specific part thin, on top of contracts that carry over. Every scheduled pipeline on our server writes Parquet logs to one schema, with PIPELINE_START and PIPELINE_END sentinel rows sharing a run ID, so a new pipeline is monitorable from day one by adding one path to the monitor's config. Onboarding the quarterly retirement pipeline needed only a per-pipeline silence threshold of 2,400 hours, since the default 48-hour rule would alert for 89 days after every run. The legislative pipeline takes a multi-state config.json, so it is ready for California expansion, and its inference router switches serving stacks by flag. When the SPA research funding platform was re-scoped, reusing the existing ingestion pipeline, NLP outputs and on-prem inference pattern took it from a 480-hour proposal to a 237-hour work request without removing functionality.",
+   "sources": [
+    "work_history.md:477",
+    "work_history.md:485",
+    "work_history.md:502",
+    "work_history.md:817",
+    "work_history.md:149",
+    "work_history.md:62",
+    "work_history.md:972"
+   ]
+  },
+  {
+   "id": "fde-self-serve-trigger",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Letting non-technical users run a pipeline",
+   "questions": [
+    "how do non technical users run your pipelines",
+    "how did you automate the payroll process",
+    "upload a file and the pipeline runs",
+    "one click execution without local setup",
+    "github actions for business users",
+    "how do you make a pipeline self serve for the customer",
+    "file naming auto detection",
+    "how did she remove manual configuration",
+    "turning a manual excel process into automation",
+    "box as the interface for a pipeline"
+   ],
+   "tags": [
+    "self-serve",
+    "automation",
+    "github actions",
+    "box",
+    "upload",
+    "one click",
+    "payroll",
+    "excel",
+    "versioned outputs"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "For payroll the interface is a Box folder. The old CPA and PUA processing was manual and semi-manual in Excel. I rebuilt it as a Python transformation framework that applies the business-rule mappings, deduplication and derived fields, with Box for both source and destination: staff upload files and processing follows. File type is detected from the naming convention, so nobody configures which kind of file it is, which removes a whole class of operator error. A GitHub Actions workflow gives one-click execution with no local environment to set up, and every output is timestamped and versioned so any run can be traced and repeated. Processing went from hours to minutes. The same idea runs through my other work: the legislative backfill went from a hand-staged chain to one command per General Assembly session.",
+   "sources": [
+    "work_history.md:519",
+    "work_history.md:520",
+    "work_history.md:521",
+    "work_history.md:522",
+    "work_history.md:523",
+    "work_history.md:524",
+    "work_history.md:525",
+    "work_history.md:257"
+   ]
+  },
+  {
+   "id": "fde-client-dev-environment",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Setting up the customer engineer's environment",
+   "questions": [
+    "how did you set up the library engineer's development environment",
+    "no gpu on the customer's laptop what then",
+    "why colab t4 as primary compute",
+    "why the ollama http api instead of the cli",
+    "why was the email summarization 34.8 seconds per row",
+    "synthetic validation kit on colab",
+    "how does she make a dev environment that keeps data private",
+    "cpu first local model plan",
+    "dev environment constraints on customer hardware",
+    "working practices for a new engineer on the project"
+   ],
+   "tags": [
+    "dev environment",
+    "colab",
+    "t4",
+    "laptop",
+    "cpu",
+    "ollama api",
+    "synthetic data",
+    "onboarding",
+    "secrets manager"
+   ],
+   "links": [
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Email archiving",
+     "url": "email-archiving.html"
+    }
+   ],
+   "answer": "The Library engineer's university-standard laptop has integrated graphics and no discrete GPU, which rules out local high-throughput serving and makes local multimodal inference impractical. So Colab's T4 is her primary compute, and her local plan is CPU-first: a small text model, a small vision model and local embeddings, called through the Ollama HTTP API. Not the CLI, because the CLI reloads model weights on every call, which is exactly what produced 34.8 seconds per row in the email proof of concept. Real archival content can't go to Google infrastructure, so I built her a validation kit with a synthetic corpus, scoring code, notebook, rubric and brief. The working rules are explicit: credentials in a secrets manager, never a notebook cell; outputs cleared before commit; jobs checkpointed to resume; and no accession content in any public repository.",
+   "sources": [
+    "work_history.md:912",
+    "work_history.md:608",
+    "work_history.md:856",
+    "work_history.md:913"
+   ]
+  },
+  {
+   "id": "fde-data-boundary",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Enforcing a customer's data boundary in code",
+   "questions": [
+    "how do you keep customer data inside their boundary",
+    "how do you enforce data handling rules technically",
+    "how do you stop sensitive data reaching a public repo",
+    "can ai coding assistants see customer documents",
+    "how did you sanitize the public demo build",
+    "privacy gate in the repository",
+    "how does she keep confidential files out of git",
+    "data boundary statement for governance",
+    "local processing only design",
+    "how do you publish a demo without leaking data"
+   ],
+   "tags": [
+    "data boundary",
+    "privacy gate",
+    "sanitizer",
+    "gitignore",
+    "confidential",
+    "local only",
+    "compliance",
+    "security",
+    "pii"
+   ],
+   "links": [
+    {
+     "label": "Archival images and the production build",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "I enforce the boundary mechanically, because a promise doesn't survive a busy week. On the archival build, hosted AI services are excluded: models, embeddings, extracted text, the vector index and the originals stay inside the institutional network, with written confirmation sought from Data Privacy and Governance. The public demonstration build is produced by a sanitizer that refuses to write if any identifying content survives. Before publishing the repository I caught a notebook with 377 MB of embedded outputs that would have put email content in public. For document intelligence, the rule is that AI coding assistants write and run code but see aggregate metrics only; local models do all reading, and a privacy gate script denies institutional identifiers before anything reaches GitHub. On the retirement pipeline, output pairs names with salary, so credentials live outside the repository and every extract is gitignored.",
+   "sources": [
+    "work_history.md:921",
+    "work_history.md:927",
+    "work_history.md:857",
+    "work_history.md:906",
+    "work_history.md:954",
+    "work_history.md:955",
+    "work_history.md:815"
+   ]
+  },
+  {
+   "id": "fde-secrets-management",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Managing secrets across a deployment",
+   "questions": [
+    "where do database passwords go in your pipelines",
+    "how do you manage secrets in production",
+    "how do you rotate keys without downtime",
+    "where do credentials live in your pipelines",
+    "how do you keep api keys out of code",
+    "secret management on azure app service",
+    "how did you prepare code for external review",
+    "how does she handle connection strings and keys",
+    "credentials in notebooks",
+    "secondary key rotation",
+    "config files for database credentials"
+   ],
+   "tags": [
+    "passwords",
+    "secrets",
+    "credentials",
+    "api keys",
+    "rotation",
+    "key vault",
+    "config",
+    "connection strings",
+    "environment variables"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Research proposal pipeline",
+     "url": "research-proposal-processing.html"
+    }
+   ],
+   "answer": "Secrets live in platform configuration or files outside the repository, never in code or notebooks. The legislative platform's secret surface spans Cosmos keys, Azure OpenAI keys, Communication Services connection strings and deployment credentials, all held in App Service and Function App configuration, with a rotation practice that uses secondary keys so a rotation causes no downtime. The research proposals pipeline loads database credentials through a YAML config loader. The retirement pipeline keeps them in a restricted environment file outside the repository, and its preflight verifies they load before the first scheduled run. Before sharing the prediction training code with outside collaborators, I removed an embedded API key, storage credentials and local file paths. For the Library's engineer the rule is written down: credentials go in a secrets manager, never a notebook cell.",
+   "sources": [
+    "work_history.md:174",
+    "work_history.md:418",
+    "work_history.md:815",
+    "work_history.md:813",
+    "work_history.md:118",
+    "work_history.md:913"
+   ]
+  },
+  {
+   "id": "fde-graceful-degradation",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing for graceful degradation",
+   "questions": [
+    "what if the model is down",
+    "how do you design for graceful degradation",
+    "what happens when the llm is offline",
+    "how do you keep a pipeline stage from taking down the rest",
+    "fallbacks when an api key is missing",
+    "decoupling optional ai features",
+    "how did procurement handle the llm being down",
+    "how does she keep systems useful when a component fails",
+    "failure isolation between pipeline stages",
+    "the system never returns nothing",
+    "partial availability design"
+   ],
+   "tags": [
+    "unavailable",
+    "graceful degradation",
+    "fallback",
+    "resilience",
+    "decoupling",
+    "failure isolation",
+    "availability",
+    "offline",
+    "fault tolerance"
+   ],
+   "links": [
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Every AI component should be optional to the core path. In procurement, Tier 1 exact matching on manufacturer and part number always runs, under 2 ms, even when the LLM is offline; semantic candidates still display for manual review, so the system never returns nothing. In the legislative app, LLM briefings run on open-weights Llama through Groq and degrade cleanly when no API key is configured. The automated bill investigator is deliberately decoupled from the nightly scoring core, so a failure in deep-dive generation can't take down routine scoring, and its reader layer deploys independently. The monitoring side follows the same rule: an unreadable log file becomes a synthetic LOG_READ_FAILED record and an alert, instead of disappearing.",
+   "sources": [
+    "work_history.md:750",
+    "work_history.md:758",
+    "work_history.md:748",
+    "work_history.md:77",
+    "work_history.md:237",
+    "work_history.md:238",
+    "work_history.md:475"
+   ]
+  },
+  {
+   "id": "fde-hosting-sizing",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Sizing cloud hosting for a customer app",
+   "questions": [
+    "monthly cost to host an app on azure",
+    "how do you size cloud hosting for an app",
+    "which app service tier did you choose and why",
+    "basic versus premium v3",
+    "how much would it cost to host the procurement tool",
+    "memory bound startup on app service",
+    "how did you justify the tier upgrade",
+    "how does she estimate hosting cost",
+    "cloud cost analysis for stakeholders",
+    "what ram does a faiss index need in production",
+    "azure deployment plan for procurement"
+   ],
+   "tags": [
+    "infrastructure",
+    "procurement",
+    "monthly",
+    "hosting",
+    "tier",
+    "sizing",
+    "cost",
+    "premium v3",
+    "b3",
+    "ram"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "Size from the workload's real constraint, usually memory at startup for these apps, and give the decision-maker the cost trade-off in writing. The legislative app loads ML artifacts and data on start, so I evaluated Basic against Premium v3 for that memory-bound profile, wrote the cost and scaling analysis, and recommended the upgrade; it resolved the crash and cold-start cluster. Earlier I had made code changes for the Basic tier's constraints: pyarrow column pruning for selective parquet reads, cached loading, and sampling for cold starts. For procurement I designed the production deployment path: App Service B3 because the FAISS index needs 8 GB of RAM at minimum, Blob Storage for the index and parquet files, and Azure OpenAI gpt-4o-mini replacing the local model, estimated at about $77 a month.",
+   "sources": [
+    "work_history.md:172",
+    "work_history.md:99",
+    "work_history.md:74",
+    "work_history.md:764",
+    "work_history.md:745"
+   ]
+  },
+  {
+   "id": "fde-debugging-uncontrolled",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Debugging in an environment you don't control",
+   "questions": [
+    "how do you debug in an environment you don't control",
+    "how do you troubleshoot customer infrastructure",
+    "how do you separate environment problems from code bugs",
+    "debugging without admin access",
+    "how do you diagnose a network block precisely",
+    "integration friction versus real defects",
+    "how does she debug problems on someone else's server",
+    "how do you prove which layer is failing",
+    "what's your method for environment issues",
+    "debugging a managed cloud service"
+   ],
+   "tags": [
+    "troubleshooting",
+    "environment",
+    "network",
+    "tls",
+    "curl",
+    "layers",
+    "integration friction",
+    "diagnosis"
+   ],
+   "links": [
+    {
+     "label": "vLLM throughput study",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I narrow the problem to a layer I can prove, then hand the owner of that layer evidence rather than a symptom. Three patterns recur. Network: on two occasions a destination failed at the TLS handshake while neighbors worked (Hugging Face but not GitHub or PyPI; Cosmos DB but not Blob), and testing each endpoint separately turned a vague \"it can't connect\" into a specific constraint I could design around or raise as an exception. Dependencies: the vLLM stand-up failed three ways at once, all version drift and VRAM contention rather than engine bugs, so I fixed them in order instead of patching code. Platform behavior: a deploy that looked like a code regression was stale workers serving old code. And the host itself: an 11-night silent failure traced to a kernel update disabling the GPU driver, documented for the system administrators.",
+   "sources": [
+    "work_history.md:63",
+    "work_history.md:170",
+    "work_history.md:65",
+    "work_history.md:232",
+    "work_history.md:205"
+   ]
+  }
+ ],
+ "add_questions": {},
+ "replace_answers": {},
+ "tests": [
+  [
+   "how did you get model weights onto a server that can't reach hugging face",
+   "fde-design-no-internet|aie-vllm-airgap"
+  ],
+  [
+   "walk me through standing up an inference server in an isolated network",
+   "fde-design-no-internet|aie-vllm-airgap"
+  ],
+  [
+   "design an ai pipeline for a client that has no internet connectivity",
+   "fde-design-no-internet"
+  ],
+  [
+   "the customer forbids hosted models, how would you architect it",
+   "fde-design-no-internet|fde-data-boundary"
+  ],
+  [
+   "how would you ship llm inference into a disconnected site",
+   "fde-design-no-internet|aie-vllm-airgap"
+  ],
+  [
+   "how do you pull only new rows from an oracle source each run",
+   "fde-oracle-integration"
+  ],
+  [
+   "how would you write results back into the customer's oracle schema",
+   "fde-oracle-integration"
+  ],
+  [
+   "connecting python to an encrypted oracle warehouse",
+   "fde-oracle-integration"
+  ],
+  [
+   "how would you inventory a box folder before downloading",
+   "fde-box-integration"
+  ],
+  [
+   "how do you ingest from a customer's file storage system",
+   "fde-box-integration"
+  ],
+  [
+   "what's the source adapter in the archival pipeline",
+   "fde-box-integration"
+  ],
+  [
+   "how does the daily job detect legislative changes",
+   "fde-legiscan-ingestion"
+  ],
+  [
+   "why did the prediction tab show almost no matches",
+   "fde-legiscan-ingestion"
+  ],
+  [
+   "how do you ingest incrementally from a third party data provider",
+   "fde-legiscan-ingestion"
+  ],
+  [
+   "the university's single sign on broke your deployment pipeline",
+   "fde-azure-tenant-deploy"
+  ],
+  [
+   "how did you get azure functions deployed under tenant restrictions",
+   "fde-azure-tenant-deploy"
+  ],
+  [
+   "what deployment problems did you have with oryx",
+   "fde-azure-tenant-deploy|aie-deployment"
+  ],
+  [
+   "your server couldn't connect to the cloud database, how did you fix it",
+   "fde-firewall-cosmos"
+  ],
+  [
+   "why do user prompts go through blob storage",
+   "fde-firewall-cosmos"
+  ],
+  [
+   "how did you redesign the scoring path around a network restriction",
+   "fde-firewall-cosmos"
+  ],
+  [
+   "why did the web app container keep dying",
+   "fde-app-service-failures"
+  ],
+  [
+   "what caused the constant page refreshing in production",
+   "fde-app-service-failures"
+  ],
+  [
+   "how do you confirm a new function deploy is actually serving",
+   "fde-app-service-failures"
+  ],
+  [
+   "how do you switch between inference engines with a config change",
+   "fde-backend-router"
+  ],
+  [
+   "why build a router before vllm was available",
+   "fde-backend-router"
+  ],
+  [
+   "how is the serving layer abstracted in your pipeline",
+   "fde-backend-router"
+  ],
+  [
+   "how does login work on the legislative platform",
+   "fde-magic-link-auth"
+  ],
+  [
+   "how did you implement passwordless login",
+   "fde-magic-link-auth"
+  ],
+  [
+   "how are one time sign in tokens stored and expired",
+   "fde-magic-link-auth|fde-cosmos-schema"
+  ],
+  [
+   "what's stored in the document database and how is it partitioned",
+   "fde-cosmos-schema"
+  ],
+  [
+   "how does the nightly scorer avoid redoing unchanged bills",
+   "fde-cosmos-schema"
+  ],
+  [
+   "how did you design the data model for user profiles",
+   "fde-cosmos-schema"
+  ],
+  [
+   "what framework do you reach for to build an internal app quickly",
+   "fde-rapid-apps"
+  ],
+  [
+   "why fastapi with plain javascript for procurement",
+   "fde-rapid-apps|procure-stack|aie-api-app-design"
+  ],
+  [
+   "how is the streamlit app organized",
+   "fde-rapid-apps"
+  ],
+  [
+   "how did you keep test emails from reaching real users",
+   "fde-safe-rollout"
+  ],
+  [
+   "how do you launch an autonomous feature safely",
+   "fde-safe-rollout"
+  ],
+  [
+   "how did you check the digest wasn't just keyword matching",
+   "fde-safe-rollout"
+  ],
+  [
+   "how do you share one gpu between several pipelines",
+   "fde-gpu-server-ops"
+  ],
+  [
+   "what happened when the gpu driver stopped working",
+   "fde-gpu-server-ops|fde-debugging-uncontrolled"
+  ],
+  [
+   "how did you recover from the jupyterhub memory crash",
+   "fde-gpu-server-ops"
+  ],
+  [
+   "which parts of the legislative system run in the cloud",
+   "fde-deployment-topology"
+  ],
+  [
+   "how does data move from the gpu server to the web app",
+   "fde-deployment-topology|fde-firewall-cosmos"
+  ],
+  [
+   "when does the prediction pipeline run each day",
+   "fde-deployment-topology|fde-legiscan-ingestion"
+  ],
+  [
+   "what separates a demo from a production system",
+   "fde-hardening-poc"
+  ],
+  [
+   "how did you make the beta production grade",
+   "fde-hardening-poc"
+  ],
+  [
+   "what reliability fixes came out of your pipeline audit",
+   "fde-hardening-poc"
+  ],
+  [
+   "how do you architect a system so another team can take it over",
+   "fde-handoff-architecture|iv-handover-documentation|aie-maintainable-ai|rims-pipeline"
+  ],
+  [
+   "what contracts did you write for the archival pipeline",
+   "fde-handoff-architecture"
+  ],
+  [
+   "how did you structure the repository and issues for the library team",
+   "fde-handoff-architecture"
+  ],
+  [
+   "what automated checks run before a scheduled job goes live",
+   "fde-deployment-checks"
+  ],
+  [
+   "how do you test without access to production data or credentials",
+   "fde-deployment-checks|iv-prototype-synthetic-data"
+  ],
+  [
+   "how do you keep releases from breaking reports",
+   "fde-deployment-checks"
+  ],
+  [
+   "how do you verify a client's dataset is complete",
+   "fde-validating-customer-data"
+  ],
+  [
+   "how did you find the missing resolved bills",
+   "fde-validating-customer-data|leg-status-filter-bug|ads-dataset-reconstruction"
+  ],
+  [
+   "what do you do when the source data is only an extract",
+   "fde-validating-customer-data"
+  ],
+  [
+   "how do you scope the first version of a customer system",
+   "fde-scoping-poc"
+  ],
+  [
+   "what did you leave out of version one",
+   "fde-scoping-poc"
+  ],
+  [
+   "how do you prototype before building the production app",
+   "fde-scoping-poc"
+  ],
+  [
+   "how did you rebuild a workflow when the platform was decommissioned",
+   "fde-legacy-recovery|ex-modernization"
+  ],
+  [
+   "how do you recover logic from a system nobody documented",
+   "fde-legacy-recovery"
+  ],
+  [
+   "why not rebuild the lost workflow in knime first",
+   "fde-legacy-recovery"
+  ],
+  [
+   "how did you fix the accessibility audit findings",
+   "fde-accessibility-qa"
+  ],
+  [
+   "how do you make a streamlit app pass wcag testing",
+   "fde-accessibility-qa|ex-accessibility"
+  ],
+  [
+   "how did you verify accessibility fixes on the live site",
+   "fde-accessibility-qa"
+  ],
+  [
+   "how do you make each new pipeline monitorable automatically",
+   "fde-reusable-contracts"
+  ],
+  [
+   "how do you build things that carry over to the next deployment",
+   "fde-reusable-contracts"
+  ],
+  [
+   "how does configuration let you add a new state",
+   "fde-reusable-contracts"
+  ],
+  [
+   "how do business users kick off a pipeline without engineers",
+   "fde-self-serve-trigger"
+  ],
+  [
+   "how did you automate the excel payroll files",
+   "fde-self-serve-trigger"
+  ],
+  [
+   "can staff run your pipeline just by uploading a file",
+   "fde-self-serve-trigger"
+  ],
+  [
+   "what if the customer's engineer has no gpu",
+   "fde-client-dev-environment"
+  ],
+  [
+   "why call ollama over http rather than the command line",
+   "fde-client-dev-environment"
+  ],
+  [
+   "how did you set up compute for the new library engineer",
+   "fde-client-dev-environment"
+  ],
+  [
+   "how do you technically prevent confidential data from being published",
+   "fde-data-boundary"
+  ],
+  [
+   "how did you make the public demo safe to share",
+   "fde-data-boundary"
+  ],
+  [
+   "what can coding assistants see on institutional documents",
+   "fde-data-boundary|aie-ai-coding-assistants"
+  ],
+  [
+   "how do you store database passwords in a pipeline",
+   "fde-secrets-management"
+  ],
+  [
+   "how do you rotate cloud keys safely",
+   "fde-secrets-management"
+  ],
+  [
+   "how did you scrub credentials before sharing code",
+   "fde-secrets-management"
+  ],
+  [
+   "what does the system do if the language model is unavailable",
+   "fde-graceful-degradation"
+  ],
+  [
+   "how do you isolate failures between components",
+   "fde-graceful-degradation"
+  ],
+  [
+   "how do you design fallbacks for ai features",
+   "fde-graceful-degradation|aie-api-app-design"
+  ],
+  [
+   "how did you choose the hosting tier",
+   "fde-hosting-sizing"
+  ],
+  [
+   "what would the procurement app cost to run on azure",
+   "fde-hosting-sizing"
+  ],
+  [
+   "how do you size infrastructure for an ml web app",
+   "fde-hosting-sizing|ex-capacity-planning"
+  ],
+  [
+   "how do you debug a system on infrastructure you don't own",
+   "fde-debugging-uncontrolled"
+  ],
+  [
+   "how do you tell a network problem from a code problem",
+   "fde-debugging-uncontrolled"
+  ],
+  [
+   "your method for diagnosing environment specific failures",
+   "fde-debugging-uncontrolled|iv-debugging-method"
+  ]
+ ],
+ "gaps": [
+  "All behavioural topics from the original list were dropped per Tayler's 11 Nov update (why FDE, embedding with a team, ambiguity, disagreement, pushing back, skeptical customers, changing minds, feedback, status updates, executives, remote/travel, first two weeks, competing priorities, cross-org politics).",
+  "Container orchestration (Docker, Kubernetes) for customer deployments: nothing in the sources; deployments are App Service, Azure Functions, cron and JupyterHub Scheduler on a Linux server.",
+  "Multi-tenant deployments across several external customers: all deployments are inside one university system; the sources show reuse across internal partners, not multi-customer tenancy.",
+  "CI/CD beyond GitHub Actions board automation and the payroll one-click workflow (e.g. automated test gates on deploy): not documented.",
+  "Travel and onsite willingness: not in the sources."
+ ]
+}

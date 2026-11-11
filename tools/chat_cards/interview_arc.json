@@ -1,0 +1,1897 @@
+{
+ "family": "arc",
+ "cards": [
+  {
+   "id": "arc-rims-architecture",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Architecture: the RIMS archival pipeline's eight stages",
+   "questions": [
+    "how is the rims archival pipeline architected",
+    "walk me through the eight stages of the archival pipeline",
+    "rims pipeline architecture",
+    "what are the stages of the rims pipeline",
+    "how do the archival pipeline stages hand off to each other",
+    "eight stage pipeline design",
+    "format lanes in the archival pipeline",
+    "how does she structure a multi stage archival processing system",
+    "how did you design the stages and gates for the archive pipeline",
+    "what does each rims stage own",
+    "architecture of the university library archival system",
+    "how are different file types routed in the archival pipeline",
+    "what happens to emails versus images versus documents in the archive build"
+   ],
+   "tags": [
+    "stage gates",
+    "manifest",
+    "accession",
+    "triage",
+    "enrichment",
+    "format lanes",
+    "digital preservation",
+    "rims",
+    "file types",
+    "routing"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Eight stages joined by one manifest, each with a named owner, a gate condition that defines done, and a stated dependency on the stage before it: 00 source and access, 01 inventory and identify, 02 triage and appraisal, 03 extraction and routing, 04 enrichment, 05 metadata, 06 index, search and delivery, 07 scale and scheduling. The manifest is one row per file path, stored as partitioned Parquet, and each stage adds the columns it owns, which is what makes a mixed accession processable at all. Inside extraction, files go down format lanes, email, image, document, tabular and scientific, rather than one path. My standing rule there: where a fact is already in a file header, a model only phrases it, never discovers it. The September 2026 demonstration processed 2,375 real files across three accessions in about 21 seconds on 4 vCPU, with the review interface on top.",
+   "sources": [
+    "work_history.md:843",
+    "work_history.md:846",
+    "work_history.md:865",
+    "work_history.md:869",
+    "work_history.md:871",
+    "work_history.md:1409"
+   ]
+  },
+  {
+   "id": "arc-unify-pocs",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Turning three proofs of concept into one production system",
+   "questions": [
+    "how do you take several proofs of concept into one production system",
+    "how did you unify three proofs of concept",
+    "poc to production architecture",
+    "what had to change to move the archival work from prototype to production",
+    "consolidating prototypes into one pipeline",
+    "why port com automation to tika and libreoffice",
+    "what blocked the archival prototypes from production",
+    "how do you turn a demo into an operational system",
+    "proof of concept to production transition",
+    "how do you consolidate several pilots into one platform"
+   ],
+   "tags": [
+    "prototype",
+    "productionization",
+    "consolidation",
+    "shared vocabulary",
+    "dependencies",
+    "office automation",
+    "headless libreoffice",
+    "pilots",
+    "merge",
+    "single platform"
+   ],
+   "links": [
+    {
+     "label": "Archival image throughput",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Find the shared representation first, then remove the dependencies that can't scale. The archival production build merged three proofs of concept, image classification, email processing and file search, which had three corpora and no shared vocabulary. The unifying piece is a single manifest every stage reads and writes. Then I treated blockers as design inputs. The file-search prototype drove Word, Excel and PowerPoint through COM automation, which can't run on Colab or the Linux GPU server, can't be parallelized safely and hangs on malformed files, so porting to Tika plus headless LibreOffice is a prerequisite, with output parity checked against the prototype on the same files. The image work's throughput limit came off first: moving to vLLM took a full 12,125-image pass from about 22 hours to about 3.7. Each inherited prototype folder also got a README saying what's reusable and what's known to be broken.",
+   "sources": [
+    "work_history.md:838",
+    "work_history.md:846",
+    "work_history.md:890",
+    "work_history.md:898",
+    "work_history.md:636",
+    "work_history.md:642"
+   ]
+  },
+  {
+   "id": "arc-multi-tenancy",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Multi-tenancy and per-user data isolation",
+   "questions": [
+    "how do you handle multi tenant concerns",
+    "multi tenancy",
+    "how do you isolate one user's data from another's",
+    "have you built a multi tenant saas",
+    "per user data model in cosmos",
+    "how does the platform scale per user without reprocessing",
+    "partition key design",
+    "how is personalization architected so adding a user is cheap",
+    "how is each user's data kept separate",
+    "tenant isolation",
+    "how do you keep customers' data separate",
+    "does adding users increase processing cost",
+    "how would you separate one customer's data from another's"
+   ],
+   "tags": [
+    "tenant",
+    "isolation",
+    "partition key",
+    "per-user",
+    "personalization",
+    "user scoped",
+    "saas",
+    "customers",
+    "tenant boundaries",
+    "separate customers"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "Honestly, I haven't built a multi-organization SaaS. The legislative platform serves one institution with per-user isolation inside it. Cosmos DB holds each user's profile, tracked bills, categories, impact prompts and scores under a partition-key schema shared by the live app and the nightly scorer. The move that makes it scale per user is decoupling: bill features are extracted once per bill, and impact scoring runs per user against their own prompts, so adding a user never re-extracts the corpus. Sharing is explicit, team-wide versus named individual, and every AI briefing is bound to the user whose lens produced it. The closest thing to multi-tenant design is Legacy, a personal project, where every record carries a userId and every storage path is user-scoped, so opening it to other users is an additive change.",
+   "sources": [
+    "work_history.md:155",
+    "work_history.md:221",
+    "work_history.md:224",
+    "page:legislative-pipeline.html",
+    "page:legacy-app-about.html"
+   ]
+  },
+  {
+   "id": "arc-multi-agent-architecture",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Multi-agent system architecture: one queue, lanes and rails",
+   "questions": [
+    "walk me through your multi agent system architecture",
+    "how is your agent system architected",
+    "29 agents shared queue memory decision log",
+    "why one job queue for all agents",
+    "how do lanes work in your job queue",
+    "what is the architecture behind your agent organization",
+    "how do you schedule agent work",
+    "agent orchestration architecture",
+    "how does the queue decide when work starts",
+    "how many agents does she run and how are they organized",
+    "what rails do the agents share",
+    "how do you orchestrate many agents on one workstation",
+    "the scheduling layer of your agent system"
+   ],
+   "tags": [
+    "orchestration",
+    "job queue",
+    "lanes",
+    "concurrency limits",
+    "scheduler",
+    "ownership map",
+    "claude code",
+    "subagents",
+    "backbone",
+    "scheduling"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I run 29 agents across Skyrule and my other personal projects on one workstation with one GPU (as of October 2026), organized like a small company: each has a written charter saying what it owns and what it doesn't. They share four rails: one job queue, one memory, one decision log and an ownership map that tooling enforces. The queue is the only thing that launches work, so \"why did this run now?\" always has one logged answer; the cost is that the queue becomes critical infrastructure, so I kept it small, file-based and tested. Lanes are statements about shared resources, each with its own concurrency limit: 4 for CPU scripts, 1 for vLLM because speed comes from batched requests inside a run, and a budgeted Claude lane. Jobs carry dependencies, start conditions and finish checks that decide done by evidence rather than exit code.",
+   "sources": [
+    "page:agent-architecture.html",
+    "work_history.md:1139"
+   ]
+  },
+  {
+   "id": "arc-gpu-sharing",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Sharing one GPU across models and workloads",
+   "questions": [
+    "how do you share one gpu across multiple models",
+    "gpu scheduler design",
+    "gpu lease",
+    "what happens when vllm and ollama compete for the gpu",
+    "how do you stop two models fighting over vram",
+    "one model on the gpu at a time",
+    "gpu contention between workloads",
+    "how did you get two pipelines to share one server",
+    "co-locating workloads on a single gpu",
+    "how do you switch models on a single card safely",
+    "model swapping on limited vram"
+   ],
+   "tags": [
+    "vram",
+    "contention",
+    "lease",
+    "hot swap",
+    "kv cache",
+    "keep_alive",
+    "cpu spill",
+    "co-tenancy",
+    "swap",
+    "limited memory"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "vLLM throughput evaluation",
+     "url": "vllm-inference-throughput-evaluation.html"
+    }
+   ],
+   "answer": "I make the GPU a lease with exactly one holder. In my personal agent system, a vLLM server reserves 94% of the RTX 5090 and a 32B Ollama seat needs about 20 GB, so they can't share, and when they collide Ollama doesn't fail loudly; it spills to the CPU and runs about ten times slower. So the card is idle, one vLLM profile, or the Ollama seats, never two. A switch never interrupts running GPU work: it's refused and asked again on the next tick. After every switch the result is checked against actual memory use and server health, never assumed. Time windows for who holds the card, generation overnight and agents by day, still run as a dry run. Evidence Desk follows the same rule at work: one model resident on the GPU at a time.",
+   "sources": [
+    "page:agent-architecture.html",
+    "page:document-intelligence-evaluation.html",
+    "work_history.md:940"
+   ]
+  },
+  {
+   "id": "arc-self-improving-loop",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Architecture of a self-improving system: Drop Radar",
+   "questions": [
+    "how does drop radar improve itself",
+    "self improving system architecture",
+    "how does the feedback loop rewrite its own code",
+    "self modifying agent design",
+    "how do you let an agent change production code safely",
+    "telegram agent that edits its own code",
+    "feedback loop with tests and restart",
+    "how does a user message become a code change",
+    "self healing system design",
+    "how did you design the drop radar agent loop",
+    "an ai that maintains its own system",
+    "can an ai fix the software it runs in"
+   ],
+   "tags": [
+    "feedback loop",
+    "file watcher",
+    "telegram",
+    "claude code",
+    "self-healing",
+    "feature flags",
+    "user feedback",
+    "autonomous maintenance",
+    "patch",
+    "self-repair"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "Drop Radar, a personal project, improves itself from its user's texts, and the architecture is a loop with gates. Anything sent to the Telegram bot that isn't a command is saved to a feedback inbox. A file watcher notices a new note, or a source that has started failing, and queues a run of a dedicated Claude Code agent with written rules and a living knowledge file. The agent diagnoses the issue, edits the code or source configuration, runs the tests, restarts the service and replies with what changed. The gates: 25 tests on fabricated data, a live on and off flag for every extra feature so anything declined comes out without a restart, and a weekly check-in with Keep, Change and Drop buttons per change. One bug taught me the watcher must compare note identities, not counts: a new note went unnoticed because the open count hadn't changed.",
+   "sources": [
+    "work_history.md:1200",
+    "work_history.md:1208",
+    "work_history.md:1195",
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "arc-model-lifecycle",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Model lifecycle: two clocks, auto-pickup and one input path",
+   "questions": [
+    "how do you architect retraining and rescoring",
+    "prediction freshness versus model freshness",
+    "how often do you retrain versus rescore",
+    "two independent clocks daily rescore monthly retrain",
+    "how does a new model get into production",
+    "model deployment without code changes",
+    "train serve shared input module",
+    "model lifecycle management",
+    "how do you promote a retrained model",
+    "retraining cadence design",
+    "how do you keep a production model current"
+   ],
+   "tags": [
+    "mlops",
+    "retraining",
+    "rescoring",
+    "model registry",
+    "versioning",
+    "train serve skew",
+    "cadence",
+    "deployment",
+    "freshness",
+    "current"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I separate prediction freshness from model freshness and run them as two independent clocks. For bill passage prediction, a daily run rescores active bills through the current model as new actions land, and a monthly retrain refreshes the model on full history with recency weights. The daily job picks up a new model file automatically, no code change, and the introduction-time model was built the same way: it activates on the server when its model file is present. Conflating the two clocks means either stale predictions or needless retraining. Inputs go through one shared module used by both training and nightly scoring, after I found the two formatting inputs differently; 36,028 inputs now verify byte-identical. And versions get pinned: re-pulling a moved \"latest\" tag silently changes the model you evaluated.",
+   "sources": [
+    "work_history.md:376",
+    "work_history.md:372",
+    "work_history.md:193",
+    "work_history.md:317",
+    "work_history.md:375"
+   ]
+  },
+  {
+   "id": "arc-enterprise-copilot",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Architecting an enterprise copilot over internal documents",
+   "questions": [
+    "how would you architect an enterprise copilot over internal documents",
+    "enterprise rag copilot design",
+    "design a chatbot over company documents",
+    "internal knowledge assistant architecture",
+    "how did you build the legislative assistant chatbot",
+    "copilot agent framework gpt 4.1",
+    "how do you personalize a copilot per user",
+    "enterprise knowledge assistant",
+    "how would you build an ai assistant for executives",
+    "user profile as prompt context",
+    "citation backed chatbot"
+   ],
+   "tags": [
+    "copilot",
+    "knowledge base",
+    "chatbot",
+    "personalization",
+    "citations",
+    "executive",
+    "hybrid retrieval",
+    "internal search"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "I'd start from three decisions: what it may see, who it answers for, and how a reader checks it. On the legislative platform, retrieval is hybrid, MiniLM embeddings in FAISS alongside structured filters, and the Legislative Assistant, built on Microsoft's Copilot agent framework with GPT-4.1, returns citation-backed, structured answers. I set the retrieval standards up front, embedding selection, metadata indexing and incremental updates, along with citation and interpretability requirements for executive trust. Who it answers for is a profile: each user's title, functional area, stakeholders and interests are injected into the prompt, so the same bill reads as a budget issue for one person and an AI-ethics question for another. For sensitive collections, my archival version 2 design keeps everything local: a 30B-class model on vLLM, BGE-M3 embeddings, FAISS or Qdrant, no external calls.",
+   "sources": [
+    "work_history.md:129",
+    "work_history.md:133",
+    "work_history.md:138",
+    "work_history.md:142",
+    "work_history.md:143",
+    "work_history.md:213",
+    "work_history.md:230",
+    "work_history.md:919",
+    "work_history.md:921"
+   ]
+  },
+  {
+   "id": "arc-team-collaboration",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing a team layer around an AI attribution risk",
+   "questions": [
+    "how did you design the team collaboration layer",
+    "sharing ai briefings between users",
+    "human versus ai attribution",
+    "how do you stop an ai misrepresenting a colleague",
+    "foia risk in ai systems",
+    "how do you label ai generated content in a shared workspace",
+    "team sharing and annotations design",
+    "governance risk in collaborative ai tools",
+    "how do users correct what the ai says about them",
+    "collaboration features in the legislative platform",
+    "how do readers know which content is ai generated"
+   ],
+   "tags": [
+    "attribution",
+    "provenance",
+    "sharing",
+    "governance",
+    "public records",
+    "annotations",
+    "ai labeling",
+    "ai generated",
+    "colleague",
+    "coworker"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I designed it around a governance risk identified in advance: an AI characterizing a named colleague's position slightly wrong, inside a FOIA-able system, at a public university. So the architecture holds a hard line between human and AI attribution. Every machine-generated briefing is badged as AI-authored and bound to the user whose lens produced it, so a model's interpretation is never mistaken for a colleague's stated position. Shares are team-wide or to a named individual, the distinction is stored and shown, and individual shares and flags sort above broadcasts. Imports can be untracked reversibly, so a mistake costs no data. The mitigation adopted is that users own and can correct any extracted characterization of their own view before others see it, and those corrections double as training signal for the planned institutional-memory capability.",
+   "sources": [
+    "work_history.md:221",
+    "work_history.md:222",
+    "work_history.md:223",
+    "work_history.md:224",
+    "work_history.md:225"
+   ]
+  },
+  {
+   "id": "arc-retrofit-decisions",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Schema decisions that are free now and costly later",
+   "questions": [
+    "which architecture decisions are expensive to retrofit",
+    "what decisions did you make early because they are hard to change later",
+    "attribution as schema not feature",
+    "how do you sequence a roadmap architecturally",
+    "forward architecture for the legislative platform",
+    "position records as the durable artifact",
+    "what is the gating architectural choice for the digest agent",
+    "roadmap sequencing by adoption cost",
+    "one way door decisions",
+    "irreversible design decisions",
+    "what belongs in the data model from day one"
+   ],
+   "tags": [
+    "roadmap",
+    "schema",
+    "retrofit",
+    "technical debt",
+    "attribution",
+    "institutional memory",
+    "sequencing",
+    "data model",
+    "day one",
+    "future architecture"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I sort roadmap work by adoption cost, and I look hard for the schema decisions that are free now and prohibitively expensive later. On the legislative platform the clearest one is attribution: extraction must bind every claim to a person, a timestamp and the verbatim source sentence from day one, because reconstructing who held which position after the fact would mean reprocessing the entire corpus. Second, position records as the durable artifact. Discussion is raw material; what gets retrieved years later is the institutional position, the reasoning, who was in the room and what changed their mind. Third, for the planned digest agent, I framed the deployment choice, precomputed nightly on on-prem vLLM versus generated live on managed cloud inference, as the gating architectural decision rather than an implementation detail.",
+   "sources": [
+    "work_history.md:268",
+    "work_history.md:271",
+    "work_history.md:272",
+    "work_history.md:273"
+   ]
+  },
+  {
+   "id": "arc-email-intake",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing an email intake channel",
+   "questions": [
+    "how would you design an email intake channel",
+    "email intake dossiers",
+    "cc an intake mailbox",
+    "committee hearing alerts design",
+    "how do you capture knowledge that lives in email threads",
+    "ingesting email into an ai platform",
+    "how would users contribute to the platform without changing behavior",
+    "email to bill routing",
+    "design an inbound email pipeline",
+    "what is next for the legislative platform",
+    "how would users send their email analysis into the platform",
+    "how do you collect analysis people already write in email"
+   ],
+   "tags": [
+    "email",
+    "mailbox",
+    "intake",
+    "routing",
+    "low friction",
+    "attribution",
+    "push feed",
+    "roadmap",
+    "no new tool",
+    "email threads"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Ask for the smallest behavior change possible and let existing infrastructure do the routing. For the legislative platform I designed per-bill dossiers fed by an intake mailbox that users simply CC. The institution's most valuable legislative analysis already lives in email threads and is lost when those threads are archived. Inbound mail would be matched to the right bill through the platform's existing semantic matching, and email carries sender identity for free, so every contribution arrives attributed. Pointing the same mailbox at the clerk's committee postings turns a manual phone-call process into a push feed for hearing alerts: one mechanism for two of the three most-cited stakeholder pain points. To be clear, it's designed and on the roadmap, scoped in follow-up meetings, not built yet.",
+   "sources": [
+    "work_history.md:269",
+    "work_history.md:270",
+    "work_history.md:122",
+    "work_history.md:182"
+   ]
+  },
+  {
+   "id": "arc-agent-granularity",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Where an agent belongs in a pipeline, and at what granularity",
+   "questions": [
+    "where do agents belong in a pipeline",
+    "when should you use an agent versus a classifier",
+    "agent loop per file or per folder",
+    "local domain expert agent for archival appraisal",
+    "how would you design an agentic layer on top of a pipeline",
+    "agent cost at corpus scale",
+    "rims version 2 agent",
+    "agentic appraisal design",
+    "how do you scope an ai agent in a batch system",
+    "agents versus workflows in architecture",
+    "how do you keep agents affordable at corpus scale",
+    "run an agent per document or at a coarser level"
+   ],
+   "tags": [
+    "agentic",
+    "granularity",
+    "model calls",
+    "local agent",
+    "appraisal",
+    "classification",
+    "workflow",
+    "affordable",
+    "per document",
+    "every document"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Where judgment is needed, and at the coarsest level that still works. For the archival pipeline's version 2, I scoped a fully local agent that scans an ingested drive, builds an understanding of the owner's subject domain, and ranks files for archival value, sensitivity and review priority with written explanations an archivist can evaluate. The constraint I wrote into version 1: agent loops belong at folder and collection level, not per file, because an agent loop costs many model calls where a classification costs one, and at corpus scale that's hours versus weeks. Anything a deterministic step or a single classification can do stays outside the agent; if the task doesn't require interpreting something undefined, it isn't agent work. The proposed stack stays on the network: a 30B-class model on vLLM, a vision-language model, BGE-M3, FAISS or Qdrant, controlled filesystem access.",
+   "sources": [
+    "work_history.md:918",
+    "work_history.md:919",
+    "work_history.md:920",
+    "work_history.md:921",
+    "work_history.md:922",
+    "kb:persona-agent-vs-workflow"
+   ]
+  },
+  {
+   "id": "arc-hindsight-changes",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Architecture review: what I'd change in my own systems",
+   "questions": [
+    "what would you change in your own architecture in hindsight",
+    "what would you do differently architecturally",
+    "architecture review of your own systems",
+    "design mistakes you would fix",
+    "if you started the agent queue again what would change",
+    "what are the weaknesses of your architecture",
+    "known limits of your systems",
+    "what did you get wrong in the design",
+    "regrets in system design",
+    "what technical debt would you pay down first",
+    "critique of your own designs",
+    "what is the weakest part of your systems",
+    "which design choices would you redo"
+   ],
+   "tags": [
+    "hindsight",
+    "lessons",
+    "weaknesses",
+    "technical debt",
+    "retrospective",
+    "postmortem",
+    "sqlite",
+    "sandbox",
+    "critique",
+    "looking back"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "A few, all from things that bit me. My agent job queue keeps over a thousand jobs in one JSON file guarded by a lock file and rewrites the whole list on every change; I'd use SQLite from day one. It detects usage limits by matching text in job output, which once paused a lane for a day when an agent's own report mentioned the limit; the real fix is a structured exit signal. Shell writes are guarded by heuristics, so I'd run each agent in a sandbox where out-of-scope paths simply aren't writable. On the legislative pipeline I'd make success falsifiable from the start: a stage could report green with zero output, and one malformed bill looped as a poison pill for six days. And the probability trail's monotonicity fix belongs in the model, not the display layer.",
+   "sources": [
+    "page:agent-architecture.html",
+    "work_history.md:249",
+    "work_history.md:250",
+    "work_history.md:390",
+    "work_history.md:391"
+   ]
+  },
+  {
+   "id": "arc-human-gates",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Where approval gates sit in an autonomous system",
+   "questions": [
+    "where do you put human approval gates in an autonomous system",
+    "approval gates for ai automation",
+    "authority levels for agents",
+    "dry run flag and test recipient redirect",
+    "how do you roll out autonomous emails safely",
+    "receipt gated release chain",
+    "what decisions does an agent need a human for",
+    "how do you stop agents publishing without approval",
+    "controlled rollout of ai features",
+    "which actions require a person to sign off"
+   ],
+   "tags": [
+    "human in the loop",
+    "approval",
+    "rollout",
+    "dry run",
+    "release gate",
+    "authority",
+    "governance",
+    "irreversible actions"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I gate by consequence: the more public or irreversible the action, the closer the gate sits to a person. The legislative digest shipped behind a dry-run flag and a test-recipient redirect, and go-live waited for in-person onboarding. In my personal agent system I wrote down three authority levels: agents fix isolated bugs alone, a department head approves bounded changes, and only I decide spending, release scope, sensitive data and public deployment. No agent publishes; the shell guard denies every git push. Release steps are receipt-gated, so each starts only when its predecessor's receipt carries the exact result the gate reads. At work, the archival program-manager agent holds proposed GitHub updates for human review.",
+   "sources": [
+    "work_history.md:163",
+    "work_history.md:231",
+    "page:agent-architecture.html",
+    "work_history.md:1155",
+    "work_history.md:858"
+   ]
+  },
+  {
+   "id": "arc-reference-architecture",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "A reference architecture for a first production LLM system",
+   "questions": [
+    "what reference architecture would you propose for a company's first production llm system",
+    "reference architecture for llm",
+    "how would you design a mid size company's first ai system",
+    "blueprint for a production llm application",
+    "what would your default ai stack be",
+    "starter architecture for generative ai",
+    "how would you set up llm infrastructure from scratch",
+    "first llm system in production design",
+    "what does a good first ai platform look like",
+    "your go to architecture",
+    "default architecture for an llm product",
+    "components of a first llm deployment"
+   ],
+   "tags": [
+    "blueprint",
+    "stack",
+    "greenfield",
+    "default design",
+    "patterns",
+    "mid-size company",
+    "production llm",
+    "default",
+    "components",
+    "language model"
+   ],
+   "links": [
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "Assembled from what has worked for me. Start with a small open model on one owned GPU behind vLLM with an OpenAI-compatible endpoint, and a config-driven router so the backend can change without code changes. Put deterministic code in front: exact matches, hash-based change detection, cheap filters, so the model only sees what survives. Store artifacts as Parquet with one schema contract per stage, and make every write idempotent and resumable. Route by sensitivity, volume and latency: sensitive and bulk work local, small interactive calls to a managed API, with results cached per input. Let code copy evidence and compute numbers; the model picks and judges. Give every job a standard log schema and a monitor that checks output counts, not exit codes. Ship behind dry-run flags and test recipients, and measure on your own documents before anyone calls it accurate.",
+   "sources": [
+    "work_history.md:62",
+    "work_history.md:1141",
+    "work_history.md:748",
+    "work_history.md:381",
+    "work_history.md:165",
+    "work_history.md:246",
+    "work_history.md:949",
+    "work_history.md:476",
+    "work_history.md:249",
+    "work_history.md:163",
+    "kb:persona-small-models"
+   ]
+  },
+  {
+   "id": "arc-agent-observability",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Observability for a multi-agent system",
+   "questions": [
+    "how do you observe a multi agent system",
+    "how do you know what your agents are doing",
+    "agent city architecture",
+    "how does agent city get its state",
+    "monitoring dozens of agents",
+    "the overseer agent",
+    "agent status dashboard design",
+    "how do you show which agents are stuck",
+    "deterministic state projection",
+    "why poll instead of push for the agent dashboard",
+    "observability for autonomous agents",
+    "which agents need my attention"
+   ],
+   "tags": [
+    "dashboard",
+    "status",
+    "precedence",
+    "projection",
+    "polling",
+    "cursor",
+    "overseer",
+    "attention",
+    "glance",
+    "monitoring layer"
+   ],
+   "links": [
+    {
+     "label": "Agent City",
+     "url": "agent-city.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "With 29 agents and hundreds of jobs, logs stopped answering \"who is working, who is stuck, who is waiting on me?\", so I built Agent City, a personal project: a 3D town in the browser that is a read-mostly projection of the real system. It owns no scheduling and runs no work. Each agent carries a few authoritative fields, and one pure function maps them to a single displayed state with fixed precedence: blocked, waiting on me, working, queued, offline, paused, scheduled soon, sleeping, idle. An unreachable runtime shows as offline, never asleep, and tests check every conflicting pair, so \"working\" means a job is actually running. Browsers poll every 5 seconds with a cursor, which is simple and holds up on a standard-library server. Separately, an hourly Overseer round checks every agent for failed, stuck or vanished runs, and never acts.",
+   "sources": [
+    "page:agent-architecture.html",
+    "page:agent-city.html"
+   ]
+  },
+  {
+   "id": "arc-control-surface",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing a safe control surface for autonomous jobs",
+   "questions": [
+    "how do you design controls for an autonomous system",
+    "run now button that cannot bypass gates",
+    "idempotency keys for commands",
+    "how do you stop a dashboard from becoming a way around the rules",
+    "safe ui controls for agents",
+    "command preview and confirm design",
+    "double tap on phone creates duplicate job",
+    "append only done log",
+    "control plane design for agents",
+    "how do commands from the town reach the queue",
+    "preventing duplicate jobs from double clicks"
+   ],
+   "tags": [
+    "control plane",
+    "idempotency",
+    "confirmation",
+    "preview",
+    "gates",
+    "audit log",
+    "mobile",
+    "commands",
+    "duplicate",
+    "clicks"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "Agent City",
+     "url": "agent-city.html"
+    }
+   ],
+   "answer": "Every control in a UI has to pass the same gates as everything else. In Agent City, my personal agent dashboard, \"run now\" sets aside one date gate on one queued job and records the original; it's refused for approval flags, dependencies and start conditions, and it never overrides a usage pause or the launch budget. Every command can be previewed without changing anything. Commands that spend usage, override a gate, pause or cancel need an explicit confirm. The same idempotency key within 24 hours returns the stored result and never creates a second job, so a double tap on a phone is harmless. Running jobs are never touched. The town's few writes go through the queue's own lock, and because queue records can be pruned or rewritten, the town appends each finished job once to an append-only Done log. Access is private-network only.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "arc-gated-release-chain",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Receipt-gated release chains for long generation runs",
+   "questions": [
+    "receipt gated job chain",
+    "how do you gate a long llm generation run",
+    "canary runs for llm generation",
+    "gpu kill switch supervisor",
+    "how do you stop a failed step being run past",
+    "release engineering for generated content",
+    "quarantined canary protocol",
+    "how do you supervise unattended gpu runs",
+    "wall clock backstop",
+    "how are verification passes bound to code versions",
+    "safeguards for overnight gpu runs",
+    "how do you stop a pipeline skipping a failed check",
+    "releasing a large batch of generated content"
+   ],
+   "tags": [
+    "release gates",
+    "canary",
+    "receipts",
+    "supervisor",
+    "kill switch",
+    "pre-registered",
+    "code hashes",
+    "multi step",
+    "ai written content",
+    "batch release"
+   ],
+   "links": [
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "For long, expensive generation runs I chain steps on receipts, not on exit codes. In Skyrule, my personal project, every chain step starts only when its predecessor's receipt JSON carries the exact result the gate reads, so a failed step can't be run past. Releases go through a quarantined canary on a frozen, dated protocol with acceptance gates set in advance. Canary 1 failed its 50-piece two-grader check at 18 of 50, and the five generator habits behind it became validator checks. A supervisor with a wall-clock backstop stops generation at a cutoff, verifies the model server is down and restores the standing server, while a connection watch attributes every client touching the model port by Windows job-object membership. Each verification is bound to the code hashes it tested, so an old pass can't open a gate after a change.",
+   "sources": [
+    "work_history.md:1155",
+    "work_history.md:1156"
+   ]
+  },
+  {
+   "id": "arc-explainable-outputs",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing outputs that carry their own reasons",
+   "questions": [
+    "how do you design outputs people can argue with",
+    "why expose the probability trail instead of a single score",
+    "explainability by design",
+    "storing the reason next to the result",
+    "momentum badge design",
+    "per person explainability output",
+    "why does each file show its ranking reason",
+    "how do you make predictions inspectable",
+    "transparent outputs architecture",
+    "audit friendly outputs",
+    "showing users why something ranked where it did",
+    "score history instead of a single number",
+    "explaining to users why an item ranked high"
+   ],
+   "tags": [
+    "explainability",
+    "interpretability",
+    "audit",
+    "trajectory",
+    "reasons",
+    "transparency",
+    "trust",
+    "history",
+    "why ranked",
+    "explain ranking"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I design outputs so a person can argue with them, which usually means storing the reason next to the result. The legislative passage model writes a per-action probability trail, 432,262 rows, as a first-class artifact rather than one score per bill. The trail drives the in-app curve and the momentum badge, which compares the last three actions with the prior three, and it exposed a monotonicity defect that a single current value would have hidden. In the archival triage ledger, every file shows why it ranked where it did, quoted from the archivist's own intake form, and folder-level inclusion stays a separate stated reason rather than being blended into one number. The retirement forecast emits per-person explainability: raw score, age prior, comparable cases, the shrunk estimate, the floor, and which mechanism moved it.",
+   "sources": [
+    "work_history.md:384",
+    "work_history.md:389",
+    "page:legislative-pipeline.html",
+    "work_history.md:848",
+    "work_history.md:884",
+    "work_history.md:803"
+   ]
+  },
+  {
+   "id": "arc-unattended-operation",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing for unattended operation",
+   "questions": [
+    "how do you design systems that run unattended",
+    "running 24/7 on a home pc",
+    "why jobs launch only from the scheduled task",
+    "radar down alarm",
+    "health checks that tell the truth",
+    "how do you keep a scheduled service from dying silently",
+    "hidden launcher auto restart wrapper",
+    "allowlist for self scheduling",
+    "lights out operation",
+    "what keeps your personal systems running overnight",
+    "keeping a home server running overnight",
+    "keeping automation working when nobody is watching"
+   ],
+   "tags": [
+    "unattended",
+    "watchdog",
+    "auto-restart",
+    "liveness",
+    "allowlist",
+    "scheduler",
+    "uptime",
+    "heartbeat",
+    "while you sleep",
+    "keeps working"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I design for the hours nobody's watching, which mostly means honest launches and honest health. In my personal projects, jobs launch only from the scheduled task, never from a chat session, after a session-launched job died with its console. Drop Radar's loop stopped twice in one day because the scheduled task opened a visible console that a stray Ctrl+C could kill, so it moved to a hidden launcher with an auto-restart wrapper. Health has to mean it worked: the Discord feed counts as healthy only if a post actually arrived in the last 24 hours, and a watcher raises a Telegram alarm when no source has been checked for 30 minutes; it fired 34 minutes into a real outage. A periodic hook may queue work only from an allowlist of scripts and arguments, at most hourly, so editing config can't run an arbitrary command.",
+   "sources": [
+    "work_history.md:1160",
+    "work_history.md:1208",
+    "work_history.md:1207",
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "arc-review-workbench",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Building human review into the pipeline: the Accession Workbench",
+   "questions": [
+    "how do you architect human review into an ai pipeline",
+    "accession workbench",
+    "triage ledger design",
+    "append only decision log for reviewers",
+    "how do archivists review machine decisions",
+    "release versions original reading room open web",
+    "review interface for ai triage",
+    "bulk review actions with sensitive items excluded",
+    "how are reviewer decisions recorded",
+    "review surface design",
+    "how do reviewers correct the ai's decisions"
+   ],
+   "tags": [
+    "review ui",
+    "human review",
+    "decisions",
+    "audit trail",
+    "reading room",
+    "bulk actions",
+    "workbench",
+    "correct",
+    "reviewer",
+    "changing their mind"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Review is part of the architecture, so it gets a real surface and a real record. The archival pipeline's Accession Workbench puts a triage ledger in front of the archivist: every file shows its generated title, a two-sentence summary, folder location, flags and its ranking reason. Decisions can be made per file or a whole band at a time, with sensitive material automatically excluded from bulk actions. Decisions go into an append-only log, where changing your mind writes a second entry pointing at the first, because \"selected at 14:02, changed at 14:19\" is the record an archive needs. Three release versions, original, reading room and open web, sit side by side, so the archivist chooses what publishes rather than trusting a setting. A review pass returned 481 decisions, each stamped with its reviewer, and exposed a real rationale-field bug.",
+   "sources": [
+    "work_history.md:847",
+    "work_history.md:848",
+    "work_history.md:850",
+    "work_history.md:851",
+    "work_history.md:852"
+   ]
+  },
+  {
+   "id": "arc-scale-archive",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Scaling the archival pipeline: compute, layout and agent cost",
+   "questions": [
+    "what breaks first when the archive pipeline scales",
+    "scaling the archival pipeline to millions of files",
+    "how long would 100000 images take",
+    "five million row manifest",
+    "why are embeddings stored outside the manifest",
+    "dataframe fragmentation at scale",
+    "archive scale capacity",
+    "what changes at five million files",
+    "how does the rims design scale",
+    "sizing the archival workload",
+    "what if the archive gets ten times more files",
+    "how far can archive processing go on one gpu"
+   ],
+   "tags": [
+    "scale",
+    "capacity",
+    "throughput",
+    "memory",
+    "embeddings",
+    "fragmentation",
+    "sizing",
+    "millions",
+    "10x",
+    "one gpu"
+   ],
+   "links": [
+    {
+     "label": "Archival image throughput",
+     "url": "archival-image-throughput-evaluation.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Scale shows up in three places: compute, data layout and agent cost. Compute: under Ollama a full 12,125-image pass took about 22 hours; on vLLM with the same L4 it takes about 3.7, and a 100,000-image collection moves from 12 to 13 days to about 30 hours with no new hardware. Data layout: at five million rows, 384-dimension embeddings are about 7.5 GB, so they live outside the manifest as pointers, and building roughly a hundred columns one at a time fragments the DataFrame, harmless at five rows and severe at five million. Agent cost: loops belong at folder and collection level, because per-file loops turn hours into weeks. And the biggest lever, the free-filter reduction, has to be measured on a complete drive before any of this sizing is trusted.",
+   "sources": [
+    "work_history.md:642",
+    "work_history.md:875",
+    "work_history.md:878",
+    "work_history.md:922",
+    "work_history.md:881",
+    "work_history.md:895"
+   ]
+  },
+  {
+   "id": "arc-product-hosting-ip",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Hosting and IP protection for a consumer AI product",
+   "questions": [
+    "how did you choose hosting for skyrule",
+    "skyrule production architecture",
+    "how do you protect ip in an ai product",
+    "server side machinery thin client",
+    "digitalocean postgresql vercel clerk stripe",
+    "how would you host a consumer ai app",
+    "protecting models and prompts from scraping",
+    "ios thin client architecture",
+    "consumer app hosting decision",
+    "where does the valuable logic live",
+    "where to put valuable logic in a mobile ai app",
+    "stopping competitors copying an ai product",
+    "planned production stack for skyrule"
+   ],
+   "tags": [
+    "hosting",
+    "ip protection",
+    "thin client",
+    "rate limits",
+    "fastapi",
+    "postgres",
+    "distillation",
+    "scraping",
+    "production stack",
+    "personal product"
+   ],
+   "links": [
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    }
+   ],
+   "answer": "For Skyrule, my personal project, the hosting plan follows one rule: valuable machinery stays server-side. The decided plan is a stateless FastAPI container on a DigitalOcean droplet with managed PostgreSQL, the web front end on Vercel, Clerk and Stripe, and an iOS app that's a thin client. The IP-protection plan backs that up with per-account rate limits, traceable delivery logs and trade-secret practice, informed by research I ran on client decompilation, API scraping and model distillation. The internal API is locked down on a reviewed branch: authentication on every route, no prompt or rule-file exposure, closed CORS, rate limits. Privacy shapes the data layer too: users' personal chart data never goes to a cloud model, consent gates storing anyone else's data, and the database plan includes deletion and export. It's pre-beta, so this is decided architecture, not yet load-tested.",
+   "sources": [
+    "work_history.md:1161",
+    "work_history.md:1149",
+    "work_history.md:1148",
+    "work_history.md:1150",
+    "work_history.md:1181",
+    "work_history.md:1182",
+    "work_history.md:1134"
+   ]
+  },
+  {
+   "id": "arc-content-addressing",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Content addressing and hashing as an architecture tool",
+   "questions": [
+    "how do you use hashing in your architectures",
+    "content addressing",
+    "deterministic file ids blake2b",
+    "content hash change detection",
+    "fingerprinting requests and scorers",
+    "how do you know two runs used the same inputs",
+    "stable identifiers across re crawls",
+    "hash based incremental processing",
+    "why hash everything",
+    "sha 256 receipts",
+    "proving two runs were the same test"
+   ],
+   "tags": [
+    "hashing",
+    "blake2b",
+    "sha-256",
+    "fingerprint",
+    "idempotency",
+    "incremental",
+    "deduplication",
+    "provenance",
+    "same test",
+    "benchmark"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "I use hashes wherever \"is this the same thing?\" has to be answered by code. In the archival manifest, file_uid is a blake2b hash over source identifier plus normalized path, so a re-crawl yields identical keys and manifest generations join; exact duplicates collapse by content hash in the free-filter tier but stay recorded as duplicate_of rather than deleted. The legislative pipeline's change feed is a content hash per artifact, so a quiet day does almost no work, and nightly impact scoring re-evaluates only bills whose hash changed. Evidence Desk fingerprints frozen case manifests, requests, client settings and scorers with SHA-256, and the merge tool refuses anything that doesn't match. In my personal agent system, every memory stores its source file's hash, and gate passes are bound to the code hashes they tested.",
+   "sources": [
+    "work_history.md:873",
+    "work_history.md:872",
+    "work_history.md:880",
+    "page:legislative-pipeline.html",
+    "work_history.md:164",
+    "work_history.md:939",
+    "page:agent-architecture.html",
+    "work_history.md:1156"
+   ]
+  },
+  {
+   "id": "arc-digest-architecture",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Architecture of a personalized AI digest",
+   "questions": [
+    "how is the personalized email digest built",
+    "digest architecture",
+    "how do you design a personalized ai briefing email",
+    "weekly digest function design",
+    "what goes into each user's digest",
+    "baseline then changes only digest",
+    "digest cadence daily weekly real time",
+    "personalized newsletter generated by ai",
+    "digest agent design",
+    "how does the briefing email decide what to include",
+    "how is each stakeholder's email assembled"
+   ],
+   "tags": [
+    "email",
+    "newsletter",
+    "briefing",
+    "personalization",
+    "cadence",
+    "timer trigger",
+    "baseline",
+    "changes",
+    "stakeholder",
+    "assembled"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "A digest is a scheduled assembly job over a user's own lens, so the lens is data and the schedule is a function. On the legislative platform a timer-triggered Azure Function assembles each recipient's digest from their profile, impact prompts, saved categories and tracked bills, and delivers it through managed email on their chosen cadence: daily, weekly or real-time. I designed the structure as state over time: headline finding, baseline framing, tracked bills, other movers, most imminent items, the macro picture, and a count of watched items with no material change. The first edition establishes a baseline and later editions report only what changed. The next design step is a digest agent that curates by reasoning across all of a user's signals instead of filtering on thresholds, where the deciding question is nightly on-prem precompute versus live cloud generation.",
+   "sources": [
+    "work_history.md:163",
+    "work_history.md:228",
+    "work_history.md:229",
+    "work_history.md:273"
+   ]
+  },
+  {
+   "id": "arc-skyrule-architecture",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Skyrule's system architecture: code computes, the model writes",
+   "questions": [
+    "walk me through skyrule's architecture",
+    "skyrule system design",
+    "how is skyrule layered",
+    "how do the engine rule store and generator fit together",
+    "code computes the model writes",
+    "architecture of your personal ai product",
+    "how does skyrule keep generated text grounded",
+    "versioned fastapi engine and rule store",
+    "provenance first architecture",
+    "how do you keep an llm from inventing facts in a product",
+    "designing a product where the model cannot invent facts"
+   ],
+   "tags": [
+    "layers",
+    "deterministic engine",
+    "rule store",
+    "provenance",
+    "generator",
+    "validators",
+    "fastapi",
+    "grounding",
+    "invents facts",
+    "never invents"
+   ],
+   "links": [
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "Skyrule, my personal project, is layered so that anything factual is computed by code and the model only writes. At the bottom is a deterministic Python engine exposed through a versioned FastAPI layer, with regression controls that must reproduce 279 reference spans exactly. Above it is a rule store built by a provenance pipeline over a 76-title licensed corpus: extraction, independent verification by a second model, a verbatim-quote gate and page re-checks, so every rule traces to a book, a page and a quote. The relationship model is explicit functions with 206 weights held in a ledger, deliberately producing no total or compatibility score. Generation is brief-then-prose: code lays out what's supported, a local model plans claim by claim, code validates every claim, then the model writes one sentence per approved claim and code checks again.",
+   "sources": [
+    "work_history.md:1135",
+    "work_history.md:1142",
+    "work_history.md:1143",
+    "work_history.md:1144",
+    "work_history.md:1145"
+   ]
+  },
+  {
+   "id": "arc-shared-execution-environment",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Architecting a shared server for many production pipelines",
+   "questions": [
+    "how do you architect a shared server for many pipelines",
+    "linux analytics execution environment",
+    "how do multiple production pipelines share one server",
+    "environment isolation for vllm",
+    "conda environment isolation",
+    "how did you set up the analytics server",
+    "running several ai pipelines concurrently on one machine",
+    "platform for many pipelines",
+    "why separate python environments for serving and harness",
+    "shared infrastructure for data science pipelines",
+    "keeping pipelines from interfering with each other on one server",
+    "what infrastructure do your pipelines run on"
+   ],
+   "tags": [
+    "platform",
+    "isolation",
+    "virtual environment",
+    "conda",
+    "concurrency",
+    "shared resources",
+    "jupyterhub",
+    "interfere",
+    "infrastructure",
+    "box"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I treat one shared server as a platform with conventions, because several production pipelines run on it at once: legislative processing, proposal NLP, archival image classification, the retirement forecast and more. Each gets its own environment. vLLM 0.6.6 lives in an isolated conda environment because the system Python carries a different vLLM and an incompatible syntax surface, so serving runs in the vLLM environment and the benchmark scripts in system Python; the retirement forecast runs in its own virtual environment. Every pipeline writes the same Parquet logging contract, so one monitor sees all of them. Shared resources get managed explicitly: right-sizing the language model's GPU allocation freed about 15 GB so the archival pipeline could share the L4, and after an out-of-memory failure took down the shared JupyterHub, I moved heavy jobs off it.",
+   "sources": [
+    "work_history.md:52",
+    "work_history.md:57",
+    "work_history.md:66",
+    "work_history.md:811",
+    "work_history.md:511",
+    "work_history.md:113",
+    "work_history.md:207"
+   ]
+  },
+  {
+   "id": "arc-agent-org-redesign",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Reorganizing an agent organization: five teams and generated scopes",
+   "questions": [
+    "how did you reorganize your agent organization",
+    "five working teams",
+    "agent departments folded into teams",
+    "how are agent write scopes generated",
+    "union of hats write scope",
+    "how do you restructure a multi agent system safely",
+    "agent organization design",
+    "testing an agent reorganization",
+    "status log with a single locking writer",
+    "fewer deciders in an agent organization",
+    "why merge agent departments into fewer teams",
+    "how was the agent structure reshaped"
+   ],
+   "tags": [
+    "org design",
+    "teams",
+    "scopes",
+    "least privilege",
+    "permissions",
+    "restructure",
+    "governance",
+    "departments",
+    "fewer groups",
+    "reshaped"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    },
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    }
+   ],
+   "answer": "On October 26 I folded Skyrule's 14 agent departments into five working teams: Foundation, Platform, App & Brand, Release and Program. The goal was fewer deciders, with records staying in their department homes. The departments survive as review hats, and each team's write scope is generated as the union of the hats it wears, never wider; the agent-definition folder and the live site stay out of every team's scope. I tested the change like code: 31 build checks including a planted out-of-scope control, guard self-tests at 45 of 45 and 27 of 27, and 12 live allow and deny checks. Alongside it came an append-only status log with a single locking writer, self-tested with four writers appending 25 lines at once and none interleaved, a daily morning-brief PDF built from files with no model, and a 30-minute stall watch.",
+   "sources": [
+    "work_history.md:1159",
+    "work_history.md:1137"
+   ]
+  },
+  {
+   "id": "arc-agent-budget-governance",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Governing model usage and spend in an agent system",
+   "questions": [
+    "how do you control model spend in an agent system",
+    "usage budget for agents",
+    "weekly launch budget",
+    "what happens when an agent hits a usage limit",
+    "how do you stop agents burning through credits",
+    "per job model choice to control cost",
+    "claude lane opt in approval note",
+    "how do you cap unattended agent jobs",
+    "agent cost governance",
+    "rate limiting your own ai agents",
+    "how do you keep agents from running up a bill",
+    "rationing an expensive model across agents",
+    "what happens when you run out of model usage"
+   ],
+   "tags": [
+    "budget",
+    "usage limits",
+    "spend",
+    "credits",
+    "quota",
+    "cost control",
+    "launch log",
+    "bill",
+    "ration",
+    "out of usage"
+   ],
+   "links": [
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I treat model usage as a shared resource with its own lane and its own ledger. In my personal agent system the Claude lane spends my own usage, so it's opt-in per job: a job without an approval note never starts there. A weekly budget, enforced by the queue from its own launch log, caps launches so at least half my weekly usage stays free for my own work, and every raise is recorded with my reason. Unattended Claude jobs are capped at two at a time, while the GPU and CPU lanes are unmetered. When Claude reports a usage limit, the whole lane pauses until the stated reset, and that stop doesn't count as a failed attempt. The gap I'd close: cost is tracked as launches against the budget, not as tokens.",
+   "sources": [
+    "work_history.md:1160",
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "arc-personalization-design",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Designing per-user lenses: profiles, impact prompts and categories",
+   "questions": [
+    "how did you design personalization in the legislative platform",
+    "per user impact scoring design",
+    "user profile injected into the prompt",
+    "custom impact prompts",
+    "why not one institution wide impact score",
+    "personal lens architecture",
+    "how do users customize what the ai looks for",
+    "custom keyword categories",
+    "token limits on user written context",
+    "personalized ai analysis design",
+    "analysis tailored to each person's job"
+   ],
+   "tags": [
+    "personalization",
+    "profiles",
+    "lens",
+    "impact rating",
+    "prompt context",
+    "context window",
+    "categories",
+    "relevance",
+    "tailored",
+    "role"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web application",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "I started from a premise: a single institution-wide impact score is too broad to act on, because impact only means something relative to a person's role. So on the legislative platform each user defines a lens and the system applies it to every active bill. The profile, title, functional area, stakeholders served and the legislation they watch for, is injected into the LLM prompt for every downstream analysis. Users write impact questions in their own words, and each is scored against every active bill on a No, Low, Moderate or High scale with a one-sentence rationale. Up to ten keyword categories each choose which fields they search. I built explicit token and input-length limits into the profile and prompt interfaces so user-written context can't silently truncate the model's input, and explained the reason to users.",
+   "sources": [
+    "work_history.md:212",
+    "work_history.md:213",
+    "work_history.md:214",
+    "work_history.md:215",
+    "work_history.md:217",
+    "work_history.md:218"
+   ]
+  },
+  {
+   "id": "arc-pm-agent",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Putting a program-manager agent into a team's workflow",
+   "questions": [
+    "how did you design the program manager agent in teams",
+    "teams agent linked to github issues",
+    "ai project manager agent",
+    "acceptance criteria for an internal agent",
+    "how do you add an agent to a team's workflow",
+    "rims program manager agent",
+    "agent that tracks blockers and issues",
+    "human review before an agent updates github",
+    "what has the teams agent actually been verified to do",
+    "agent in microsoft teams",
+    "should an ai assistant update the project board",
+    "bringing an assistant bot into a team chat"
+   ],
+   "tags": [
+    "microsoft teams",
+    "github issues",
+    "project management",
+    "acceptance criteria",
+    "copilot agent",
+    "blockers",
+    "workflow",
+    "project board",
+    "team chat",
+    "bot"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I put it where the team already talks and kept every write behind review. For the archival build I set up a shared program-manager agent in Microsoft Teams to track progress and blockers and link chat updates to GitHub issues, with proposed GitHub updates held for human review before anything changes. I drafted its acceptance criteria: shared access, reading a designated chat, accurate issue matching, duplicate prevention and reviewed GitHub updates. Then I report against them honestly. It opens in Teams, and GitHub issue retrieval and designated-chat retrieval have been demonstrated; automatic monitoring, persistent duplicate prevention and GitHub writes remain unverified. It sits on a repository built as the single source of truth, with 33 open issues across stages 00 to 07 and Blocked as a board column rather than a label.",
+   "sources": [
+    "work_history.md:858",
+    "work_history.md:844",
+    "work_history.md:898",
+    "work_history.md:900"
+   ]
+  }
+ ],
+ "add_questions": {
+  "legis-network-tls": [
+   "why did the campus firewall force the scoring workload into a different architecture",
+   "cosmos unreachable from the on prem server"
+  ],
+  "skyrule-agent-lanes": [
+   "how do you stop an agent writing outside its scope"
+  ]
+ },
+ "replace_answers": {},
+ "tests": [
+  [
+   "explain the stage by stage design of the library archive processing system",
+   "arc-rims-architecture|rims-pipeline"
+  ],
+  [
+   "how many stages does the archive pipeline have and what does each do",
+   "arc-rims-architecture|rims-pipeline"
+  ],
+  [
+   "how do email images and documents get processed differently in the archival build",
+   "arc-rims-architecture"
+  ],
+  [
+   "what does it take to get a prototype ready for real production use",
+   "arc-unify-pocs|ex-poc-to-production|fde-hardening-poc"
+  ],
+  [
+   "how would you merge separate pilot projects into a single platform",
+   "arc-unify-pocs|ex-poc-to-production"
+  ],
+  [
+   "which prototype dependencies did you have to replace before going to production",
+   "arc-unify-pocs"
+  ],
+  [
+   "how would your design keep two customers' data apart",
+   "arc-multi-tenancy|legacy-multi-tenant|fde-cosmos-schema"
+  ],
+  [
+   "what happens to the processing cost when you add another user to the platform",
+   "arc-multi-tenancy|leg-extraction-decoupled"
+  ],
+  [
+   "talk about tenant boundaries in systems you've built",
+   "arc-multi-tenancy|legacy-multi-tenant|fde-cosmos-schema"
+  ],
+  [
+   "how do you orchestrate dozens of ai agents on one machine",
+   "arc-multi-agent-architecture|aie-multi-agent"
+  ],
+  [
+   "describe the scheduling backbone of your agent setup",
+   "arc-multi-agent-architecture|skyrule-job-queue"
+  ],
+  [
+   "what does the architecture of your agent company look like",
+   "arc-multi-agent-architecture|skyrule-agents"
+  ],
+  [
+   "two services need the same graphics card, how do you arbitrate",
+   "arc-gpu-sharing"
+  ],
+  [
+   "what goes wrong when two inference servers run on one card",
+   "arc-gpu-sharing"
+  ],
+  [
+   "how do you schedule model swaps on limited gpu memory",
+   "arc-gpu-sharing|aie-gpu-memory-sizing"
+  ],
+  [
+   "how can an ai safely patch the software it runs inside",
+   "arc-self-improving-loop"
+  ],
+  [
+   "explain the loop where user notes turn into tested fixes",
+   "arc-self-improving-loop"
+  ],
+  [
+   "design a system that updates itself based on user feedback",
+   "arc-self-improving-loop"
+  ],
+  [
+   "how do retrained models reach the nightly scoring job",
+   "arc-model-lifecycle"
+  ],
+  [
+   "how do you decide how often to retrain a production model",
+   "arc-model-lifecycle|ads-recency-weighting"
+  ],
+  [
+   "how do you keep the model in production current without retraining every day",
+   "arc-model-lifecycle"
+  ],
+  [
+   "how would you build an internal assistant that answers questions over our company files",
+   "arc-enterprise-copilot|aie-design-rag"
+  ],
+  [
+   "what's your design for a knowledge chatbot leadership can trust",
+   "arc-enterprise-copilot|aie-design-rag"
+  ],
+  [
+   "tell me how the bill assistant answers questions with sources",
+   "arc-enterprise-copilot"
+  ],
+  [
+   "how do you make sure readers know a summary came from the model and not a coworker",
+   "arc-team-collaboration"
+  ],
+  [
+   "what risk shaped the shared workspace design",
+   "arc-team-collaboration"
+  ],
+  [
+   "design question: colleagues share ai analysis inside a public institution",
+   "arc-team-collaboration"
+  ],
+  [
+   "what did you put in the data model early because adding it later would be painful",
+   "arc-retrofit-decisions"
+  ],
+  [
+   "which design choices did you treat as hard to reverse",
+   "arc-retrofit-decisions"
+  ],
+  [
+   "how did you plan the platform's future architecture",
+   "arc-retrofit-decisions"
+  ],
+  [
+   "how would you get people's email analysis into the system without a new tool",
+   "arc-email-intake"
+  ],
+  [
+   "design a way for users to forward correspondence into the bill tracker",
+   "arc-email-intake"
+  ],
+  [
+   "how would you turn committee postings into alerts",
+   "arc-email-intake"
+  ],
+  [
+   "would you run an llm agent on every document or something coarser",
+   "arc-agent-granularity"
+  ],
+  [
+   "how do you keep agentic steps affordable across millions of files",
+   "arc-agent-granularity"
+  ],
+  [
+   "when is a plain classifier better than an agent in a document pipeline",
+   "arc-agent-granularity|persona-agent-vs-workflow|con-should-we-use-llm"
+  ],
+  [
+   "looking back, which design choices in your projects would you redo",
+   "arc-hindsight-changes|iv-biggest-lessons"
+  ],
+  [
+   "critique your own system design",
+   "arc-hindsight-changes"
+  ],
+  [
+   "what's the weakest part of the systems you built",
+   "arc-hindsight-changes"
+  ],
+  [
+   "which steps in an automated system should still wait for a person",
+   "arc-human-gates|iv-human-in-loop"
+  ],
+  [
+   "how did you launch ai generated emails without risking a bad first impression",
+   "arc-human-gates|fde-safe-rollout"
+  ],
+  [
+   "how do you decide what an autonomous agent may do alone",
+   "arc-human-gates|aie-agent-design"
+  ],
+  [
+   "if we hired you to stand up our first gen ai platform what would you build",
+   "arc-reference-architecture"
+  ],
+  [
+   "sketch a sensible default architecture for an llm product at a mid sized firm",
+   "arc-reference-architecture"
+  ],
+  [
+   "what components belong in a first production language model deployment",
+   "arc-reference-architecture"
+  ],
+  [
+   "how do you tell at a glance which of your ai agents need attention",
+   "arc-agent-observability|agent-city-real-state"
+  ],
+  [
+   "what is the monitoring layer for your agent company",
+   "arc-agent-observability"
+  ],
+  [
+   "how does the 3d town know what each agent is really doing",
+   "arc-agent-observability|agent-city-real-state"
+  ],
+  [
+   "how do you make buttons in an ops dashboard safe to press",
+   "arc-control-surface"
+  ],
+  [
+   "what stops a user interface from overriding your job approvals",
+   "arc-control-surface"
+  ],
+  [
+   "how do you prevent duplicate jobs from repeated clicks",
+   "arc-control-surface"
+  ],
+  [
+   "how do you make sure a multi step generation pipeline cannot skip a failed check",
+   "arc-gated-release-chain"
+  ],
+  [
+   "what safeguards surround your overnight gpu jobs",
+   "arc-gated-release-chain"
+  ],
+  [
+   "how do you release a large batch of ai written content safely",
+   "arc-gated-release-chain"
+  ],
+  [
+   "why show the history of a bill's score rather than just today's number",
+   "arc-explainable-outputs"
+  ],
+  [
+   "how do your systems tell the user why something was ranked high",
+   "arc-explainable-outputs"
+  ],
+  [
+   "design outputs that a skeptical stakeholder can check",
+   "arc-explainable-outputs"
+  ],
+  [
+   "how do you make sure a home server keeps working while you sleep",
+   "arc-unattended-operation"
+  ],
+  [
+   "what did you learn about running scheduled automation with no one watching",
+   "arc-unattended-operation"
+  ],
+  [
+   "how do you detect that a monitoring loop itself has stopped",
+   "arc-unattended-operation|aie-observability"
+  ],
+  [
+   "how do archivists check and correct what the ai decided",
+   "arc-review-workbench"
+  ],
+  [
+   "what does the reviewer screen in your archive system look like",
+   "arc-review-workbench"
+  ],
+  [
+   "how do you record a reviewer changing their mind",
+   "arc-review-workbench"
+  ],
+  [
+   "what would you worry about if the library sent you ten times more files",
+   "arc-scale-archive"
+  ],
+  [
+   "how big can the archive processing get on one gpu",
+   "arc-scale-archive|aii-why-throughput-matters"
+  ],
+  [
+   "which design choices in the archive build only matter at millions of rows",
+   "arc-scale-archive"
+  ],
+  [
+   "where would you put the secret sauce in a mobile ai app",
+   "arc-product-hosting-ip"
+  ],
+  [
+   "what is the planned production stack for your personal product",
+   "arc-product-hosting-ip"
+  ],
+  [
+   "how do you stop competitors copying your ai product's logic",
+   "arc-product-hosting-ip"
+  ],
+  [
+   "why do your pipelines compute hashes of files and requests",
+   "arc-content-addressing"
+  ],
+  [
+   "how do you get identical ids when you rescan the same drive",
+   "arc-content-addressing|aie-data-contracts"
+  ],
+  [
+   "how do you prove two benchmark runs were the same test",
+   "arc-content-addressing"
+  ],
+  [
+   "walk me through how each stakeholder's ai email gets put together",
+   "arc-digest-architecture|fde-safe-rollout"
+  ],
+  [
+   "how does the platform decide what goes in someone's weekly briefing",
+   "arc-digest-architecture"
+  ],
+  [
+   "design a personalized summary email for executives",
+   "arc-digest-architecture"
+  ],
+  [
+   "how is your personal product structured from engine to text",
+   "arc-skyrule-architecture|skyrule"
+  ],
+  [
+   "explain the layers of the skyrule system",
+   "arc-skyrule-architecture|skyrule"
+  ],
+  [
+   "how do you design a product where the llm never invents facts",
+   "arc-skyrule-architecture"
+  ],
+  [
+   "how do you keep many pipelines from stepping on each other on one box",
+   "arc-shared-execution-environment|fde-gpu-server-ops"
+  ],
+  [
+   "describe the infrastructure your production pipelines run on",
+   "arc-shared-execution-environment"
+  ],
+  [
+   "why does vllm get its own python environment",
+   "arc-shared-execution-environment|aie-vllm-airgap"
+  ],
+  [
+   "why did you merge your ai departments into fewer groups",
+   "arc-agent-org-redesign"
+  ],
+  [
+   "how do you change agent permissions without breaking the system",
+   "arc-agent-org-redesign|skyrule-agent-lanes"
+  ],
+  [
+   "how was the skyrule agent structure reshaped in late october",
+   "arc-agent-org-redesign"
+  ],
+  [
+   "how do you keep autonomous agents from running up a big bill",
+   "arc-agent-budget-governance"
+  ],
+  [
+   "what does your queue do when the model provider says you're out of usage",
+   "arc-agent-budget-governance"
+  ],
+  [
+   "how do you ration access to an expensive model across many agents",
+   "arc-agent-budget-governance"
+  ],
+  [
+   "how does each person get analysis tailored to their job",
+   "arc-personalization-design"
+  ],
+  [
+   "why let users write their own impact questions",
+   "arc-personalization-design"
+  ],
+  [
+   "how do you stop long user profiles from breaking the prompt",
+   "arc-personalization-design|fde-cosmos-schema"
+  ],
+  [
+   "would you trust an ai assistant to update the project board",
+   "arc-pm-agent"
+  ],
+  [
+   "how do you bring an assistant bot into a delivery team's chat",
+   "arc-pm-agent"
+  ],
+  [
+   "what was proven and what was not for your project tracking agent",
+   "arc-pm-agent"
+  ],
+  [
+   "what blocked the analytics server from talking to the cloud database",
+   "legis-network-tls|aie-batch-vs-online|fde-firewall-cosmos"
+  ],
+  [
+   "how are agents prevented from editing files they do not own",
+   "skyrule-agent-lanes|aie-agent-design|arc-multi-agent-architecture"
+  ]
+ ],
+ "gaps": [
+  "Multi-organization multi-tenant SaaS: never built; arc-multi-tenancy says so and gives the per-user and Legacy (personal) design instead.",
+  "Disaster recovery, multi-region, failover and backup/restore design for the Azure platform: no source (only Drop Radar's weekly OneDrive backup).",
+  "Load testing, concurrent-user capacity, uptime/SLA numbers for the Azure web tier: not in sources.",
+  "Kubernetes, container orchestration, API gateways, message queues/event buses (Kafka, Service Bus, Event Grid): not used in sources.",
+  "A formal threat model for the work platforms (only Skyrule, a personal project, has one).",
+  "Network design inside Azure (VNets, private endpoints): not in sources; and the brief bars security configuration details anyway.",
+  "Topics deliberately left to other families because a card already exists there: legislative end-to-end topology (fde-deployment-topology), on-prem/cloud split and hosted vs local (aie-batch-vs-online, aie-serving-choice, fde-firewall-cosmos), backend router (fde-backend-router), procurement tier order (aie-model-routing, procure-tiers), document intake (aie-design-doc-extraction), semantic search at millions (aie-design-product-search, aie-vector-index), sensitive data (fde-data-boundary, fde-design-no-internet, aie-pii-pipeline), magic-link auth (fde-magic-link-auth, fde-cosmos-schema), 10x and capacity math (aie-scale-10x, aie-slo-capacity, con-hardware-advice), event vs scheduled (ade-orchestration-choice, ade-batch-vs-streaming), caching (aie-caching), observability (aie-observability, ade-logging-contract), handoff (fde-handoff-architecture), security (aie-ai-security, fde-secrets-management), cost and tiers (con-tco-cost-advice, fde-hosting-sizing), ML data layers (ade-medallion-layers, ade-gold-publish), multi-state (ade-multi-source-alignment), semantic layer (con-semantic-layer, con-readiness-assessment), accessibility (ex-accessibility, fde-accessibility-qa), failure isolation (fde-graceful-degradation), build vs integrate (con-build-vs-buy), air-gapped GPU (aie-vllm-airgap). add_questions cannot target other families' cards (merge.py only patches kb_base cards), so those were not routed."
+ ]
+}

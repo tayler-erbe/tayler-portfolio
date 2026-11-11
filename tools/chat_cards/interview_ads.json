@@ -1,0 +1,2550 @@
+{
+ "family": "ads",
+ "cards": [
+  {
+   "id": "ads-end-to-end-modeling",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Walking through a modeling project end to end",
+   "questions": [
+    "walk me through a modeling project end to end",
+    "walk me through a machine learning project from problem framing to deployment",
+    "take me through one of your models from start to finish",
+    "describe a data science project from framing to production",
+    "how do you take a model from idea to production",
+    "end to end ml project example",
+    "what steps did you follow to build the bill passage model",
+    "how did you frame the bill prediction problem",
+    "can you walk through your modeling process",
+    "how does she run a modeling project from start to finish",
+    "problem framing to deployment",
+    "explain the design of a predictive model you shipped",
+    "from a vague business question to a model running in production"
+   ],
+   "tags": [
+    "lifecycle",
+    "pipeline",
+    "framing",
+    "deployment",
+    "scoping",
+    "productionize",
+    "workflow",
+    "business question"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web app",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "The bill passage model is the cleanest example, because I owned every step. I framed it as a survival problem: most bills die at different procedural stages, and \"will this pass\" depends on when you ask. Action text was unlabeled, so I built a 47-category taxonomy and labeled 1.39 million action rows. I applied a leakage guard at one point before aggregation, expanded each bill into prefixes so the model learns from every point in its life, and split train and test at the bill level. The production model is TF-IDF into a HistGradientBoostingClassifier, rescored daily by a scheduled pipeline. Validation came last and changed the most. After a corpus correction and retraining, on a held-out General Assembly it reached 75.1% precision and 76.2% recall at a 0.70 threshold, with a median 21 days' warning.",
+   "sources": [
+    "work_history.md:342",
+    "work_history.md:344",
+    "work_history.md:346",
+    "work_history.md:347",
+    "work_history.md:348",
+    "work_history.md:349",
+    "work_history.md:381",
+    "work_history.md:155",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ads-feature-engineering",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Feature engineering that moved the metric",
+   "questions": [
+    "give me an example of feature engineering that moved the metric",
+    "which feature improved your model the most",
+    "what feature engineering have you done",
+    "which feature made the biggest difference in a model",
+    "how did adding title and synopsis change the bill model",
+    "roc-auc 0.561 to 0.845",
+    "have you ever removed features that were hurting a model",
+    "how do you decide which features to drop",
+    "feature engineering example with numbers",
+    "what features did she engineer for the bill model",
+    "why did you retire the macroeconomic features",
+    "feature selection decisions you have made",
+    "which predictors gave the biggest lift",
+    "new input variables that improved discrimination"
+   ],
+   "tags": [
+    "features",
+    "predictors",
+    "variables",
+    "ablation",
+    "lift",
+    "discrimination",
+    "inputs",
+    "feature importance",
+    "synopsis",
+    "covariates"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "The feature that moved the most was the bill itself. My introduction-time model scores a bill before any procedural history exists, and on the held-out 103rd General Assembly it sat at a near-chance ROC-AUC of 0.561. Adding each bill's title and synopsis raised it to 0.845. A jump that size makes me suspicious before it makes me happy, so I confirmed it with an ablation study and three leakage checks. The other half of feature work is removal. In the retirement model I retired the macroeconomic features: unemployment and market indices are identical for every employee in a run, so they can't change anyone's rank in a report whose whole purpose is ranking, and across 21 annual anchors they mostly let the model dress a year effect up as a market effect.",
+   "sources": [
+    "work_history.md:153",
+    "work_history.md:80",
+    "work_history.md:805"
+   ]
+  },
+  {
+   "id": "ads-validation-strategy",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Validation strategy: held-out periods and out-of-time tests",
+   "questions": [
+    "what is your validation strategy",
+    "how do you validate a model",
+    "do you use temporal splits",
+    "out of time validation",
+    "how do you split train and test for time-dependent data",
+    "what is leave one year out validation",
+    "why did you hold out a full general assembly",
+    "how did you validate the retirement risk bands",
+    "frozen validation of cut points",
+    "why not a random train test split",
+    "how does she validate models before trusting them",
+    "how do you make sure your model works on future data",
+    "held out session validation"
+   ],
+   "tags": [
+    "holdout",
+    "backtest",
+    "prospective",
+    "out-of-sample",
+    "cross-validation",
+    "temporal",
+    "split",
+    "generalization"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I validate the way the model will be used, which almost always means out of time. For bill prediction I held out an entire General Assembly, the 103rd, and split at the bill level so a bill's early actions can't sit in training while its later ones are tested. I also built safeguards so no prediction made after the outcome was known gets counted. For the retirement model, panel data of that shape must never be split at random, so splits are by anchor year only. The risk-band cut points were fitted on 2019 to 2022, frozen, then applied untouched to 2023 to 2025, and checked seven more ways by leaving one year out at a time. The Elevated band had the higher retirement rate in all seven.",
+   "sources": [
+    "work_history.md:79",
+    "work_history.md:149",
+    "work_history.md:348",
+    "work_history.md:793",
+    "work_history.md:800"
+   ]
+  },
+  {
+   "id": "ads-evaluation-metrics",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Choosing evaluation metrics",
+   "questions": [
+    "how do you choose evaluation metrics",
+    "which metrics do you use to evaluate a classifier",
+    "why pr-auc instead of roc-auc",
+    "pr-auc against the base rate",
+    "is roc auc enough",
+    "what metric did you report for bill prediction",
+    "how do you evaluate a model on rare events",
+    "what metrics matter to stakeholders",
+    "what is wrong with a hit rate",
+    "how does she pick the right metric",
+    "model evaluation metrics",
+    "accuracy versus auc versus precision",
+    "what should a classifier report besides auc",
+    "which measure do you report to leadership"
+   ],
+   "tags": [
+    "auc",
+    "roc",
+    "pr-auc",
+    "average precision",
+    "base rate",
+    "measure",
+    "report",
+    "classifier",
+    "denominator",
+    "leadership"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I pick the metric that answers the stakeholder's real question, then report it against the right baseline. For bill prediction, nobody acts on an AUC. They want to know how often a call is right and how much warning it gives, so the headline is precision and recall at a 0.70 threshold plus median days of warning. For rare events I lead with PR-AUC, because ROC-AUC can look flattering when negatives dominate. The retirement model's PR-AUC is 0.182, which only means something next to a 0.024 base rate. I still use ROC-AUC where ranking is the point, as with the introduction-time bill model. And I distrust any metric without a denominator: the legacy retirement report quoted a hit rate with no false-positive count, which is close to guaranteed when you flag 12.6% of staff.",
+   "sources": [
+    "work_history.md:149",
+    "work_history.md:155",
+    "work_history.md:796",
+    "work_history.md:798",
+    "work_history.md:153"
+   ]
+  },
+  {
+   "id": "ads-calibration",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Calibration and risk bands",
+   "questions": [
+    "how do you calibrate a model",
+    "is your model calibrated",
+    "what is calibration and why does it matter",
+    "how do you check if predicted probabilities are accurate",
+    "expected calibration error",
+    "rank based calibration",
+    "why did you replace probabilities with risk bands",
+    "the retirement probability column that was never a probability",
+    "discrimination versus calibration",
+    "how does she handle overconfident probabilities",
+    "are your probabilities real probabilities",
+    "risk bands instead of percentages",
+    "do your risk scores mean what they say",
+    "how do you fix overstated percentages"
+   ],
+   "tags": [
+    "ece",
+    "reliability",
+    "overconfident",
+    "probability",
+    "observed rate",
+    "calibrated",
+    "overstated",
+    "percent",
+    "risk scores",
+    "brier"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I treat ranking and calibration as separate claims, because a model can order people well and still print the wrong numbers. In the inherited retirement report, out-of-time testing showed the top bin predicting 42.5% where 5.6% actually retired, even though the model ranked a retiree above a non-retiree roughly 85% of the time. Stakeholders were reading those percentages literally. I replaced them with two observed-rate risk bands, Elevated at 6.3% and Lower at 0.4%, each with a 95% confidence interval. The rebuilt pipeline uses a rank-based calibration layer, and I caught that it washed out a probability floor applied before it, so the floor now runs after calibration, on the printed scale. My bill-model validation checked calibration with ECE, and the app says plainly that its probabilities rank well but run overconfident.",
+   "sources": [
+    "work_history.md:797",
+    "work_history.md:799",
+    "work_history.md:802",
+    "work_history.md:367"
+   ]
+  },
+  {
+   "id": "ads-significance-testing",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Confidence intervals and significance testing",
+   "questions": [
+    "how do you test whether a difference is significant",
+    "bootstrap confidence intervals",
+    "paired bootstrap",
+    "mcnemar test",
+    "holm correction",
+    "multiple comparisons correction",
+    "wilson interval",
+    "how do you put error bars on a model comparison",
+    "how do you know an improvement is real and not noise",
+    "statistical significance of model results",
+    "does she use confidence intervals on evaluation results",
+    "which significance tests have you used",
+    "how do you compare two models with statistics",
+    "correcting for many variants tested at once"
+   ],
+   "tags": [
+    "ci",
+    "interval",
+    "hypothesis test",
+    "p-value",
+    "resampling",
+    "paired",
+    "beats",
+    "variants",
+    "comparison",
+    "noise"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "Applied AI Lab",
+     "url": "https://tayler-erbe.github.io/document-intelligence-lab/"
+    }
+   ],
+   "answer": "I put an interval on any comparison I'm going to act on, and I match the test to how the data is paired. In my document-intelligence evaluation every model answered the same frozen questions, so comparisons are paired: paired bootstrap intervals for effect sizes, McNemar tests for right-or-wrong outcomes, and Holm correction because I was testing many methods at once. When I later confirmed parsers, the bootstrap was clustered by source, since items from the same source are correlated. The pre-registered method, majority-of-three voting, gained 4.5 points on a 7B model with a 95% interval of 3.0 to 6.1. For proportions from small samples I use Wilson intervals and gate on the lower bound; one precision check passed at 84 of 96, 87.5%. The retirement risk bands carry 95% intervals too.",
+   "sources": [
+    "work_history.md:940",
+    "work_history.md:944",
+    "page:document-intelligence-evaluation.html",
+    "work_history.md:1147",
+    "work_history.md:799"
+   ]
+  },
+  {
+   "id": "ads-experiment-design",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Experimental design, pre-registration and A/B testing",
+   "questions": [
+    "how do you design an experiment",
+    "have you run a/b tests",
+    "do you pre-register your experiments",
+    "what is pre-registration and have you used it",
+    "how do you avoid p-hacking",
+    "controlled experiment design",
+    "how do you change one variable at a time",
+    "experimental design in your work",
+    "has she done ab testing",
+    "how do you keep an evaluation honest",
+    "confirmatory versus exploratory analysis",
+    "online experiments on users",
+    "how do you avoid cherry-picking results",
+    "fair comparison between two methods"
+   ],
+   "tags": [
+    "ab test",
+    "traffic",
+    "randomized",
+    "control",
+    "preregistration",
+    "cherry-picking",
+    "fair test",
+    "versions",
+    "confirmatory",
+    "frozen"
+   ],
+   "links": [
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    },
+    {
+     "label": "vLLM throughput study",
+     "url": "vllm-inference-throughput-evaluation.html"
+    }
+   ],
+   "answer": "I design experiments so they can't reach a convenient conclusion by accident, and to be straight, my experiments have been offline evaluations, not live A/B tests on user traffic. The discipline carries over. In my document-intelligence work I froze the cases and fingerprinted every request, then pre-registered majority-of-three voting as the single confirmatory method before running the held-out set. Failed or truncated answers stayed in the denominator as zeros, and nothing was re-run to rescue a result. For the vLLM throughput study I changed one variable at a time, holding prompt design, concurrency and serving stack fixed in turn, then added a same-model control. When a vendor model scored badly, I reassessed it one mechanism at a time across 192 requests before concluding anything.",
+   "sources": [
+    "work_history.md:940",
+    "work_history.md:637",
+    "work_history.md:641",
+    "work_history.md:951",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "ads-small-data-power",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Sample size, power and small data",
+   "questions": [
+    "how do you work with small data",
+    "how do you handle a small sample size",
+    "sample size and statistical power",
+    "what do you do when you only have a hundred positive events",
+    "how many events do you need to build a model",
+    "small data modeling",
+    "how do you decide how many risk bands the data can support",
+    "is your evaluation set big enough",
+    "power analysis",
+    "how does she deal with too few examples",
+    "not enough data to train a model",
+    "thin data",
+    "how many observations do you need for a finer model",
+    "would more data help"
+   ],
+   "tags": [
+    "power",
+    "sample size",
+    "observations",
+    "positives",
+    "tiny",
+    "more data",
+    "finer",
+    "pooling",
+    "underpowered",
+    "events"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "Small data mostly changes what I'm allowed to claim. The retirement panel has 4,891 person-year rows but only about 101 to 118 retirements, so I sized the design to the events. A three-band version looked better in-sample and collapsed under prospective testing, so the report uses two bands, and I documented that as a limit of the event count. The 75-and-over cell had zero retirements across 26 person-years, which is why I shrank those estimates toward an age-based prior. The production run aborts if the panel returns fewer than 30 positives. Evaluation sets get the same scrutiny: 80 pages couldn't rule out a 0.02 numeric-recall deficit, so a promising model counted as a lead, not a win. When pooling is possible I measure it: wider System Office data moved PR-AUC from 0.182 to 0.199.",
+   "sources": [
+    "work_history.md:788",
+    "work_history.md:800",
+    "work_history.md:801",
+    "work_history.md:794",
+    "work_history.md:806",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "ads-survival-hazard",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Survival and hazard modeling",
+   "questions": [
+    "survival analysis experience",
+    "have you done hazard modeling",
+    "gompertz hazard",
+    "competing risks",
+    "how did you model retirement timing",
+    "survival style labeling",
+    "time to event modeling",
+    "what is the rule of 85 hazard curve",
+    "have you used cox proportional hazards",
+    "has she built survival models",
+    "how do you model when something will happen",
+    "retirement hazard by age and service",
+    "probability an employee leaves within the next year"
+   ],
+   "tags": [
+    "survival",
+    "hazard",
+    "time-to-event",
+    "cox",
+    "censoring",
+    "leaves",
+    "chance",
+    "next year",
+    "departure",
+    "eligibility"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I use survival framing whenever the question is about when, and the retirement forecast is the clearest case. I built annual point-in-time snapshots from 2005 onward and labeled each active person forward twelve months, a survival-style panel. For people beyond the data's support, I fitted an age-based separation hazard to published labor-force participation anchors, with a Gompertz mortality component as a floor on involuntary exit. Across 21 years, the hazard by age plus service showed Rule-of-85 eligibility behaving as a window: risk peaks approaching 85, at 19% for 80 to 85, and declines afterward. The roadmap models all departures under a competing-risks framing, roughly three times the data. Bill prediction uses the same framing; Cox proportional hazards is recorded there as future work, not something I've shipped.",
+   "sources": [
+    "work_history.md:788",
+    "work_history.md:801",
+    "work_history.md:807",
+    "work_history.md:830",
+    "work_history.md:379",
+    "work_history.md:1390"
+   ]
+  },
+  {
+   "id": "ads-empirical-bayes",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Empirical Bayes shrinkage for small groups",
+   "questions": [
+    "empirical bayes",
+    "what is shrinkage and when do you use it",
+    "how do you handle small groups with unstable estimates",
+    "shrinkage toward a prior",
+    "why did a 74 year old score below a 58 year old",
+    "how did you fix the random forest extrapolation problem",
+    "bayesian adjustment for sparse cells",
+    "has she used empirical bayes in production",
+    "probability floor",
+    "how do you stop a model from returning near zero for rare profiles",
+    "partial pooling",
+    "estimates for a segment with almost no observations",
+    "adjusting scores for the oldest employees"
+   ],
+   "tags": [
+    "bayes",
+    "shrinkage",
+    "prior",
+    "segment",
+    "noisy estimates",
+    "oldest",
+    "baseline",
+    "small cells",
+    "extrapolation",
+    "floor"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I reach for empirical-Bayes shrinkage when a group is too small for its own estimate to be trusted. In the retirement model, a random forest returns near zero wherever it has no comparable training cases, and the 75-and-over cell had zero retirements across 26 person-years. The result was indefensible: a 74-year-old with 39 years of service scored below a 58-year-old. I built an age-adjustment module that shrinks estimates toward an age-based separation hazard, sets a floor at 60% of the age-implied hazard, counts comparable cases for each person, and caps the age-plus-service value at the range the training data supports. Every person's output shows the raw score, the prior, the support count, the shrunk value, the floor and which mechanism moved it, so a changed number can be explained from evidence.",
+   "sources": [
+    "work_history.md:801",
+    "work_history.md:803"
+   ]
+  },
+  {
+   "id": "ads-time-series-forecasting",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Time-series forecasting",
+   "questions": [
+    "arima with exponential smoothing",
+    "seasonal decomposition",
+    "how do you handle seasonality",
+    "how did you forecast enrollment",
+    "holt's double exponential smoothing",
+    "how do you choose arima parameters",
+    "forecasting with short histories",
+    "has she built forecasting models",
+    "how do you express forecast uncertainty",
+    "auto arima aic bic",
+    "long range projections of headcount or enrollment",
+    "what if arima will not fit a series"
+   ],
+   "tags": [
+    "forecast",
+    "arima",
+    "seasonality",
+    "trend",
+    "smoothing",
+    "projection",
+    "headcount",
+    "enrollment",
+    "converge",
+    "holt"
+   ],
+   "links": [
+    {
+     "label": "UIC enrollment",
+     "url": "uic-enrollment.html"
+    }
+   ],
+   "answer": "Most of my forecasting has been institutional time series with short histories, so I keep the models simple and check where they fail. For UIC enrollment, my team built ARIMA models per college and student level across 14 colleges, with orders chosen by grid search and later by Auto-ARIMA on AIC and BIC. Splitting the data into Fall, Spring and Summer series removed seasonality from each one. For 12 combinations where ARIMA wouldn't give a reliable forecast, we used Holt's double exponential smoothing, sweeping alpha and beta on an 80/20 split and picking by validation RMSE. Forecasts went out as a point estimate plus or minus validation MAE. On the legislative platform, trend analysis uses 5-year monthly baselines with seasonal adjustment, regression-based trend modeling and directional momentum.",
+   "sources": [
+    "work_history.md:536",
+    "work_history.md:537",
+    "work_history.md:98",
+    "page:uic-enrollment.html"
+   ]
+  },
+  {
+   "id": "ads-fixing-inherited-model",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Fixing statistical defects in an inherited model",
+   "questions": [
+    "what statistical defects did you correct in the retirement model",
+    "what was statistically wrong with the old retirement model",
+    "how do you audit a legacy model's methodology",
+    "how did you find flaws in a legacy model",
+    "what defects did you correct in the retirement rebuild",
+    "auditing someone else's model",
+    "what was wrong with the retirement probability column",
+    "how do you review the statistics of a model you didn't build",
+    "the 75% rule",
+    "what did she fix in the workforce planning report",
+    "legacy model problems you found",
+    "methodological problems in the legacy workforce report",
+    "why the old forecast misled stakeholders"
+   ],
+   "tags": [
+    "legacy",
+    "inherited",
+    "audit",
+    "defect",
+    "methodology",
+    "took over",
+    "misleading",
+    "old report",
+    "correction",
+    "workforce planning"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "When I inherited the retirement-risk model, the central defect was that its \"Probability of Retirement\" column was never a probability. It was an ordinal ranking on an inflated scale, and out-of-time testing showed the top bin predicting 42.5% where 5.6% retired. Its headline hit rate had no denominator, no false-positive count and no held-out evaluation. Its features included macro indicators that couldn't change anyone's rank, and two incompatible service-year definitions meant age as of today could mix with service as of some other date. Downstream, a \"75% rule\" put 19 people in all three planning windows at once. I rebuilt it on a point-in-time panel with time-based splits, replaced the column with observed-rate bands, and told stakeholders plainly that individual values would change.",
+   "sources": [
+    "work_history.md:797",
+    "work_history.md:798",
+    "work_history.md:805",
+    "work_history.md:786",
+    "work_history.md:823",
+    "work_history.md:788",
+    "work_history.md:793",
+    "work_history.md:799",
+    "work_history.md:821",
+    "work_history.md:825"
+   ]
+  },
+  {
+   "id": "ads-train-serve-skew",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Train/serve skew and reproducibility",
+   "questions": [
+    "train serve skew",
+    "how do you prevent training serving skew",
+    "what is train/serve skew and have you seen it",
+    "how do you make sure production scoring matches training",
+    "36,028 inputs byte identical",
+    "how do you verify production predictions match the model",
+    "model reproducibility from a data science view",
+    "how do you version models",
+    "did she find train serve skew in the bill model",
+    "shared input module for training and scoring",
+    "production predictions don't match offline results",
+    "scores differ between the training notebook and the nightly job",
+    "confirming deployed scores match validated ones",
+    "making sure inference features are built the same way as training features"
+   ],
+   "tags": [
+    "skew",
+    "parity",
+    "nightly",
+    "notebook",
+    "deployed scores",
+    "mismatch",
+    "versioning",
+    "seed",
+    "manifest",
+    "inference"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Train/serve skew is the first thing I check when a validated model behaves oddly in production, because the model can be fine while its inputs aren't. In the bill pipeline, nightly scoring formatted model input differently from training. I moved both onto one shared input module and verified 36,028 inputs byte-identical. I also regenerated the full probability trail, 1,275,296 scores, and checked it against production at a 0.99 correlation. Reproducibility gets the same treatment: fixed seeds, versioned model files with the recency half-life persisted into the artifact and the manifest, pinned dependency versions in the technical reference, and SQL under version control. Earlier, a production join silently matched only about 8,820 of 50,501 bills because two sources used different ID spaces; bill_number is now a stable second key.",
+   "sources": [
+    "work_history.md:154",
+    "work_history.md:151",
+    "work_history.md:349",
+    "work_history.md:375",
+    "work_history.md:387",
+    "work_history.md:791",
+    "work_history.md:356"
+   ]
+  },
+  {
+   "id": "ads-dataset-reconstruction",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Missing data and dataset reconstruction",
+   "questions": [
+    "how do you handle missing data",
+    "how did you reconstruct the retirement training panel",
+    "the bill dataset that was missing every resolved bill",
+    "how did you find the missing bills",
+    "systematically missing data",
+    "how do you build a training set that never existed",
+    "point in time dataset reconstruction",
+    "how do you deal with gaps in data",
+    "how did the success rate go from 30.4% to 13.2%",
+    "how does she handle incomplete training data",
+    "data coverage problems",
+    "records absent from the training data",
+    "how do you treat failed or unknown values"
+   ],
+   "tags": [
+    "missing",
+    "absent",
+    "records",
+    "unknown values",
+    "unfilled",
+    "coverage",
+    "rebuild",
+    "corpus",
+    "gaps",
+    "selection bias"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "The worst missing data is missing systematically and quietly. While validating the bill model, I found the training corpus was missing every resolved bill, traced to a status filter; passed-bill coverage was 1.2%. I rebuilt the corpus from 46,815 to 117,722 bills and 1,444,601 action records, reaching 100% coverage, and separated resolutions from bills, which moved the apparent success rate from 30.4% to a true 13.2%. The retirement work was reconstruction from scratch: the training set had never existed, so I built annual point-in-time snapshots with effective-dated reads at every anchor. Where I can't fill a gap, I keep it visible. Failed model answers stay in the denominator as zeros, and four report cells I couldn't reproduce are documented rather than forced to agree.",
+   "sources": [
+    "work_history.md:150",
+    "work_history.md:74",
+    "work_history.md:788",
+    "work_history.md:789",
+    "work_history.md:940",
+    "work_history.md:784"
+   ]
+  },
+  {
+   "id": "ads-unsupervised-learning",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Unsupervised learning: clustering, topics and communities",
+   "questions": [
+    "unsupervised learning experience",
+    "have you used clustering",
+    "kmeans clustering",
+    "topic modeling experience",
+    "lda topic modeling",
+    "how do you use clustering in practice",
+    "how did you find gaps in the taxonomy",
+    "graph community detection for career paths",
+    "has she done unsupervised learning",
+    "clustering to discover structure",
+    "how do you evaluate clusters",
+    "text clustering use cases"
+   ],
+   "tags": [
+    "clustering",
+    "kmeans",
+    "lda",
+    "topics",
+    "modularity",
+    "networkx",
+    "segmentation",
+    "unlabeled",
+    "graph"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Email archiving",
+     "url": "email-archiving.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I use unsupervised methods mostly to find structure I didn't know to label, then hand the result to a person or a downstream rule. In the bill taxonomy work, I clustered the uncategorized remainder with TF-IDF and KMeans to name the themes the taxonomy was missing. That made coverage an iterative loop: review clusters, update the taxonomy, re-run, measure the delta. It reached 99.0%. On a 20-year email archive, LDA on subject lines found five themes, and Llama turned keyword clusters into readable topic titles; re-running on LLM summaries with 10 topics surfaced HR and compliance themes the subject lines hid. For the HR proof of concept, built on a synthetic 500-employee dataset, I designed graph community detection with NetworkX greedy modularity to find career families and hub roles.",
+   "sources": [
+    "work_history.md:343",
+    "work_history.md:342",
+    "work_history.md:588",
+    "work_history.md:590",
+    "work_history.md:591",
+    "work_history.md:721",
+    "page:hr-workforce-analytics.html"
+   ]
+  },
+  {
+   "id": "ads-nlp-features",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "NLP features for machine learning",
+   "questions": [
+    "nlp features for machine learning",
+    "how do you turn text into features",
+    "tf-idf features",
+    "tf-idf versus embeddings",
+    "keyword fusion",
+    "text features for a classifier",
+    "how did you vectorize the bill action text",
+    "how do you clean text before modeling",
+    "embeddings as features",
+    "what text representation does she use for models",
+    "text classification features",
+    "keybert tf-idf lda",
+    "representing documents as numeric features",
+    "text preprocessing before modeling"
+   ],
+   "tags": [
+    "nlp",
+    "text",
+    "tfidf",
+    "n-grams",
+    "vectorizer",
+    "embeddings",
+    "bag of words",
+    "dense vectors",
+    "preprocessing",
+    "documents"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Research proposal pipeline",
+     "url": "research-proposal-processing.html"
+    }
+   ],
+   "answer": "For predictive text features I start with sparse, inspectable representations and add semantic ones where they earn their place. The production bill model uses TF-IDF on action text, 1 to 2 grams, min_df 5, max_df 0.95, sublinear term frequency and 50,000 features, into gradient boosting. Cleaning matters as much as the vectorizer: in California, journal page numbers and legislator names were dominating the feature space until I stripped them. For research proposals I fused TF-IDF, KeyBERT and LDA keywords, since each catches what the others miss. Embeddings handle similarity: MiniLM with FAISS for archive and legislative search, bge-small over six million procurement rows. The introduction-time model leans on LLM-extracted bill semantics, and adding title and synopsis raised its held-out ROC-AUC from 0.561 to 0.845.",
+   "sources": [
+    "work_history.md:349",
+    "work_history.md:395",
+    "work_history.md:458",
+    "work_history.md:94",
+    "work_history.md:686",
+    "work_history.md:745",
+    "work_history.md:373",
+    "work_history.md:153"
+   ]
+  },
+  {
+   "id": "ads-algorithm-choice",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Gradient boosting, random forest or logistic regression",
+   "questions": [
+    "gradient boosting vs random forest",
+    "when do you use logistic regression",
+    "random forest versus logistic regression",
+    "which algorithm do you choose for tabular data",
+    "why histgradientboosting for the bill model",
+    "why random forest for retirement risk",
+    "how do you pick an algorithm",
+    "xgboost versus random forest",
+    "what are the weaknesses of random forests",
+    "how does she decide between tree models and linear models",
+    "boosting or bagging",
+    "what classifier do you start with"
+   ],
+   "tags": [
+    "xgboost",
+    "gbm",
+    "trees",
+    "linear model",
+    "classifier",
+    "boosting",
+    "baseline",
+    "algorithm",
+    "tabular",
+    "start with"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "UIC enrollment",
+     "url": "uic-enrollment.html"
+    }
+   ],
+   "answer": "I choose by data shape and by what the model has to explain. For the bill model, 50,000 sparse TF-IDF features on action-sequence prefixes suit histogram gradient boosting: it handles interactions and stays deterministic with a fixed seed. For the retirement panel, a few thousand rows of person features, I used a 500-tree random forest, then hit its known weakness: it returns near zero wherever no comparable case exists, so it needed an age prior. Logistic regression is my interpretable baseline and fallback; the HR departure-risk design pairs it with XGBoost and falls back to eligibility and tenure rules if performance is insufficient. At UIC, H2O's random forest beat CatBoost on the class that mattered, discontinuing students. I've also run TF-IDF with KNN, logistic regression and random forest for job classification.",
+   "sources": [
+    "work_history.md:349",
+    "work_history.md:796",
+    "work_history.md:801",
+    "work_history.md:710",
+    "page:hr-workforce-analytics.html",
+    "page:uic-enrollment.html"
+   ]
+  },
+  {
+   "id": "ads-hyperparameter-tuning",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Hyperparameter tuning",
+   "questions": [
+    "how do you tune hyperparameters",
+    "hyperparameter tuning approach",
+    "grid search experience",
+    "do you use grid search or random search",
+    "how did you tune the smoothing parameters",
+    "what hyperparameters did you use for the bill model",
+    "how do you avoid overfitting during tuning",
+    "model tuning",
+    "how does she tune models",
+    "parameter selection",
+    "how do you choose model settings",
+    "which settings did you use for gradient boosting"
+   ],
+   "tags": [
+    "hyperparameters",
+    "grid search",
+    "tuning",
+    "settings",
+    "knobs",
+    "alpha",
+    "beta",
+    "learning rate",
+    "max depth",
+    "half-life"
+   ],
+   "links": [
+    {
+     "label": "UIC enrollment",
+     "url": "uic-enrollment.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I tune in proportion to what the data can support, and I keep the search honest by validating it out of sample. For Holt's smoothing at UIC we swept alpha and beta from 0.05 to 1.0 in steps of 0.05, picked the pair with the lowest validation RMSE on an 80/20 split, then refit on all the data. ARIMA orders came from grid search, later Auto-ARIMA on AIC and BIC. For the bill model I kept a conservative, documented spec: 150 iterations, max depth 6, learning rate 0.1, min_samples_leaf 20, fixed seed. Some of the most consequential settings aren't model hyperparameters at all. I chose a 730-day recency half-life over a 5-year window with recorded reasoning, and I treated risk-band cut points as tuned parameters, frozen before testing.",
+   "sources": [
+    "page:uic-enrollment.html",
+    "work_history.md:349",
+    "work_history.md:375",
+    "work_history.md:800"
+   ]
+  },
+  {
+   "id": "ads-fairness",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Bias, fairness and equity",
+   "questions": [
+    "how do you handle bias and fairness in models",
+    "fairness audit",
+    "have you done a fairness review",
+    "algorithmic bias",
+    "how do you check a model for demographic bias",
+    "equity considerations in hr models",
+    "responsible ai in data science",
+    "how do you make sure a model doesn't disadvantage a group",
+    "does she test models for fairness",
+    "equity audit view",
+    "ethical concerns with predictive hr models",
+    "discrimination risk in people analytics",
+    "is the workforce model biased against any group"
+   ],
+   "tags": [
+    "bias",
+    "biased",
+    "fairness",
+    "equity",
+    "discrimination",
+    "people analytics",
+    "demographic",
+    "parity",
+    "ethics",
+    "workforce"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I treat fairness as something to design and test, and I'll be precise about how far I've taken it. For the HR workforce platform I designed an equity audit view that checks whether succession and promotion recommendations are proportionally distributed across demographic groups, with top-K candidate lists reviewed for representation balance and a formal fairness review scheduled in the validation phase. That was a proof of concept on synthetic data mirroring the HR tables, so I haven't yet audited a production model on real demographic data. In production, my equity work has been about not misleading people about individuals: refusing to let retirement-risk output be labeled \"projected retirements\", and escalating whether the report should rank people who resemble past retirees as a business decision instead of settling it myself.",
+   "sources": [
+    "page:hr-workforce-analytics.html",
+    "work_history.md:718",
+    "work_history.md:826",
+    "work_history.md:828"
+   ]
+  },
+  {
+   "id": "ads-production-monitoring",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Monitoring models in production and drift",
+   "questions": [
+    "how do you monitor models in production",
+    "model monitoring",
+    "how do you detect model drift",
+    "concept drift",
+    "data drift",
+    "rescoring pipelines",
+    "how often do you retrain",
+    "daily rescore and monthly retrain",
+    "how do you know a deployed model is still working",
+    "how does she monitor deployed models",
+    "model degradation over time",
+    "retraining cadence",
+    "what do you monitor after a model goes live",
+    "keeping predictions fresh as new data arrives"
+   ],
+   "tags": [
+    "drift",
+    "monitoring",
+    "retraining",
+    "rescoring",
+    "goes live",
+    "fresh",
+    "going wrong",
+    "post-deployment",
+    "degradation",
+    "alerts"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I monitor the inputs, the outputs and the monitor itself. The bill model runs on two clocks: a daily rescore of active bills and a monthly retrain with recency weighting, so prediction freshness and model freshness can't be confused. Pipelines write structured logs that a job execution monitor I built reads, and it alerts on failures, cascades and pipelines that go silent. The retirement pipeline validates its output against a frozen contract of 4 files, 21 sheets and 436 columns on every run, and aborts if the panel returns fewer than 30 positives. The defect that mattered most wasn't caught by a metric: stalled bills holding their peak probability showed up only once the trail was exposed. I haven't shipped a formal distribution-drift alarm; recency weighting and scheduled retraining are how I handle drift today.",
+   "sources": [
+    "work_history.md:376",
+    "work_history.md:375",
+    "work_history.md:467",
+    "work_history.md:782",
+    "work_history.md:794",
+    "work_history.md:389"
+   ]
+  },
+  {
+   "id": "ads-anomaly-detection",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Anomaly detection with Z-scores",
+   "questions": [
+    "anomaly detection experience",
+    "z-score anomaly detection",
+    "how do you detect anomalies",
+    "outlier detection",
+    "how do you flag unusual activity",
+    "seasonally adjusted anomaly detection",
+    "how did the legislative dashboard flag spikes",
+    "momentum badge gaining stable losing",
+    "has she built anomaly detection",
+    "how do you find outliers in time series",
+    "detecting abnormal spikes in a metric"
+   ],
+   "tags": [
+    "anomaly",
+    "outlier",
+    "z-score",
+    "spike",
+    "abnormal",
+    "unusual",
+    "seasonal",
+    "baseline",
+    "deviation",
+    "momentum"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Legislative web app",
+     "url": "legislative-web-application.html"
+    }
+   ],
+   "answer": "For anomaly detection I prefer simple, explainable baselines that an analyst can check by hand. On the legislative platform, trend analysis compares activity against 5-year monthly baselines, seasonally adjusted, and flags unusual movement with Z-score anomaly detection, alongside regression-based trend modeling and directional momentum. Adjusting for season first matters, because legislative activity has a strong calendar. At the bill level, a momentum badge compares a bill's probability over its last three actions against the prior three and labels it Gaining, Stable or Losing. I apply the same idea to pipeline health: the job monitor flags a pipeline as silent when hours since its last success pass a threshold, and I set that to 100 days for a quarterly pipeline, which would otherwise breach the standard 48-hour rule two days after every run.",
+   "sources": [
+    "work_history.md:98",
+    "page:index.html",
+    "work_history.md:384",
+    "work_history.md:473"
+   ]
+  },
+  {
+   "id": "ads-markov-simulation",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Markov chain simulation",
+   "questions": [
+    "markov chain simulation",
+    "have you used markov chains",
+    "how does a markov chain career simulation work",
+    "transition matrix modeling",
+    "stochastic simulation experience",
+    "how did you simulate career paths",
+    "monte carlo simulation of career moves",
+    "has she built a markov model",
+    "where do employees end up after n moves",
+    "internal mobility simulation",
+    "projecting employees' future job moves"
+   ],
+   "tags": [
+    "markov",
+    "transition matrix",
+    "stochastic",
+    "simulation",
+    "monte carlo",
+    "job moves",
+    "project",
+    "career",
+    "mobility",
+    "sankey"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I've used Markov chains for career mobility, and it's proof-of-concept work. For the HR workforce platform, the proof of concept I led with intern collaborators built a career transition matrix from each employee's historical job-title sequence, giving the conditional probability of every next role from any starting role. A simulation engine walks those transitions stochastically and summarizes many simulated paths into a distribution of where people in a role land after N moves, for example where academic advisors end up after four moves, shown as a Sankey flow. The same matrix feeds graph analytics that classify dead-end, feeder and fast-track roles. It ran on a synthetic 500-employee dataset mirroring the HR tables. On real data, the first thing to validate is the Markov assumption that the next move depends only on the current role; the build plan schedules validation against historical trends.",
+   "sources": [
+    "page:hr-workforce-analytics.html",
+    "work_history.md:720"
+   ]
+  },
+  {
+   "id": "ads-pandas-sql-scale",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "SQL and pandas for analysis at scale",
+   "questions": [
+    "how do you use pandas at scale",
+    "vectorized pandas",
+    "how did you relabel 1.39 million rows",
+    "two pass vectorized labeler",
+    "how do you make pandas fast",
+    "how do you handle millions of rows in python",
+    "sql and pandas for large analysis",
+    "why not apply row by row",
+    "performance tips for large dataframes",
+    "how does she process large datasets in pandas",
+    "vectorization versus loops",
+    "fuzzy matching at scale",
+    "structuring analytical sql against a warehouse"
+   ],
+   "tags": [
+    "pandas",
+    "vectorization",
+    "fuzzy matching",
+    "huge",
+    "rapidfuzz",
+    "regex",
+    "warehouse",
+    "sql",
+    "cte",
+    "performance"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "At scale I design for vectorized passes and cheap lookups before I write a loop. Labeling 1,388,400 legislative action rows one at a time with fuzzy matching wouldn't have been runnable, so I wrote a two-pass labeler: combined regex patterns via str.contains across the whole column resolve roughly 85 to 90% of rows in under 30 seconds, then rapidfuzz partial_ratio runs only on the remainder. Final coverage was 99.65%. For procurement, a per-query DataFrame scan took about 1,700 ms, so I built an in-memory dictionary keyed on manufacturer and part number with itertuples: about 90 seconds at startup, then under 2 ms per lookup across six million rows. On the SQL side, I externalize queries into version-controlled files with shared cohort CTEs and effective-dated reads.",
+   "sources": [
+    "work_history.md:344",
+    "work_history.md:345",
+    "work_history.md:748",
+    "work_history.md:791",
+    "work_history.md:789"
+   ]
+  },
+  {
+   "id": "ads-communicating-uncertainty",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Communicating uncertainty to stakeholders",
+   "questions": [
+    "how do you communicate uncertainty to stakeholders",
+    "how do you explain confidence intervals to executives",
+    "how do you present model uncertainty",
+    "how do you stop people misreading a prediction",
+    "how did you explain the risk bands to leadership",
+    "communicating probabilities to non-technical people",
+    "what do you say when a stakeholder takes a score literally",
+    "how does she talk about uncertainty",
+    "how do you report forecast ranges",
+    "floor vote likelihood wording",
+    "telling leaders how confident the model is",
+    "avoiding over-trust in model percentages"
+   ],
+   "tags": [
+    "uncertainty",
+    "director",
+    "how sure",
+    "over-trust",
+    "percentage",
+    "confidence",
+    "range",
+    "plain language",
+    "leaders",
+    "wording"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I communicate uncertainty as observed rates and plain statements people can repeat accurately. For the retirement report I replaced a fake probability with two bands and their real outcomes: in the Elevated band 6.3% retired within the year, with a 95% interval of 3.9 to 10.2, against 0.4% in the Lower band. I proposed a multi-year framing with the stakeholder, so leadership can say something defensible like a one-in-four chance of retiring within four years. I also said what the output may not be called: \"projected retirements\". For bill prediction I standardized one phrase, floor-vote likelihood, after finding five descriptions in the app, because someone who reads \"passage\" next to 94% has misunderstood before reading any documentation. UIC forecasts went out with a plus-or-minus MAE band.",
+   "sources": [
+    "work_history.md:799",
+    "work_history.md:829",
+    "work_history.md:826",
+    "work_history.md:226",
+    "page:uic-enrollment.html"
+   ]
+  },
+  {
+   "id": "ads-causal-inference",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Causal inference",
+   "questions": [
+    "causal inference experience",
+    "have you done causal analysis",
+    "correlation versus causation",
+    "difference in differences",
+    "have you run randomized controlled trials",
+    "how do you establish causality",
+    "does she have causal inference experience",
+    "can your model tell us why something happens",
+    "observational data causal effects",
+    "how do you attribute an effect to a cause"
+   ],
+   "tags": [
+    "causal",
+    "causation",
+    "counterfactual",
+    "treatment effect",
+    "rct",
+    "observational",
+    "regression",
+    "attribution",
+    "caused",
+    "proof"
+   ],
+   "links": [
+    {
+     "label": "vLLM throughput study",
+     "url": "vllm-inference-throughput-evaluation.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I'll be direct: I haven't run a formal causal study in production, such as a randomized trial or a difference-in-differences design on institutional data. The closest work is regression analysis at the San Diego Regional Data Library, quantifying differences in economic indicators between Special Economic Zone and non-zone regions, with nighttime light intensity as a proxy for economic activity. Day to day, causal thinking shows up as attribution discipline. When vLLM delivered a 6.22x speedup, I re-ran the old backend on the same model architecture to split it into 3.6x from serving and about 1.7x from the model swap. I confirm feature gains with ablations, and I keep stakeholders from reading prediction as cause: the retirement output ranks people who resemble past retirees, which is different from forecasting who will leave.",
+   "sources": [
+    "work_history.md:1279",
+    "work_history.md:1280",
+    "work_history.md:641",
+    "work_history.md:642",
+    "work_history.md:153",
+    "work_history.md:828"
+   ]
+  },
+  {
+   "id": "ads-llm-eval-statistics",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Evaluating LLM outputs statistically",
+   "questions": [
+    "how do you evaluate llm outputs statistically",
+    "acceptance sampling for llm output",
+    "statistical evaluation of generated text",
+    "how do you grade millions of llm outputs",
+    "wilson lower bound for llm quality",
+    "how do you validate an llm judge statistically",
+    "sampling plans for ai quality control",
+    "how many outputs do you need to check",
+    "how does she measure llm quality with statistics",
+    "exact binomial acceptance sampling",
+    "judge validation",
+    "checking quality of a huge batch of generated content"
+   ],
+   "tags": [
+    "sampling",
+    "binomial",
+    "wilson",
+    "judge",
+    "grader",
+    "generated content",
+    "batch",
+    "ship",
+    "without reading",
+    "quality gate"
+   ],
+   "links": [
+    {
+     "label": "Skyrule",
+     "url": "skyrule.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "I evaluate LLM output like any other measurement problem: fix the bar first, sample deliberately, and report the lower bound. In Skyrule, my personal project, exhaustive grading of a 2.6-million-piece generated library would have cost about 5,600 GPU-hours, so I designed lot acceptance sampling with exact binomial plans and stated producer and consumer risk, plus code checks on every piece. Quality bars are set before measurement and reported as a point estimate and a Wilson 95% lower bound. Judges get validated too: an independent model labels claims, I measure its agreement with my own verdicts, and those labels become a regression set for the validator. In my document-intelligence evaluation, no model grades another; published answer keys and code do the scoring, and failures count as zeros.",
+   "sources": [
+    "work_history.md:1147",
+    "work_history.md:1148",
+    "work_history.md:940",
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "ads-simple-model-enough",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "When a simple model is enough",
+   "questions": [
+    "when is a simple model enough",
+    "do you always use the most complex model",
+    "simple model versus deep learning",
+    "why didn't you use a neural network",
+    "why not an lstm for bill prediction",
+    "occam's razor in modeling",
+    "how do you decide not to add complexity",
+    "baseline models",
+    "does she prefer simple models",
+    "when is a baseline good enough",
+    "deliberately simple models",
+    "avoiding overengineering a model",
+    "when the plain approach beats a fancy one"
+   ],
+   "tags": [
+    "baseline",
+    "parsimony",
+    "simplicity",
+    "overengineering",
+    "fancy",
+    "plain",
+    "sequence model",
+    "deep learning",
+    "lstm",
+    "complexity"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Procurement intelligence",
+     "url": "procurement-intelligence.html"
+    }
+   ],
+   "answer": "A simple model is enough when it answers the decision and the extra complexity can't be validated. The bill model is TF-IDF plus gradient boosting on action-sequence prefixes. I recorded Cox proportional hazards, LSTMs and DeepSurv as an upgrade path, and documented the current approach as a deliberate baseline chosen for interpretability and production tractability. The retirement report uses two risk bands because a three-band version collapsed prospectively, and I retired macro features that added a manual quarterly chore without changing anyone's rank. In procurement, exact matching on manufacturer and part number confirmed 42,052 identical products with no AI at all; embeddings and an LLM only see what's left. A more complex method has to win out of sample before it replaces a simple one.",
+   "sources": [
+    "work_history.md:379",
+    "work_history.md:800",
+    "work_history.md:805",
+    "work_history.md:748",
+    "work_history.md:739"
+   ]
+  },
+  {
+   "id": "ads-target-definition",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Defining the target variable and labels",
+   "questions": [
+    "how do you define the target variable",
+    "how do you label outcomes for training",
+    "point in time panels",
+    "survival style labels",
+    "how do you decide what counts as a positive",
+    "target definition",
+    "how did you label retirements",
+    "label window boundary",
+    "how did you define the target at uic",
+    "how does she choose the outcome to predict",
+    "what is the label in the bill model",
+    "anchor dates and label windows"
+   ],
+   "tags": [
+    "target",
+    "label",
+    "outcome",
+    "anchor",
+    "window",
+    "y variable",
+    "dependent variable",
+    "labeling",
+    "definition"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "UIC enrollment",
+     "url": "uic-enrollment.html"
+    },
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I spend more time on the target definition than on the model, because a wrong target gives a confident answer to the wrong question. For retirement risk, each annual anchor captures who was active on that date and labels them forward twelve months, with the last anchor a full year before the run so an absent retirement is a true negative. I documented the boundary cost: 4 of 122 retirements fall on the wrong side of a January-to-January window, which makes recall slightly pessimistic. At UIC we built four label variants and recommended binary success, since graduation and continuation look more like each other than like dropout. For bills, Stage 2 predicts reaching a floor vote, not becoming law, and in California I redefined the target to floor votes only.",
+   "sources": [
+    "work_history.md:788",
+    "work_history.md:792",
+    "work_history.md:808",
+    "page:uic-enrollment.html",
+    "page:legislative-pipeline.html",
+    "work_history.md:394"
+   ]
+  },
+  {
+   "id": "ads-ensembling",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Ensembling and model stacking",
+   "questions": [
+    "ensembling experience",
+    "have you used model stacking",
+    "ensemble methods",
+    "do you combine multiple models",
+    "stacking and blending models",
+    "majority voting",
+    "vote3 majority of three",
+    "has she built ensemble models",
+    "combining model outputs",
+    "meta learner",
+    "averaging several models"
+   ],
+   "tags": [
+    "ensemble",
+    "stacking",
+    "blending",
+    "voting",
+    "average",
+    "bagging",
+    "meta-learner",
+    "combination",
+    "several models",
+    "fusion"
+   ],
+   "links": [
+    {
+     "label": "UIC enrollment",
+     "url": "uic-enrollment.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "Honestly, I haven't built a stacked meta-learner in production. My ensemble work takes three other forms. Tree ensembles are my default for tabular data: H2O's distributed random forest at UIC and a 500-tree random forest for retirement risk. At the output level, my document-intelligence evaluation pre-registered majority-of-three voting as its confirmatory method. It held for a 7B model at plus 4.5 points and for a 32B at plus 2.6, with no reliable gain on the 8B, so it's worth its triple cost only for some models. For features, my research-proposal pipeline fuses TF-IDF, KeyBERT and LDA keywords into one profile. At UIC we documented class-sensitive ensembles for the discontinued segment as a future recommendation.",
+   "sources": [
+    "page:uic-enrollment.html",
+    "work_history.md:796",
+    "work_history.md:944",
+    "work_history.md:458"
+   ]
+  },
+  {
+   "id": "ads-multi-stage-prediction",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Multi-stage prediction systems",
+   "questions": [
+    "multi-stage prediction system",
+    "why did you build a three stage model",
+    "how do the introduction committee and floor vote stages work",
+    "staged models",
+    "how do you design a pipeline of models",
+    "stage 1 stage 2 stage 3 bill prediction",
+    "introduction time prediction",
+    "per legislator vote model",
+    "how does she structure multi-stage models",
+    "cascaded models",
+    "how the three bill models fit together"
+   ],
+   "tags": [
+    "stages",
+    "cascade",
+    "three models",
+    "introduction",
+    "floor vote",
+    "roll call",
+    "legislator",
+    "staged",
+    "relate",
+    "lifecycle"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I staged the bill model because each point in a bill's life supports a different question. Stage 1 scores a bill at introduction, when the only signal is the bill itself. It's the hardest stage, and adding title and synopsis lifted its held-out ROC-AUC from 0.561 to 0.845. Stage 2 is the production model: given the procedural history so far, the likelihood the bill reaches a floor vote, rescored after every new action. Stage 3 predicts individual legislators' votes from vote history, party alignment and committee roles; it's trained but waiting on production feature integration before it joins the daily loop. Stage 1 activates on the server when its model file is present, with no pipeline code changes. I sequenced it with Stage 2 live and scoring daily while Stages 1 and 3 were staged for integration.",
+   "sources": [
+    "page:legislative-pipeline.html",
+    "work_history.md:153",
+    "work_history.md:369",
+    "work_history.md:361",
+    "work_history.md:372",
+    "work_history.md:145"
+   ]
+  },
+  {
+   "id": "ads-noisy-labels",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Noisy labels and building labels",
+   "questions": [
+    "how do you handle noisy labels",
+    "label noise",
+    "how do you measure label quality",
+    "what if you don't have ground truth",
+    "how do you build labels when none exist for modeling",
+    "inter annotator agreement",
+    "human labeling for evaluation",
+    "how did you label legislative actions",
+    "how does she deal with unreliable labels",
+    "no ground truth evaluation",
+    "label audit",
+    "evaluating without a gold standard"
+   ],
+   "tags": [
+    "labels",
+    "annotation",
+    "ground truth",
+    "gold standard",
+    "agreement",
+    "double-labeled",
+    "audit",
+    "noise",
+    "rubric",
+    "unreliable"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "Most of my label sets didn't exist until I built them, so I treat label quality as something to measure. For legislative actions I labeled 1.39 million rows with procedural stage and activity type at 99.65% coverage, keeping the raw labeled history for inspection, and in California an iterative audit of unlabeled actions drove taxonomy updates. When there's no ground truth, I say so: my LLM extraction evaluation used a blind three-criterion rubric and reported no ROC curve, because rubric scores are expert judgments. I quantify boundary noise too: 4 of 122 retirement labels fall on the wrong side of the window. For institutional documents, the planned readiness gate is a human-labeled set of about 100 documents with 20 double-labeled, so agreement between labelers can be measured instead of assumed.",
+   "sources": [
+    "work_history.md:344",
+    "work_history.md:346",
+    "work_history.md:395",
+    "work_history.md:305",
+    "work_history.md:322",
+    "work_history.md:808",
+    "work_history.md:957"
+   ]
+  },
+  {
+   "id": "ads-stats-fundamentals",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Statistics fundamentals: overfitting, bias-variance, p-values",
+   "questions": [
+    "explain overfitting",
+    "what is overfitting and how do you prevent it",
+    "explain the bias variance tradeoff",
+    "what is a p-value",
+    "statistics fundamentals",
+    "explain bias versus variance with an example",
+    "how do you detect overfitting",
+    "basic statistics interview questions",
+    "can she explain p-values",
+    "what does a p-value mean",
+    "effective sample size",
+    "how do you know a model memorized its training data"
+   ],
+   "tags": [
+    "overfitting",
+    "memorized",
+    "memorize",
+    "bias",
+    "variance",
+    "p-value",
+    "significance",
+    "generalization",
+    "multiple testing",
+    "fundamentals"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Document intelligence evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "I'd explain them through mistakes I've caught. Overfitting is a model learning the sample instead of the pattern; my clearest case is a three-band retirement design that looked better in-sample and collapsed prospectively, its middle band scoring below its bottom band. That's bias versus variance in practice: with roughly a hundred events, a finer model carries more variance than the data can pay for, so I accepted the coarser two-band version. A p-value is the probability of a result at least as extreme if there were no real effect, which is why testing many methods inflates false wins and why I apply Holm correction. And I watch effective sample size: recency weights are normalized to mean 1 so weighting doesn't quietly shrink the data.",
+   "sources": [
+    "work_history.md:800",
+    "work_history.md:788",
+    "work_history.md:940",
+    "work_history.md:375"
+   ]
+  },
+  {
+   "id": "ads-suspicious-results",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Sanity-checking a suspiciously good result",
+   "questions": [
+    "how do you sanity-check a suspiciously good auc",
+    "what do you do when a model's auc looks too good",
+    "how do you check whether a high score is real",
+    "signs that your validation is broken",
+    "how would you audit an auc of 0.99",
+    "why did you distrust the june bill model",
+    "results too good to be true",
+    "how do you debug a model that looks perfect",
+    "how does she verify a surprising result",
+    "checks before publishing a model metric",
+    "what can an aggregate metric hide",
+    "suspiciously high accuracy",
+    "how do you know a great metric isn't a mistake",
+    "doubting a near perfect model"
+   ],
+   "tags": [
+    "too good",
+    "unbelievable",
+    "amazing",
+    "doubt",
+    "checklist",
+    "mistake",
+    "suspicious",
+    "inflated",
+    "near perfect",
+    "sanity check"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I treat a near-perfect score as a bug report until proven otherwise, and I check four things in order. First, the target: in California the first definition counted committee votes, a 76.4% positive rate that made the task trivial, so I redefined it as floor votes only. Second, the population: my June bill model's corpus was missing every resolved bill through a status filter, and resolutions pooled with bills had inflated the success rate to 30.4% from a true 13.2%. Third, leakage and splits: outcome terms audited, bill-level splits, a full Assembly held out, and an ablation for any big feature gain. Fourth, individual behavior, because aggregates hide things: the per-action trail showed stalled bills keeping their peak probability. After the fixes I replaced the June headline with held-out results.",
+   "sources": [
+    "work_history.md:394",
+    "work_history.md:150",
+    "work_history.md:346",
+    "work_history.md:348",
+    "work_history.md:153",
+    "work_history.md:389",
+    "work_history.md:363",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  {
+   "id": "ads-bill-threshold",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Why a 0.70 threshold, and why precision there",
+   "questions": [
+    "why a 0.70 threshold",
+    "why did you choose 0.70 for bill prediction",
+    "why report precision at the threshold",
+    "what does 75.1% precision mean",
+    "how did you pick the operating point for the bill model",
+    "precision at 0.70",
+    "is 75% precision good for bill prediction",
+    "why precision and recall instead of auc for bills",
+    "what does 21 days warning mean",
+    "how was the median warning measured",
+    "how does she justify the bill model threshold",
+    "bill model operating threshold"
+   ],
+   "tags": [
+    "threshold",
+    "cutoff",
+    "operating point",
+    "precision",
+    "recall",
+    "warning",
+    "lead time",
+    "flag"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Precision at a threshold matches how the model is used: an analyst sees a flagged bill and wants to know how often a flag is right. At 0.70 on the held-out 103rd General Assembly, 75.1% of the bills the model flagged were correct calls, it caught 76.2% of the bills it should have, and the median first call came 21 days before the floor vote. The warning measure needs safeguards so no prediction made after the outcome is counted. I'd defend 0.70 as an operating point where precision and recall are nearly balanced, not as an optimum, since the right threshold depends on how many flags a team can review; that's how I framed flag volume on the retirement report. And it's one held-out Assembly, which I report as such, not a long prospective record.",
+   "sources": [
+    "work_history.md:149",
+    "work_history.md:155",
+    "page:legislative-pipeline.html",
+    "work_history.md:796"
+   ]
+  },
+  {
+   "id": "ads-bill-model-limits",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Failure modes of the bill passage model",
+   "questions": [
+    "what are the failure modes of the bill prediction model",
+    "limitations of the bill passage model",
+    "where does the bill model break",
+    "monotonicity defect in the probability trail",
+    "does the model predict passage into law",
+    "what would break the bill model",
+    "known issues with the bill model",
+    "how could the bill predictions mislead someone",
+    "what would you fix next in the bill model",
+    "weaknesses of the legislative prediction system",
+    "what does she list as the bill model's limits",
+    "weak spots in the legislative model",
+    "how bill probabilities can be misread"
+   ],
+   "tags": [
+    "limitations",
+    "failure modes",
+    "weak spots",
+    "misread",
+    "legislative model",
+    "monotonicity",
+    "decay",
+    "overconfident",
+    "stall",
+    "known issues"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "I keep a twelve-item limitations document, and four failure modes matter most. First, Stage 2 predicts reaching a floor vote, not becoming law; bills reach votes and fail, so the app says floor-vote likelihood everywhere. Second, the probability trail misbehaves after a stall: a bill that advanced and then stalled keeps its peak probability. The real fix is a decay term on time since the last advancing action plus down-weighting on re-referral, and the display patch is documented as insufficient. Third, probabilities rank well but run overconfident in absolute terms. Fourth, the evidence is one held-out Assembly, not a long prospective record. Open model work includes unifying the labeler and verifying synopses against as-introduced bill text, since Stage 1 now leans on them.",
+   "sources": [
+    "work_history.md:156",
+    "page:legislative-pipeline.html",
+    "work_history.md:389",
+    "work_history.md:390",
+    "work_history.md:391",
+    "work_history.md:367",
+    "work_history.md:83"
+   ]
+  },
+  {
+   "id": "ads-uic-model-critique",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "What I'd change in the UIC enrollment model",
+   "questions": [
+    "what are the weaknesses of the uic enrollment model",
+    "what would you do differently on the uic model",
+    "is the uic accuracy inflated",
+    "total_completed_terms leakage",
+    "why was spring the weakest model",
+    "cohen's kappa by semester",
+    "how reliable is the uic dropout classifier",
+    "critique your own enrollment model",
+    "limitations of the student retention model",
+    "what would she change about the uic model",
+    "smote without a seed"
+   ],
+   "tags": [
+    "kappa",
+    "leakage",
+    "retention",
+    "dropout",
+    "critique",
+    "limitations",
+    "inflated",
+    "semester",
+    "trustworthy",
+    "enrollment"
+   ],
+   "links": [
+    {
+     "label": "UIC enrollment",
+     "url": "uic-enrollment.html"
+    }
+   ],
+   "answer": "The biggest issue is a feature. TOTAL_COMPLETED_TERMS was the top predictor, and in October 2026 I added a correction to the case study: it counts terms across all recorded history, so it can partly reveal the outcome, and the selected model's cross-validated scores may be inflated by leakage. I'd rebuild with features computed strictly as of each snapshot, the way my retirement panel reads effective-dated rows. Second, performance varied by term: Cohen's kappa was 0.882 for Fall but 0.461 for Spring, where dropout patterns are more diffuse. Third, the SMOTE step ran without a static seed, so runs weren't deterministic. And predicted discontinued counts consistently ran under actuals, which needed an adjustment ratio. We documented those limits and recommended domain-informed feature selection.",
+   "sources": [
+    "page:uic-enrollment.html",
+    "work_history.md:789"
+   ]
+  },
+  {
+   "id": "ads-retirement-next",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "What I'd change next in the retirement model",
+   "questions": [
+    "what would you do differently in the retirement model",
+    "limitations of the retirement risk model",
+    "retirement model roadmap",
+    "why model all departures instead of just retirement",
+    "known intent override",
+    "what is the retirement model's biggest blind spot",
+    "next improvements to the workforce forecast",
+    "should the model forecast or rank",
+    "how would you improve the retirement forecast",
+    "persisting the trained model",
+    "what would she improve in the retirement model",
+    "what is missing from the retirement model",
+    "where the retirement model can be wrong about a person"
+   ],
+   "tags": [
+    "roadmap",
+    "blind spot",
+    "missing",
+    "wrong",
+    "workforce",
+    "competing risks",
+    "known intent",
+    "improvements",
+    "resignation",
+    "surs"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "The biggest blind spot is announced retirements: someone who has given notice looks identical to someone with no plans until HR processes the termination. The fix is an HR-maintained list of known intent, shown as Confirmed instead of predicted, which also makes the remaining predictions more honest. Next, I'd model all departures under a competing-risks framing, roughly three times the data and closer to what stakeholders actually ask. I'd persist the trained model so past quarters can be explained, publish the confidence column so thin-evidence cases are visible, and replace an inherited eligibility constant with confirmed SURS Tier I and Tier II rules. One question stays a business decision: whether the report ranks people who resemble past retirees or forecasts who will retire next year.",
+   "sources": [
+    "work_history.md:827",
+    "work_history.md:830",
+    "work_history.md:831",
+    "work_history.md:828"
+   ]
+  },
+  {
+   "id": "ads-measuring-model-impact",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Measuring whether a model is worth it",
+   "questions": [
+    "how do you measure the impact of a model",
+    "how do you know a model is delivering value",
+    "how did you measure the retirement model's impact",
+    "model impact metrics beyond accuracy",
+    "how do you evaluate a model in business terms",
+    "what evidence shows the retirement rebuild helped",
+    "measuring decision quality from a model",
+    "how does she measure model value",
+    "which model had the biggest impact",
+    "what business value did your model deliver",
+    "how do you compare a new model with one that no longer exists",
+    "proving a model is useful to the business",
+    "showing a rebuilt model beats the old one"
+   ],
+   "tags": [
+    "impact",
+    "value",
+    "useful",
+    "business",
+    "better",
+    "old model",
+    "decisions",
+    "roi",
+    "workforce planning",
+    "auditable"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    },
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I measure a model by what it changes downstream, and I'm explicit about what can't be measured. For the rebuilt retirement-risk forecast, which Strategic Workforce Planning uses each quarter, I track three things. Delivery: the outstanding report shipped the same day the old system's loss surfaced, and the pipeline now runs quarterly in about six minutes. Decision quality: observed-rate bands with roughly fifteen-fold separation, plus a planning workbook placing 73 employees at the earliest horizon they enter the Elevated band, each exactly once. Errors removed: the old 75% rule had 19 people in all three windows at once. What I can't claim is that it's more accurate than the original, which no longer exists to compare against. What I can claim is that it's auditable where the original wasn't.",
+   "sources": [
+    "work_history.md:770",
+    "work_history.md:811",
+    "work_history.md:821",
+    "work_history.md:799",
+    "work_history.md:822",
+    "work_history.md:823",
+    "work_history.md:833"
+   ]
+  },
+  {
+   "id": "ads-recency-weighting",
+   "section": "interview",
+   "section_label": "Interview answers",
+   "title": "Handling nonstationary data with recency weighting",
+   "questions": [
+    "how do you handle older training data",
+    "recency weighting",
+    "rolling window versus exponential decay",
+    "how do you deal with nonstationary data",
+    "should you drop old data from training",
+    "730 day half-life",
+    "sample weights for time decay",
+    "how do you handle changing base rates over time",
+    "how does she weight historical data",
+    "time decay weighting",
+    "train on recent years only or on all history",
+    "adapting to shifts without throwing away history"
+   ],
+   "tags": [
+    "nonstationarity",
+    "decay",
+    "half-life",
+    "sample weights",
+    "recent years",
+    "history",
+    "shifts",
+    "throwing away",
+    "base rate shift",
+    "recency"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "When older data is still informative but the world has shifted, I weight it instead of cutting it. For the bill model I compared a rolling 5-year training window against exponential decay and chose decay. The procedural grammar of the legislature is stable across 16 years, so a 5-year cut would discard roughly half the data for no gain; what shifts is the base rate and political salience of categories. I implemented decay as sample weights with a 730-day half-life, so a 2022 bill counts about half as much as a 2024 bill and a 2018 bill about 10%, normalized to mean 1 to preserve effective sample size. The half-life is stored in both the model artifact and the manifest, and a monthly retrain refreshes the model on full history.",
+   "sources": [
+    "work_history.md:375",
+    "work_history.md:376"
+   ]
+  }
+ ],
+ "add_questions": {
+  "iv-build-taxonomy": [
+   "how do you design a label taxonomy for a model",
+   "building a taxonomy for training labels"
+  ],
+  "persona-agent-vs-workflow": [
+   "when do you not need machine learning at all"
+  ],
+  "iv-choose-between-models": [
+   "choosing among competing models"
+  ],
+  "iv-interpretable-models": [
+   "explaining a model's internals"
+  ]
+ },
+ "replace_answers": {
+  "iv-leakage": {
+   "answer": "I assume leakage until I've ruled it out, especially when a number looks great. In bill prediction, procedural history leaks by construction: the actions that record a bill passing live in the same table as the actions that predict it. So I remove outcome-revealing stages at a single point before aggregation, split at the bill level, and keep the raw labeled history so the guard can be inspected rather than trusted. The title-and-synopsis gain was confirmed with an ablation and three leakage checks before I published it. In California, the first target counted committee votes, which made the task trivially easy; I redefined it as floor votes only. In the retirement panel every historical read is effective-dated. At UIC, two top-ranked variables were term-dependent leakage and were dropped.",
+   "sources": [
+    "work_history.md:346",
+    "work_history.md:348",
+    "work_history.md:153",
+    "work_history.md:394",
+    "work_history.md:789",
+    "page:uic-enrollment.html",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  "iv-class-imbalance": {
+   "answer": "With rare events I decide whether to rebalance at all, then make sure evaluation still reflects the real base rate. The retirement panel has about 101 to 118 positive events in 4,891 person-year rows, a 2.4% base rate, so I report PR-AUC against that base rate and precision and recall at every candidate threshold instead of accuracy. For bill prediction I trained on a class-balanced sample capped at 100,000 rows per class, and evaluated on a held-out General Assembly. At UIC, the team applied SMOTE to the 70% training partition only, never the 30% test set, so synthetic minority rows couldn't inflate the evaluation. And when events are this thin, I let them limit the design: the retirement report uses two risk bands because three couldn't hold up prospectively.",
+   "sources": [
+    "work_history.md:788",
+    "work_history.md:796",
+    "work_history.md:349",
+    "page:uic-enrollment.html",
+    "work_history.md:800"
+   ]
+  },
+  "iv-precision-vs-recall": {
+   "answer": "I treat the operating threshold as a business decision that I inform with the full trade-off. For the retirement report I reported precision and recall at every candidate threshold and handed flag volume to stakeholders as what it actually is: a decision about how many people leadership is willing to review. For bill prediction, at 0.70 on a held-out General Assembly the model gives 75.1% precision and 76.2% recall with a median 21 days' warning, and warning time is part of the trade-off, since a model that becomes confident the morning of the vote is accurate and useless. In relevance scoring, when a speed-limit bill surfaced as high impact to an AI-ethics reader because of an incidental camera provision, I flagged threshold tightening instead of shipping a tenuous inference to a sophisticated audience.",
+   "sources": [
+    "work_history.md:796",
+    "work_history.md:828",
+    "work_history.md:155",
+    "page:legislative-pipeline.html",
+    "work_history.md:194"
+   ]
+  },
+  "iv-choose-between-models": {
+   "answer": "I decide what failure costs before I compare, then let that criterion pick. At UIC the institutional use was finding students likely to discontinue, so error on that class decided it: H2O's random forest kept error below 5% across all three classes in cross-validation, while CatBoost's error on the Discontinued class was 47.71% with a systematic residual. For legislative extraction, the job was 11,673 bills and roughly 155 unattended hours, so I weighted stability over peak: Mistral at 500 tokens swung 0.10 in rubric score across chunk sizes against 0.35 for Qwen, even though Qwen had the higher single score. And I re-run the comparison when conditions change. After the vLLM migration, production moved to Llama 3.1 8B because the recovered headroom made the larger model affordable.",
+   "sources": [
+    "page:uic-enrollment.html",
+    "work_history.md:240",
+    "work_history.md:303",
+    "work_history.md:311",
+    "work_history.md:315",
+    "page:legislative-pipeline.html"
+   ]
+  },
+  "iv-interpretable-models": {
+   "answer": "I build interpretability for the person who has to argue with the model, and I check the explanation method itself for artifacts. For bill prediction I ranked survival and death signals by presence versus absence, then found every survival signal scoring about 0.297, because long winning bills share many tokens. I specified a dual method that adds the model's own TF-IDF weights times feature importances, rather than ship a chart ordered by a metric artifact. The retirement report gives each person their raw score, age prior, comparable-case count, shrunk estimate, floor, final value and a confidence rating. At UIC we used variable importance, SHAP and partial dependence plots. And the bill app shows the score after every action, so a jump from 46% to 85% on \"Do Pass\" is legible.",
+   "sources": [
+    "work_history.md:377",
+    "work_history.md:378",
+    "work_history.md:803",
+    "page:uic-enrollment.html",
+    "page:legislative-pipeline.html"
+   ]
+  }
+ },
+ "tests": [
+  [
+   "describe your approach to a full modeling engagement from the business question onward",
+   "ads-end-to-end-modeling"
+  ],
+  [
+   "how would you go from a vague prediction request to something running every day",
+   "ads-end-to-end-modeling"
+  ],
+  [
+   "what does your typical ML workflow look like on a real project",
+   "ads-end-to-end-modeling"
+  ],
+  [
+   "what input variable gave you the largest lift and how did you verify it",
+   "ads-feature-engineering"
+  ],
+  [
+   "share a case where new predictors improved discrimination",
+   "ads-feature-engineering"
+  ],
+  [
+   "when have you taken variables out of a model on purpose",
+   "ads-feature-engineering"
+  ],
+  [
+   "how do you test whether a model will hold up next year",
+   "ads-validation-strategy"
+  ],
+  [
+   "what kind of holdout do you trust for panel data",
+   "ads-validation-strategy"
+  ],
+  [
+   "explain how you backtested the risk bands",
+   "ads-validation-strategy"
+  ],
+  [
+   "how do you decide what number to report for a classifier",
+   "ads-evaluation-metrics"
+  ],
+  [
+   "what measure do you use when positives are only a couple percent of the data",
+   "ads-evaluation-metrics"
+  ],
+  [
+   "which scores do you show leadership instead of AUC",
+   "ads-evaluation-metrics"
+  ],
+  [
+   "what do you do when predicted percentages don't match what actually happens",
+   "ads-calibration"
+  ],
+  [
+   "how do you know a 40 percent score means 40 percent",
+   "ads-calibration"
+  ],
+  [
+   "how would you correct overstated risk scores",
+   "ads-calibration"
+  ],
+  [
+   "how would you show that model A really beats model B",
+   "ads-significance-testing"
+  ],
+  [
+   "what do you do about testing lots of variants at once",
+   "ads-significance-testing"
+  ],
+  [
+   "how do you get an interval on a proportion from a small sample",
+   "ads-significance-testing"
+  ],
+  [
+   "have you split traffic between two versions of a product",
+   "ads-experiment-design|ex-experiment-design"
+  ],
+  [
+   "how do you stop yourself from cherry picking results",
+   "ads-experiment-design"
+  ],
+  [
+   "how do you set up a fair test between two methods",
+   "ads-experiment-design"
+  ],
+  [
+   "what changes in your approach when the number of positives is tiny",
+   "ads-small-data-power"
+  ],
+  [
+   "how do you know if you have enough observations to support a finer model",
+   "ads-small-data-power"
+  ],
+  [
+   "would more data help your retirement model",
+   "ads-small-data-power"
+  ],
+  [
+   "how would you estimate the chance someone leaves in the next year",
+   "ads-survival-hazard"
+  ],
+  [
+   "how do you model event timing when many people never have the event",
+   "ads-survival-hazard"
+  ],
+  [
+   "what did the age plus service curve show",
+   "ads-survival-hazard"
+  ],
+  [
+   "what do you do when one segment has almost no data",
+   "ads-empirical-bayes"
+  ],
+  [
+   "how did you correct scores for the oldest employees",
+   "ads-empirical-bayes"
+  ],
+  [
+   "explain pulling noisy estimates toward a baseline",
+   "ads-empirical-bayes"
+  ],
+  [
+   "how would you project headcount or enrollment ten years out",
+   "ads-time-series-forecasting"
+  ],
+  [
+   "what do you do when an arima model won't converge on a series",
+   "ads-time-series-forecasting"
+  ],
+  [
+   "how do you remove seasonal patterns before forecasting",
+   "ads-time-series-forecasting"
+  ],
+  [
+   "what went wrong methodologically in the report you took over",
+   "ads-fixing-inherited-model"
+  ],
+  [
+   "describe correcting a flawed model somebody else left behind",
+   "ads-fixing-inherited-model"
+  ],
+  [
+   "how did you know the old workforce forecast was misleading",
+   "ads-fixing-inherited-model"
+  ],
+  [
+   "why would a model score differently in the nightly job than in the notebook",
+   "ads-train-serve-skew"
+  ],
+  [
+   "how do you guarantee the features at inference are built the same way as in training",
+   "ads-train-serve-skew"
+  ],
+  [
+   "what checks do you run to confirm deployed scores are the ones you validated",
+   "ads-train-serve-skew"
+  ],
+  [
+   "what do you do when whole categories of records are absent from training data",
+   "ads-dataset-reconstruction"
+  ],
+  [
+   "how would you repair a corpus that has a selection problem",
+   "ads-dataset-reconstruction"
+  ],
+  [
+   "how do you treat unknown or unfilled values in evaluation",
+   "ads-dataset-reconstruction"
+  ],
+  [
+   "how have you grouped unlabeled records into themes",
+   "ads-unsupervised-learning"
+  ],
+  [
+   "where have topic models or text clustering been useful in your work",
+   "ads-unsupervised-learning|ex-topic-modeling"
+  ],
+  [
+   "where have you applied graph clustering",
+   "ads-unsupervised-learning"
+  ],
+  [
+   "how do you represent documents numerically for a predictive model",
+   "ads-nlp-features"
+  ],
+  [
+   "when would you use bag of words instead of dense vectors",
+   "ads-nlp-features"
+  ],
+  [
+   "what preprocessing did the legislative text need",
+   "ads-nlp-features"
+  ],
+  [
+   "what makes you reach for boosted trees over a linear model",
+   "ads-algorithm-choice"
+  ],
+  [
+   "where has a random forest let you down",
+   "ads-algorithm-choice"
+  ],
+  [
+   "which classifier would you start with on a new tabular problem",
+   "ads-algorithm-choice"
+  ],
+  [
+   "walk me through how you search for good model settings",
+   "ads-hyperparameter-tuning"
+  ],
+  [
+   "what knobs did you set on the gradient boosting model",
+   "ads-hyperparameter-tuning"
+  ],
+  [
+   "how do you pick alpha and beta for exponential smoothing",
+   "ads-hyperparameter-tuning|uic-smoothing"
+  ],
+  [
+   "how would you check whether a promotion model treats groups equally",
+   "ads-fairness"
+  ],
+  [
+   "what have you done about discrimination risk in people analytics",
+   "ads-fairness"
+  ],
+  [
+   "is your workforce model biased",
+   "ads-fairness|hr-equity"
+  ],
+  [
+   "what do you watch after a model goes live",
+   "ads-production-monitoring"
+  ],
+  [
+   "how do you keep a scoring model fresh as new data arrives",
+   "ads-production-monitoring"
+  ],
+  [
+   "how would you notice if a production model started going wrong",
+   "ads-production-monitoring"
+  ],
+  [
+   "how do you spot a spike that isn't just seasonal",
+   "ads-anomaly-detection"
+  ],
+  [
+   "what method flags unusual legislative activity",
+   "ads-anomaly-detection"
+  ],
+  [
+   "how would you detect abnormal behavior in a metric",
+   "ads-anomaly-detection"
+  ],
+  [
+   "explain how you projected people's job moves forward",
+   "ads-markov-simulation"
+  ],
+  [
+   "what is a transition matrix and how did you use one",
+   "ads-markov-simulation"
+  ],
+  [
+   "have you done stochastic simulation of paths",
+   "ads-markov-simulation"
+  ],
+  [
+   "how do you keep python fast on a table with over a million records",
+   "ads-pandas-sql-scale"
+  ],
+  [
+   "what's your trick for fuzzy matching a huge column",
+   "ads-pandas-sql-scale"
+  ],
+  [
+   "how do you structure analytical sql for a warehouse",
+   "ads-pandas-sql-scale"
+  ],
+  [
+   "how do you tell a director how sure the model is",
+   "ads-communicating-uncertainty"
+  ],
+  [
+   "what language do you use so leaders don't over-trust a percentage",
+   "ads-communicating-uncertainty"
+  ],
+  [
+   "how do you present a range instead of a single number",
+   "ads-communicating-uncertainty"
+  ],
+  [
+   "can you separate cause from correlation in your analyses",
+   "ads-causal-inference"
+  ],
+  [
+   "what treatment effect estimation have you done",
+   "ads-causal-inference"
+  ],
+  [
+   "how would you prove that a change caused an improvement",
+   "ads-causal-inference|iv-attribution-controls"
+  ],
+  [
+   "how would you check quality on a huge batch of generated content without reading it all",
+   "ads-llm-eval-statistics"
+  ],
+  [
+   "what statistics do you put on a grader's accuracy",
+   "ads-llm-eval-statistics"
+  ],
+  [
+   "how do you decide whether a generated library is good enough to ship",
+   "ads-llm-eval-statistics"
+  ],
+  [
+   "why would you ship a gradient boosted baseline instead of a sequence model",
+   "ads-simple-model-enough"
+  ],
+  [
+   "how do you resist overengineering a model",
+   "ads-simple-model-enough"
+  ],
+  [
+   "give an example where the plain approach beat the fancy one",
+   "ads-simple-model-enough"
+  ],
+  [
+   "how do you set up the y for a prediction problem",
+   "ads-target-definition"
+  ],
+  [
+   "what makes a good outcome definition for an event model",
+   "ads-target-definition"
+  ],
+  [
+   "what choices did you make about labeling dropout versus graduation",
+   "ads-target-definition|uic-labels|uic-label-variants"
+  ],
+  [
+   "do you average or stack several models together",
+   "ads-ensembling"
+  ],
+  [
+   "have you used voting across multiple model answers",
+   "ads-ensembling"
+  ],
+  [
+   "what's your experience combining learners",
+   "ads-ensembling"
+  ],
+  [
+   "why not one model for the whole legislative lifecycle",
+   "ads-multi-stage-prediction|leg-survival-framing"
+  ],
+  [
+   "how do your three bill models relate to each other",
+   "ads-multi-stage-prediction"
+  ],
+  [
+   "what does each stage in your prediction system answer",
+   "ads-multi-stage-prediction"
+  ],
+  [
+   "what do you do when your training labels are unreliable",
+   "ads-noisy-labels"
+  ],
+  [
+   "how would you evaluate with no gold standard",
+   "ads-noisy-labels"
+  ],
+  [
+   "how do you check that human annotators agree",
+   "ads-noisy-labels"
+  ],
+  [
+   "how would you explain variance and bias to a colleague",
+   "ads-stats-fundamentals"
+  ],
+  [
+   "what's the definition of statistical significance",
+   "ads-stats-fundamentals|ads-significance-testing"
+  ],
+  [
+   "how do you tell when a model has memorized its training data",
+   "ads-stats-fundamentals"
+  ],
+  [
+   "what would make you doubt a model scoring nearly perfectly",
+   "ads-suspicious-results"
+  ],
+  [
+   "how do you figure out if an amazing metric is a mistake",
+   "ads-suspicious-results"
+  ],
+  [
+   "what's your checklist when validation numbers look unbelievable",
+   "ads-suspicious-results"
+  ],
+  [
+   "what's the reasoning behind your bill model cutoff",
+   "ads-bill-threshold"
+  ],
+  [
+   "how often is a flagged bill actually right",
+   "ads-bill-threshold|leg-heldout-precision-recall"
+  ],
+  [
+   "how much lead time does the legislative model give and how is that computed",
+   "ads-bill-threshold"
+  ],
+  [
+   "what are the weak spots in your legislative model",
+   "ads-bill-model-limits"
+  ],
+  [
+   "how might someone misread the bill probabilities",
+   "ads-bill-model-limits"
+  ],
+  [
+   "what's the next modeling fix for the bill system",
+   "ads-bill-model-limits"
+  ],
+  [
+   "how trustworthy are the enrollment classifier's scores",
+   "ads-uic-model-critique"
+  ],
+  [
+   "what's wrong with the uic retention model in hindsight",
+   "ads-uic-model-critique"
+  ],
+  [
+   "which uic feature might leak the outcome",
+   "ads-uic-model-critique|iv-leakage"
+  ],
+  [
+   "what's missing from the workforce retirement model",
+   "ads-retirement-next"
+  ],
+  [
+   "how would you extend the retirement forecast to resignations",
+   "ads-retirement-next"
+  ],
+  [
+   "where can the retirement model be wrong about a person",
+   "ads-retirement-next"
+  ],
+  [
+   "how do you prove a model is useful to the business",
+   "ads-measuring-model-impact"
+  ],
+  [
+   "what value metrics did you track for the workforce model",
+   "ads-measuring-model-impact"
+  ],
+  [
+   "how would you show a rebuilt model is better than the old one",
+   "ads-measuring-model-impact"
+  ],
+  [
+   "is it better to train only on recent years or on everything",
+   "ads-recency-weighting"
+  ],
+  [
+   "how do you let a model adapt to shifts without throwing away history",
+   "ads-recency-weighting"
+  ],
+  [
+   "what did you do about base rates changing across sessions",
+   "ads-recency-weighting"
+  ],
+  [
+   "what would you check if your model hit 0.99 auc on the first try",
+   "ads-suspicious-results|iv-leakage"
+  ],
+  [
+   "how do you keep future information out of your training features",
+   "iv-leakage"
+  ],
+  [
+   "what checks do you run for target leakage",
+   "iv-leakage"
+  ],
+  [
+   "how do you handle a dataset where one class is very rare",
+   "iv-class-imbalance|ads-small-data-power"
+  ],
+  [
+   "did you oversample the minority class",
+   "iv-class-imbalance|uic-smote-configuration"
+  ],
+  [
+   "how do you pick where to set the cutoff on a classifier",
+   "iv-precision-vs-recall|ads-evaluation-metrics|ads-bill-threshold|iv-similarity-thresholds"
+  ],
+  [
+   "false positives versus false negatives how do you trade them off",
+   "iv-precision-vs-recall"
+  ],
+  [
+   "how did you decide between competing models",
+   "iv-choose-between-models"
+  ],
+  [
+   "what made you pick one candidate model over another",
+   "iv-choose-between-models"
+  ],
+  [
+   "how do you explain what a model is doing internally",
+   "iv-interpretable-models"
+  ],
+  [
+   "shap or feature importance experience",
+   "iv-interpretable-models|ads-feature-engineering|uic-features"
+  ],
+  [
+   "how do you build a labeling scheme from scratch",
+   "iv-build-taxonomy|ads-noisy-labels"
+  ],
+  [
+   "have you done a/b testing on a product",
+   "ads-experiment-design|ex-experiment-design"
+  ],
+  [
+   "arima experience",
+   "ads-time-series-forecasting|ex-forecasting|uic-arima"
+  ]
+ ],
+ "gaps": [
+  "Why exactly 0.70 was chosen as the bill-model threshold: sources report results at 0.70 but record no selection rationale; the card frames it as a reported operating point with near-balanced precision and recall.",
+  "What the three leakage checks behind ROC-AUC 0.561 to 0.845 were, and the ablation design: sources only say 'an ablation study and three leakage checks'.",
+  "Live A/B testing on user traffic: no sources; answered honestly with offline pre-registered evaluation.",
+  "Formal causal inference (RCT, diff-in-diff, IV): none in sources; answered with the SEZ regression and attribution controls.",
+  "Model stacking / meta-learners: none; answered honestly.",
+  "Formal distribution-drift detection (PSI, KS alarms): none; answered with two-clock retraining, recency weights and output contracts.",
+  "Formal power calculations before data collection: none sourced beyond acceptance-sampling plans.",
+  "Fairness audit of a production model on real demographic data: none; HR equity view was a synthetic-data POC.",
+  "Bayesian hyperparameter optimization (Optuna etc.): none sourced.",
+  "Imputation methods for missing values: little sourced; answered with systematic-missingness reconstruction instead.",
+  "Behavioural topics dropped per Tayler's update: 'where I sit' (DS vs analytics vs MLE) removed; 'biggest lesson' converted to ads-suspicious-results; 'most impactful model' converted to ads-measuring-model-impact."
+ ]
+}
