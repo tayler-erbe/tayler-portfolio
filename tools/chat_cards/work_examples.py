@@ -1617,3 +1617,82 @@ if _os.path.exists(_p):
             next(c for c in CARDS if c["id"] == _cid)["questions"].extend(q for q in _qs if q not in next(c for c in CARDS if c["id"] == _cid)["questions"])
         else:
             PATCHES.setdefault(_cid, {}).setdefault("add_questions", []).extend(_qs)
+
+# ---- stress test round 2: content gaps that the sources can answer ----
+GUIDE = L("Choosing a local model (guide)", "choosing-local-models-guide.html")
+
+card(EX, "drop-radar-overview", "Drop Radar: what it is and who it's for", [
+    "what is drop radar", "what is drop radar and who was it made for", "tell me about drop radar", "drop radar project",
+    "what does drop radar do", "who uses drop radar", "why did you build drop radar", "the drop alert system",
+    "what is the collectors alert system", "does drop radar buy things automatically", "is drop radar a checkout bot",
+    "how long did drop radar take to build",
+], ["drop radar", "drop alert", "collectibles", "limited releases", "restock", "telegram", "personal project"], [
+    L("Drop Radar", "drop-radar.html"),
+], """
+Drop Radar is a personal project: a real-time alert system I built for my husband over one weekend in October 2026. He
+collects limited releases (trading cards, collectible toys, watches) and kept losing drops to bots. It watches about 40
+stores and sources around the clock, pings his phone within seconds when something goes live, and improves itself from
+the notes he texts it, through a Claude Code agent that edits the code, runs the tests and replies with what changed. It
+only ever alerts. It never buys, joins a queue or gets around bot protection, because none of the 22 stores he buys from
+permits automated checkout. Its deep search found a 100-piece limited-edition watch that sold out in minutes, and he got one.
+""", sources=["page:drop-radar.html"])
+
+card(EX, "guide-model-names", "Reading a model's name: 27B, 35B-A3B, Q4_K_M, AWQ", [
+    "what does q4_k_m mean", "what does the q4_k_m at the end of a model name actually mean", "35b-a3b meaning",
+    "what does 35b-a3b mean", "what does awq mean", "what do the numbers in a model name mean", "is a 32b model better than a 27b",
+    "what does 8b mean in a model name", "how to read a model name", "what is a mixture of experts model", "q4 quantization meaning",
+], ["model name", "parameters", "q4_k_m", "a3b", "awq", "quantization", "mixture of experts", "bit width"], [GUIDE], """
+The labels look like a ranking and aren't one. 27B or 32B is roughly the parameter count in billions: it sets capacity, not
+how well the model was trained or follows instructions. 35B-A3B is a mixture of experts: about 35 billion parameters in
+total with about 3 billion active per token, so it can compute less per token, but all the weights still have to be stored.
+Q4 or Q4_K_M is an approximately 4-bit weight quantization format, which shrinks the weights so a large model fits on one
+card. AWQ is a quantization method, not a bit width, so check the actual bit width of the checkpoint you download. My guide
+walks through each label and what it does and doesn't tell you.
+""", sources=["page:choosing-local-models-guide.html (section 01)"])
+
+card(EX, "guide-audience", "Who the local model guide is for", [
+    "who is the local model guide written for", "who is the local model guide written for and did anyone review it",
+    "was the model guide reviewed", "what does the choosing a local model guide cover", "is the guide based on your own results",
+    "what is the advisory guide about", "choosing a local model guide",
+], ["guide", "advisory", "audience", "reviewed", "local model", "open weight"], [GUIDE], """
+It's written for teams choosing an open-weight model for a specific job, often their first local model. It covers how to
+read model names, how these models are commonly trained, why a smaller model can beat a bigger one, what public benchmarks
+can and can't tell you, a method for picking and validating a model, and when fine-tuning is worth it, ending in a
+one-page checklist. It combines findings from my own evaluations (the generation model screen and the document intelligence
+evaluation) with general engineering guidance, and it was independently reviewed and revised following technical feedback.
+""", sources=["page:choosing-local-models-guide.html (header and sections 01-08)"])
+
+card(EX, "core-clients-internal", "Who my clients have been", [
+    "have you done any consulting for outside clients", "done any consulting for outside clients", "have you had external clients",
+    "who are your clients", "do you have paying customers", "have you worked for customers outside the university",
+    "is all your work internal", "what kind of clients have you worked with",
+], ["clients", "external", "outside", "internal clients", "customers", "consulting"], [
+    L("Projects", "index.html#projects"),
+    LAB_LINK,
+], """
+My clients so far have been inside the University of Illinois System, where I work as an internal consultant and builder for
+other units: the Institute of Government and Public Affairs and Academic Affairs on legislation, the University Library and
+records management on archives, Sponsored Programs Administration on research proposals, Illinois HR on workforce analytics,
+purchasing on procurement, and UIC on enrollment. Each came with its own stakeholders, data and constraints. I haven't yet
+done paid consulting for outside organizations; my Applied AI Lab is where I publish the advisory work that isn't tied to
+one unit.
+""", sources=["work_history.md:1350-1385", "page:index.html", "lab index"])
+
+card(EX, "core-knowledge-graphs", "Knowledge graphs and graph-based retrieval", [
+    "used knowledge graphs for rag", "have you used knowledge graphs", "graph rag", "knowledge graph experience",
+    "have you built a knowledge graph", "graphrag",
+], ["knowledge graph", "graph rag", "graphrag", "network graph", "relationships"], [
+    L("Legislative pipeline", "legislative-pipeline.html"),
+    L("HR workforce analytics", "hr-workforce-analytics.html"),
+], """
+I've built graphs for analysis, not for retrieval. On the legislative platform I constructed knowledge and network graphs
+mapping relationships across legislative goals, beneficiaries and policy domains from LLM-extracted features, and in HR
+workforce analytics I used graph community detection to find career communities. My retrieval systems are FAISS vector
+search with exact-match and keyword tiers in front. I haven't used a knowledge graph as the retrieval layer for RAG.
+""", sources=["work_history.md:135", "page:hr-workforce-analytics.html", "work_history.md:1399"])
+
+for _cid, _qs in {
+    "chatbot-how-built": ["can you remember what i asked earlier", "do you remember our conversation", "does this chat have memory",
+                          "do you store what i type", "is this conversation being recorded", "will tayler see my questions"],
+}.items():
+    PATCHES.setdefault(_cid, {}).setdefault("add_questions", []).extend(_qs)

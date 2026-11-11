@@ -12,7 +12,7 @@
   // words that say how she feels about a thing, not what the thing is: a match on these alone is never an answer
   // ("favorite burrito" must not answer with the favorite-bands card when no card mentions burritos)
   var GENERIC = { favorite: 1, favourite: 1, fav: 1, like: 1, love: 1, best: 1, type: 1, kind: 1, prefer: 1, enjoy: 1, thing: 1, most: 1 };
-  var MIN_COVER = 0.4, MIN_SCORE = 10, RELATED_RATIO = 0.45, UNKNOWN_W = 0.6, ARTICLE_PRIOR = 0.7, ANSWER_CREDIT = 0.6;
+  var MIN_COVER = 0.4, MIN_SCORE = 10, RELATED_RATIO = 0.35, MAX_RELATED = 3, UNKNOWN_W = 0.6, ARTICLE_PRIOR = 0.7, ANSWER_CREDIT = 0.6;
   var PARENT_SLACK = 0.02, PARENT_RATIO = 0.3;   // see the parent rule in search()
   // meaning-based search (optional, loaded lazily): BM25 answers alone when it is sure (exact phrasing, or a confident match with
   // cover >= GATE_COVER and score >= GATE_SCORE); otherwise BM25 and embedding scores are fused. Tuned on the blind dev half only.
@@ -231,7 +231,7 @@
     var best = ids[0], par = best && byId[best].card.parent;
     if (par && f[par] !== undefined && f[par] >= o.hParentRatio * f[best]) best = par;   // a general question goes to the summary card
     var confident = res.confident || smax >= o.embTau;
-    var related = ids.filter(function (id) { return id !== best && f[id] >= RELATED_RATIO * f[best]; }).slice(0, 2)
+    var related = ids.filter(function (id) { return id !== best && f[id] >= RELATED_RATIO * f[best]; }).slice(0, MAX_RELATED)
                      .map(function (id) { return byId[id]; });
     return { query: res.query, terms: res.terms, best: confident ? byId[best] : null, top: byId[best], related: related,
              confident: confident, mode: "hybrid", embTop: smax, ranked: ids.slice(0, 30).map(function (id) { return byId[id]; }) };
@@ -312,19 +312,19 @@
     var confident = !!top && (top.exact || (top.content && top.cover >= this.opt.minCover && top.score >= this.opt.minScore));
     var related = [];
     if (top) {
-      for (var i = 1; i < results.length && related.length < 2; i++) {
+      for (var i = 1; i < results.length && related.length < MAX_RELATED; i++) {
         if (results[i].score >= RELATED_RATIO * top.score && results[i].cover >= 0.3) related.push(results[i]);
       }
     }
     return { query: query, terms: terms, best: confident ? top : null, top: top || null,
-             related: confident ? related : results.filter(function (r) { return r.content; }).slice(0, 2), confident: confident,
+             related: confident ? related : results.filter(function (r) { return r.content; }).slice(0, MAX_RELATED), confident: confident,
              ranked: results.slice(0, 30), all: results, mode: "bm25" };
   };
 
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111104";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111105";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -342,7 +342,8 @@
     send: "Ask",
     close: "Close",
     starters: "Try asking",
-    related: "Related",
+    related: "Not quite it? Closest other answers",
+    closest: "Closest answers I have",
     loading: "Loading answers",
     failed: "The answers could not load.",
     you: "You asked"
@@ -520,9 +521,9 @@
     }
     return h("article", { class: "ask-card", "data-card": card.id }, kids);
   }
-  function relatedView(items) {
+  function relatedView(items, label) {
     if (!items.length) return null;
-    return h("div", { class: "ask-related" }, [h("p", { class: "ask-label", text: TEXT.related }),
+    return h("div", { class: "ask-related" }, [h("p", { class: "ask-label", text: label || TEXT.related }),
       h("ul", { class: "ask-chips" }, items.map(function (r) {
         return h("li", null, [chip(r.card.title, function () { show(r.card); })]);
       }))]);
@@ -545,7 +546,7 @@
       fb.note ? h("p", { class: "ask-answer ask-note", text: fill(fb.note) }) : null,
       links(ls)]);
     var block = h("div", { class: "ask-block" }, [wrap]);
-    if (res.related && res.related.length) block.appendChild(relatedView(res.related.filter(function (r) { return r.cover > 0.2; })) || h("span"));
+    if (res.related && res.related.length) block.appendChild(relatedView(res.related.filter(function (r) { return res.mode === "hybrid" || r.cover > 0.2; }), TEXT.closest) || h("span"));
     block.appendChild(starters());
     return block;
   }
