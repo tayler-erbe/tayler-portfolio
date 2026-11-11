@@ -1,0 +1,1349 @@
+{
+ "family": "gme",
+ "cards": [
+  {
+   "id": "gme-overview",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Generation model evaluation overview",
+   "questions": [
+    "what is the generation model evaluation page",
+    "what is the rule-bound generation screen",
+    "summarize the generation model evaluation",
+    "what is the local model screening case study",
+    "tell me about screening local models on one gpu",
+    "what did the qwen3.8 model screen find overall",
+    "what is the rule-bound generation on one gpu study",
+    "short summary of the skyrule generator model screen",
+    "what did she evaluate in the generation model evaluation",
+    "give me the headline result of the generation model evaluation",
+    "what did the seven configuration screen conclude"
+   ],
+   "tags": [
+    "screening",
+    "case study",
+    "summary",
+    "local models",
+    "rule-bound",
+    "overview",
+    "yield",
+    "shootout",
+    "bake-off",
+    "candidate models",
+    "local generator",
+    "seven model",
+    "point of the screen",
+    "skyrule generator",
+    "comparison of local models"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#problem"
+    }
+   ],
+   "answer": "It's an October 2026 case study where I screened seven local model configurations, covering six models, on the real generator behind my personal project Skyrule. The generator writes a plan, then a piece, and code checks both. Its yield had stalled at 3 of 20 groups. Under a decision rule frozen before the run, Qwen3.8 27B accepted 7 of 20, and a second pre-registered round on 60 new groups replicated it, 24 against 11. The public IFEval ranking disagreed with the task ranking. Qwen3.8 is eligible for the release route, not adopted, and nothing on the page is release validation.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-problem",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Why the generator needed a model screen",
+   "questions": [
+    "why did the generation model evaluation happen",
+    "why did the skyrule generator keep only 3 of 20 groups",
+    "what was the problem with the rule-bound generator yield",
+    "what was the pre-registered bar of 9 groups",
+    "why did every first plan fail at least one check",
+    "what was the median of five failing checks per plan",
+    "what caused the low yield in the skyrule text generator",
+    "why screen models when the generator yield stalled",
+    "what did the trial run on 20 frozen groups show",
+    "what was wrong with the generator before the model screen",
+    "did the low yield come from the model or the prompt",
+    "how many checks did a first plan fail in the generation screen"
+   ],
+   "tags": [
+    "yield",
+    "stall",
+    "trial run",
+    "frozen groups",
+    "bar of 9",
+    "plan stage",
+    "failing checks",
+    "stuck",
+    "three accepted",
+    "pieces",
+    "twenty",
+    "team",
+    "other local models",
+    "low acceptance",
+    "why look at other models"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#problem"
+    }
+   ],
+   "answer": "A trial run on 20 frozen test groups finished within its bounds but kept only 3 of 20, against a pre-registered bar of 9. A separate measurement found every first plan failed at least one check, with a median of five failing checks per plan. The anchor words were present for all 20 groups, but one rule banned the phrase \"each other\" while every accepted wording of one goal contained it. So the low yield could come from the model, the serving setup, the instructions, or all three. The screen asked one narrower question: with prompt, checks and bar fixed, does another local configuration accept clearly more groups?",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-rule",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The decision rule and what clearly more means",
+   "questions": [
+    "what was the screening rule in the generation model evaluation",
+    "what does clearly more mean in the model screen",
+    "how many more accepted groups earned a full trial",
+    "what was the four group margin in the qwen screen",
+    "was the decision rule written before the model run",
+    "why a margin of four accepted groups",
+    "what was the first try condition in the screening rule",
+    "how did she decide which model earned a full trial",
+    "is the four group margin a calibrated threshold",
+    "what does earning a full trial mean for a local model",
+    "what is the screening threshold for the generation screen"
+   ],
+   "tags": [
+    "decision rule",
+    "threshold",
+    "margin",
+    "pre-registered",
+    "full trial",
+    "screening bar",
+    "false positive",
+    "meaningful win",
+    "candidate model",
+    "define",
+    "before testing",
+    "win condition",
+    "pass condition"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#method"
+    }
+   ],
+   "answer": "An arm earned a full trial if it accepted at least four more groups than the baseline and did not accept fewer on the first try. I wrote that before any model loaded and froze it by hash. I'm clear about its limits: the four-group margin is a screening threshold with no calibrated false-positive control across several candidates, and with seven arms on 20 groups one arm can clear it by luck. That's why passing only earned a full trial, not adoption. Fluent writing that fails a check counts as a rejected piece, so the generator's own checks were the score.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-arms",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The seven configurations that were tested",
+   "questions": [
+    "which models were tested in the generation model evaluation",
+    "what were the seven arms in the model screen",
+    "what is arm A in the generation screen",
+    "which model families did the generation screen cover",
+    "was gemma 4 31b in the generation screen",
+    "was nemotron 3 nano tested in the generator screen",
+    "which models did she compare against qwen3-32b",
+    "what is a bundle of model server and quantisation",
+    "what was the optional eighth arm in the screen",
+    "why was qwen3.8 27b with thinking low not compared",
+    "what was gpt-oss 20b tested for in the generation screen",
+    "which quantisation did the ollama arms use"
+   ],
+   "tags": [
+    "arms",
+    "gemma 4",
+    "gpt-oss",
+    "nemotron",
+    "qwen 3.6",
+    "q4_k_m",
+    "awq",
+    "thinking",
+    "candidate models",
+    "vendor",
+    "different vendor",
+    "bake-off",
+    "list",
+    "thinking variant",
+    "time cap"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#evaluated"
+    }
+   ],
+   "answer": "Seven main configurations covering six models. A was Qwen3-32B on vLLM with AWQ, the current generator and the baseline. B was the same model on Ollama with Q4_K_M. Then Qwen3.8 27B, GPT-OSS 20B with thinking set to low, Nemotron 3 Nano, Gemma 4 31B and Qwen 3.6 35B-A3B, all on Ollama. Each arm is a bundle of model, server, quantization, chat template and default sampling, and the results describe those bundles. An optional eighth arm, Qwen3.8 27B with thinking low, hit its per-arm time cap and was not compared.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-fidelity",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Fidelity gate and freezing the rule",
+   "questions": [
+    "what was the fidelity gate in the generation model evaluation",
+    "how did she check the baseline reproduced the trial run",
+    "what does frozen by hash mean in the model screen",
+    "why must the baseline reproduce 3 of 20",
+    "did the baseline pass the fidelity gate",
+    "what is pre-registration in the qwen screen",
+    "how did she make sure the bench was faithful to the release generator",
+    "what happens if the baseline does not reproduce the trial",
+    "was the screening rule fixed before the model loaded",
+    "how was the bench reviewed before spending gpu time",
+    "how many cpu tests did the generation bench have"
+   ],
+   "tags": [
+    "fidelity",
+    "reproducibility",
+    "hash",
+    "pre-registration",
+    "bench",
+    "review",
+    "67 tests",
+    "harness",
+    "earlier run",
+    "peeking",
+    "safeguards",
+    "proves",
+    "matched",
+    "before running",
+    "guard"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#method"
+    }
+   ],
+   "answer": "Before any model loaded I froze the screening rule by hash. The fidelity gate said the baseline must reproduce the trial run's 3 of 20 within two groups, or nothing is concluded. It accepted 3 of 20, so the gate passed, though that only establishes fidelity under the pre-registered gate. The bench's records show each copied file's hash checked against the release version. The design went through two independent model-review rounds, the bench had 67 CPU tests, and a later independent audit of the write-up found overstatements, now corrected on the page.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-realgen",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Running the real generator and GPU fit",
+   "questions": [
+    "did the screen use the real skyrule generator code",
+    "what stayed fixed across arms in the generation model evaluation",
+    "how did every ollama arm load on the gpu",
+    "what is the 16,384 token context requirement in the screen",
+    "why refuse a model that does not fit 100 percent on the gpu",
+    "was the vllm baseline fit checked the same way",
+    "what did the bench do to guard the shared gpu",
+    "how did the bench refuse unsafe restores",
+    "what was the same seed and retry budget across arms",
+    "one model on the gpu at a time in the generation screen",
+    "what happens to rejected and timed out groups in the denominator"
+   ],
+   "tags": [
+    "gpu lock",
+    "context",
+    "retry budget",
+    "seed",
+    "denominator",
+    "vram fit",
+    "ownership",
+    "identical",
+    "every candidate",
+    "same prompts",
+    "same checks",
+    "vram",
+    "entirely"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#method"
+    }
+   ],
+   "answer": "Each arm ran the release generator's own code, prompt, retry budget, seed and checks on the same 20 frozen groups, pointed at a different model. Every Ollama arm had to load 100% onto the GPU at a 16,384-token context or be refused, and all six did. The vLLM baseline ran on its own server, so its fit wasn't checked the same way. The bench held a lock on the card, checked ownership before destructive steps, and stopped an arm if it saw a model it hadn't loaded. Rejected and timed-out groups stayed in the denominator of 20.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-screen-results",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Task screen results by arm",
+   "questions": [
+    "what were the task screen results in the generation model evaluation",
+    "how many groups did qwen3.8 27b accept in the screen",
+    "how many groups did gemma 4 31b accept of 20",
+    "how many groups did nemotron 3 nano accept",
+    "what did gpt-oss 20b score on the generator checks",
+    "what was the accepted count for qwen 3.6 35b-a3b",
+    "which configuration met the screening rule",
+    "how many accepted on first try in the model screen",
+    "what are the wilson intervals in the generation screen",
+    "did qwen3.8 beat the current configuration 7 of 20 against 3",
+    "what is the mcnemar result for qwen3.8 against the baseline",
+    "how did qwen3.8 and the baseline differ paired by group"
+   ],
+   "tags": [
+    "accepted groups",
+    "wilson",
+    "mcnemar",
+    "first try",
+    "7 of 20",
+    "results table",
+    "screen",
+    "best candidate",
+    "keep out of twenty",
+    "statistically significant",
+    "first screen",
+    "significance"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#findings"
+    }
+   ],
+   "answer": "Only Qwen3.8 27B met the rule: 7 of 20 accepted against the baseline's 3, with a Wilson interval of 0.18 to 0.57. First-try acceptance was 0 of 20 for both, so it didn't lose there. Paired by group, both accepted 2, only Qwen3.8 accepted 5, only the baseline 1, exact McNemar p = 0.22, unadjusted and descriptive. GPT-OSS 20B also got 3, Qwen 3.6 got 2, Qwen3-32B on Ollama got 1, and Nemotron 3 Nano and Gemma 4 each got 0. With 20 groups and one seed, small differences aren't resolved.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-backend",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Same model, different backend bundle",
+   "questions": [
+    "did the same qwen3-32b behave differently on vllm and ollama",
+    "why did qwen3-32b accept 1 of 20 on ollama",
+    "what is the backend effect in the generation screen",
+    "vllm awq versus ollama q4_k_m for qwen3-32b",
+    "does the server change the model's results",
+    "how many calls per accepted group did qwen3-32b ollama use",
+    "why compare bundles rather than models",
+    "did quantisation explain the qwen3-32b gap",
+    "how reproducible was the backend difference in the screen",
+    "what changed between arm a and arm b",
+    "what is 104 calls per accepted group"
+   ],
+   "tags": [
+    "backend",
+    "quantisation",
+    "vllm",
+    "ollama",
+    "awq",
+    "bundle",
+    "confound",
+    "identical weights",
+    "two backends",
+    "server",
+    "comparison of the server",
+    "yields"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#findings"
+    }
+   ],
+   "answer": "The same Qwen3-32B accepted 3 groups on vLLM with AWQ and 1 on Ollama with Q4_K_M. Total calls were about equal, 102 and 104, so per accepted group the Ollama arm used about three times as many, 104 against 34. Server, quantization and possibly template and sampling defaults changed together, so I can't say which one mattered. In this single run the two bundles differed. The screen doesn't show how reproducible that is or how much the server alone contributes, which is why I describe every result as a comparison of bundles.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-stage-failure",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Which stage failed for which model",
+   "questions": [
+    "where did gemma 4 fail in the generation screen",
+    "how many groups did gemma 4 fail at the plan stage",
+    "what is the plan stage versus writing stage failure",
+    "did the current configuration fail mostly at planning",
+    "why test a different model for each stage",
+    "how many writing calls did gemma 4 make",
+    "what does the stage failure split suggest",
+    "how many groups did the baseline reject at the plan stage",
+    "does the screen show which model plans best",
+    "gemma 4 rejected 14 at the writing stage",
+    "plan then write then check failure analysis"
+   ],
+   "tags": [
+    "plan stage",
+    "writing stage",
+    "failure analysis",
+    "per-stage",
+    "gemma",
+    "split pipeline",
+    "planner",
+    "writer",
+    "planned better",
+    "wrote better",
+    "break",
+    "pipeline",
+    "baseline qwen3-32b"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#findings"
+    }
+   ],
+   "answer": "Failures differed by stage. Gemma 4 had 3 groups rejected at the plan stage and 14 at the writing stage across 42 writing calls, and accepted none. The current Qwen3-32B configuration had 15 groups rejected at the plan stage. That suggests testing a different model for each stage, which I did in round 2. It doesn't establish which model plans or writes best on its own. It's a lead from failure analysis, and it needed its own pre-registered test before I'd treat it as anything more.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-resource",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Calls and tokens per accepted group",
+   "questions": [
+    "how many tokens per accepted group did qwen3.8 use",
+    "what is output tokens per accepted group in the screen",
+    "did qwen3.8 27b use fewer model calls",
+    "calls per accepted group for the baseline and qwen3.8",
+    "what are the success-normalised totals in the screen",
+    "is tokens per accepted group a measured completion time",
+    "how much cheaper was qwen3.8 per accepted piece",
+    "did the resource use fall for the better model",
+    "11,021 tokens per accepted group",
+    "2,733 output tokens per accepted group",
+    "would full library time follow from the token savings"
+   ],
+   "tags": [
+    "tokens",
+    "calls",
+    "efficiency",
+    "cost per accepted",
+    "throughput",
+    "normalised",
+    "winning configuration",
+    "less output",
+    "usable piece",
+    "per kept",
+    "cheaper"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#findings"
+    }
+   ],
+   "answer": "Per accepted group, Qwen3.8 27B used 16.4 calls and 2,733 output tokens against the baseline's 34.0 calls and 11,021, so about half the calls and about a quarter of the tokens in this run. In round 2 it was 14.8 calls and 3,194 tokens against 42.7 and 7,516 for the current prompt. These are success-normalized totals across all stages, not measured completion times. On a single card it matters, but full-library time also depends on batching, latency and how yield varies across other groups, so I don't claim a library time from them.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-qwen-diff",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Why Qwen3.8 differed from Qwen3-32B",
+   "questions": [
+    "how did qwen3.8 differ from qwen3-32b on the checks",
+    "why did qwen3.8 27b accept four more groups",
+    "what were the plan calls for qwen3.8 versus the baseline",
+    "which checks did qwen3.8 fail less often at round 0",
+    "what is the nev1 check",
+    "what are dup1 goal1 and bf8 checks",
+    "did shorter plans cause the qwen3.8 gain",
+    "how long were qwen3.8 plans on average",
+    "what do the records not show about the qwen difference",
+    "is the cause of the qwen3.8 advantage known",
+    "qwen3.8 flagged more often on nev1",
+    "launder2 and interact2 counts for the two qwen arms"
+   ],
+   "tags": [
+    "dup1",
+    "goal1",
+    "bf8",
+    "nev1",
+    "launder2",
+    "checker flags",
+    "plan length",
+    "smaller qwen",
+    "won the screen",
+    "why smaller",
+    "why won",
+    "first plans"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#differences"
+    }
+   ],
+   "answer": "The records show where they differed, not why. Qwen3.8 used 27 plan calls against 41, with 491 average output tokens per plan against 727, and 12 groups rejected at the plan stage against 15. At round 0 it failed DUP1 on 2 groups against 7, GOAL1 on 10 against 15, and LAUNDER2 and INTERACT2 on 0 against 4 each, but NEV1 on 9 against 0. Both had 15 groups fail BF8. Shorter plans coincided with fewer flags on some checks. The screen can't separate training, size, architecture, template, quantization or sampling, so the cause stays a hypothesis.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-contradiction",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The instruction contradiction in the prompt",
+   "questions": [
+    "what was the instruction contradiction in the generator",
+    "which rule banned the phrase each other",
+    "did the prompt contradict its own checks in the generation screen",
+    "how much of the failure came from the instruction conflict",
+    "did the candidate prompt fix help in round 2",
+    "why does the instruction conflict sit under every arm",
+    "what is bf8 and why did both arms fail it",
+    "how did she find the contradictory rule",
+    "what is the candidate fix for the instruction conflict",
+    "can incompatible instructions explain the low yield",
+    "was the prompt repair benefit shown"
+   ],
+   "tags": [
+    "contradiction",
+    "prompt bug",
+    "instructions",
+    "each other",
+    "conflicting rules",
+    "candidate prompt",
+    "fixing the prompt",
+    "prompt repair",
+    "second round",
+    "raise acceptance",
+    "self-contradictory"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#differences"
+    }
+   ],
+   "answer": "One rule banned the phrase \"each other\" while every accepted wording of one goal contained it, so some failures may reflect incompatible instructions rather than either model. It surfaced when the prompts were reconstructed after a measurement showed every first plan failed a check. The aggregate BF8 counts don't say how much of the failure that conflict caused. I tested a candidate fix in round 2 as a separate factor, and its benefit wasn't shown at that precision: an average of 7.5 points, interval minus 3 to 18. The contradiction still needs its own repair and test.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-round2",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Round 2 replication on 60 new groups",
+   "questions": [
+    "what was round 2 of the generation model evaluation",
+    "did the qwen3.8 advantage replicate on new groups",
+    "how many groups did qwen3.8 accept of 60",
+    "what was the primary replication rule in round 2",
+    "what is the newcombe interval of 6.6 to 35.5",
+    "qwen3.8 24 of 60 against 11 of 60",
+    "what was the mcnemar p value of 0.011",
+    "was first try acceptance worse in round 2",
+    "how many new groups and what seed did round 2 use",
+    "did the pre-registered replication hold",
+    "what was the scope of the round 2 replication",
+    "does the replication count as release validation"
+   ],
+   "tags": [
+    "replication",
+    "round 2",
+    "60 groups",
+    "newcombe",
+    "p = 0.011",
+    "pre-registered",
+    "new seed",
+    "winning model",
+    "fresh data",
+    "win again",
+    "statistical rule",
+    "enough to ship",
+    "ship the model",
+    "replicated"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#round2"
+    }
+   ],
+   "answer": "Yes, it held. In a second pre-registered round frozen before it ran, with a new seed and 60 new groups from one job, Qwen3.8 27B accepted 24 of 60 against the current configuration's 11, a difference of 21.7 points with a 95% Newcombe interval of 6.6 to 35.5. Paired, only Qwen3.8 accepted 18, only the current one 5, both 6, neither 31, exact McNemar p = 0.011, and first-try acceptance wasn't worse. Scope is narrow: one seed, one placement, one relation and one goal, and a bundle comparison. It supports a full release route, not release validation.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-model-prompt",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Model versus prompt in the two by two",
+   "questions": [
+    "did the prompt fix or the model matter more",
+    "what was the model versus prompt contrast in round 2",
+    "how many points did the candidate prompt add",
+    "how many groups did qwen3.8 accept with the candidate fix",
+    "what was the interaction estimate in the two by two",
+    "did she detect a model and prompt interaction",
+    "what is the 21 point model effect",
+    "how many groups did the baseline accept with the candidate prompt",
+    "is the prompt benefit demonstrated",
+    "are the secondary estimates exploratory",
+    "a.fx2 and c.fx2 arm results"
+   ],
+   "tags": [
+    "factorial",
+    "interaction",
+    "bootstrap",
+    "candidate prompt",
+    "model effect",
+    "exploratory",
+    "two-by-two",
+    "swapping",
+    "editing the prompt",
+    "mattered more",
+    "acceptance",
+    "prompt versus model"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#round2"
+    }
+   ],
+   "answer": "The model mattered more than the prompt. Across the two-by-two, Qwen3.8 on Ollama against Qwen3-32B on vLLM averaged about 21 points, bootstrap interval 9 to 33. The candidate prompt contrast averaged 7.5 points, interval minus 3 to 18, so a prompt benefit wasn't demonstrated at this precision. Qwen3.8 accepted 24 of 60 with the current prompt and 28 with the candidate, and the baseline 11 and 16. The interaction estimate was minus 1.7 points, interval about minus 20 to 18: none detected, though meaningful interactions remain compatible with the data. These secondary estimates are exploratory.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-staged",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "One model per stage test",
+   "questions": [
+    "did using gemma 4 for plans and qwen3.8 for writing help",
+    "how many plans did gemma 4 get accepted of 60",
+    "what was the staged arm s.fx1",
+    "how was the staged pipeline run in two passes",
+    "what was gemma 4's plan acceptance versus qwen3.8's",
+    "did the one model per stage design show a gain",
+    "what does 25 accepted against 24 mean",
+    "were the staged resource figures live measurements",
+    "how much better was qwen3.8 writing than gemma writing",
+    "why replay gemma's plan responses byte for byte",
+    "gemma plans qwen3.8 writes result"
+   ],
+   "tags": [
+    "staged",
+    "two-model pipeline",
+    "plan replay",
+    "gemma plans",
+    "per-stage model",
+    "multi-model",
+    "two-model",
+    "planner and writer",
+    "worth it",
+    "strongest planner",
+    "best writer",
+    "splitting",
+    "raise yield"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#round2"
+    }
+   ],
+   "answer": "It didn't demonstrate a benefit. Gemma 4's plans were accepted for 52 of 60 groups against 27 for Qwen3.8's own, but with Qwen3.8 writing from Gemma's plans, 25 groups were accepted against 24 with its own plans: an estimated gain of 1.7 points, interval minus 17 to plus 20. Holding Gemma's recorded plans fixed, Qwen3.8 writing accepted 35 points more groups than Gemma writing, interval 23 to 47. The staged arm used two passes, replaying Gemma's plan responses byte for byte, so the resource figures mix two models and aren't costs of a live pipeline.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-ifeval",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "IFEval results by configuration",
+   "questions": [
+    "what were the ifeval scores in the generation screen",
+    "what was gemma 4's ifeval prompt strict score",
+    "how did qwen3.8 score on ifeval",
+    "which model had the lowest ifeval score",
+    "how many prompts are in ifeval",
+    "how was the ifeval checker validated against the paper",
+    "why was the ollama qwen3-32b ifeval arm flagged contaminated",
+    "what is prompt-level strict accuracy",
+    "how did gemma 4 compare to the baseline on ifeval paired",
+    "what was gpt-oss 20b's ifeval score of 0.725",
+    "which ifeval arms were rerun after contamination"
+   ],
+   "tags": [
+    "ifeval",
+    "benchmark",
+    "541 prompts",
+    "prompt strict",
+    "contaminated",
+    "mcnemar",
+    "checker",
+    "instruction-following benchmark",
+    "each candidate",
+    "public benchmark",
+    "best ifeval model",
+    "scorer"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#public"
+    }
+   ],
+   "answer": "IFEval has 541 prompts, and prompt-level strict accuracy is the headline. Gemma 4 31B scored 0.900, the baseline Qwen3-32B on vLLM 0.830, Qwen 3.6 0.823, Qwen3.8 0.806, Nemotron 0.793 and GPT-OSS 20B 0.725. Before use, the reference checker reproduced the paper's published GPT-4 results within two prompts and two instructions, not exactly. Paired against the baseline, Gemma passed 61 prompts it failed and failed 23 it passed, p below 0.0001. Qwen3-32B on Ollama was flagged contaminated in round 2, so it's descriptive only, 0.839, and not compared.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-rank-mismatch",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Why the IFEval and task rankings disagreed",
+   "questions": [
+    "why did gemma 4 top ifeval but fail the generator",
+    "did the public benchmark predict the task result in the generation screen",
+    "ifeval ranking versus task ranking",
+    "what does gemma 4 versus qwen3.8 show about benchmarks",
+    "can a leaderboard choose a model for a rule-bound generator",
+    "why did the highest ifeval model accept almost no groups",
+    "what is the difference between ifeval and the generator's checks",
+    "did qwen3.8 score below the baseline on ifeval",
+    "what decided which configuration earned a full trial",
+    "benchmarks for shortlist not verdict in the model screen",
+    "does ifeval establish writing quality"
+   ],
+   "tags": [
+    "leaderboard",
+    "benchmark mismatch",
+    "task-specific",
+    "shortlist",
+    "validity",
+    "public benchmark",
+    "general instruction-following score",
+    "pick the production model",
+    "predictor of fit",
+    "in-house checks",
+    "benchmark leaders",
+    "real workload"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#public"
+    }
+   ],
+   "answer": "The two rankings differed. Across the six configurations with clean IFEval results, Gemma 4 scored highest at 0.900 and accepted 0 of 20 and then 4 of 60 task groups, while Qwen3.8 scored below the current configuration, 0.806 against 0.830, and accepted the most. IFEval tests general verifiable instructions, and the generator's checks test this task's specific rules, so they measure different things. I use a public benchmark to build a shortlist, but here the task's checks and a rule written in advance decided what earned a full trial. Neither establishes writing quality.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-speed-memory",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Speed and memory on the RTX 5090",
+   "questions": [
+    "how fast was nemotron 3 nano on the rtx 5090",
+    "what was the vram after load for qwen3.8 27b",
+    "what generation tokens per second did gpt-oss 20b reach",
+    "what was time to first token for gemma 4 31b",
+    "how much vram did the vllm awq baseline use",
+    "what hardware ran the generation model evaluation",
+    "are the speed numbers aggregate throughput",
+    "what licences did ollama report for these models",
+    "which model had the smallest memory footprint in the screen",
+    "single-stream rate on one 32 gb card",
+    "was qwen3.8 122 tokens per second"
+   ],
+   "tags": [
+    "rtx 5090",
+    "vram",
+    "tokens per second",
+    "latency",
+    "licence",
+    "throughput",
+    "single stream",
+    "gpu memory",
+    "winning model",
+    "fastest",
+    "production capacity",
+    "tokens per second figures"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#hardware"
+    }
+   ],
+   "answer": "One NVIDIA RTX 5090 with 32 GB, one request at a time, 20 fixed prompts. Qwen3.8 27B used 19,324 MiB after load at 122 tokens per second with 0.71 s to first token. Nemotron 3 Nano was fastest at 336 tokens a second, GPT-OSS 20B smallest at 13,156 MiB and 280 tokens a second, Gemma 4 31B 128 tokens a second at 23,560 MiB, and the vLLM baseline 68 at 30,436 MiB. These are single-stream rates on this card, not aggregate throughput or production capacity, since vLLM batches in real use. Licences reproduce Ollama's metadata, so check each model's own before use.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-incidents",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Run incidents and GPU contamination",
+   "questions": [
+    "what incidents happened during the generation model evaluation",
+    "why was gemma 4's first ifeval run discarded",
+    "what contaminated the nemotron ifeval run",
+    "what interfered with the shared gpu",
+    "why was qwen3-32b on ollama flagged contaminated",
+    "what was the path guard repair in round 2",
+    "how did the watcher catch unexpected models",
+    "does moving a window earlier give isolation",
+    "what happened when restoring the resident service failed",
+    "did the incidents affect the task scores",
+    "which arms were not run because of a text-encoding error"
+   ],
+   "tags": [
+    "incident",
+    "contamination",
+    "shared gpu",
+    "watcher",
+    "isolation",
+    "restore",
+    "path guard",
+    "other jobs",
+    "sharing the gpu",
+    "schedule change",
+    "benchmark run",
+    "hourly agent"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#incidents"
+    }
+   ],
+   "answer": "Incidents were recorded as they happened, and affected results were discarded or flagged. In the first IFEval window the bench's watcher saw an unexpected model load and stopped Gemma 4's run. I first attributed it to a morning check-in job; a later diagnosis traced it to an hourly agent round that falls back to a local model when the resident service is down. The next window started early at my request without removing that interference, and Nemotron's IFEval run was contaminated, probably from the same cause, though that wasn't measured. A text-encoding error then stopped the window before B and D. Round 2's first two windows were refused by an output-path guard, fixed in two lines. Task scores were unaffected.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-limits",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What the screen does not show",
+   "questions": [
+    "what are the limits of the generation model evaluation",
+    "what does the model screen not prove",
+    "is the qwen3.8 result a general ranking",
+    "does the screen measure writing quality",
+    "why is 20 groups and one seed a limitation",
+    "are the results valid for other task types",
+    "is the evaluation release validation",
+    "how many scores did a model judge give",
+    "what are the caveats of comparing configuration bundles",
+    "can the results be extended to the rest of the library",
+    "does the best result of 7 of 20 meet the bar of 9"
+   ],
+   "tags": [
+    "limitations",
+    "caveats",
+    "generalization",
+    "validity",
+    "no model judge",
+    "scope",
+    "small sample",
+    "shouldn't conclude",
+    "evidence run out",
+    "general ranking",
+    "local models ranking",
+    "reader"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#findings"
+    }
+   ],
+   "answer": "Several things. The checks are the score, not a measure of writing quality beyond what they test, and a model judge gave 0 scores. Twenty frozen groups and one seed say little about small differences or other groups, and round 2's 60 groups came from a single job. Each arm is a bundle of model, server, quantization, template and sampling, so I can't attribute a difference to any one of them. The best round 1 result, 7 of 20, was still below the bar of 9. Other task types weren't tested, and nothing here is release validation or a production decision.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-status",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Status, release route and next steps",
+   "questions": [
+    "what is the status of the generation model evaluation",
+    "is qwen3.8 adopted in the skyrule generator",
+    "what is the release route for the qwen3.8 model",
+    "what comes next after round 2",
+    "is there a fine-tuning experiment planned",
+    "why did the fine-tuning pilot stop",
+    "what approvals are needed to change the generator model",
+    "qwen3.8 eligible not adopted",
+    "what is a canary run for the generator",
+    "what is level 2 research in this study",
+    "does she plan a wider model search"
+   ],
+   "tags": [
+    "status",
+    "release",
+    "fine-tuning",
+    "adoption",
+    "canary",
+    "next steps",
+    "approval",
+    "in production",
+    "switches models",
+    "yet",
+    "before the generator switches",
+    "winning model"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#next"
+    }
+   ],
+   "answer": "Qwen3.8 is eligible for the release route, not adopted. Taking it into the generator is a release decision: its own canary run, an independent quality review and the project owner's approval of the model change. The next piece is a pre-registered fine-tuning experiment with its own build, which reserves the round 2 groups from training and validation data. Its first pilot stopped on a server setup error, recorded and fixed, and has been re-queued, so no fine-tuning result is reported. A wider model search remains possible later. This is level 2 research, so nothing on the page is release validation.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-role",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "My role and the tools used",
+   "questions": [
+    "what was her role in the generation model evaluation",
+    "who designed the model screen",
+    "what tools were used in the generation model evaluation",
+    "did she use claude to orchestrate the bench",
+    "what does evaluation design orchestration failure analysis mean",
+    "which servers did the screen use",
+    "how did an agent help run the model evaluation",
+    "is the generation model evaluation a personal project",
+    "what ollama and vllm setup did she run",
+    "did she write the bench herself for the screen",
+    "who ran the failure analysis in the model screen"
+   ],
+   "tags": [
+    "role",
+    "orchestration",
+    "ollama",
+    "vllm",
+    "claude",
+    "agent",
+    "personal project",
+    "personally own",
+    "stack",
+    "client or own project",
+    "experiment",
+    "owned"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#problem"
+    }
+   ],
+   "answer": "I did the evaluation design, the orchestration and the failure analysis. The workload belongs to Skyrule, my self-funded personal project, and the bench ran on one RTX 5090 using Ollama and vLLM. My coordinating agent, Claude, unloaded an unexpected model by hand in the first IFEval window so the restore and results could proceed. The design went through two independent model-review rounds, and an independent audit of the write-up found overstatements that are now corrected on the page. It is an October 2026 case study of screening evidence, not a production decision.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-lessons",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Engineering lessons from the screen",
+   "questions": [
+    "what were the takeaways of the generation model evaluation",
+    "what did she learn from the qwen3.8 screen",
+    "why measure the task as well as the leaderboard",
+    "why decide before you look in a model comparison",
+    "why have the write-up audited",
+    "what did the audit of the first draft find",
+    "why does a shared gpu need isolation",
+    "what lessons came from comparing bundles",
+    "how did the pre-registered rule keep the screen from becoming adoption",
+    "what would she do differently in the generation screen",
+    "what is the main lesson of rule-bound generation on one gpu"
+   ],
+   "tags": [
+    "lessons",
+    "takeaways",
+    "audit",
+    "method",
+    "pre-registration",
+    "retrospective",
+    "best practice",
+    "main lessons",
+    "independent audit",
+    "case study",
+    "local model study"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#takeaways"
+    }
+   ],
+   "answer": "Six things. Measure the task as well as the leaderboard, because the IFEval ranking and the task ranking differed. Check the harness and the instructions, since a reproduced baseline doesn't prove the prompts are sound and a review found a contradiction. Compare bundles and say so. Decide before you look, and keep the decision small, so a screening result doesn't become an adoption. A shared GPU needs isolation, not good timing. And have the write-up audited: the first draft had causal claims the data didn't support, a units error and figures from the wrong window. The corrected page says less and is more defensible.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  },
+  {
+   "id": "gme-method-why",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Why the method is set up this way",
+   "questions": [
+    "why use the generator's own checks as the score",
+    "why not use a model judge in the generation screen",
+    "why report only counts and check names",
+    "why keep the prompt and checks fixed across arms",
+    "how does the generation screen avoid overfitting to luck",
+    "why keep rejected groups in the denominator",
+    "what is the design logic of the rule-bound generation screen",
+    "why a fixed seed and frozen groups",
+    "does the screen publish generated text",
+    "why separate prompt as a factor in round 2",
+    "what makes this evaluation reproducible"
+   ],
+   "tags": [
+    "design logic",
+    "denominator",
+    "no judge",
+    "reproducible",
+    "controls",
+    "frozen",
+    "rationale",
+    "llm grade",
+    "timeouts",
+    "failures",
+    "count timeouts",
+    "grade the output"
+   ],
+   "links": [
+    {
+     "label": "Generation model evaluation",
+     "url": "generation-model-evaluation.html#method"
+    }
+   ],
+   "answer": "I held the prompt, checks and bar fixed so any change in accepted groups could be attributed to the configuration, and I used the generator's own code checks as the score so there's no model judge and no scoring subjectivity: 0 scores came from a model. Rejected and timed-out groups stay in the denominator of 20, so a configuration can't look good by dropping hard cases. The screening rule was frozen by hash before running, on 20 frozen groups. Only counts and check names are reported, never generated text. In round 2 I tested the candidate prompt as a separate factor rather than changing it under the screen.",
+   "sources": [
+    "page:generation-model-evaluation.html"
+   ]
+  }
+ ],
+ "add_questions": {},
+ "tests": [
+  [
+   "give me the one paragraph version of the local model screen",
+   "gme-overview"
+  ],
+  [
+   "what was the point of the seven model shootout on the skyrule generator",
+   "gme-overview"
+  ],
+  [
+   "overall what came out of the rule-bound generation evaluation",
+   "gme-overview"
+  ],
+  [
+   "why was the text generator stuck at three accepted pieces out of twenty",
+   "gme-problem"
+  ],
+  [
+   "what made the team look at other local models for the generator",
+   "gme-problem"
+  ],
+  [
+   "where did the low acceptance rate in the rule-bound generator come from",
+   "gme-problem"
+  ],
+  [
+   "how did she define a meaningful win for a candidate model before testing",
+   "gme-rule"
+  ],
+  [
+   "what was the pass condition for the candidate configurations in the screen",
+   "gme-rule"
+  ],
+  [
+   "did the threshold control false positives across seven arms",
+   "gme-rule"
+  ],
+  [
+   "list the candidate models in the local generator bake-off",
+   "gme-arms"
+  ],
+  [
+   "did the screen include a model from a different vendor",
+   "gme-arms"
+  ],
+  [
+   "what happened to the thinking variant of qwen3.8 in the screen",
+   "gme-arms"
+  ],
+  [
+   "what proves the harness matched the earlier generator run",
+   "gme-fidelity"
+  ],
+  [
+   "how did she guard against peeking before the model comparison",
+   "gme-fidelity"
+  ],
+  [
+   "what safeguards did the evaluation bench have before running",
+   "gme-fidelity"
+  ],
+  [
+   "were the prompts and checks identical for every candidate model",
+   "gme-realgen"
+  ],
+  [
+   "how did the bench make sure the model fit entirely in vram",
+   "gme-realgen"
+  ],
+  [
+   "did the screen change the retry budget between models",
+   "gme-realgen"
+  ],
+  [
+   "how many pieces did the best candidate keep out of twenty",
+   "gme-screen-results"
+  ],
+  [
+   "did any model in the screen accept zero groups",
+   "gme-screen-results"
+  ],
+  [
+   "was the qwen3.8 advantage in the first screen statistically significant",
+   "gme-screen-results"
+  ],
+  [
+   "is a model comparison really a comparison of the server too",
+   "gme-backend"
+  ],
+  [
+   "why did identical weights give different yields on two backends",
+   "gme-backend"
+  ],
+  [
+   "what confounds sit inside a model name in the screen",
+   "gme-backend"
+  ],
+  [
+   "did one model plan better while another wrote better",
+   "gme-stage-failure"
+  ],
+  [
+   "what motivated trying a two-model plan and write pipeline",
+   "gme-stage-failure"
+  ],
+  [
+   "where in the pipeline did the baseline qwen3-32b break",
+   "gme-stage-failure"
+  ],
+  [
+   "how much less output did the winning configuration produce per usable piece",
+   "gme-resource"
+  ],
+  [
+   "did the best model cost fewer calls for each kept group",
+   "gme-resource"
+  ],
+  [
+   "can the token savings be turned into a library generation time",
+   "gme-resource"
+  ],
+  [
+   "what did the checker flags show about the better model's first plans",
+   "gme-qwen-diff"
+  ],
+  [
+   "can you say why the smaller qwen model won the screen",
+   "gme-qwen-diff"
+  ],
+  [
+   "did plan length explain the difference between the two qwen arms",
+   "gme-qwen-diff"
+  ],
+  [
+   "were the instructions self-contradictory in the skyrule prompts",
+   "gme-contradiction"
+  ],
+  [
+   "did fixing the prompt raise acceptance in the second round",
+   "gme-contradiction"
+  ],
+  [
+   "how did she tell a model failure from a prompt failure",
+   "gme-contradiction"
+  ],
+  [
+   "did the winning model win again on fresh data",
+   "gme-round2"
+  ],
+  [
+   "what statistical rule decided that the advantage replicated",
+   "gme-round2"
+  ],
+  [
+   "is the replicated result enough to ship the model",
+   "gme-round2"
+  ],
+  [
+   "which mattered more for acceptance, swapping the model or editing the prompt",
+   "gme-model-prompt"
+  ],
+  [
+   "was there an interaction between the model and the prompt fix",
+   "gme-model-prompt"
+  ],
+  [
+   "how big was the prompt effect compared with the model effect",
+   "gme-model-prompt"
+  ],
+  [
+   "is a two-model planner and writer pipeline worth it",
+   "gme-staged"
+  ],
+  [
+   "what happened when the strongest planner fed the best writer",
+   "gme-staged"
+  ],
+  [
+   "did splitting planning and writing between models raise yield",
+   "gme-staged"
+  ],
+  [
+   "how did each candidate do on the public instruction-following benchmark",
+   "gme-ifeval"
+  ],
+  [
+   "was the best ifeval model also the best on the generator",
+   "gme-ifeval"
+  ],
+  [
+   "how did she validate the ifeval scorer",
+   "gme-ifeval"
+  ],
+  [
+   "can I trust a general instruction-following score to pick the production model",
+   "gme-rank-mismatch"
+  ],
+  [
+   "which was better predictor of fit, the public benchmark or the in-house checks",
+   "gme-rank-mismatch"
+  ],
+  [
+   "why do benchmark leaders sometimes fail the real workload",
+   "gme-rank-mismatch"
+  ],
+  [
+   "how much gpu memory did the winning model need",
+   "gme-speed-memory"
+  ],
+  [
+   "which candidate generated tokens the fastest",
+   "gme-speed-memory"
+  ],
+  [
+   "are the tokens per second figures production capacity",
+   "gme-speed-memory"
+  ],
+  [
+   "how did she handle the other jobs sharing the gpu during the benchmark",
+   "gme-incidents"
+  ],
+  [
+   "what went wrong during the ifeval runs",
+   "gme-incidents"
+  ],
+  [
+   "why was a schedule change not enough to isolate the gpu",
+   "gme-incidents"
+  ],
+  [
+   "what shouldn't a reader conclude from the local model screening",
+   "gme-limits"
+  ],
+  [
+   "where does the evidence in the generation study run out",
+   "gme-limits"
+  ],
+  [
+   "is this a general ranking of local models",
+   "gme-limits"
+  ],
+  [
+   "is the winning model in production yet",
+   "gme-status"
+  ],
+  [
+   "what has to happen before the generator switches models",
+   "gme-status"
+  ],
+  [
+   "is she fine-tuning a model for the generator",
+   "gme-status"
+  ],
+  [
+   "what did she personally own in the local model comparison",
+   "gme-role"
+  ],
+  [
+   "what stack ran the experiment",
+   "gme-role"
+  ],
+  [
+   "was the evaluation done for a client or for her own project",
+   "gme-role"
+  ],
+  [
+   "what are the main engineering lessons from the local model study",
+   "gme-lessons"
+  ],
+  [
+   "why did she have an independent audit of her case study",
+   "gme-lessons"
+  ],
+  [
+   "what practices keep a small model screen honest",
+   "gme-lessons"
+  ],
+  [
+   "why not let an llm grade the generator output in the local model comparison",
+   "gme-method-why"
+  ],
+  [
+   "how do frozen groups and a fixed seed keep the screen fair",
+   "gme-method-why"
+  ],
+  [
+   "why count timeouts as failures in the generation screen",
+   "gme-method-why"
+  ]
+ ],
+ "gaps": []
+}

@@ -1,0 +1,1259 @@
+{
+ "family": "dix",
+ "cards": [
+  {
+   "id": "dix-overview",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Document Intelligence on One GPU: what it is",
+   "questions": [
+    "what is the document intelligence on one gpu case study",
+    "what is the document intelligence evaluation",
+    "explain the document intelligence evaluation project",
+    "what is the local model document reading evaluation",
+    "what did the document intelligence evaluation measure",
+    "which local model reads what",
+    "summary of the document intelligence case study",
+    "tell me about the document intelligence evaluation for ocr tables charts",
+    "what is the eleven models by seven tasks evaluation",
+    "what is the 40,975 scored rows evaluation",
+    "why did she build the document intelligence evaluation",
+    "what is the october 2026 model evaluation case study"
+   ],
+   "tags": [
+    "overview",
+    "case study",
+    "local models",
+    "open-weight",
+    "benchmark",
+    "ocr",
+    "vlm"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html"
+    }
+   ],
+   "answer": "It's a model evaluation case study from October 2026 called Document Intelligence on One GPU: Which Local Model Reads What. I measured eleven open-weight models across seven tasks (prose OCR, tables, chart questions, chart to table, whole-page text, layout and contract clauses) under a frozen protocol, then confirmed the winners on data no model had seen. The result is 40,975 scored rows for rounds 1 and 2, with no scores given by a model judge. The deployment target is a single NVIDIA L4 or L40S, and I used public benchmarks only.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-problem",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The problem: facts hidden in hard-to-read places",
+   "questions": [
+    "what problem does the document intelligence evaluation solve",
+    "why is document extraction hard in the document intelligence evaluation",
+    "what counts as solved in the document intelligence evaluation",
+    "what kinds of extraction does a proposal packet need",
+    "why can't a search box read these document packets",
+    "why not use a cloud document service for these documents",
+    "why does the document intelligence study say a single accuracy number hides the problem",
+    "what does fluent text that is 90% right mean in the evaluation",
+    "what are the five kinds of extraction in one packet",
+    "which documents was the document intelligence evaluation built for",
+    "problem statement for the one gpu document study",
+    "what has to be true for an extracted record to be useful"
+   ],
+   "tags": [
+    "problem",
+    "extraction",
+    "scans",
+    "budget tables",
+    "charts",
+    "provenance",
+    "proposals",
+    "contracts"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#problem"
+    }
+   ],
+   "answer": "The most useful facts in proposals, contracts, awards and reports sit in scanned text, budget tables, charts, spreadsheets flattened into PDF and clauses on page forty. A database can't read them and neither can a search box. Each kind of extraction fails differently, so one accuracy number hides the one that matters. I defined solved as three things: the numbers are right, the source page is attached, and the system says so when it is unsure or couldn't read a page. Fluent text that is 90% right is a liability in a budget. Many of these documents also can't leave the organization.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-rules",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Ground rules: no model judge, failures stay in",
+   "questions": [
+    "what are the constraints of the document intelligence evaluation",
+    "does a model grade another model in the document intelligence evaluation",
+    "how are failed answers scored in the document intelligence evaluation",
+    "are truncated answers re-run in the one gpu evaluation",
+    "why does the document intelligence study use only public datasets",
+    "why were zero model judges used",
+    "how did she keep the document intelligence scoring objective",
+    "what happens to truncated or failed answers in the model evaluation",
+    "what is the one model on the gpu at a time rule",
+    "what were the rules of the local model document benchmark",
+    "scoring rules for the eleven model evaluation",
+    "are scores from reference answers or from an llm judge here"
+   ],
+   "tags": [
+    "denominator",
+    "no llm judge",
+    "reference answers",
+    "scoring",
+    "public data",
+    "reproducible",
+    "constraints"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#problem"
+    }
+   ],
+   "answer": "Every score comes from a published answer key and code, never from another model's opinion, so there are zero model-judge scores. Failed and truncated answers stay in the denominator as zero, and nothing is re-run to rescue them. Only one model sits on the GPU at a time, the deployment target is an L4 with 24 GB or an L40S with 48 GB, and every model was measured on one 32 GB desktop so speeds compare fairly. I used public datasets only, so every number can be published and checked.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-models",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Which eleven models were tested",
+   "questions": [
+    "which models were tested in the document intelligence evaluation",
+    "what are the eleven open-weight models in the evaluation",
+    "did the document intelligence evaluation test qwen3-vl",
+    "was olmocr tested in the document intelligence evaluation",
+    "which small parsers were in the final round",
+    "was gpt-oss-20b in the document evaluation",
+    "what runtimes were used in the document intelligence study",
+    "which models ran on ollama and which on vllm in the evaluation",
+    "what is the 27b local tag model in the evaluation",
+    "what is the list of models in the one gpu document study",
+    "was nemotron 3 nano tested for document extraction",
+    "which models ran only on the legal track"
+   ],
+   "tags": [
+    "qwen",
+    "nemotron",
+    "paddleocr",
+    "olmocr",
+    "gpt-oss",
+    "ollama",
+    "vllm",
+    "model list",
+    "vision language models",
+    "line up"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#evaluated"
+    }
+   ],
+   "answer": "Eleven open-weight models. The Qwen family covers Qwen3-VL 8B Instruct and Qwen2.5-VL 7B on Ollama, Qwen3-VL 32B AWQ and Qwen3 32B text on vLLM, and Qwen2.5-VL 32B on Ollama. A locally tagged 27B build is reported but not recommended, because I couldn't verify its upstream identity. The final round added three small parsers on vLLM, Nemotron 3.5 Parse 0.63B, PaddleOCR-VL-1.6 and olmOCR-2 7B FP8, plus gpt-oss-20b for clauses. Nemotron 3 Nano 30B ran through a hosted API on the legal track.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-tasks",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The seven tasks and their datasets",
+   "questions": [
+    "what tasks were in the document intelligence evaluation",
+    "which datasets did the document intelligence evaluation use",
+    "how many cases per task in the document intelligence study",
+    "what metric scored table transcription in the evaluation",
+    "what is teds in the document intelligence evaluation",
+    "how were chart questions scored in the evaluation",
+    "what data stood in for contracts in the document intelligence study",
+    "which public benchmarks did she use: omnidocbench, fintabnet, chartqa, cuad",
+    "what does the layout detection task measure",
+    "how was whole-page text scored",
+    "what is relaxed accuracy with 5% tolerance",
+    "what are the seven tasks of the one gpu evaluation"
+   ],
+   "tags": [
+    "omnidocbench",
+    "fintabnet",
+    "chartqa",
+    "cuad",
+    "contractnli",
+    "teds",
+    "word f1",
+    "iou",
+    "character error rate"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#evaluated"
+    }
+   ],
+   "answer": "Each kind of hard-to-reach information became one frozen task with its own public answer key and metric. Prose crop OCR used 50 OmniDocBench cases scored by character error rate and numeric recall. Table transcription used OmniDocBench and FinTabNet.c with 60 cases, scored by TEDS tree similarity and cell F1. Chart questions used 200 ChartQA cases with relaxed accuracy at 5% tolerance. Chart to table used 60 cases, whole-page text 40 scored by word F1, layout detection 120 at IoU 0.5, and clause extraction 24 cases from CUAD and ContractNLI, with 60 fresh documents on top. Tables, chart questions and pages also had held-out or fresh sets.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-methods",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Prompting methods compared",
+   "questions": [
+    "what methods were compared in the document intelligence evaluation",
+    "what is self-check in the document intelligence evaluation",
+    "what is vote3 in the evaluation",
+    "what is read table first in the document study",
+    "what is layout masking in the evaluation",
+    "what does evidence by id mean in the methods list",
+    "what is the expert prompt method",
+    "did she test upscaling images in the document intelligence study",
+    "what is the baseline prompt in the evaluation",
+    "which tricks did you try on the vision models",
+    "what are the official pipelines in the final round",
+    "list the prompting variants of the one gpu evaluation"
+   ],
+   "tags": [
+    "self-check",
+    "vote3",
+    "expert prompt",
+    "upscale",
+    "hires",
+    "masking",
+    "majority vote",
+    "prompt variants"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#evaluated"
+    }
+   ],
+   "answer": "Besides the baseline (task prompt, forced JSON schema, temperature 0), I tried an expert prompt with a role and rules, and self-check, where the model answers and then re-reads the image and corrects itself in one call. Upscale or hires enlarges the image first. Round 2 added vote3 (three answers, majority wins), read table first (transcribe the chart data, then answer) and layout masking (blank detected figures and tables before page OCR). The legal track used evidence by ID, and the final round compared each parser's official multipass or pipeline mode with its single pass.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-protocol",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Making numbers comparable across two machines",
+   "questions": [
+    "how did the document intelligence evaluation keep results comparable",
+    "what is the conformance check in the evaluation",
+    "how were the cases frozen before models saw them",
+    "why were case manifests hashed",
+    "how did she merge laptop and desktop results",
+    "did the two machines agree in the evaluation",
+    "how many comparison groups reproduced across machines",
+    "why was the thinking build removed from the evaluation",
+    "what token budgets and image caps were used for every model",
+    "how are held-out sets used once in the document intelligence study",
+    "what does fresh mean in the evaluation",
+    "how does the merge tool refuse non-conforming rows"
+   ],
+   "tags": [
+    "conformance",
+    "frozen manifests",
+    "sha-256",
+    "reproducibility",
+    "held-out",
+    "fingerprint",
+    "thinking model",
+    "cross-machine"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#method"
+    }
+   ],
+   "answer": "The desktop and laptop ran weeks apart under different runtimes, so I checked sameness in code. A conformance check fingerprints the frozen case manifests, the exact requests, the model-call settings and the scorers, and the merge tool refuses rows that fail. Cases were hashed before any model saw them, and held-out sets (2,181 cases in round 1, 1,988 in round 2) were used once. Every model got the same prompt, schema, token budget (300 to 6,000 by task) and image cap, at temperature 0. A thinking build burned its budget on hidden reasoning, so I removed it and deleted its rows. Qwen2.5-VL 7B reproduced in 11 of 13 comparison groups.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-final-round",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Final round: pre-registered confirmation of small parsers",
+   "questions": [
+    "what was the final round of the document intelligence evaluation",
+    "how were the parser hypotheses pre-registered",
+    "what counted as passing in the final round",
+    "which four models were new in the final round",
+    "what fresh data confirmed the parser leads",
+    "how many fresh tables and pages were used in the final confirmation",
+    "what was the pass rule for the 32b comparison",
+    "why did nemotron parse count only as a lead",
+    "what bootstrap was used in the final round",
+    "did the parser official pipelines beat their single pass",
+    "what did olmocr-2 do on fresh pages",
+    "did a larger output budget help the failed pages"
+   ],
+   "tags": [
+    "pre-registration",
+    "hypothesis",
+    "holm correction",
+    "clustered bootstrap",
+    "fresh data",
+    "8192 tokens",
+    "parsers",
+    "confirmation"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "The final round tested four models never run before: three small parsers and gpt-oss-20b. I wrote the two leads down as hypotheses, then tested them on 100 FinTabNet.c tables and 80 unused OmniDocBench pages, all at an 8,192-token output budget against Qwen3-VL 32B AWQ. A hypothesis passed only if its main metric improved and numeric recall was no more than 0.02 worse, under a source-clustered bootstrap with Holm correction. PaddleOCR-VL-1.6 passed. Nemotron Parse stayed a lead. The parsers' multipass modes did not beat single pass, and a bigger budget recovered at most one failed page in 80.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-paddle-tables",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "PaddleOCR-VL-1.6 on tables",
+   "questions": [
+    "how did paddleocr-vl-1.6 do on tables",
+    "what was paddleocr-vl-1.6 teds in the evaluation",
+    "which model won table transcription in the document intelligence evaluation",
+    "paddleocr-vl-1.6 vs qwen3-vl 32b on fintabnet",
+    "what numeric recall did the best table route reach",
+    "did the paddleocr table result pass the pre-registered test",
+    "how many tables confirmed paddleocr-vl-1.6",
+    "is paddleocr-vl-1.6 better than a 32b model at tables",
+    "what is the best table model in the one gpu study",
+    "did any table route reach 99% numeric recall",
+    "how big is paddleocr-vl-1.6 in gpu memory",
+    "table results of the final parsers"
+   ],
+   "tags": [
+    "paddleocr",
+    "paddleocr-vl",
+    "accurate",
+    "32b",
+    "teds",
+    "tables",
+    "fintabnet.c",
+    "numeric recall",
+    "97.4",
+    "table winner"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "PaddleOCR-VL-1.6 passed the pre-registered test on 100 fresh FinTabNet.c tables. Its TEDS was 0.852 against 0.762 for Qwen3-VL 32B AWQ, and numeric recall was 97.4% against 93.2%. It needs only about 2 GB of weights and was the leading table route. It still did not reach the 99% bar I set for unattended numbers, so it stays review-assisted. I read the pass narrowly: the model wins on this public data, and an organization's own tables still need their own labelled test.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-nemotron-pages",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Nemotron 3.5 Parse on whole pages",
+   "questions": [
+    "how did nemotron 3.5 parse do on whole pages",
+    "why is nemotron parse a lead and not a win",
+    "what was nemotron parse word f1 on the 80 fresh pages",
+    "what are the numbers for nemotron parse vs qwen3-vl 32b",
+    "can 80 pages rule out a 0.02 numeric deficit",
+    "why does whole-page text need a numeric check",
+    "how fast is nemotron 3.5 parse",
+    "how big is nemotron 3.5 parse",
+    "what is the best whole-page ocr model in the document intelligence study",
+    "how did olmocr-2 compare on fresh pages",
+    "which parser lost the most numbers",
+    "nemotron parse results in the document intelligence evaluation"
+   ],
+   "tags": [
+    "nemotron parse",
+    "whole page",
+    "word f1",
+    "numeric check",
+    "olmocr-2",
+    "88.2",
+    "lead",
+    "pages"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "Nemotron 3.5 Parse wrote better page text, with word F1 of 0.899 against 0.820 for Qwen3-VL 32B AWQ on 80 fresh pages. On numbers it tied on average, 88.2% against 88.3%, but 80 pages can't rule out a 0.02 deficit, so I count it as a lead with numbers still open, not a win. That's why the routing for whole pages says single pass with numbers checked. olmOCR-2 wrote the cleanest prose and lost the most numbers, at 70.6% numeric recall on those pages. The Nemotron parser is about 1.3 GB.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-small-ocr",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Does a small 8B model read prose and tables as well as a 32B",
+   "questions": [
+    "can an 8b model do ocr as well as a 32b model",
+    "what was the character error rate of qwen3-vl 8b",
+    "how did qwen3-vl 8b do on prose crops",
+    "what numeric recall did the models get on ocr crops",
+    "why is 96.5% numeric recall not good enough",
+    "what table teds did qwen3-vl 8b reach",
+    "does model size matter for ocr in the document intelligence study",
+    "what is the 99% numeric recall bar",
+    "can the 12 gb laptop gpu do the ocr task",
+    "why is the missing 3.5% of numbers the whole problem",
+    "did any prompt variant change table results",
+    "is the 8b ocr candidate unattended or review-assisted"
+   ],
+   "tags": [
+    "8b",
+    "character error",
+    "1.2%",
+    "96.5%",
+    "numeric recall",
+    "laptop",
+    "model size",
+    "99% bar"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "On text tasks, size made little difference. Qwen3-VL 8B on the 12 GB laptop had a pooled character error of 1.2% on 50 prose crops on both machines, matching Qwen3-VL 32B AWQ and Qwen2.5-VL 32B. Table TEDS was 0.818 for 8B, 0.821 for the 32B AWQ build and 0.724 for 7B, and no prompt variant changed that significantly. But every model recovered 96.5% of the numbers in the crops, short of my 99% bar. For budgets and invoices the missing 3.5% is the whole problem, so the 8B model is a review-assisted candidate, not an unattended one.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-self-check-swing",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The self-check swing: +26.5 for 7B, minus 43.5 for 8B",
+   "questions": [
+    "what happened when self-check was applied to chart questions",
+    "why did self-check hurt qwen3-vl 8b",
+    "how much did self-check help qwen2.5-vl 7b",
+    "what were the chart question scores per model",
+    "what was the 43.5 point drop in the evaluation",
+    "is a prompting method a global switch",
+    "what did the 32b reference score on chart questions",
+    "how did 8b score on chartqa at baseline",
+    "how did the same prompt move 7b and 8b in opposite directions",
+    "which method should each model use for chart questions",
+    "did self-check hold on the fresh charts",
+    "why choose prompting methods per model and per task"
+   ],
+   "tags": [
+    "self-check",
+    "chartqa",
+    "43.5",
+    "26.5",
+    "method per model",
+    "chart questions",
+    "qwen2.5-vl 7b",
+    "regression"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "The same self-check instruction, on the same prompt and images, moved the two small models in opposite directions on 200 chart questions. Qwen2.5-VL 7B went from 52.5% to 79.0%, up 26.5 points. Qwen3-VL 8B went from 79.5% to 36.0%, down 43.5. The 32B reference scored 85.0% at baseline and 91.0% with self-check. The pattern held on fresh charts in round 2: plus 17.8 for 7B and minus 42.7 for 8B. A method isn't a global switch; it has to be chosen per model and per task, and confirmed on data the pairing hasn't seen.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-chart-to-table",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Chart to table: recovering the data behind a chart",
+   "questions": [
+    "how did qwen3-vl 8b do at chart to table",
+    "what is chart to table in the document intelligence evaluation",
+    "what value recall did self-check reach on charts",
+    "how many charts were in the chart to table task",
+    "what was baseline value recall for the 8b model",
+    "did the expert prompt help chart extraction",
+    "is chart to data ready for production in the evaluation",
+    "why does chart to table need a bigger held-out set",
+    "how is value recall scored within 5%",
+    "what is the best method for the 8b model on chart data",
+    "chart extraction results in the one gpu study",
+    "how did she score chart data recovery"
+   ],
+   "tags": [
+    "chart to data",
+    "value recall",
+    "self-check",
+    "8b",
+    "chart extraction",
+    "0.930",
+    "0.418",
+    "label recall"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "Recovering the table behind a chart is where the 8B model needs help. On 60 charts, scored by value recall within 5% and label recall, self-check lifted Qwen3-VL 8B from 0.418 to 0.930, and the expert prompt reached 0.900. So self-check is the routed method for chart to data on 8B, even though it's harmful for chart questions on the same model. It's a 60-case task, a strong candidate that still needs a larger held-out set before I'd trust it.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-vote3",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Round 2: vote3 and the fresh charts",
+   "questions": [
+    "what did round 2 of the document intelligence evaluation test",
+    "how many new chart questions were used in round 2",
+    "what is vote3 and did it work",
+    "how much did vote3 help qwen2.5-vl 7b",
+    "did vote3 help the 8b model",
+    "what was the confirmatory method chosen in advance",
+    "why was read-table-first dropped",
+    "did upscaling help chart questions",
+    "what does vote3 cost compared with self-check",
+    "which method is the cheap win for a 7b deployment",
+    "what are the confidence intervals for vote3",
+    "what is the cost trade-off between self-check and vote3"
+   ],
+   "tags": [
+    "vote3",
+    "round 2",
+    "majority vote",
+    "722 charts",
+    "1,322 questions",
+    "paired bootstrap",
+    "pre-registered",
+    "confirmatory"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "Round 2 froze 1,322 new questions across 722 charts and 80 new pages, and I picked vote3 in advance as the one confirmatory method. It held up: plus 4.5 points on 7B (95% interval 3.0 to 6.1) and plus 2.6 on the desktop 32B (1.4 to 3.7). On 8B it did nothing, minus 0.2 with an interval crossing zero. Read-table-first was dropped on development data, and upscaling alone didn't help. Costs differ: self-check is one longer call and vote3 is three calls. For 7B, self-check is the cheap win. For 8B neither applies, and for 32B vote3 is the only confirmed gain.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-masking",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Layout masking: cleaner text, lost numbers",
+   "questions": [
+    "what is the layout masking trade-off",
+    "why did layout masking hurt numeric recall",
+    "how much did masking raise word f1",
+    "what happened to numeric recall when figures and tables were blanked",
+    "does masking help whole-page ocr",
+    "why is masking experimental in the document intelligence evaluation",
+    "what will the next version of masking blank",
+    "what are the masking numbers on 80 confirmation pages",
+    "how did masking affect newspapers",
+    "did masking help the 8b model",
+    "which detector did she use to find figures and tables",
+    "can you trade numbers for cleaner prose"
+   ],
+   "tags": [
+    "masking",
+    "layout detector",
+    "word f1",
+    "numeric recall",
+    "0.872",
+    "0.694",
+    "regression",
+    "doclayout-yolo"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#findings"
+    }
+   ],
+   "answer": "Masking raised the word F1 and cut numeric recall, so I kept it experimental. A layout detector blanked figures and tables before page OCR. On the 80 confirmation pages, Qwen3-VL 32B AWQ word F1 rose from 0.814 to 0.881, while numeric recall fell from 0.872 to 0.694. On the 40 development pages it fell from 0.909 to 0.720, and newspaper results got worse. Masking also hid numbers the page text needed. For contracts and budgets that trade is unacceptable. Next I'll blank only tables, figures and equations and judge it on numeric recall first. 7B gained 0.085 on word F1, and 8B's 0.010 gain included zero.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-evidence-by-id",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Evidence by ID: stopping invented quotes",
+   "questions": [
+    "what is evidence by id in the document intelligence evaluation",
+    "how does the evidence-linked extraction work",
+    "why did models quote text that did not exist",
+    "how did she remove copy failures in clause extraction",
+    "does evidence by id prove the answer is right",
+    "how are absent fields handled in the legal track",
+    "what is the known limit of evidence by id",
+    "how does retrieval coverage limit clause extraction",
+    "what did the baseline quoting design fail on",
+    "how are hash and offset used to verify evidence",
+    "provenance vs correctness in the document intelligence study",
+    "how do contract answers get their supporting sentence"
+   ],
+   "tags": [
+    "evidence by id",
+    "provenance",
+    "block ids",
+    "hash",
+    "absent fields",
+    "retrieval coverage",
+    "citations",
+    "hallucinated quote"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#evidence"
+    }
+   ],
+   "answer": "Early legal runs showed models quoting text that wasn't in the cited span, or paraphrasing it enough to fail a string check. The fix takes copying out of the model's hands. Documents are split into blocks with IDs, retrieval supplies candidates, and the model returns only IDs and the label. My code copies the exact text, verifies its hash and location, and records absent fields explicitly. That removed every copy failure from the quoting design, 0 failed requests against 2 to 4 for the baseline. It doesn't prove the answer is right, and retrieval is the bottleneck: if the right block isn't a candidate, no design recovers it.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-nemotron-reassessment",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Nemotron reassessment: a bad score is a configuration",
+   "questions": [
+    "why did nemotron 3 nano score low at first",
+    "what was the nemotron reassessment",
+    "how many requests were in the controlled nemotron reassessment",
+    "did enabling reasoning help nemotron on cuad",
+    "what changed from 3 of 30 to 13 of 30",
+    "did output budget alone change the nemotron result",
+    "did the reassessment prove a serving defect",
+    "can you conclude a model family is weak from one bad score",
+    "what was the cost of turning reasoning on in nemotron",
+    "how did she test one mechanism at a time",
+    "is nemotron 3 nano adequate for production contract extraction",
+    "what does a weak configuration untested mean"
+   ],
+   "tags": [
+    "nemotron",
+    "reassessment",
+    "reasoning",
+    "controlled comparison",
+    "one variable at a time",
+    "cuad",
+    "contractnli",
+    "configuration"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#evidence"
+    }
+   ],
+   "answer": "A hosted Nemotron 3 Nano 30B scored 1/12 on CUAD, far below the local Qwen models. The easy conclusion was weak model. The honest one was weak configuration, untested. I ran 192 requests across eight configurations on the same 24 cases, changing one mechanism at a time: budget, reasoning, sampling, label definitions, full-document context, evidence by ID and schema delivery. Budget alone changed nothing, and reasoning lifted CUAD from 1/12 to 4/12. A pre-specified contrast on 60 fresh documents confirmed it: CUAD 3/30 to 13/30, ContractNLI 5/30 to 12/30, at the cost of one truncation per task. That supports enabling reasoning. It doesn't show production adequacy or a serving defect.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-legal-results",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Clause extraction results and the always-absent baseline",
+   "questions": [
+    "what were the final clause extraction results",
+    "how many fresh documents were in the legal comparison",
+    "did any configuration beat the always-absent baseline on cuad",
+    "what is the always-absent baseline of 15 out of 30",
+    "how did qwen3 32b do on contractnli in the final comparison",
+    "why did gpt-oss-20b with high reasoning do worse",
+    "how did gpt-oss-20b low reasoning score",
+    "is a difference of a few documents noise at 30 questions",
+    "what token budget did the legal comparison use",
+    "which model was best on contractnli in the document intelligence study",
+    "what does the 24-case diagnostic pack show",
+    "how did qwen3 32b thinking on versus off compare"
+   ],
+   "tags": [
+    "clause extraction",
+    "cuad",
+    "contractnli",
+    "qwen3 32b",
+    "gpt-oss-20b",
+    "truncation",
+    "baseline",
+    "60 documents"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#evidence"
+    }
+   ],
+   "answer": "On 60 fresh public documents with identical requests and a 16,000-token budget, Qwen3 32B with thinking off scored 14/30 on CUAD and 18/30 on ContractNLI; thinking on gave 15 and 16. gpt-oss-20b at low reasoning scored 15 and 14, and at high reasoning 11 and 4, because it got truncated. Nemotron with reasoning on scored 13 and 12. The CUAD set holds 15 absent fields, so answering absent every time scores 15/30, and no configuration beat that. At 30 questions a task, differences of a few documents are noise, so I don't claim a winner on CUAD.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-hardware",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Hardware fit and speed on L4 and L40S",
+   "questions": [
+    "what gpu does the document intelligence evaluation target",
+    "does paddleocr-vl-1.6 fit on an nvidia l4",
+    "does a 32b model fit on an l4",
+    "how much memory do the recommended parsers need",
+    "how fast was nemotron parse in the evaluation",
+    "how many cases a minute did each model process",
+    "what gpu was the evaluation measured on",
+    "why will absolute speeds be lower on an l4",
+    "what is the memory bandwidth of the l4, l40s and rtx 5090",
+    "how did she check models ran fully on the gpu",
+    "what other memory costs besides weights did the study note",
+    "does the parsers' lead widen on slower cards"
+   ],
+   "tags": [
+    "l4",
+    "l40s",
+    "rtx 5090",
+    "vram",
+    "throughput",
+    "140 per minute",
+    "memory bandwidth",
+    "weights size"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#hardware"
+    }
+   ],
+   "answer": "The target is one NVIDIA L4 (24 GB) or L40S (48 GB), but every final-round model ran on one 32 GB RTX 5090. Fit comes from weight sizes: about 2 GB for PaddleOCR-VL-1.6, 1.3 GB for Nemotron 3.5 Parse, 13 GB for gpt-oss-20b and 20 GB for a 4-bit 32B model. Everything recommended fits an L40S; on an L4 a 32B is tight. On a packet of 20 pages and 20 tables, four requests at a time, Nemotron Parse did 140 cases a minute, PaddleOCR-VL-1.6 73, olmOCR-2 19 and Qwen3-VL 32B AWQ 9. Bandwidth is about 1.8, 0.86 and 0.3 TB/s for the desktop, L40S and L4, so speeds there will be lower.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-limits",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What the evaluation does not show",
+   "questions": [
+    "what are the limits of the document intelligence evaluation",
+    "is the document intelligence evaluation production approval",
+    "what was not measured in the one gpu study",
+    "did she measure cost against a hosted service",
+    "does the evaluation prove accuracy on an organization's own documents",
+    "is unattended numeric extraction ready",
+    "why is fresh data not proven absent from pretraining",
+    "is a local pipeline a security certification",
+    "what still needs its own gate in the document packet workflow",
+    "how does the study treat dataset terms and redistribution",
+    "what are the honest caveats of the local model evaluation",
+    "is this prototype evidence or certification"
+   ],
+   "tags": [
+    "limitations",
+    "caveats",
+    "not production",
+    "prototype",
+    "unattended",
+    "domain validation",
+    "security",
+    "nist ai 600-1"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#hardware"
+    }
+   ],
+   "answer": "It's prototype evidence, not production certification. I did not measure speed on an actual L4 or L40S, purchase cost, or any total cost against a hosted service. The ranking should transfer to the target cards; the absolute numbers won't. No model reached the 99% bar for unattended numeric extraction, and the best table route reached 97.4%. Public scores say which model to try first, but an organization's own documents need their own labelled, document-disjoint test. Fresh means unused in earlier runs, not proven absent from pretraining. A local pipeline is an architectural option, not a security certification, and I used NIST AI 600-1 as the risk framing.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-routing",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The routing table: which model for which job",
+   "questions": [
+    "what routing did the document intelligence evaluation choose",
+    "which model should read tables",
+    "which model should read whole pages",
+    "what do you recommend for chart questions",
+    "which model for clause extraction in the evaluation",
+    "what layout detector was used",
+    "what is ready to prototype on one l4 or l40s",
+    "what is not ready in the document intelligence evaluation",
+    "how should spreadsheets rendered to pdf be handled",
+    "what about native spreadsheets",
+    "what does the intended document workflow look like",
+    "what is the recommended model per task"
+   ],
+   "tags": [
+    "routing",
+    "recommendation",
+    "prototype",
+    "paddleocr",
+    "qwen3 32b",
+    "doclayout-yolo",
+    "spreadsheets",
+    "workflow"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#applications"
+    }
+   ],
+   "answer": "Routing came straight from the measured results. Tables go to PaddleOCR-VL-1.6 single pass. Whole pages go to Nemotron 3.5 Parse single pass with numbers checked. Prose crops use Qwen3-VL 8B baseline. Chart questions use 8B with self-check off, or 7B with it on; chart to data uses 8B with self-check. Layout uses DocLayout-YOLO. Clauses use Qwen3 32B with thinking off, or gpt-oss-20b at low reasoning, with evidence by ID and retrieval coverage shown. Not ready: unattended numbers and masking where numbers matter. Native spreadsheets should be parsed directly; a spreadsheet printed to PDF needs the table route and a numeric check.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-role",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "My role and who did what",
+   "questions": [
+    "what was her role in the document intelligence evaluation",
+    "did ai read the pages in the document intelligence evaluation",
+    "who wrote the harness for the evaluation",
+    "did a coding assistant see the model answers",
+    "what did she do herself in the document intelligence study",
+    "who did the reading, extraction and answering",
+    "did people read individual pages or only aggregate tables",
+    "what is the division of labour in the one gpu study",
+    "did she design the evaluation",
+    "did she do the failure analysis",
+    "who ran the orchestration of the evaluation",
+    "how was ai used to build the document evaluation harness"
+   ],
+   "tags": [
+    "role",
+    "personally",
+    "division of labour",
+    "evaluation design",
+    "orchestration",
+    "failure analysis",
+    "coding assistant",
+    "harness"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#method"
+    }
+   ],
+   "answer": "My role was evaluation design, orchestration and failure analysis. Local models did all the reading, extraction and answering. AI coding assistants wrote and ran the harness, and no assistant read a page, a crop or a model answer. People read aggregate tables only. I set the protocol: frozen cases, identical requests, answer-key scoring, failures kept in the denominator and written-down hypotheses before confirmation. I also did the failure analysis, such as the self-check split between 7B and 8B and the numeric loss under masking.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-next",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What comes next for the document intelligence work",
+   "questions": [
+    "what are the next steps for the document intelligence evaluation",
+    "what is the intake pipeline plan",
+    "what is field-bound numbers scoring",
+    "what is domain validation in the next steps",
+    "is fine-tuning planned for qwen3-vl 8b",
+    "what is the review workflow in the next steps",
+    "what are clause blocks in the next steps",
+    "what is the done-when criterion for the intake pipeline",
+    "what open questions remain in the one gpu study",
+    "what would she build after the document evaluation",
+    "will the study move on to labelled domain documents",
+    "what does the roadmap of the document intelligence case study include"
+   ],
+   "tags": [
+    "next steps",
+    "roadmap",
+    "intake service",
+    "fine-tuning",
+    "adapter",
+    "domain validation",
+    "review screen",
+    "open questions"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#next"
+    }
+   ],
+   "answer": "Six steps, each with a done-when. First, an intake service on the routing: a queue, checkpoints, bounded retries and one model per task, done when every file in a packet is processed and resumable with page-level evidence. Second, finer clause blocks for evidence by ID, measured against the retrieval ceiling. Third, a reviewer screen with source-page navigation and persisted corrections. Fourth, domain validation with independent human labels, a double-labelled subset and a document-disjoint holdout. Fifth, field-bound numbers, scoring each number in its own field and cell. Sixth, adapter fine-tuning of Qwen3-VL 8B after error analysis, shown on held-out documents of the same types.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  },
+  {
+   "id": "dix-lessons",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Engineering takeaways from the evaluation",
+   "questions": [
+    "what are the takeaways of the document intelligence evaluation",
+    "what did the document intelligence study teach her",
+    "what is the main lesson about method and model",
+    "why keep failures in the denominator",
+    "why report numeric recall beside text metrics",
+    "why separate provenance from correctness",
+    "why define extraction types rather than ocr",
+    "what is the 43-point swing lesson",
+    "what is the masking lesson in numbers",
+    "what would she tell a team picking a local document model",
+    "what are the six engineering takeaways",
+    "what did the one gpu evaluation change about how she works"
+   ],
+   "tags": [
+    "lessons",
+    "takeaways",
+    "numeric gate",
+    "denominator",
+    "provenance",
+    "configuration",
+    "method is part of the model"
+   ],
+   "links": [
+    {
+     "label": "Document Intelligence Evaluation",
+     "url": "document-intelligence-evaluation.html#takeaways"
+    }
+   ],
+   "answer": "Six lessons. Define the problem as extraction types, not OCR: six tasks with six metrics exposed a 43-point swing one accuracy number would have averaged away. The method is part of the model, since self-check helped 7B by 26.5 points and hurt 8B by 43.5. Keep failures in the denominator, which made the thinking-build collapse and the first Nemotron result visible. Report numbers beside text, because masking raised word F1 by 0.067 and cut numeric recall by 0.178. Separate provenance from correctness. And treat a bad score as a configuration until proven otherwise.",
+   "sources": [
+    "page:document-intelligence-evaluation.html"
+   ]
+  }
+ ],
+ "add_questions": {},
+ "tests": [
+  [
+   "give me the overview of the local document model study",
+   "dix-overview"
+  ],
+  [
+   "what is your one gpu document reading benchmark about",
+   "dix-overview"
+  ],
+  [
+   "describe the eleven open-weight models seven tasks study",
+   "dix-overview"
+  ],
+  [
+   "why is reading proposals and contracts with a model difficult",
+   "dix-problem"
+  ],
+  [
+   "what does it mean for an extracted record to be useful",
+   "dix-problem"
+  ],
+  [
+   "why do the proposal and contract packets need local models instead of a hosted ocr service",
+   "dix-problem"
+  ],
+  [
+   "did an llm score the answers in the one gpu study",
+   "dix-rules"
+  ],
+  [
+   "how were broken answers counted in the document intelligence study",
+   "dix-rules"
+  ],
+  [
+   "can the document intelligence evaluation scores be checked by others",
+   "dix-rules"
+  ],
+  [
+   "list the vision language models in the document intelligence evaluation",
+   "dix-models"
+  ],
+  [
+   "did you try paddleocr or olmocr in the local model benchmark",
+   "dix-models"
+  ],
+  [
+   "what is the model line up of the document intelligence evaluation",
+   "dix-models|ex-document-intelligence"
+  ],
+  [
+   "which metrics scored ocr and tables in the document intelligence evaluation",
+   "dix-tasks"
+  ],
+  [
+   "how many chartqa cases were in the document intelligence development set",
+   "dix-tasks"
+  ],
+  [
+   "which public datasets power the document extraction comparison",
+   "dix-tasks"
+  ],
+  [
+   "what prompting techniques did you test on the document models",
+   "dix-methods"
+  ],
+  [
+   "did you try majority voting on the vision language models",
+   "dix-methods"
+  ],
+  [
+   "how does the self-check prompt method work in the document intelligence evaluation",
+   "dix-methods"
+  ],
+  [
+   "how did the document intelligence evaluation guarantee the same test on the laptop and desktop",
+   "dix-protocol"
+  ],
+  [
+   "were the laptop and desktop results reproducible",
+   "dix-protocol"
+  ],
+  [
+   "what stopped models seeing the held-out document intelligence cases beforehand",
+   "dix-protocol"
+  ],
+  [
+   "how did you confirm the small document parsers on unseen data",
+   "dix-final-round"
+  ],
+  [
+   "what was the rule for a parser to beat qwen3-vl 32b in the final round",
+   "dix-final-round"
+  ],
+  [
+   "did a bigger output budget fix the failed pages for the small parsers",
+   "dix-final-round"
+  ],
+  [
+   "which small parser transcribes fintabnet tables best",
+   "dix-paddle-tables"
+  ],
+  [
+   "how accurate is paddleocr-vl on financial tables",
+   "dix-paddle-tables"
+  ],
+  [
+   "did paddleocr-vl-1.6 beat the 32b vision model on tables",
+   "dix-paddle-tables"
+  ],
+  [
+   "is nemotron parse a confirmed winner for full page text",
+   "dix-nemotron-pages"
+  ],
+  [
+   "which parser gave the cleanest page text but dropped numbers",
+   "dix-nemotron-pages"
+  ],
+  [
+   "how did the page text parsers compare with the 32b model",
+   "dix-nemotron-pages"
+  ],
+  [
+   "do you need a 32b model for reading scanned text crops",
+   "dix-small-ocr"
+  ],
+  [
+   "why did every model stall at 96.5% of numbers",
+   "dix-small-ocr"
+  ],
+  [
+   "is a small vision model good enough for ocr on a laptop",
+   "dix-small-ocr"
+  ],
+  [
+   "why did self-check make qwen3-vl 8b worse on charts",
+   "dix-self-check-swing"
+  ],
+  [
+   "does the self-check trick work the same on 7b and 8b vision models",
+   "dix-self-check-swing|dix-methods"
+  ],
+  [
+   "how did self-check swing chartqa accuracy by 43 points",
+   "dix-self-check-swing|dix-lessons"
+  ],
+  [
+   "can the 8b model rebuild a data table from a plot",
+   "dix-chart-to-table"
+  ],
+  [
+   "how well did self-check recover chart values",
+   "dix-chart-to-table"
+  ],
+  [
+   "is the chart extraction result confirmed on held-out data",
+   "dix-chart-to-table"
+  ],
+  [
+   "what did majority voting of three answers add on the unseen charts",
+   "dix-vote3"
+  ],
+  [
+   "which method was confirmed for the 32b model on round 2 charts",
+   "dix-vote3"
+  ],
+  [
+   "was the chart result confirmed on 722 new charts",
+   "dix-vote3"
+  ],
+  [
+   "why not blank the figures before running page ocr",
+   "dix-masking"
+  ],
+  [
+   "did blanking tables and figures improve page text but lose amounts",
+   "dix-masking"
+  ],
+  [
+   "why does the page report numeric recall beside word f1",
+   "dix-masking|dix-lessons"
+  ],
+  [
+   "how do you make sure a model's cited evidence is real",
+   "dix-evidence-by-id"
+  ],
+  [
+   "does copying the evidence in code make the answer correct",
+   "dix-evidence-by-id"
+  ],
+  [
+   "what is the bottleneck for contract question answering with evidence",
+   "dix-evidence-by-id"
+  ],
+  [
+   "was the poor first nemotron result the model or the setup",
+   "dix-nemotron-reassessment"
+  ],
+  [
+   "how do you avoid blaming a model for a bad configuration",
+   "dix-nemotron-reassessment"
+  ],
+  [
+   "what did turning on reasoning do for the hosted 30b model",
+   "dix-nemotron-reassessment"
+  ],
+  [
+   "which model scored highest on the 60 fresh contract documents",
+   "dix-legal-results|dix-tasks"
+  ],
+  [
+   "did any model beat saying absent every time",
+   "dix-legal-results"
+  ],
+  [
+   "why did high reasoning fail on the 20b open-weight model",
+   "dix-legal-results"
+  ],
+  [
+   "will the document parsers fit on a 24 gb card",
+   "dix-hardware"
+  ],
+  [
+   "how many pages a minute can the small parser process",
+   "dix-hardware"
+  ],
+  [
+   "did you measure speed on the real target gpu",
+   "dix-hardware"
+  ],
+  [
+   "can i deploy these document models straight from the evaluation",
+   "dix-limits|dix-routing"
+  ],
+  [
+   "what does the one gpu study not claim",
+   "dix-limits"
+  ],
+  [
+   "is it safe to extract invoice numbers unattended with these local models",
+   "dix-limits"
+  ],
+  [
+   "which model do you pick for each document task in the evaluation routing",
+   "dix-routing"
+  ],
+  [
+   "what is the recommended routing for pages, tables and contracts",
+   "dix-routing"
+  ],
+  [
+   "should i parse the original excel file or the printed pdf spreadsheet",
+   "dix-routing"
+  ],
+  [
+   "what part of the document intelligence evaluation did she personally do",
+   "dix-role"
+  ],
+  [
+   "were the model answers read by an assistant",
+   "dix-role"
+  ],
+  [
+   "who wrote the harness for the document intelligence evaluation",
+   "dix-role"
+  ],
+  [
+   "what is planned after the evaluation finished",
+   "dix-next"
+  ],
+  [
+   "will she fine-tune qwen3-vl 8b on labelled documents",
+   "dix-next"
+  ],
+  [
+   "how will the document evaluation be validated on real labelled documents",
+   "dix-next"
+  ],
+  [
+   "what should a team take away from the local model benchmark",
+   "dix-lessons"
+  ],
+  [
+   "what general rules came out of the document intelligence evaluation",
+   "dix-lessons|dix-rules"
+  ],
+  [
+   "what takeaways from the document intelligence evaluation carry to the next evaluation",
+   "dix-lessons"
+  ]
+ ],
+ "gaps": []
+}

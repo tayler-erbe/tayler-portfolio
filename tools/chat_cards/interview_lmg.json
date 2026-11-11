@@ -1,0 +1,1193 @@
+{
+ "family": "lmg",
+ "cards": [
+  {
+   "id": "lmg-overview",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What the Choosing a Local Model guide is",
+   "questions": [
+    "what is tayler's guide to picking an open model",
+    "guide to choosing local llms by tayler erbe",
+    "what is the choosing a local model guide",
+    "what is the practical guide to choosing a local model",
+    "what does tayler's local model guide cover",
+    "why did you write the choosing a local model guide",
+    "what is the find evaluate validate fine-tune guide",
+    "explain the local model selection guide on the portfolio",
+    "what is in the open-weight model selection guide",
+    "summarize the choosing a local model guide",
+    "what problem does the local model guide solve",
+    "how is the local model guide structured",
+    "when was the choosing a local model guide published",
+    "what is the october 2026 advisory guide",
+    "tell me about the model selection advisory guide",
+    "what sections are in the choosing a local model guide"
+   ],
+   "tags": [
+    "advisory guide",
+    "open-weight",
+    "model selection",
+    "find evaluate validate fine-tune",
+    "portfolio guide",
+    "october 2026"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html"
+    }
+   ],
+   "answer": "It's an advisory guide from October 2026 for teams choosing an open-weight model for a specific job. Model names are full of numbers like 8B, 27B, 35B-A3B, Q4 and AWQ that look like a ranking and aren't one, so the guide explains what the labels mean, how models are commonly trained, why a smaller model can beat a bigger one on a task, and a method for picking, validating and, only when needed, fine-tuning. It combines findings from my own generation screen and document intelligence evaluation with general engineering guidance. It was independently reviewed and revised after technical feedback.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-names",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "How to read a model name like 27B or Q4",
+   "questions": [
+    "how do you read a model name in the local model guide",
+    "what do 27b and 32b mean in a model name",
+    "what does the b in 32b stand for",
+    "does a bigger parameter count mean a better model",
+    "what do model name numbers tell you according to the guide",
+    "what does parameter count not tell you about a model",
+    "does 27b versus 32b rank the models",
+    "what does the choosing a local model guide say about reading model names",
+    "are 8b 27b 32b a ranking",
+    "what does the version or release date of a model tell you",
+    "does model size or release date identify the best model for a task"
+   ],
+   "tags": [
+    "parameters",
+    "billions",
+    "model naming",
+    "labels",
+    "capacity",
+    "instruction following"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#basics"
+    }
+   ],
+   "answer": "Those numbers are not a ranking. 27B or 32B means roughly that many billion parameters, the numbers the model learned in training. It's a design choice that sets capacity, but it says nothing about how well the model was trained or how well it follows instructions. Version and release date identify a release, and its documentation may disclose training changes and data, yet neither size nor release date alone identifies the best model for a task. That's the first lesson of the guide: treat the label as a starting point and test the model on your own job.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-moe",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Mixture of experts and active parameters in the guide",
+   "questions": [
+    "what does 35b-a3b mean in the local model guide",
+    "what is a mixture of experts model according to the guide",
+    "what do active parameters mean for a mixture of experts model",
+    "is active parameter count a quality score",
+    "do mixture of experts models need less memory",
+    "why is a 3b active model not the same as a 3b dense model",
+    "does sparse activation make a model faster",
+    "what does a35b-a3b tell you about speed and storage",
+    "moe total parameters versus active parameters per token",
+    "how does the guide treat mixture of experts models"
+   ],
+   "tags": [
+    "moe",
+    "sparse",
+    "active parameters",
+    "a3b",
+    "dense model",
+    "storage"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#basics"
+    }
+   ],
+   "answer": "35B-A3B names a mixture of experts: roughly 35 billion parameters in total, about 3 billion active per token, depending on the vendor's counting convention. Sparse activation can reduce computation compared with a similar dense model, but actual speed depends on the hardware and the serving software, and all the weights still need storing, so memory isn't saved. Active parameter count is also not a quality score. In the guide I treat it as one fact about cost and capacity, to be confirmed by measuring the model on my own hardware and task.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-quant",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Quantisation formats Q4 and AWQ in the guide",
+   "questions": [
+    "what do q4 and q4_k_m mean in the local model guide",
+    "is awq a bit width or a method",
+    "what does the guide say about quantisation",
+    "does quantization shrink the context cache",
+    "why can the same model behave differently under different quantisation methods",
+    "how do you check the bit width of an awq checkpoint",
+    "what does q4 quantisation not shrink",
+    "does 4-bit quantisation change model behavior in the guide",
+    "what should I verify about a quantised checkpoint before downloading it",
+    "why does quantisation method matter when comparing local models"
+   ],
+   "tags": [
+    "quantization",
+    "4-bit",
+    "gguf",
+    "awq",
+    "kv cache",
+    "memory",
+    "checkpoint"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#basics"
+    }
+   ],
+   "answer": "Q4 and Q4_K_M are approximately 4-bit weight formats with some mixed precision and storage overhead. They shrink the weights so a large model fits on one card, but not every other use of memory, such as the context cache. AWQ is a quantisation method, not a bit width, so check the actual bit width of the checkpoint you download. Different methods lose different things, so the same model can behave differently under each. That's why the guide says to run the same model under each quantisation you're considering instead of assuming they match.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-variants",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Instruct, base and thinking models in the guide",
+   "questions": [
+    "what is the difference between instruct and base models in the local model guide",
+    "when should I use a base model instead of an instruct model",
+    "what do thinking or reasoning models do according to the guide",
+    "does reasoning mode cost time and token budget",
+    "can you turn off the reasoning of a thinking model",
+    "which variant is the usual starting point for an assistant application",
+    "what does chat or instruct mean in a model name",
+    "how does the guide describe thinking and reasoning variants",
+    "what do base models suit according to the guide"
+   ],
+   "tags": [
+    "instruct",
+    "base model",
+    "reasoning tokens",
+    "chat model",
+    "thinking mode",
+    "token budget"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#basics"
+    }
+   ],
+   "answer": "Instruct and chat models are adapted to respond to requests, and they're usually the starting point for assistant-style applications. Base models are mainly pretrained continuation models and suit specialized adaptation. Thinking or reasoning models may generate intermediate reasoning tokens before the final answer. That can help hard problems, but whether you can see or switch off the reasoning depends on the model and the server, and it costs time and token budget. In the guide I list reasoning mode among the settings to record, because it changes both results and cost.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-training",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "How open-weight models are commonly trained in the guide",
+   "questions": [
+    "how does a model go from pretraining to an assistant in the guide",
+    "pretraining to assistant stages in the local model guide",
+    "how are open-weight models commonly trained according to the local model guide",
+    "what are the three stages of training in the guide",
+    "what is pretraining versus instruction tuning versus preference optimisation",
+    "what does supervised instruction tuning do",
+    "how does preference optimization or reinforcement learning shape a model",
+    "why do size and release date only start the comparison of models",
+    "what does the guide say about next-token prediction at scale",
+    "where does a model's knowledge and fluency come from",
+    "where do the preferences come from in model post-training",
+    "is the three-stage recipe universal for every model"
+   ],
+   "tags": [
+    "pretraining",
+    "post-training",
+    "rlhf",
+    "sft",
+    "instruction tuning",
+    "reward model",
+    "verifiable rewards"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#training"
+    }
+   ],
+   "answer": "The guide describes a common recipe in three stages, and says plainly it's not universal because vendors publish different amounts of detail. Pretraining is next-token prediction over very large amounts of text and code, often trillions of tokens, and it gives much of the knowledge and fluency. Supervised instruction tuning trains on requests paired with good responses, which turns a continuation model into an assistant. Preference optimization or reinforcement learning then pushes toward preferred responses, whether the preferences come from people, a reward model or automatic checks. Data, compute and all three stages matter alongside parameter count.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-screen-result",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Qwen3.8 27B versus Qwen3-32B in the generation screen",
+   "questions": [
+    "how did qwen3.8 27b compare with qwen3-32b in the generation screen",
+    "how many groups did qwen3.8 27b accept in the local model guide",
+    "what was the replication result for qwen3.8 27b",
+    "what is the 21.7 point difference with a 95% interval of 6.6 to 35.5",
+    "did the smaller qwen model outperform qwen3-32b",
+    "what did the second pre-registered round on 60 new groups show",
+    "24 accepted against 11 for qwen3.8 27b",
+    "7 of 20 test groups accepted by qwen3.8 27b versus 3",
+    "what screening rule did qwen3.8 27b meet",
+    "is qwen3.8 27b adopted to replace qwen3-32b"
+   ],
+   "tags": [
+    "qwen3.8",
+    "27b",
+    "replication",
+    "pre-registered",
+    "confidence interval",
+    "ollama",
+    "vllm",
+    "accepted groups"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#smaller"
+    }
+   ],
+   "answer": "In my generation screen, Qwen3.8 27B accepted 7 of 20 test groups through a strict generator's checks, against 3 for the larger Qwen3-32B configuration it would replace, which met a pre-registered screening rule. A second pre-registered round on 60 new groups replicated it: 24 accepted against 11, a difference of 21.7 points with a 95% interval of 6.6 to 35.5. It's still a comparison of configurations, one on Ollama and one on vLLM, on one job's groups, and adopting it remains a release decision.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-prompt-conflict",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The prompt conflict found in the generation screen",
+   "questions": [
+    "can i trust the qwen3.8 numbers given the flawed prompt in the guide",
+    "what prompt conflict did the local model guide find",
+    "why does the each other conflict matter for the generation screen results",
+    "was the prompt in the screen clean",
+    "what does pinned prompt checked by hash mean in the generation screen",
+    "can the screen figures be read as general instruction-following of qwen",
+    "what must happen before adopting a model after a prompt conflict",
+    "how did the review of the generation screen prompt change the claim",
+    "what is wrong with the prompt used in the qwen3.8 screen"
+   ],
+   "tags": [
+    "prompt contradiction",
+    "each other",
+    "hash",
+    "pinned prompt",
+    "instruction following",
+    "versioned prompt"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#smaller"
+    }
+   ],
+   "answer": "A prompt review found that one rule banned the phrase \"each other\" while another required wording containing it. Every arm in the screen ran the same pinned prompt, the one with the conflict, copied from the release version and checked by hash. So the figures are pipeline outcomes under that prompt, not a clean measure of either model's general instruction-following. A corrected prompt has to be versioned and re-tested on both models before any adoption. I kept the finding in the guide because it limits what the numbers can claim.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-plan-flags",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Checker flags at the first plan in the generation screen",
+   "questions": [
+    "what were the plan check flags for qwen3.8 27b versus qwen3-32b",
+    "how many groups did the copying check flag for the smaller model",
+    "what is the causal-leap check in the generation screen",
+    "what is the behaviour-only check flagged 9 against 0",
+    "how many groups failed the exact-anchor check",
+    "why did the smaller model trade one failure for another",
+    "are the first plan checker flags counts across retries",
+    "do the plan flags amount to a semantic audit",
+    "what does a new model trade in the local model guide",
+    "what were the flagged counts 2 against 7 and 0 against 4"
+   ],
+   "tags": [
+    "copying check",
+    "causal leap",
+    "behaviour-only",
+    "exact anchor",
+    "first plan",
+    "failure modes",
+    "retries"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#smaller"
+    }
+   ],
+   "answer": "At the first plan check, the smaller model's plans were flagged by the copying check in 2 groups against 7 and by the causal-leap check in 0 against 4. But the behaviour-only check, which also covers feelings, causes, outcomes and labels, flagged 9 against 0. Both models were flagged by the exact-anchor check in 15 groups. These are checker flags at the first plan, not counts across retries or a semantic audit. It shows the guide's point that a new model trades one set of failures for another, so only a confirmation run tells you whether the trade holds.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-why-smaller",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Why the smaller model won, and what the screen cannot say",
+   "questions": [
+    "what explains the small model advantage in the guide",
+    "why did the 27b model beat the 32b in the local model guide",
+    "why did the smaller model win in the local model guide",
+    "is newer post-training the cause of the qwen3.8 result",
+    "what does the generation screen not separate",
+    "does the screen show why a smaller model outperformed the bigger one",
+    "what are the reasons a smaller model can outperform a bigger one on a task",
+    "can the screen prove a causal explanation for the qwen3.8 win",
+    "what is a configuration-level result",
+    "does a model that fits fully on the card run faster",
+    "what confounds were not separated in the generation screen",
+    "why can fit to the task beat parameter count"
+   ],
+   "tags": [
+    "causal claim",
+    "confounding",
+    "post-training",
+    "configuration",
+    "fit on gpu",
+    "retries",
+    "architecture"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#smaller"
+    }
+   ],
+   "answer": "Newer post-training is one possible explanation, but the screen didn't separate it from architecture, quantisation, server, chat template or decoding differences, so it supports a configuration-level result, not a causal one. The guide gives general reasons a smaller model can win: a different or later training recipe can matter more than extra parameters, parameter count alone doesn't establish fit to a task's constraints, and quantisation, server and template change behavior. A model that fits fully on the card at the needed context also usually runs faster, which matters when a pipeline retries.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-config-sensitivity",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Same model, different backend: the 3 versus 1 result",
+   "questions": [
+    "what does the local model guide say about the same 32b accepting 3 groups and 1",
+    "how much does backend configuration change the same model's results",
+    "did qwen3-32b behave differently under different servers",
+    "does the serving stack change which groups a model passes",
+    "why must you compare configurations and not just models",
+    "how do quantisation server and template change model behaviour",
+    "how many groups did the same 32b accept under another backend configuration",
+    "what is the evidence that configuration matters in the guide"
+   ],
+   "tags": [
+    "backend",
+    "server",
+    "chat template",
+    "same model",
+    "configuration effect",
+    "ollama vs vllm"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#smaller"
+    }
+   ],
+   "answer": "The guide cites it as evidence that a model name isn't the unit being tested: the same 32B accepted 3 groups under one backend configuration and 1 under another. Quantisation, server and chat template change behavior, so what I compared in the screen was configurations, one on Ollama and one on vLLM, not models in the abstract. That's why the method says to run the same model under each server and quantisation you're considering, with a control arm for each change, so you can attribute a difference to the thing you changed.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-benchmarks",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What public benchmarks can and cannot tell you in the guide",
+   "questions": [
+    "what can public benchmarks tell you according to the local model guide",
+    "how did gemma 4 score on ifeval in the generation screen",
+    "gemma 4 had the highest ifeval and accepted 0 of 20",
+    "why not use ifeval as the verdict for choosing a model",
+    "what are the ifeval scores 0.900 0.830 and 0.806",
+    "how did qwen3.8 rank on ifeval",
+    "what is benchmark contamination in the guide",
+    "how many task groups did gemma 4 exhaust plan and writing retries on",
+    "what does ifeval measure and not measure",
+    "should benchmark scores be used to build a shortlist"
+   ],
+   "tags": [
+    "ifeval",
+    "gemma 4",
+    "benchmark contamination",
+    "shortlist",
+    "screening evidence",
+    "public scores"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#benchmarks"
+    }
+   ],
+   "answer": "Use public benchmarks to build a shortlist, not as the verdict. In my screen, Gemma 4 had the highest IFEval score of the four models completed, 0.900 against the baseline's 0.830, and accepted 0 of 20 task groups: 3 exhausted their plan retries, 14 their writing retries, and the recorded refusal reasons show the other 3 stopped early after repeated failures. Qwen3.8 had the lowest, 0.806, and accepted the most. IFEval measures its own verifiable instructions, not every capability a pipeline needs, and public test material can leak into training data.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-method-find",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Step one of the method: find candidates and check the licence",
+   "questions": [
+    "how does the guide say to find candidate local models",
+    "what does step one of the model picking method say",
+    "why check the licence for an open-weight model",
+    "does open-weight mean unrestricted",
+    "what should I check about commercial and redistribution rights",
+    "what hardware constraints should shape a model shortlist",
+    "what reliability requirements should be written down alongside speed",
+    "why include the current model as the baseline",
+    "what obligations come with adapters or training data",
+    "how do you shortlist local models for a hardware budget"
+   ],
+   "tags": [
+    "licence",
+    "license",
+    "acceptable use",
+    "commercial rights",
+    "shortlist",
+    "baseline",
+    "hardware fit",
+    "concurrency"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#method"
+    }
+   ],
+   "answer": "Start from what fits your hardware at the context, output length and concurrency you need, including the context cache and runtime overhead. Then shortlist from benchmarks, recent releases and the families you already run. Check each release's licence, acceptable-use terms and commercial and redistribution rights, plus any obligations that come with adapters or training data, because open-weight does not mean unrestricted. Write down reliability requirements alongside speed, including how failures, timeouts and exhausted retries will be handled, and include your current model as the baseline.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-method-test",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Step two: turn the real task into a test",
+   "questions": [
+    "does the guide count timeouts as failures",
+    "timeouts and failed answers in the denominator in the guide",
+    "how does the guide say to turn a real task into a test for local models",
+    "why keep failed and timed-out answers in the denominator",
+    "what should a frozen case set contain in the model selection method",
+    "how do you account for cost per successful case",
+    "should you test quality at long context length",
+    "what end to end accounting does the local model guide recommend",
+    "do advertised context limits prove quality at that length",
+    "why use code-based checks or answer keys when picking a model",
+    "what do you measure besides accuracy when choosing a local model"
+   ],
+   "tags": [
+    "frozen cases",
+    "denominator",
+    "cost per success",
+    "latency",
+    "throughput",
+    "long context",
+    "answer key"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#method"
+    }
+   ],
+   "answer": "Freeze a set of real cases with code-based checks or answer keys, and keep failed and timed-out answers in the denominator so a model can't look better by failing quietly. Then account end to end: input and output tokens, retries, runtime and cost per successful case, plus latency and throughput. If you need long inputs, test quality at that length instead of trusting the advertised context limit. The idea is that the test measures your job, so the number you get is the one you'll live with in production.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-decision-rule",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Writing the decision rule before the run",
+   "questions": [
+    "how does the guide decide in advance what a win is",
+    "guide pre-registered decision rule before the run",
+    "what counts as a win in the model picking method",
+    "what does the guide say about writing the decision rule before you run",
+    "what should a pre-registered model comparison rule state",
+    "why must the lower bound of the interval clear the minimum useful improvement",
+    "what is the minimum useful improvement in the local model guide",
+    "why count groups not retries as independent units",
+    "how do you handle multiple candidates winning by luck",
+    "what multiplicity procedure does the guide suggest",
+    "does a rule written first remove small-sample uncertainty",
+    "what does a pass earn under a pre-registered rule",
+    "when do you stop testing under the guide's method"
+   ],
+   "tags": [
+    "pre-registration",
+    "stopping rule",
+    "multiplicity",
+    "confidence interval",
+    "independent units",
+    "minimum effect",
+    "winner's curse"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#method"
+    }
+   ],
+   "answer": "State the primary measure and the direction of comparison, the minimum useful improvement, the interval method and confidence level, how candidates are selected, when you'll stop, and what a pass earns. Require the interval's lower bound, not just the estimate, to clear the minimum useful improvement, and count groups or cases, not retries, as the independent units. A rule written first reduces discretion but doesn't remove small-sample uncertainty or the chance that one of several candidates wins by luck, so use a pre-specified multiplicity procedure or an independent confirmation design, finishing candidate selection before looking at confirmation results.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-fidelity",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Harness fidelity and checker validity",
+   "questions": [
+    "does the guide validate the automatic checks before trusting results",
+    "validating checkers in the model selection method",
+    "what is harness fidelity in the local model guide",
+    "how do you reproduce the baseline within a stated tolerance",
+    "why does reproducing the baseline not prove the test is valid",
+    "how do you test the checks on known passing and failing examples",
+    "why review instructions for contradictions before evaluating models",
+    "should you audit a sample by hand or with a validated grader",
+    "what is checker validity in model evaluation",
+    "what does step four of the method say",
+    "how do you know your evaluation checks are correct"
+   ],
+   "tags": [
+    "baseline reproduction",
+    "tolerance",
+    "checker validity",
+    "borderline examples",
+    "grader",
+    "audit",
+    "test validity"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#method"
+    }
+   ],
+   "answer": "Reproduce the baseline within a stated tolerance and investigate any mismatch. Separately, test the checks on known passing, failing and borderline examples, review the instructions for contradictions, and audit a sample by hand or with a validated grader. Reproducing the baseline alone doesn't prove the test is valid, because a harness can reproduce an old number and still have a broken checker. The prompt conflict I found in my own screen is the example I'd point to: the pipeline ran faithfully, and the instruction set was still contradictory.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-one-change",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Change one thing at a time and record everything",
+   "questions": [
+    "how does the guide isolate variables",
+    "what goes in the run record in the model selection method",
+    "what to record for each model run in the guide",
+    "why change one thing at a time when choosing a local model",
+    "what settings does the guide say to record",
+    "should prompt changes be tested separately from model changes",
+    "does a shared seed guarantee identical runs",
+    "what do I need to record for reproducibility of a model comparison",
+    "which checkpoint and tokenizer details should be kept",
+    "why record the chat template and reasoning mode",
+    "what is a control arm for each change in the guide",
+    "how do you separate server quantisation prompt and model effects"
+   ],
+   "tags": [
+    "reproducibility",
+    "seeds",
+    "decoding settings",
+    "ablation",
+    "control arm",
+    "run record",
+    "tokenizer revision"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#method"
+    }
+   ],
+   "answer": "Run the same model under each server and quantisation you're considering, and test prompt changes separately from model changes, so each difference has one cause. Record exact checkpoint and tokenizer revisions, chat template, server version, quantisation, reasoning mode, decoding settings, context and output budgets, stopping rules, retry policy and seeds. A shared seed doesn't guarantee identical runs, so I don't treat seeds as proof of reproducibility. The checklist asks the same thing: a control arm for each change and every setting recorded.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-confirm",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Confirming a screening win on fresh cases",
+   "questions": [
+    "does the guide rerun the winner on data it has not seen",
+    "how does the guide validate a model selection decision on fresh cases",
+    "confirmation round after a screening win in the guide",
+    "why confirm a screening win on fresh cases in the local model guide",
+    "what counts as fresh confirmation cases",
+    "what is a paired interval lower bound in the guide",
+    "can you prove what a vendor's model saw in training",
+    "what should be unused by local training prompt development or model selection",
+    "what does a screening win earn",
+    "why did the generation screen run a second round on 60 new groups",
+    "step six of the model picking method",
+    "how do you avoid overfitting a model choice to your dev set"
+   ],
+   "tags": [
+    "confirmation run",
+    "holdout",
+    "paired comparison",
+    "contamination",
+    "fresh data",
+    "selection bias"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#method"
+    }
+   ],
+   "answer": "A screening win earns a confirmation, not adoption. The confirmation uses cases not used in local training, prompt development or model selection, with a paired interval whose lower bound clears the minimum useful improvement. You can control what you used, but you usually can't prove what a vendor's model saw in training. My generation screen followed this: the 7 of 20 versus 3 screening result was followed by a second pre-registered round on 60 new groups, 24 accepted against 11, with a 95% interval of 6.6 to 35.5 on the difference.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-levers",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The order of levers before fine-tuning",
+   "questions": [
+    "in what order does the guide say to try levers before fine-tuning",
+    "why does fine-tuning come last in the local model guide",
+    "what should you fix before fine-tuning a model",
+    "when is retrieval better than fine-tuning",
+    "when does the guide say to switch or route models",
+    "should you fix contradictions in instructions first",
+    "when is fine-tuning justified in the guide",
+    "what is the cheapest lever for improving a local model pipeline",
+    "can you use a different model per stage when failures differ by stage"
+   ],
+   "tags": [
+    "lever order",
+    "prompt fixes",
+    "routing",
+    "rag",
+    "retrieval",
+    "tools",
+    "engineering effort"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#finetune"
+    }
+   ],
+   "answer": "The order is: fix the instructions and checks, switch or route models, add retrieval or tools, and only then fine-tune. Fixing instructions is low effort and always first, because contradictions between rules are common. Switching or routing needs evaluation time, and fits once a candidate meets your pre-registered rule and its confirmation; a different model per stage can help when failures differ by stage. Retrieval or tools fit when the problem is missing or changing knowledge, not behavior. Fine-tuning needs data, training and validation, so it's for when the best prompt and model still miss your bar and you can produce enough good, representative examples.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-rsft-dpo",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Rejection-sampling fine-tuning and preference tuning",
+   "questions": [
+    "what is rejection-sampling fine-tuning in the local model guide",
+    "how do automatic checks supply cheap labels for fine-tuning",
+    "what should you audit when fine-tuning on outputs that pass checks",
+    "what does the guide say about preference tuning and dpo",
+    "why can noisy preferences teach the wrong lesson",
+    "should preferences reflect quality rather than length or style",
+    "is a better first-try pass rate guaranteed after rejection sampling",
+    "what are the risks of reward-model based reinforcement learning in the guide",
+    "how do you build preference pairs for the same request"
+   ],
+   "tags": [
+    "rsft",
+    "dpo",
+    "preference pairs",
+    "reward model",
+    "rejection sampling",
+    "reward hacking",
+    "synthetic labels"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#finetune"
+    }
+   ],
+   "answer": "With rejection-sampling fine-tuning, automatic checks provide cheap labels for the properties they actually test. After validating the checks, you sample many outputs, keep those that pass and also meet your quality requirements, and fine-tune on them, auditing coverage, diversity and signs of the model exploiting the checks. A better first-try pass rate is a hypothesis to test on held-out cases, not a guarantee. Preference tuning pairs a preferred and a rejected response for the same request, and the preference has to reflect the quality you want, not length or style. Methods such as DPO or reward-model reinforcement learning can learn from the pairs, but noisy preferences teach the wrong lesson.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-lora",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "LoRA and QLoRA on one GPU",
+   "questions": [
+    "what do lora and qlora do in the local model guide",
+    "can a 27b model be fine-tuned on a 32 gb card",
+    "how does lora train small adapter weights",
+    "what is qlora over a frozen low-bit base",
+    "why must feasibility be measured for sequence length and batch size",
+    "what should be stored with a lora adapter",
+    "does lora freeze the base model",
+    "how many parameters does lora train",
+    "what are the single-gpu fine-tuning limits in the guide"
+   ],
+   "tags": [
+    "adapter",
+    "low-rank",
+    "peft",
+    "qlora",
+    "32gb",
+    "vram",
+    "fine-tuning on one gpu"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#finetune"
+    }
+   ],
+   "answer": "LoRA trains small low-rank adapter weights while the base model usually stays frozen; how many weights that is depends on the rank and which layers are adapted. QLoRA does the same over a frozen low-bit copy of the base. That can make some 27B training runs feasible on a 32 GB card, but the guide is careful: feasibility must be measured for your sequence length, batch size and software. Keep the exact base checkpoint and the adapter's configuration together with the adapter, since the adapter is only meaningful against that base.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-validate-tuned",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "How to validate a tuned model",
+   "questions": [
+    "how does the guide check a tuned model did not regress on general skills",
+    "regression suite for a fine-tuned model in the guide",
+    "how does the guide say to validate a fine-tuned model",
+    "at what level should you split training and test sets",
+    "why de-duplicate at the level of related documents or templates",
+    "how do you compare tuned and untuned models like with like",
+    "what is a regression suite for a tuned model",
+    "how should the quality review of a tuned model be run",
+    "what should be reported besides the average for a tuned model",
+    "why keep the test set untouched until the decision point",
+    "what limits should be stated in advance for each guard"
+   ],
+   "tags": [
+    "data leakage",
+    "train test split",
+    "regression suite",
+    "blinded review",
+    "subgroup",
+    "rubric",
+    "de-duplication"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#validate"
+    }
+   ],
+   "answer": "Split before you train, as whole cases, and de-duplicate at whatever level prevents leakage between related cases, documents or templates. Use validation data for tuning decisions and keep the test set untouched until the decision point. Run tuned and untuned models on the same base checkpoint, server, quantisation, prompt and settings, and record any differences you can't remove. Guard what the checks can't see with a small regression suite and a pre-specified quality review, with a rubric, stated sample size and sampling procedure, blinded where feasible, with limits stated in advance and subgroup and stage-level failures reported, not just the average.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-null-status",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Null results, release and the fine-tuning experiment status",
+   "questions": [
+    "what does the guide say if my fine-tune does not beat the base model",
+    "fine-tune null result in the local model guide",
+    "how should a null result from fine-tuning be interpreted in the guide",
+    "does a failed fine-tuning test show fine-tuning cannot help",
+    "what is the status of the fine-tuning experiment from the local model guide",
+    "when will the fine-tuning results be added to the guide",
+    "how does a tuned model that passes get released",
+    "what limits does the local model guide have",
+    "what does the guide say about a small live trial and a way back",
+    "is the fine-tuning part of the guide finished",
+    "does the guide cover results of tuning the generation screen model"
+   ],
+   "tags": [
+    "null result",
+    "release process",
+    "rollback",
+    "status",
+    "planned experiment",
+    "live trial"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#validate"
+    }
+   ],
+   "answer": "A failed test of one recipe doesn't show that fine-tuning cannot help; it shows that this data, recipe and setup did not clear the bar. A tuned model that does pass still goes through the normal release route: a small live trial, a quality review and a way back. As for status, a fine-tuning experiment following this method is designed for the generation screen, and its results will be added when it finishes. So the guide's fine-tuning sections are method, not reported results, and run results are specific to the configurations and cases tested.",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  },
+  {
+   "id": "lmg-checklist",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The one-page model selection checklist",
+   "questions": [
+    "what does the guide check before adopting an open-weight model",
+    "one page checklist for picking an open-weight model",
+    "what is on the one-page checklist in the local model guide",
+    "what questions does the model selection checklist ask",
+    "what is a good answer to did I decide what better means first",
+    "does the checklist ask about licence and acceptable use",
+    "what does the checklist say about fit at context and concurrency",
+    "what does the checklist require before fine-tuning",
+    "what does the checklist say about keeping the test set apart",
+    "what does the checklist say the winner must show on fresh cases",
+    "give me the model picking checklist"
+   ],
+   "tags": [
+    "checklist",
+    "review list",
+    "go no-go",
+    "pre-flight",
+    "summary",
+    "selection criteria"
+   ],
+   "links": [
+    {
+     "label": "Choosing a Local Model guide",
+     "url": "choosing-local-models-guide.html#checklist"
+    }
+   ],
+   "answer": "It's ten questions, each with a good answer. Does the model fit at my context, output length and concurrency, measured on my hardware including cache? Is the licence checked for the exact release? Is the test my real task with validated checks? Did I fix what better means first, in a written rule frozen before the run? Does the current model reproduce its known result? Are server, quantisation, prompt and model separated? Did the winner hold on fresh cases? Did I fix instructions and try other models before fine-tuning? Is the test set kept apart? Did general skill and quality hold within limits stated in advance?",
+   "sources": [
+    "page:choosing-local-models-guide.html"
+   ]
+  }
+ ],
+ "add_questions": {},
+ "tests": [
+  [
+   "what is your guide on picking an open model",
+   "lmg-overview|guide-audience"
+  ],
+  [
+   "give me an overview of the model choosing guide",
+   "lmg-overview|guide-audience"
+  ],
+  [
+   "what topics does the choosing local models page teach",
+   "lmg-overview|guide-audience"
+  ],
+  [
+   "is a 32b model automatically better than a 27b one in the model guide",
+   "lmg-names"
+  ],
+  [
+   "what does the number in a local model name mean in your guide",
+   "lmg-names"
+  ],
+  [
+   "can you rank open models by parameter size, per the guide",
+   "lmg-names"
+  ],
+  [
+   "will a moe with three billion active parameters fit on a small gpu, per the model guide",
+   "lmg-moe"
+  ],
+  [
+   "is a sparse model cheaper to run than a dense one according to the guide",
+   "lmg-moe"
+  ],
+  [
+   "what is the catch with a35b-a3b models and storage",
+   "lmg-moe"
+  ],
+  [
+   "does a 4-bit model still need a big kv cache in the guide",
+   "lmg-quant"
+  ],
+  [
+   "is awq the same as 4 bit, per the local model guide",
+   "lmg-quant"
+  ],
+  [
+   "can two quantisations of one model behave differently in the guide",
+   "lmg-quant"
+  ],
+  [
+   "should i start from a base or chat checkpoint per the model guide",
+   "lmg-variants"
+  ],
+  [
+   "do reasoning models cost more tokens in the local model guide",
+   "lmg-variants"
+  ],
+  [
+   "what is a thinking variant in the guide",
+   "lmg-variants"
+  ],
+  [
+   "walk me through pretraining to assistant in the local model guide",
+   "lmg-training"
+  ],
+  [
+   "what is post-training in the open model guide",
+   "lmg-training"
+  ],
+  [
+   "why does instruction tuning quality matter in the guide's training section",
+   "lmg-training"
+  ],
+  [
+   "how much better was the 27b qwen than the 32b in the screen",
+   "lmg-screen-result"
+  ],
+  [
+   "did the 60 new group round favor qwen3.8 27b",
+   "lmg-screen-result"
+  ],
+  [
+   "how big was the qwen3.8 versus qwen3-32b acceptance gap",
+   "lmg-screen-result"
+  ],
+  [
+   "was there a contradiction between two rules in the pinned screening prompt of the guide",
+   "lmg-prompt-conflict"
+  ],
+  [
+   "can i trust the qwen3.8 numbers given the prompt flaw",
+   "lmg-prompt-conflict"
+  ],
+  [
+   "do the guide's screen results measure instruction following",
+   "lmg-prompt-conflict"
+  ],
+  [
+   "did the qwen3.8 27b plans get flagged for copying less than qwen3-32b",
+   "lmg-plan-flags|gme-qwen-diff"
+  ],
+  [
+   "which plan checks did qwen3.8 27b fail more often than qwen3-32b",
+   "lmg-plan-flags|gme-qwen-diff"
+  ],
+  [
+   "how did checker flag types differ between qwen3.8 and qwen3-32b at the first plan",
+   "lmg-plan-flags|gme-qwen-diff"
+  ],
+  [
+   "is it the parameters or the training recipe behind the qwen3.8 27b win in the guide",
+   "lmg-why-smaller"
+  ],
+  [
+   "what does the guide say explains the small model advantage",
+   "lmg-why-smaller"
+  ],
+  [
+   "why does the guide not claim a cause for the qwen3.8 result",
+   "lmg-why-smaller"
+  ],
+  [
+   "can ollama and vllm give different pass counts for the same 32b in the guide",
+   "lmg-config-sensitivity"
+  ],
+  [
+   "how sensitive is the guide's qwen3-32b result to the serving software",
+   "lmg-config-sensitivity"
+  ],
+  [
+   "why does the guide compare configurations rather than models",
+   "lmg-config-sensitivity"
+  ],
+  [
+   "did the model with the best ifeval win your screen in the guide",
+   "lmg-benchmarks"
+  ],
+  [
+   "why did gemma 4 accept 0 groups despite high ifeval",
+   "lmg-benchmarks"
+  ],
+  [
+   "can published benchmark scores pick the model, per the local model guide",
+   "lmg-benchmarks"
+  ],
+  [
+   "how does the guide shortlist candidate local models",
+   "lmg-method-find"
+  ],
+  [
+   "is an open weights model free to use commercially per the guide",
+   "lmg-method-find"
+  ],
+  [
+   "what do you check before shortlisting a model in the guide",
+   "lmg-method-find"
+  ],
+  [
+   "how does the guide build an evaluation set from a real task",
+   "lmg-method-test|gme-method-why"
+  ],
+  [
+   "does the guide count timeouts as failures in the denominator",
+   "lmg-method-test|gme-method-why"
+  ],
+  [
+   "how does the guide compute cost per successful case",
+   "lmg-method-test|gme-method-why"
+  ],
+  [
+   "how does the guide decide in advance what counts as a win",
+   "lmg-decision-rule"
+  ],
+  [
+   "why does the local model guide want the rule written before the run",
+   "lmg-decision-rule"
+  ],
+  [
+   "what stops you picking the lucky candidate out of several, per the guide",
+   "lmg-decision-rule"
+  ],
+  [
+   "how does the guide verify the evaluation harness works",
+   "lmg-fidelity"
+  ],
+  [
+   "does the guide validate automatic checks before trusting results",
+   "lmg-fidelity"
+  ],
+  [
+   "what if the baseline does not reproduce in the guide's method",
+   "lmg-fidelity"
+  ],
+  [
+   "how does the guide isolate variables when comparing configurations",
+   "lmg-one-change"
+  ],
+  [
+   "what goes in the run record of the guide's method",
+   "lmg-one-change"
+  ],
+  [
+   "will the same seed give identical runs, per the model guide",
+   "lmg-one-change"
+  ],
+  [
+   "does the guide rerun the winner on data it has not seen",
+   "lmg-confirm"
+  ],
+  [
+   "how does the guide validate a model selection decision",
+   "lmg-confirm"
+  ],
+  [
+   "what is the difference between a screen and a confirmation in the guide",
+   "lmg-confirm"
+  ],
+  [
+   "what does the guide try before training a model on your own data",
+   "lmg-levers|ex-fine-tuning"
+  ],
+  [
+   "is retrieval or fine-tuning the fix for missing knowledge according to the guide",
+   "lmg-levers|ex-fine-tuning"
+  ],
+  [
+   "why does the guide say not to fine-tune straight away",
+   "lmg-levers|ex-fine-tuning"
+  ],
+  [
+   "can a model learn to game the checks it is fine-tuned on, per the guide",
+   "lmg-rsft-dpo"
+  ],
+  [
+   "when would the guide use dpo",
+   "lmg-rsft-dpo"
+  ],
+  [
+   "what does the guide say about sampling outputs that pass checks and training on them",
+   "lmg-rsft-dpo"
+  ],
+  [
+   "can i train a 27b model on a single gpu per the guide",
+   "lmg-lora"
+  ],
+  [
+   "what does the guide say lora freezes",
+   "lmg-lora"
+  ],
+  [
+   "what should i save along with a lora adapter in the guide",
+   "lmg-lora"
+  ],
+  [
+   "how does the guide stop leakage when fine-tuning",
+   "lmg-validate-tuned"
+  ],
+  [
+   "how does the guide check a tuned model did not get worse at general skills",
+   "lmg-validate-tuned"
+  ],
+  [
+   "what does the guide compare a fine-tuned model against",
+   "lmg-validate-tuned"
+  ],
+  [
+   "are there results yet from the fine-tuning experiment in the guide",
+   "lmg-null-status"
+  ],
+  [
+   "what does the guide say if my fine-tune does not beat the base",
+   "lmg-null-status"
+  ],
+  [
+   "how does the guide roll out a tuned model",
+   "lmg-null-status"
+  ],
+  [
+   "what does the guide check before adopting an open-weight model",
+   "lmg-checklist"
+  ],
+  [
+   "give me the short list of questions from the model guide checklist",
+   "lmg-checklist"
+  ],
+  [
+   "how does the guide's checklist judge a local model choice",
+   "lmg-checklist"
+  ]
+ ],
+ "gaps": []
+}

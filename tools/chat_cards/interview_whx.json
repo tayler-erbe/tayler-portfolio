@@ -1,0 +1,994 @@
+{
+ "family": "whx",
+ "cards": [
+  {
+   "id": "whx-jm-why-custom",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: why build it from scratch",
+   "questions": [
+    "what is the monitoring app that watches scheduled jobs",
+    "name the tool that watches the scheduled workflows on the server",
+    "how did you build your own monitoring application for scheduled jobs",
+    "why did you build your own job execution monitor",
+    "why not use an off the shelf monitoring tool for the pipelines",
+    "job execution monitoring application why custom",
+    "why build the pipeline monitor from scratch",
+    "what problem does the job execution monitoring application solve",
+    "why did she design the job monitor herself",
+    "what was wrong with having no central pipeline monitoring",
+    "job execution monitor design motivation",
+    "what did the monitoring application replace on the linux server",
+    "custom health check system for scheduled data workflows",
+    "why a custom alerting system for the advanced analytics server",
+    "what is the job execution monitoring application",
+    "how is the job monitor like mlflow and airflow alerting",
+    "who needed the job execution monitor"
+   ],
+   "tags": [
+    "job monitor",
+    "custom monitoring",
+    "health check",
+    "scheduled workflows",
+    "observability",
+    "build vs buy",
+    "analytics server",
+    "alerting"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "I built it because every scheduled workflow on our Linux analytics server needed one place to answer a single question: did it run, and did it work? The monitor is custom, designed from scratch for the Advanced Analytics environment rather than adopted off the shelf, and it covers the role I'd otherwise get from MLflow run tracking plus Airflow alerting. The design choice that makes it work is a standard log schema: each pipeline writes Parquet logs in the same shape, and one monitor reads all of them. It is deployed and runs on a cron schedule in production, with no manual steps.",
+   "sources": [
+    "work_history.md:464",
+    "work_history.md:465",
+    "work_history.md:466",
+    "work_history.md:462"
+   ]
+  },
+  {
+   "id": "whx-jm-modules",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: module layout",
+   "questions": [
+    "how is the job execution monitor structured",
+    "what modules make up the job monitor",
+    "log_reader alert_rules time_windows emailer config main",
+    "job monitor code architecture",
+    "what does alert_rules.py do in the monitor",
+    "what does time_windows.py do",
+    "how is the monitoring application organized in python",
+    "separation of concerns in the job monitoring app",
+    "what is in config.py for the job monitor",
+    "what does log_reader.py do",
+    "is the job execution monitor modular",
+    "how did she structure the pipeline monitor code",
+    "what does main.py do in the job monitor"
+   ],
+   "tags": [
+    "modules",
+    "code structure",
+    "python application",
+    "utility modules",
+    "separation of concerns",
+    "log reader",
+    "emailer",
+    "config"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "The monitor is a modular Python application with one file per concern. log_reader.py loads and concatenates the pipeline Parquet logs into a single DataFrame. alert_rules.py classifies failures by status and age. time_windows.py holds the silence detection and the reusable last_n_hours and last_n_days filters. emailer.py builds and sends the alert mail. config.py holds the settings, including the list of extra log paths, and main.py runs the whole check. Keeping them apart means I can change a rule, such as a silence threshold, without touching how logs are read or mail is sent.",
+   "sources": [
+    "work_history.md:471",
+    "work_history.md:492"
+   ]
+  },
+  {
+   "id": "whx-jm-discovery",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: discovering and registering pipelines",
+   "questions": [
+    "how does a new workflow get picked up by the monitor",
+    "what has the job monitor been pointed at",
+    "how does the health monitor learn about a new job",
+    "what workflows does the monitoring application track right now",
+    "how does the job monitor find pipelines",
+    "how do you add a new pipeline to the job execution monitor",
+    "EXTRA_LOG_FILES in the monitor config",
+    "which pipelines does the job monitor watch",
+    "pipeline auto discovery in the monitoring app",
+    "how does the monitor watch pipelines outside the standard directory",
+    "what pipelines are monitored by the job execution monitor",
+    "onboarding a pipeline to the job monitor takes one line",
+    "how is the proposal processing pipeline registered in the monitor",
+    "does onboarding a pipeline need new monitor code",
+    "how does the monitor handle pipelines in other folders",
+    "pipeline_demo and proposal_processing monitoring"
+   ],
+   "tags": [
+    "auto discovery",
+    "registration",
+    "onboarding",
+    "config list",
+    "log path",
+    "pipelines directory",
+    "quarterly pipeline",
+    "extensible"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "Onboarding a pipeline takes no new monitor code. Pipelines under the standard pipelines directory are discovered automatically, and one living elsewhere, such as the proposal processing pipeline, is registered by adding its log path to an EXTRA_LOG_FILES list in config.py. Today the monitor watches pipeline_demo, which is auto-discovered, and proposal_processing, which is registered that way, and I later onboarded the quarterly workforce planning pipeline with a per-pipeline silence override. Because the logging contract is shared, any future pipeline built on it is monitorable from day one.",
+   "sources": [
+    "work_history.md:472",
+    "work_history.md:473",
+    "work_history.md:500",
+    "work_history.md:501",
+    "work_history.md:502",
+    "work_history.md:817"
+   ]
+  },
+  {
+   "id": "whx-jm-log-read-failed",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: unreadable logs as failures",
+   "questions": [
+    "what is LOG_READ_FAILED in the job monitor",
+    "what happens if a pipeline log file is corrupt",
+    "how does the monitor handle broken parquet log files",
+    "who monitors the logs themselves in the job monitoring app",
+    "synthetic failure records in the monitor",
+    "what if the log file cannot be read by the job monitor",
+    "LOG_READ_FAILED status explained",
+    "corrupt log file alert in the pipeline monitor",
+    "does a broken log hide a failing pipeline",
+    "how does the job monitor surface logging infrastructure failures",
+    "unreadable log file permission error monitoring"
+   ],
+   "tags": [
+    "log failure",
+    "corrupt log",
+    "parquet",
+    "synthetic record",
+    "permissions",
+    "missing log",
+    "log infrastructure",
+    "critical"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "An unreadable log is treated as a failure, not skipped. If a pipeline's Parquet log is broken, corrupt or unreadable, the monitor writes a synthetic LOG_READ_FAILED record for it, so the problem shows up as an alert instead of the pipeline silently dropping out of view. It is tiered with real failures: LOG_READ_FAILED within the last 24 hours is CRITICAL, like a FAILED stage. The reasoning is simple. A monitor that quietly ignores logs it can't read would go blind exactly when the logging layer breaks, and the file path stored on each row helps me diagnose corruption or permission problems.",
+   "sources": [
+    "work_history.md:475",
+    "work_history.md:487",
+    "work_history.md:474"
+   ]
+  },
+  {
+   "id": "whx-jm-email",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: what the alert email contains",
+   "questions": [
+    "can the alert sender be tested on its own",
+    "how do you test the alert emailer separately from the checks",
+    "what do I receive when the pipeline monitor sends an alert",
+    "how do you verify alert emails work",
+    "what is in a job monitor alert email",
+    "what does the pipeline alert email look like",
+    "how are alert emails sent by the job monitor",
+    "send_test_email smoke test in the monitor",
+    "job monitor email subject line",
+    "what details are in the pipeline failure email",
+    "does the alert email include the traceback",
+    "how did you test the emailer separately",
+    "what does the silent pipeline section of the alert say",
+    "alert email format for failed pipelines",
+    "why is the pipeline alert subject so loud"
+   ],
+   "tags": [
+    "alert email",
+    "sendmail",
+    "traceback",
+    "subject line",
+    "smoke test",
+    "diagnostics",
+    "notification",
+    "run id"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "The email is written so someone can start debugging from the inbox. It opens with the subject line '!!! Pipeline Alert !!!' for visibility. Each CRITICAL failure lists the pipeline, stage, error type, error message, run ID and timestamp, plus a traceback preview. Each silent pipeline lists its last successful run and the hours elapsed. WARNING and INFO rows ride along as context when a CRITICAL fires. Mail goes out through the server's local sendmail because outbound SMTP isn't available there, and a send_test_email function lets me validate the emailer on its own, without running the full monitoring logic.",
+   "sources": [
+    "work_history.md:468",
+    "work_history.md:488",
+    "work_history.md:495",
+    "work_history.md:496",
+    "work_history.md:497",
+    "work_history.md:498"
+   ]
+  },
+  {
+   "id": "whx-jm-notebooks",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: investigation notebooks",
+   "questions": [
+    "is there a way to look at pipeline health manually without email",
+    "how do you inspect pipeline health by hand without waiting for an alert",
+    "manual look at the pipeline logs and failures",
+    "how do you review pipeline runs interactively",
+    "what notebooks come with the job execution monitor",
+    "monitor_investigation.ipynb what is it",
+    "log_reader_sanity_check notebook",
+    "how do you triage a pipeline failure without sending alert emails",
+    "manual inspection tools for the pipeline monitor",
+    "how do you debug the monitor interactively",
+    "what is in the monitor investigation notebook",
+    "job monitor documentation as notebooks",
+    "preview the alert email body without sending",
+    "how do you inspect pipeline health by hand",
+    "jupyter notebooks for pipeline health triage",
+    "how do you explain the log schema to a new teammate"
+   ],
+   "tags": [
+    "notebooks",
+    "jupyter",
+    "triage",
+    "debugging",
+    "documentation",
+    "inspection",
+    "email preview",
+    "runbook"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "I built two notebooks as the human inspection layer, so triage never needs a live alert. log_reader_sanity_check.ipynb documents the log schema column by column and explains how to tell root failures from cascades, how silent pipelines are found and how time-window checks feed the alerts. monitor_investigation.ipynb exposes every monitor function across 10 sections: load logs, last 24 hours, all failures, root failures only, the latest full traceback, alert classification preview, silent pipeline detection, last success per pipeline, email body preview and full run history. They double as living documentation of the logic.",
+   "sources": [
+    "work_history.md:504",
+    "work_history.md:505",
+    "work_history.md:506",
+    "work_history.md:507"
+   ]
+  },
+  {
+   "id": "whx-jm-limits",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: scope and limits",
+   "questions": [
+    "what can the pipeline monitor not detect",
+    "how many failures has the monitor flagged so far",
+    "is there evidence of incidents the job monitor caught",
+    "what are the blind spots of the monitoring app",
+    "weak points of the pipeline monitoring system",
+    "what are the limits of the job execution monitor",
+    "what does the job monitor not cover",
+    "does the job monitor catch every kind of failure",
+    "what pipelines can the job monitor not see",
+    "what would you improve in the job execution monitor",
+    "does the monitor only send email",
+    "job monitor limitations",
+    "what does the job monitor require from a pipeline",
+    "can the monitor watch a job that does not write the standard log",
+    "what does the job monitoring app not show",
+    "is the job execution monitor a full observability platform",
+    "how many alerts has the job monitor caught"
+   ],
+   "tags": [
+    "limitations",
+    "scope",
+    "requirements",
+    "caveats",
+    "coverage",
+    "what it doesn't do",
+    "email only",
+    "honest"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "The monitor only sees pipelines that write the standard Parquet log, so a job outside the contract is invisible to it. Alerts go by email, and only CRITICAL severity sends one, so a stale WARNING or INFO appears only as context in a later message. It runs every 30 to 60 minutes, so detection is bounded by that cadence rather than being instant. My notes carry no count of incidents it has caught, so I won't offer one. What I can show is the design: absence detection, cascade separation and visible log failures. Grafana panels sit beside it for the quarterly pipeline.",
+   "sources": [
+    "work_history.md:466",
+    "work_history.md:469",
+    "work_history.md:488",
+    "work_history.md:489",
+    "work_history.md:817"
+   ]
+  },
+  {
+   "id": "whx-jm-medium",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job monitor: the Medium article and why it matters",
+   "questions": [
+    "is there a blog post about the pipeline alerting system",
+    "did she publish an article about her pipeline monitor",
+    "why is the monitoring project more than a side tool",
+    "why does the pipeline monitoring project matter beyond the tool",
+    "I got tired of pipelines failing silently medium article",
+    "what is the monitoring article on medium about",
+    "did she write about the job execution monitor",
+    "why does the job monitor show platform ownership",
+    "monitoring capability scales with the platform",
+    "what is the significance of the job execution monitoring project",
+    "is monitoring normally part of a data scientist's job",
+    "what does the job monitor say about her scope of work",
+    "pipelines failing silently so I built my own monitoring system",
+    "published writing on production monitoring",
+    "does every future pipeline get monitored automatically"
+   ],
+   "tags": [
+    "medium",
+    "article",
+    "platform ownership",
+    "significance",
+    "governance layer",
+    "operational maturity",
+    "production monitoring",
+    "writing"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    },
+    {
+     "label": "Medium article",
+     "url": "https://medium.com/@tayler.erbe/i-got-tired-of-pipelines-failing-silently-so-i-built-my-own-monitoring-system-e8224fe22387"
+    }
+   ],
+   "answer": "I wrote it up as a Medium article titled 'I Got Tired of Pipelines Failing Silently, So I Built My Own Monitoring System'. The project matters beyond the tool itself. Monitoring and pipeline health tracking sit outside a data scientist's normal scope, and building them meant owning the platform and the production governance layer, not only the pipelines. Because of the standardized logging contract, every future pipeline is monitorable from day one, so the capability grows with the platform instead of needing custom work per pipeline.",
+   "sources": [
+    "work_history.md:509",
+    "work_history.md:510",
+    "work_history.md:511",
+    "work_history.md:512"
+   ]
+  },
+  {
+   "id": "whx-pay-overview",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Payroll automation: what it is and why",
+   "questions": [
+    "what is the payroll and financial analytics automation project",
+    "CPA PUA payroll ETL pipeline",
+    "why did you automate the CPA and PUA payroll process",
+    "what did the payroll automation replace",
+    "payroll ETL automation results",
+    "who was the payroll automation built for",
+    "what problem does the payroll pipeline solve",
+    "payroll and financial analytics automation status",
+    "tell me about the CPA PUA project",
+    "how much faster is the payroll processing now",
+    "payroll excel workflow replaced by python"
+   ],
+   "tags": [
+    "payroll",
+    "CPA",
+    "PUA",
+    "ETL",
+    "automation",
+    "legacy workflow",
+    "excel",
+    "University Payroll & Benefits"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "I replaced manual and semi-manual legacy workflows for CPA and PUA payroll data with a fully automated end-to-end ETL pipeline. The result: processing time dropped from hours to minutes, with better reliability, repeatability and governance. It was built for University Payroll & Benefits and the System Office. The pipeline reads raw payroll Excel files, applies business-rule mappings, deduplication and derived-field logic, and produces clean, analytics-ready outputs. Status is near-final, with the production transition underway, so I'd call it close to done rather than long established.",
+   "sources": [
+    "work_history.md:514",
+    "work_history.md:515",
+    "work_history.md:516",
+    "work_history.md:517",
+    "work_history.md:519",
+    "work_history.md:525"
+   ]
+  },
+  {
+   "id": "whx-pay-transform",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Payroll automation: the transformation framework",
+   "questions": [
+    "what happens to a payroll spreadsheet once it goes through the pipeline",
+    "walk me through the payroll pipeline steps from excel to output",
+    "what does the payroll pipeline do to a raw file",
+    "how does the payroll transformation framework work",
+    "what transformations does the CPA PUA pipeline apply",
+    "business rule mappings in payroll processing",
+    "deduplication and derived fields in the payroll ETL",
+    "payroll raw excel files to analytics ready output",
+    "what does the payroll python framework do",
+    "how are payroll files cleaned and standardized",
+    "design of the payroll ETL transformation steps",
+    "standardized python transformation framework for payroll",
+    "what are the inputs and outputs of the payroll pipeline"
+   ],
+   "tags": [
+    "transformation",
+    "business rules",
+    "deduplication",
+    "derived fields",
+    "excel ingestion",
+    "standardized framework",
+    "data cleaning",
+    "analytics-ready"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "I built it as a standardized Python transformation framework rather than a one-off script. It ingests the raw payroll Excel files, applies the business-rule mappings, removes duplicates, calculates the derived fields and writes clean, analytics-ready outputs. Putting the rules in a framework is what replaced the legacy approach, where the same steps were done by hand or half by hand and varied from run to run. My notes don't list the individual mapping rules or row volumes, so I can describe the structure but not those specifics.",
+   "sources": [
+    "work_history.md:520"
+   ]
+  },
+  {
+   "id": "whx-pay-autodetect",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Payroll automation: CPA vs PUA file detection",
+   "questions": [
+    "how does the payroll tool know which file type it received",
+    "how does the pipeline recognize a CPA file versus a PUA file",
+    "how does the payroll automation decide which kind of file it got",
+    "how does the payroll pipeline tell CPA files from PUA files",
+    "file auto detection by naming convention for payroll",
+    "why detect payroll file type automatically",
+    "CPA versus PUA file detection logic",
+    "how did you remove manual configuration from the payroll pipeline",
+    "what operational risk does file auto detection remove",
+    "naming convention based routing of payroll files",
+    "what happens if a payroll file is named wrong",
+    "does the user choose CPA or PUA before processing"
+   ],
+   "tags": [
+    "file detection",
+    "naming convention",
+    "routing",
+    "operator error",
+    "configuration",
+    "CPA",
+    "PUA",
+    "risk reduction"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "The pipeline decides for itself whether a file is CPA or PUA, based on the file's naming convention. That removes manual configuration, so nobody has to tell the system which kind of payroll file they uploaded, and it reduces operational risk because a wrong setting can't produce the wrong transformation. I treat it as a design principle: if a human choice can be inferred from something already reliable, infer it. The trade-off is that detection depends on people following the naming convention, and my notes don't describe how a misnamed file is handled.",
+   "sources": [
+    "work_history.md:522",
+    "work_history.md:519"
+   ]
+  },
+  {
+   "id": "whx-pay-box-actions",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Payroll automation: Box and GitHub Actions workflow",
+   "questions": [
+    "how can someone who does not code kick off the payroll processing",
+    "how does a non-technical person start the payroll job",
+    "do payroll staff need to code to run the pipeline",
+    "how is the payroll run triggered",
+    "how do payroll users run the CPA PUA pipeline",
+    "box integration for the payroll pipeline",
+    "github actions one click payroll execution",
+    "payroll automation without local environment setup",
+    "non technical users upload files to trigger payroll processing",
+    "where do payroll source and output files live",
+    "how did you operationalize the payroll workflow",
+    "why github actions for the payroll pipeline",
+    "payroll pipeline box storage upload trigger",
+    "do payroll users need python installed"
+   ],
+   "tags": [
+    "box",
+    "github actions",
+    "one click",
+    "self serve",
+    "non-technical users",
+    "operationalize",
+    "cloud storage",
+    "no local setup"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "The pipeline is integrated with Box for both source and destination storage, so non-technical users trigger processing by uploading files. I operationalized the workflow with GitHub Actions, which gives one-click execution with no local environment setup. The reasoning is adoption: payroll staff shouldn't need Python, a laptop configuration or a command line to run a monthly job. The design pushes the technical work into the pipeline and leaves users with a familiar folder and a single action. My notes don't say how often it runs or what monitoring wraps it.",
+   "sources": [
+    "work_history.md:521",
+    "work_history.md:524"
+   ]
+  },
+  {
+   "id": "whx-pay-audit",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Payroll automation: versioned outputs and auditability",
+   "questions": [
+    "can you trace where a payroll figure came from",
+    "where did this payroll number come from and can it be reproduced",
+    "what did automating payroll do for governance",
+    "how can a payroll result be explained later",
+    "how are payroll outputs versioned",
+    "timestamped outputs in the payroll pipeline",
+    "payroll pipeline auditability and traceability",
+    "how do you reproduce a past payroll run",
+    "governance improvements in the payroll automation",
+    "repeatable downstream analysis of payroll outputs",
+    "why timestamp the CPA PUA outputs",
+    "what makes the payroll automation auditable",
+    "how did reliability and governance improve in payroll processing"
+   ],
+   "tags": [
+    "audit trail",
+    "versioning",
+    "timestamps",
+    "traceability",
+    "repeatability",
+    "governance",
+    "reproducibility",
+    "reliability"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "Every output the payroll pipeline writes is timestamped and versioned, which supports auditability, traceability and repeatable downstream analysis. If someone asks how a number was produced, the run can be identified, traced and repeated instead of reconstructed from memory. That is the governance side of the project, alongside the speed gain from hours to minutes. Payroll is data where being able to explain a result matters as much as producing it quickly. What I can't give you from my notes is a formal audit outcome, because the project is near-final and still in its production transition.",
+   "sources": [
+    "work_history.md:523",
+    "work_history.md:525",
+    "work_history.md:515"
+   ]
+  },
+  {
+   "id": "whx-pay-limits",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Payroll automation: status and what is not shown",
+   "questions": [
+    "how mature is the payroll project",
+    "how finished is the CPA PUA automation",
+    "is the payroll pipeline live yet",
+    "do you have metrics for the payroll pipeline",
+    "is the payroll automation in production",
+    "what is the status of the CPA PUA pipeline",
+    "what don't you know about the payroll automation",
+    "payroll pipeline limitations",
+    "what would you add to the payroll ETL",
+    "payroll automation production transition",
+    "has the payroll pipeline been fully deployed",
+    "how many payroll files does the pipeline process",
+    "payroll pipeline numbers and metrics"
+   ],
+   "tags": [
+    "status",
+    "near-final",
+    "production transition",
+    "limitations",
+    "metrics",
+    "what's next",
+    "honest answer",
+    "deployment"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "It is near-final, with the production transition underway, so I describe it as nearly there rather than fully settled. The one quantified outcome I can stand behind is that manual processing went from hours to minutes. I don't have volumes, error rates or file counts in my notes, and I won't invent them. The design choices are clear: a standardized framework, file auto-detection, Box storage, GitHub Actions execution and versioned outputs. The honest gap is evidence at scale, which the production run will provide.",
+   "sources": [
+    "work_history.md:515",
+    "work_history.md:525"
+   ]
+  },
+  {
+   "id": "whx-jc-overview",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job classification app: what it is",
+   "questions": [
+    "have you built anything that matches similar job descriptions",
+    "did you build a job matching tool for HR",
+    "what HR classification and search work have you delivered",
+    "have you done job title matching for human resources",
+    "what is the job classification and semantic matching application",
+    "UIS HR job matching prototype",
+    "job classification project for human resources",
+    "streamlit job matching app",
+    "what did you build for UIS HR",
+    "semantic search across job descriptions",
+    "job classification semantic matching status",
+    "tell me about the job matching prototype",
+    "what problem does the job classification application solve",
+    "is the UIS HR job classification project delivered"
+   ],
+   "tags": [
+    "job classification",
+    "semantic matching",
+    "UIS HR",
+    "streamlit",
+    "prototype",
+    "job descriptions",
+    "matching",
+    "HR"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "It's a Streamlit job matching prototype for UIS HR that uses BERT embeddings and FAISS for context-aware semantic search across job descriptions. Behind it I built several classification pipelines and used generative AI to expand job summaries and reduce classification redundancy. Status is delivered, and I'd call it a prototype, not a production system. The point of the semantic approach is that a search for a role finds descriptions that mean the same thing even when the wording differs, which keyword search misses. My notes hold no accuracy figures, so I don't quote any.",
+   "sources": [
+    "work_history.md:707",
+    "work_history.md:709",
+    "work_history.md:710",
+    "work_history.md:711"
+   ]
+  },
+  {
+   "id": "whx-jc-semantic",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job classification app: BERT embeddings and FAISS search",
+   "questions": [
+    "how does the job matching app use BERT and FAISS",
+    "semantic search over job descriptions with embeddings",
+    "why embeddings instead of keyword search for job descriptions",
+    "faiss index for job matching",
+    "context aware job search design",
+    "how does the streamlit job matcher find similar jobs",
+    "bert embeddings for HR job descriptions",
+    "what is the retrieval design in the UIS HR job matching prototype"
+   ],
+   "tags": [
+    "BERT",
+    "FAISS",
+    "embeddings",
+    "vector search",
+    "similarity",
+    "retrieval",
+    "context-aware",
+    "nearest neighbor"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "Job descriptions are turned into BERT embeddings and indexed with FAISS, so the Streamlit app can retrieve descriptions by meaning rather than shared words. That matters in HR, where the same work can appear under different titles and phrasing. FAISS handles fast nearest-neighbor lookup over the vectors. I used the same embedding-plus-FAISS pattern at much larger scale later, in the procurement system with 5.19 million vectors. For this prototype my notes don't give the corpus size, the exact BERT variant or retrieval metrics, so I can explain the design but not quantify it.",
+   "sources": [
+    "work_history.md:709",
+    "work_history.md:745"
+   ]
+  },
+  {
+   "id": "whx-jc-classifiers",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job classification app: the classification pipelines",
+   "questions": [
+    "did you only use deep learning for the job matching work",
+    "which models did you try for sorting HR job descriptions into categories",
+    "did you use classical machine learning on HR job data",
+    "which algorithms did you compare for job classification",
+    "what classification models did you build for job classification",
+    "TF-IDF PCA KNN logistic regression random forest job pipelines",
+    "how did you classify jobs at UIS HR",
+    "why several classifiers for job classification",
+    "classical machine learning for job descriptions",
+    "tf-idf with pca for job classification",
+    "random forest versus logistic regression on job descriptions",
+    "what features were used to classify HR jobs"
+   ],
+   "tags": [
+    "TF-IDF",
+    "PCA",
+    "KNN",
+    "logistic regression",
+    "random forest",
+    "classification pipelines",
+    "baseline models",
+    "text classification"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "I built TF-IDF, PCA, KNN, logistic regression and Random Forest classification pipelines for the UIS HR job data, alongside the embedding search. Having several classical pipelines gives a baseline to compare against and a cheaper, more interpretable option than going straight to a neural model. TF-IDF captures the vocabulary, PCA reduces dimensionality, and the classifiers then separate job categories. My notes don't record which model won or what accuracy it reached, so I can't tell you a number or claim one pipeline outperformed another.",
+   "sources": [
+    "work_history.md:710",
+    "work_history.md:711"
+   ]
+  },
+  {
+   "id": "whx-jc-genai",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job classification app: generative AI for job summaries",
+   "questions": [
+    "did a language model help clean up the job descriptions",
+    "how did you handle overlapping job classes with an LLM",
+    "how did you reduce duplicate job categories",
+    "what did LLMs do in the HR job project",
+    "how did you use generative AI in the job classification project",
+    "expand job summaries with an LLM",
+    "reduce classification redundancy with generative AI",
+    "why expand job descriptions before classifying",
+    "genai job summary expansion for HR",
+    "what did generative AI do in the UIS HR application",
+    "redundancy in job classification data",
+    "did you use an LLM in the job matching prototype"
+   ],
+   "tags": [
+    "generative AI",
+    "LLM",
+    "summary expansion",
+    "redundancy",
+    "job summaries",
+    "data enrichment",
+    "descriptions",
+    "HR classification"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "I applied generative AI to expand job summaries and reduce classification redundancy. Short or near-duplicate descriptions are hard to separate, so expanding them gives the classifier and the embedding search more to work with, and it helps collapse classes that were redundant. I treat generated text as an aid to the pipeline, not as a source of truth. My notes don't name the model I used or measure how much the expansion changed results, so I can describe the purpose but not a measured improvement.",
+   "sources": [
+    "work_history.md:711"
+   ]
+  },
+  {
+   "id": "whx-jc-limits",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Job classification app: limits and what it does not show",
+   "questions": [
+    "how well does the job classification model perform",
+    "is the HR job matcher ready for real use",
+    "how accurate is the job matching prototype",
+    "was the HR job classification app evaluated",
+    "what are the limits of the job classification prototype",
+    "job matching app accuracy and evaluation",
+    "is the UIS HR job classification app in production",
+    "what would you improve in the job matching application",
+    "how did you validate the job classification models",
+    "what does the job classification project not prove",
+    "job classification prototype evaluation results",
+    "how mature is the semantic job matching app"
+   ],
+   "tags": [
+    "limitations",
+    "evaluation",
+    "prototype",
+    "validation",
+    "metrics",
+    "next steps",
+    "production readiness",
+    "honest answer"
+   ],
+   "links": [
+    {
+     "label": "Projects",
+     "url": "index.html#projects"
+    }
+   ],
+   "answer": "It's a delivered prototype, not a production system, and my notes record no accuracy, recall or user-testing results for it, so I won't claim any. What it shows is design competence: semantic retrieval with BERT and FAISS, a set of classical classification pipelines for comparison, and generative AI used to tidy the data. The gap is an evaluation set. For the procurement system I built a 30-query hand-curated one, and a prototype like this would need the same before anyone relies on it.",
+   "sources": [
+    "work_history.md:706",
+    "work_history.md:707",
+    "work_history.md:709",
+    "work_history.md:710",
+    "work_history.md:711"
+   ]
+  }
+ ],
+ "tests": [
+  [
+   "why did you write your own pipeline monitoring instead of buying one",
+   "whx-jm-why-custom"
+  ],
+  [
+   "what is the monitoring app that watches your scheduled jobs",
+   "whx-jm-why-custom"
+  ],
+  [
+   "how is the code for the pipeline health checker organized",
+   "whx-jm-modules"
+  ],
+  [
+   "which python files make up the monitor and what does each do",
+   "whx-jm-modules"
+  ],
+  [
+   "how would a new workflow get picked up by your health monitor",
+   "whx-jm-discovery"
+  ],
+  [
+   "what has the monitoring app been pointed at so far",
+   "whx-jm-discovery"
+  ],
+  [
+   "what does the monitor do when it cannot open a pipeline's log",
+   "whx-jm-log-read-failed"
+  ],
+  [
+   "how do you stop a broken log file from making a pipeline invisible",
+   "whx-jm-log-read-failed"
+  ],
+  [
+   "what information do I get when the pipeline monitor emails me",
+   "whx-jm-email"
+  ],
+  [
+   "can you test the alert sender without running the checks",
+   "whx-jm-email"
+  ],
+  [
+   "is there a way to look at pipeline health manually instead of waiting for an email",
+   "whx-jm-notebooks"
+  ],
+  [
+   "how would someone new learn how your monitoring logic works",
+   "whx-jm-notebooks"
+  ],
+  [
+   "what can't your pipeline monitor detect",
+   "whx-jm-limits"
+  ],
+  [
+   "is there any evidence of how many failures the monitor has flagged",
+   "whx-jm-limits"
+  ],
+  [
+   "is there a blog post about the pipeline alerting system you made",
+   "whx-jm-medium"
+  ],
+  [
+   "is the pipeline monitor just a utility or something bigger",
+   "whx-jm-medium"
+  ],
+  [
+   "what did the system office payroll automation do",
+   "whx-pay-overview"
+  ],
+  [
+   "how long did payroll processing take before and after you automated it",
+   "whx-pay-overview"
+  ],
+  [
+   "what happens to a payroll spreadsheet once it goes through your pipeline",
+   "whx-pay-transform"
+  ],
+  [
+   "were the payroll rules hard coded in a script or a framework",
+   "whx-pay-transform"
+  ],
+  [
+   "how does the payroll job work out whether an upload is CPA or PUA",
+   "whx-pay-autodetect"
+  ],
+  [
+   "what is the weak point of detecting payroll files by their name",
+   "whx-pay-autodetect"
+  ],
+  [
+   "how can someone who doesn't code kick off the payroll processing",
+   "whx-pay-box-actions"
+  ],
+  [
+   "is the payroll job run from a laptop or from a hosted workflow",
+   "whx-pay-box-actions"
+  ],
+  [
+   "can a payroll output be traced back to the run that made it",
+   "whx-pay-audit"
+  ],
+  [
+   "did payroll automation improve auditability",
+   "whx-pay-audit"
+  ],
+  [
+   "has the payroll automation gone live",
+   "whx-pay-limits"
+  ],
+  [
+   "what numbers back up the payroll improvement",
+   "whx-pay-limits"
+  ],
+  [
+   "did you make an app that finds similar job postings for HR",
+   "whx-jc-overview"
+  ],
+  [
+   "what did you build for the human resources office on job descriptions",
+   "whx-jc-overview"
+  ],
+  [
+   "how does the job search app understand that two titles mean the same role",
+   "whx-jc-semantic"
+  ],
+  [
+   "which vector index did the HR matching prototype use",
+   "whx-jc-semantic"
+  ],
+  [
+   "what classifiers were built to sort jobs into classes",
+   "whx-jc-classifiers"
+  ],
+  [
+   "were there simple baseline models next to the embeddings for jobs",
+   "whx-jc-classifiers"
+  ],
+  [
+   "was an LLM used to enrich short job summaries",
+   "whx-jc-genai"
+  ],
+  [
+   "how did you cut redundancy in the job categories",
+   "whx-jc-genai"
+  ],
+  [
+   "what accuracy did the job classifier reach",
+   "whx-jc-limits"
+  ],
+  [
+   "is the job matching prototype production ready",
+   "whx-jc-limits"
+  ]
+ ]
+}

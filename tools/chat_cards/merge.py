@@ -90,6 +90,9 @@ def main():
         for link in p.get("add_links", []):
             if link["url"] not in [l["url"] for l in c["links"]]: c["links"].append(link)
 
+    for c in new_cards:                            # cards waiting for her answer carry no answer text
+        if c.get("state") == "PENDING":
+            c.pop("answer", None)
     pos = max(i for i, c in enumerate(kb["cards"]) if c["section"] == "core") + 1
     kb["cards"][pos:pos] = new_cards
     if getattr(w, "FALLBACK", None):

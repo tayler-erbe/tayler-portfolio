@@ -1,0 +1,286 @@
+{
+ "index-stepping-up-lead": [
+  "why did her title change from data engineer to data scientist?"
+ ],
+ "index-stakeholders": [
+  "who are the stakeholders she has built things for?"
+ ],
+ "ex-forward-deployed": [
+  "can she work in a forward deployed engineer role even though she has only worked in higher ed?"
+ ],
+ "tech-containers": [
+  "does she use docker to package her applications?"
+ ],
+ "index-skills-infra": [
+  "is she comfortable on the linux command line?"
+ ],
+ "roles-wanted": [
+  "where's she based",
+  "is tayler open to moving to another city",
+  "can you work on-site with a customer?",
+  "is tayler available to hire"
+ ],
+ "fde-rapid-apps": [
+  "does she know streamlit"
+ ],
+ "ex-what-i-can-help-with": [
+  "would she do consulting?"
+ ],
+ "persona-strengths": [
+  "strengths weaknesses"
+ ],
+ "tech-orchestration-mlops": [
+  "what clouds, databases and orchestration tools has she used at work, and which popular ones like airflow, dbt, kafka and databricks has she not touched?",
+  "opentelemetry tracing for llm calls?"
+ ],
+ "vit-slo-capacity-plan": [
+  "how would you do capacity planning for a 50-state rollout of the legislation extraction?"
+ ],
+ "fde-legiscan-ingestion": [
+  "how do you keep the vector index fresh when new bills arrive every day?"
+ ],
+ "ade-llm-stage": [
+  "what happens in your pipeline when the model returns output that fails to parse?"
+ ],
+ "aie-observability": [
+  "what metrics would you put on a dashboard for an llm service in production?"
+ ],
+ "aie-design-doc-extraction": [
+  "how would you architect a document intake service that handles 50,000 pages a day on premises?"
+ ],
+ "tech-azure": [
+  "which azure services have you actually used in production?",
+  "used azure data factory?"
+ ],
+ "aii-ambiguity": [
+  "how would you put a human in the loop for sensitive image classification at archive scale?"
+ ],
+ "aie-eval-harness": [
+  "how do you make an llm pipeline reproducible when model versions keep changing?"
+ ],
+ "aie-scaling-honest": [
+  "what would it take to move your ollama and vllm workloads onto kubernetes?"
+ ],
+ "tech-langchain": [
+  "used langgraph or crewai?"
+ ],
+ "aie-api-app-design": [
+  "do you use pydantic for outputs?",
+  "built any rest apis?",
+  "have you built rest apis?"
+ ],
+ "aie-gpu-memory-sizing": [
+  "ever hit oom on the l4? what did you do"
+ ],
+ "iv-structured-output": [
+  "how do you pick temperature?"
+ ],
+ "aie-prompt-versioning": [
+  "few shot or zero shot for extraction?"
+ ],
+ "aie-deployment": [
+  "blue green deploys?"
+ ],
+ "ex-monitoring": [
+  "on call experience?"
+ ],
+ "aie-ai-security": [
+  "guardrails"
+ ],
+ "aie-hybrid-retrieval": [
+  "reranking cross encoder"
+ ],
+ "ex-rag-example": [
+  "has she built a rag system that is actually in production"
+ ],
+ "ex-fine-tuning": [
+  "has she done any model distillation or training from scratch"
+ ],
+ "vllm-throughput": [
+  "whats the diffrence betwen vllm and olama for you"
+ ],
+ "ait-precision-quantization": [
+  "did you benchamrk quantised models agaisnt full precison"
+ ],
+ "ex-local-vs-hosted": [
+  "why llama not gpt for the extraction thign",
+  "will our data be used to train the model?"
+ ],
+ "fde-gpu-server-ops": [
+  "if the l4 server died tomorrow, what's your recovery plan, how long would the daily legislative run be down, and is there any cloud fallback for the extraction step?"
+ ],
+ "ads-feature-engineering": [
+  "what features go into predicting whether a bill passes?"
+ ],
+ "ads-empirical-bayes": [
+  "how do you stabilize rates for small departments with only a handful of employees?"
+ ],
+ "ads-time-series-forecasting": [
+  "how did you validate a ten year enrollment projection when you can't wait ten years?"
+ ],
+ "uic-models": [
+  "what is the 82% accuracy on the enrollment model measured against, and what's the baseline?"
+ ],
+ "ads-fixing-inherited-model": [
+  "retirement risk forecast method",
+  "when you rebuilt the retirement risk forecast, how did you prove the new python version matched or improved on the old one, what was statistically wrong before, and how is it monitored now?"
+ ],
+ "ads-hyperparameter-tuning": [
+  "did you evr use bayesian optimzation for tuning"
+ ],
+ "ads-end-to-end-modeling": [
+  "on the bill passage model: what was the training population, what was held out, how was the threshold chosen, and how would the numbers change if you scored bills later in their lifecycle than introdu"
+ ],
+ "iv-reproducibility": [
+  "how do you version a dataset so a model can be reproduced later?"
+ ],
+ "iv-chunking": [
+  "how do you chunk documents before embedding them, and how did you pick the chunk size?"
+ ],
+ "iv-sql-experience": [
+  "pl/sql experience?",
+  "what databses have you worked with"
+ ],
+ "iv-python-experience": [
+  "used pyarrow directly?"
+ ],
+ "iv-test-data-pipelines": [
+  "written unit tests for etl?"
+ ],
+ "ade-batch-vs-streaming": [
+  "how would you move a nightly oracle-to-parquet batch job to something near real time, what would you keep, what would you throw away, and is it even worth the cost?"
+ ],
+ "aie-vllm-airgap": [
+  "have you ever deployed an ai system inside a customer environment where you had no internet access at all?",
+  "do you have experince with on premise deployements"
+ ],
+ "fde-oracle-integration": [
+  "walk me through how you got the legislative platform connected to oracle in production."
+ ],
+ "aie-data-contracts": [
+  "what happens when the upstream data source changes format and your pipeline breaks at 2am?"
+ ],
+ "iv-story-retirement-rebuild": [
+  "you ever ship something in under two weeks?"
+ ],
+ "iv-end-to-end-ownership": [
+  "is she more of a builder or an architect"
+ ],
+ "ex-executive-stakeholders": [
+  "we need someone who can talk to a vp in the morning and fix a broken etl job in the afternoon. have you actually done both in the same role, and can you give an example of each?"
+ ],
+ "con-privacy-compliance": [
+  "have you done any work under hipaa?",
+  "is it safe to put our employee data into an ai system?"
+ ],
+ "iv-earn-stakeholder-trust": [
+  "have you ever had to defend a model's accuracy numbers to a sceptical executive?"
+ ],
+ "con-build-vs-buy": [
+  "copilot or custom, which is cheaper"
+ ],
+ "index-domains": [
+  "does tayler have experience in healthcare"
+ ],
+ "con-use-case-scoring": [
+  "a client has budget for one ai project this year and three candidates: contract review, a customer service bot and demand forecasting. how would you help them choose, and what information would you ne"
+ ],
+ "ex-capacity-planning": [
+  "we keep getting asked whether to self-host an open model or pay for an enterprise api. what numbers from your own benchmarking would you bring to that conversation, and where do those numbers stop bei"
+ ],
+ "ex-contracts": [
+  "can ai read our contracts and pull out the key dates and terms?"
+ ],
+ "con-estimating-effort": [
+  "how much would it cost to build something like your legislative tool for us?"
+ ],
+ "persona-augmentation": [
+  "will this replace any of my staff?"
+ ],
+ "iv-handover-documentation": [
+  "what happens to the system after you finish? do we depend on you forever?"
+ ],
+ "archival-images": [
+  "can ai sort through a huge photo collection and flag sensitive images?"
+ ],
+ "procure-problem": [
+  "could you help us make sense of our purchasing data?"
+ ],
+ "ade-matching-data-prep": [
+  "data cleanup help"
+ ],
+ "ex-industries": [
+  "has tayler worked with nonprofits or government"
+ ],
+ "contact": [
+  "does she have references"
+ ],
+ "ex-document-processing": [
+  "i run operations for a regional nonprofit. we have years of grant reports as pdfs and nobody can find anything. is this something you could fix, roughly how would it work, and what would we have to do"
+ ],
+ "index-working-style": [
+  "what's your working style when nobody is telling you what to do?"
+ ],
+ "iv-explain-non-technical": [
+  "how do you explain a technical trade-off to someone with no technical background?"
+ ],
+ "arc-gpu-sharing": [
+  "how do 29 agents share a single gpu without stepping on each other?"
+ ],
+ "ex-agent-guardrails": [
+  "in the multi-agent setup, what still has to go through her personally, what are the known weak spots, and how does she keep track of decisions she already made?"
+ ],
+ "ait-prompt-design": [
+  "did merging three prompts into one hurt the output quality?"
+ ],
+ "ait-methodology": [
+  "what concurency levels did she benchmark?"
+ ],
+ "ex-model-evaluation": [
+  "why didnt she use an llm judge to score the ocr models"
+ ],
+ "ex-responsible-ai": [
+  "does drop radar buy the stuff automatically"
+ ],
+ "ex-rapid-prototyping": [
+  "how long did drop radar take to build"
+ ],
+ "vit-exp35-qwen-null": [
+  "qwen 27b vs 32b"
+ ],
+ "legislative-platform": [
+  "does the legislation thing cover all 50 states"
+ ],
+ "legis-webapp-docs": [
+  "is there a writeup on the legislative web app's azure architecture"
+ ],
+ "skyrule": [
+  "why astrology?? seems odd for a data scientist"
+ ],
+ "uic-output-audiences": [
+  "did advisors actually get per-student risk scores out of it?"
+ ],
+ "persona-agents-paradigm": [
+  "are agents overhyped"
+ ],
+ "opinion-consciousness": [
+  "does she think llms actually understand anything"
+ ],
+ "iv-models-used": [
+  "favorite llm"
+ ],
+ "websites": [
+  "does she have a newsletter or substack"
+ ],
+ "answer-q69-places": [
+  "whats her favourite place"
+ ],
+ "chatbot-how-built": [
+  "am i talking to tayler right now",
+  "do you store what i type",
+  "how do i know ur answers are acurate and not made up"
+ ],
+ "persona-open-vs-closed": [
+  "i'm curious where she lands on the open source debate: should companies release weights, does she run things locally on principle or for cost, and has she written about it anywhere?"
+ ]
+}

@@ -1,0 +1,1210 @@
+{
+ "family": "drd",
+ "cards": [
+  {
+   "id": "drd-origin",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Why Tayler built Drop Radar",
+   "questions": [
+    "why did you build drop radar",
+    "what problem does drop radar solve",
+    "what made you start the drop radar project",
+    "why was drop radar created for your husband",
+    "what is the origin story of drop radar",
+    "why did your husband need a drop alert system",
+    "who is drop radar for",
+    "what was the goal of drop radar",
+    "why build drop radar in a weekend",
+    "how did drop radar start",
+    "what inspired the drop radar alert system",
+    "why did he keep losing limited drops to bots"
+   ],
+   "tags": [
+    "motivation",
+    "husband",
+    "collector",
+    "bots",
+    "sellout",
+    "reselling",
+    "backstory",
+    "reason",
+    "wife",
+    "built for husband"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#story"
+    }
+   ],
+   "answer": "My husband has collected and resold trading cards, collectible toys and watches since he worked at a card shop at 12. For months he was glued to his phone trying to catch limited drops, and he kept losing them to bots. These releases sell out in minutes, and nobody can refresh a dozen stores at once while living their life. So I built Drop Radar over one weekend. The goal was simple: he stops watching his phone, trusts the system to tell him when something matters, and we get that time back together. It is a personal project, and he is its real user.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-sources",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What Drop Radar watches",
+   "questions": [
+    "what does drop radar watch",
+    "how many sources does drop radar monitor",
+    "what kinds of sources does drop radar track",
+    "does drop radar watch store homepages for a waiting room",
+    "how does drop radar detect a queue going up",
+    "what are the ingestion sources of drop radar",
+    "does drop radar read rss feeds",
+    "how often does drop radar check each source",
+    "does drop radar use shopify product feeds",
+    "what are the drop windows in drop radar",
+    "how does drop radar find restocks and new items",
+    "how many stores does drop radar watch around the clock"
+   ],
+   "tags": [
+    "sources",
+    "feeds",
+    "waiting room",
+    "rss",
+    "keyword watcher",
+    "intervals",
+    "shopify",
+    "restock",
+    "feeds",
+    "pages",
+    "poll",
+    "notice",
+    "detect drop",
+    "starting"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#what"
+    }
+   ],
+   "answer": "Drop Radar watches about 40 stores and sources around the clock. That covers store product feeds for new items and restocks, store homepages for a waiting room appearing (a queue going up means a drop is starting), page and keyword watchers, and RSS feeds. Each source has its own check interval, and checks tighten inside the drop windows he knows well, like weekday mornings at one store and evenings at another. Discord restock channels arrive over the official live connection, and an AI deep search hunts for small-batch limited editions the scripted feeds miss.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-filtering",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "How Drop Radar filters alerts",
+   "questions": [
+    "how does drop radar filter alerts",
+    "does drop radar only alert for retail price items",
+    "how does drop radar handle third-party marketplace sellers",
+    "how does drop radar avoid duplicate alerts",
+    "what is the 30 minute dedupe in drop radar",
+    "does drop radar have quiet hours",
+    "what goes to the drop radar dashboard instead of his phone",
+    "how does drop radar treat resale listings and giveaways",
+    "how does drop radar handle in-store sightings",
+    "why does drop radar only alert on actionable items",
+    "how does drop radar stop alert spam",
+    "what filters does drop radar apply before pinging"
+   ],
+   "tags": [
+    "filter",
+    "dedupe",
+    "retail price",
+    "quiet hours",
+    "marketplace",
+    "noise",
+    "dashboard",
+    "suppress",
+    "repeat",
+    "notifications",
+    "duplicate",
+    "spam"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#what"
+    }
+   ],
+   "answer": "Drop Radar only pings his phone for what he actually wants: online, at retail price, from the real store. Third-party marketplace sellers are flagged, and in-store sightings, resale listings and giveaways go to the dashboard instead. The same product or link alerts only once per 30 minutes across all sources, and quiet hours keep the night quiet. That filtering came from his feedback. Early alerts were low-value in his judgment, so I moved news and trackers to the dashboard and kept the phone for alerts he can act on.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-alert-levels",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar alert levels and channels",
+   "questions": [
+    "what are the drop radar alert levels",
+    "what does LIVE mean in drop radar",
+    "what is the difference between LIVE SOON and INFO in drop radar",
+    "how does drop radar send alerts",
+    "does drop radar use telegram pushover and ntfy",
+    "what is in a drop radar alert",
+    "what does a drop radar notification contain",
+    "which alerts get a loud push in drop radar",
+    "what does a SOON alert mean in drop radar",
+    "does drop radar include the direct store link",
+    "what is an INFO alert in drop radar",
+    "how fast does drop radar ping his phone"
+   ],
+   "tags": [
+    "live",
+    "soon",
+    "info",
+    "push",
+    "telegram",
+    "pushover",
+    "ntfy",
+    "priority"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#what"
+    }
+   ],
+   "answer": "Drop Radar uses three levels. LIVE means buyable now or the queue is up, and it sends a loud push. SOON is an announcement, with a normal push. INFO goes to the dashboard only. Alerts go to a Telegram bot, with optional Pushover critical alerts and ntfy. Each one carries the product, store, price, seller, when it was posted, when it was seen, and the direct store link. The system pings his phone within seconds of a release going live, and he still makes every purchase himself.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-checkout-help",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Checkout help inside the store rules",
+   "questions": [
+    "how does drop radar get him to checkout faster",
+    "what are drop radar one-tap cart links",
+    "does drop radar open the cart link itself",
+    "how do drop radar drop reminders work",
+    "what is the drop radar per-store checklist",
+    "how does drop radar handle invite and raffle programs",
+    "does drop radar test daylight saving time reminders",
+    "what speed-ups does drop radar offer without a bot",
+    "why does drop radar build cart links instead of auto checkout",
+    "what reminders does drop radar send before a drop",
+    "how does drop radar convert time zones for drops",
+    "what does drop radar do to improve checkout odds"
+   ],
+   "tags": [
+    "cart link",
+    "reminder",
+    "checklist",
+    "raffle",
+    "invite",
+    "daylight saving",
+    "time zones",
+    "checkout"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#what"
+    }
+   ],
+   "answer": "Because no store permits automated checkout, I built the legitimate speed-ups. Drop Radar generates one-tap cart links that open checkout with the item already in the cart. It builds the link and never opens it. It sends reminders 24 hours and 15 minutes before an announced drop, with time zones converted and tested across a daylight-saving change. It also keeps a per-store checklist so his accounts are ready for invite and raffle programs. Every one of these is something he can use without putting his accounts at risk.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-ledger-inbox",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar ledger and email parsing details",
+   "questions": [
+    "how does drop radar read his email",
+    "what emails does drop radar parse",
+    "does drop radar read the inbox read-only",
+    "how often does drop radar check the dedicated inbox",
+    "how many retailers does drop radar parse emails from",
+    "what does the drop radar ledger calculate",
+    "what are SELL NOW HOLD and WATCH in drop radar",
+    "how does drop radar work out ebay fees and profit",
+    "what ship-by reminders does drop radar send for ebay",
+    "what happens to emails drop radar cannot read",
+    "does drop radar keep cost basis and days held",
+    "how does drop radar track going rates"
+   ],
+   "tags": [
+    "ledger",
+    "imap",
+    "cost basis",
+    "ebay",
+    "sell now",
+    "hold",
+    "watch",
+    "ship-by",
+    "profit",
+    "compute",
+    "sale",
+    "calculate",
+    "payout"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#what"
+    }
+   ],
+   "answer": "Drop Radar reads a dedicated inbox, read-only, every 15 minutes. It parses order, shipping, delivery and cancellation emails from about 15 retailers, plus eBay seller emails. From those it keeps cost basis, what he still holds, going rates with their source and date, days held, and a SELL NOW, HOLD or WATCH suggestion with its reason. For eBay it works out fees, payout and profit, and reminds him 24 and 4 hours before a ship-by deadline. Emails it cannot read go to a review list, never dropped. All of it stays on our home PC.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-bot-commands",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Telegram bot commands and feedback notes",
+   "questions": [
+    "what commands does the drop radar telegram bot have",
+    "what does the drop radar /add command do",
+    "does drop radar have a /status command",
+    "what happens when he texts drop radar something that is not a command",
+    "how does drop radar treat dictated notes and screenshots",
+    "is the drop radar telegram bot two-way",
+    "what does the drop radar /ledger command do",
+    "what is /price in drop radar",
+    "how does he give feedback to drop radar",
+    "what does /remind do in drop radar",
+    "how are free-text messages handled by the drop radar bot",
+    "does drop radar accept voice notes"
+   ],
+   "tags": [
+    "telegram",
+    "commands",
+    "feedback",
+    "screenshot",
+    "dictated",
+    "chat interface",
+    "bot"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#loop"
+    }
+   ],
+   "answer": "The Telegram bot is a two-way line to an AI agent, not only an alert channel. Commands like /add, /remove, /status, /remind, /ledger and /price run straight away. Anything else he sends, a text, a dictated note or a screenshot, is saved as feedback. A file watcher notices the new note and queues an agent run. That is the design choice I like most: he talks to the system the way he talks to anyone, and he never has to learn a configuration format or touch a line of code.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-agent-run",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What the Drop Radar agent does with a note",
+   "questions": [
+    "what does the drop radar claude code agent do with a note",
+    "how does a note become a code change in drop radar",
+    "does the drop radar agent run tests before restarting",
+    "what rules does the drop radar agent follow",
+    "what is the drop radar living knowledge file",
+    "does the drop radar agent reply on telegram",
+    "how does drop radar trigger an agent run",
+    "what does the file watcher do in drop radar",
+    "what happens when a drop radar source starts failing",
+    "does he ever edit code in drop radar",
+    "how does the drop radar agent change the source list",
+    "how is the drop radar agent queued"
+   ],
+   "tags": [
+    "agent",
+    "claude code",
+    "file watcher",
+    "job queue",
+    "tests",
+    "restart",
+    "autonomous",
+    "knowledge file",
+    "after note",
+    "self test",
+    "code changes",
+    "own code",
+    "edits"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#loop"
+    }
+   ],
+   "answer": "A file watcher notices a new note, or a source that has started failing, and queues a run of a dedicated Claude Code agent through an autonomous job queue. The agent has written rules and a living knowledge file. It reads the note, works out what is wrong, edits the code or the source list, runs the tests, restarts the service, and replies on Telegram with what it changed. He never touches a line of code. The tests are the gate between an edit and a restart, which is what makes it reasonable to let an agent change a live system.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-reviews",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar scheduled reviews and check-ins",
+   "questions": [
+    "what scheduled reviews does the drop radar agent run",
+    "does drop radar have a weekly review",
+    "what is the drop radar weekly feedback check-in",
+    "what are keep change and drop buttons in drop radar",
+    "how does drop radar ask the user questions",
+    "does drop radar have a monthly research pass",
+    "what is the drop radar resale-picks briefing",
+    "can every drop radar choice be undone",
+    "does drop radar have feature on and off switches",
+    "how does drop radar make questions easy to answer",
+    "what is the rotating open question in drop radar",
+    "how does drop radar keep the user in charge"
+   ],
+   "tags": [
+    "review",
+    "check-in",
+    "weekly",
+    "daily",
+    "monthly",
+    "buttons",
+    "toggle",
+    "undo",
+    "inline keyboard",
+    "review itself",
+    "how often",
+    "schedule",
+    "cadence"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#loop"
+    }
+   ],
+   "answer": "The agent also runs on a schedule: a daily review, a weekly review, a weekly resale-picks briefing and a monthly research pass. Every weekly review ends with a feedback check-in. Each change from that week gets Keep, Change and Drop buttons, plus one open question that rotates. He asked for it to be easy, so questions come as tap-to-choose Telegram buttons rather than paragraphs. Every choice is saved to a file the agent acts on and can be undone, and each extra feature has a live on and off switch, so anything he declines comes out without a restart.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-stdlib",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Why Drop Radar is standard-library Python",
+   "questions": [
+    "why is drop radar standard-library python",
+    "does drop radar use any frameworks",
+    "what python modules does drop radar use",
+    "what is the drop radar tech stack",
+    "how does drop radar run on windows",
+    "how many modules does drop radar have",
+    "how many lines of code is drop radar",
+    "does drop radar use sqlite",
+    "how does drop radar restart if it stops",
+    "what runs drop radar on the home pc",
+    "does drop radar need anything installed beyond python",
+    "what is the drop radar auto-restart wrapper"
+   ],
+   "tags": [
+    "stdlib",
+    "python",
+    "urllib",
+    "sqlite3",
+    "imaplib",
+    "task scheduler",
+    "no dependencies",
+    "stack",
+    "codebase",
+    "size",
+    "big",
+    "loc",
+    "small"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#architecture"
+    }
+   ],
+   "answer": "Drop Radar is about 3,300 lines of standard-library Python in 12 modules, with no frameworks and no proxies. It uses urllib, sqlite3, imaplib, email, threading and http.server, plus a websocket client I built on ssl and socket. Windows Task Scheduler runs it, with a wrapper that restarts it if it stops. I chose the standard library so there is nothing to install beyond Python and nothing for a dependency update to break on a home PC that has to stay up around the clock. The trade-off is writing small pieces, like the websocket client, myself.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-discord-gateway",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar Discord Gateway and websocket",
+   "questions": [
+    "how does drop radar connect to discord",
+    "did drop radar move from rest polling to the discord gateway",
+    "how fast do discord posts reach drop radar",
+    "how many discord servers does drop radar follow",
+    "does drop radar use self-bots or user tokens",
+    "how did you write the drop radar websocket client",
+    "what are heartbeat resume and dead-connection detection in drop radar",
+    "what is the drop radar read-only discord bot",
+    "does drop radar fall back to rest polling",
+    "what discord restock servers does drop radar read",
+    "how did drop radar reduce discord latency to one second",
+    "how are discord announcement channels followed in drop radar"
+   ],
+   "tags": [
+    "discord",
+    "gateway",
+    "websocket",
+    "polling",
+    "latency",
+    "heartbeat",
+    "announcement channels",
+    "restock servers"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#architecture"
+    }
+   ],
+   "answer": "I joined nine community restock servers for him and followed six of their announcement channels into his own private server, where a read-only bot reads the posts. It started as REST polling every 10 seconds. I moved it to Discord's official Gateway through a websocket client written on the standard library, with heartbeat, resume and dead-connection detection, so posts now arrive in about a second, with REST polling as an automatic fallback. There are no self-bots and no user tokens, so it stays inside Discord's rules.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-health-arrival",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Honest health and the arrival log",
+   "questions": [
+    "how does drop radar measure source health",
+    "when is the drop radar discord feed healthy",
+    "what is the drop radar arrival log",
+    "what does drop radar log for every alert",
+    "how does drop radar know a source is broken",
+    "why does healthy mean arrivals in drop radar",
+    "what is the drop radar monthly summary",
+    "how does drop radar find its fastest sources",
+    "what are the health states in drop radar",
+    "does drop radar track each store's busiest hour",
+    "how does drop radar check that a source actually delivers",
+    "what is a health row in drop radar"
+   ],
+   "tags": [
+    "health",
+    "monitoring",
+    "arrival log",
+    "latency",
+    "observability",
+    "busiest hour",
+    "silent failure",
+    "silent failures",
+    "detect",
+    "failing quietly",
+    "stale",
+    "broken source"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#architecture"
+    }
+   ],
+   "answer": "Every Drop Radar source has a health row with real states. The Discord feed counts as healthy only when a followed post actually arrived in the last 24 hours, not just because the code ran. A source that runs without errors but never delivers anything is broken, so health checks for real arrivals. An arrival log records every alert's upstream post time, detection time and send time. It feeds a monthly summary of which sources are fastest and each store's busiest day and hour.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-live-bugs",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Bugs Drop Radar found in live data",
+   "questions": [
+    "what bugs did drop radar have",
+    "what bugs were found in drop radar live data",
+    "did drop radar's backoff freeze the loop",
+    "why did atc fire on watch in drop radar",
+    "what was the drop radar substring matching bug",
+    "did drop radar swallow first posts from new channels",
+    "why did the drop radar feedback watcher requeue notes",
+    "how did you fix the drop radar loop freeze",
+    "what went wrong in drop radar early on",
+    "what failure modes did drop radar hit in production",
+    "how were the drop radar bugs found",
+    "what was the drop radar baseline bug"
+   ],
+   "tags": [
+    "bugs",
+    "debugging",
+    "backoff",
+    "substring",
+    "baseline",
+    "failure modes",
+    "production issues",
+    "defects",
+    "real-world",
+    "incidents",
+    "errors",
+    "what went wrong"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#architecture"
+    }
+   ],
+   "answer": "Four bugs showed up only in live data, and all four were fixed. A backoff froze the whole loop for up to an hour, so a blocked host is now skipped, not slept on. Channels with no baseline yet had their first posts swallowed. A substring match let atc fire on watch. And a feedback watcher queued notes it had already handled. None of them appeared in the 25 automated tests, which run on fabricated data. They are the reason health now checks for real arrivals.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-deep-search",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar AI deep search",
+   "questions": [
+    "what is the drop radar deep search",
+    "how does drop radar find small-batch limited editions",
+    "what did the drop radar deep search find",
+    "how does the drop radar AI deep search work",
+    "why was the deep search added to drop radar",
+    "what was the 100-piece watch drop radar found",
+    "how was drop radar weighted toward limited editions",
+    "what does drop radar use claude web research for",
+    "did the deep search change drop radar's design",
+    "how often does the drop radar deep search run",
+    "what do scripted feeds miss that drop radar's deep search finds",
+    "what was the first deep search result in drop radar"
+   ],
+   "tags": [
+    "deep search",
+    "limited edition",
+    "watch",
+    "claude web research",
+    "discovery",
+    "ai search",
+    "small batch"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#results"
+    }
+   ],
+   "answer": "Scripted feeds wait for a store to post, so I added an AI deep search to hunt for small-batch limited editions they miss. It uses Claude web research. Its first test run surfaced a limited-edition watch, only 100 made, that sold out within minutes, and my husband got one. That find changed the design: the deep search is now weighted toward limited editions, which he named as his top priority. How often it runs is one of the choices he sets through the tap-to-choose buttons.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-numbers",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar headline numbers",
+   "questions": [
+    "how many commits did drop radar have",
+    "how many tests does drop radar have",
+    "what are the drop radar results",
+    "how many stores does drop radar research terms for",
+    "how many lines is drop radar and how many modules",
+    "what are the drop radar stats",
+    "how long has drop radar been live",
+    "how fast is drop radar from discord to alert",
+    "what are drop radar's numbers",
+    "how many stores does he buy from that drop radar covers",
+    "how many commits in the drop radar weekend",
+    "what are the drop radar project metrics"
+   ],
+   "tags": [
+    "metrics",
+    "statistics",
+    "commits",
+    "357",
+    "uptime",
+    "stats at a glance",
+    "scale"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#results"
+    }
+   ],
+   "answer": "Drop Radar watches about 40 stores and sources around the clock. The first build took one weekend, October 22 to 25, 2026, with 357 commits, about 3,300 lines of standard-library Python in 12 modules, and 25 automated tests, all on fabricated data. A Discord post reaches it in about a second over the Gateway, down from 10-second polling. I researched the terms of 22 stores he buys from, and none permits automated checkout. It has been live 24/7 on a home PC since October 22, 2026.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-tests-privacy",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar tests and private data",
+   "questions": [
+    "how is drop radar tested",
+    "are drop radar's tests run on real data",
+    "does drop radar keep purchase data out of git",
+    "how does drop radar protect his purchase records",
+    "how does a test prove drop radar data stays out of the repo",
+    "where does drop radar store his data",
+    "does drop radar data go to the code repository",
+    "what does drop radar's gitignore do",
+    "are the 25 drop radar tests on fabricated data",
+    "is drop radar's ledger private",
+    "why does drop radar keep data on the home pc",
+    "what is in the drop radar showcase repo"
+   ],
+   "tags": [
+    "testing",
+    "unittest",
+    "privacy",
+    "gitignore",
+    "fabricated data",
+    "data protection",
+    "home pc",
+    "showcase"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#limits"
+    }
+   ],
+   "answer": "Drop Radar has 25 automated tests, all on fabricated data, using unittest. His real data stays home: every purchase, sale and timing record lives on our home PC and never goes into the code repository. Git ignores it twice over, and a test proves it. The public showcase on GitHub Pages is separate from the running system. I treat privacy as something to test rather than trust, because a stray commit of purchase records would be hard to undo.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-store-rules",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Researching store terms for Drop Radar",
+   "questions": [
+    "did you check store terms for drop radar",
+    "how many stores did drop radar research",
+    "does any store permit automated checkout in drop radar",
+    "what do tcgplayer and ebay say about scraping for drop radar",
+    "how does drop radar get going rates",
+    "is the ebay sold-price api restricted for drop radar",
+    "how does drop radar treat a 403 or 429",
+    "is drop radar polite to stores",
+    "does drop radar use proxies",
+    "what did the drop radar terms research find",
+    "how does drop radar respect rate limits",
+    "what did you research before building drop radar"
+   ],
+   "tags": [
+    "terms of service",
+    "compliance",
+    "scraping",
+    "403",
+    "429",
+    "rate limiting",
+    "polite",
+    "ebay",
+    "tcgplayer",
+    "stores terms",
+    "look at",
+    "legal",
+    "policies",
+    "terms research"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#limits"
+    }
+   ],
+   "answer": "Before building, I researched all 22 stores he buys from: the platform, the bot protection I could observe, and their terms of service, quoted and dated. None permits automated checkout. TCGplayer and eBay forbid scraping, and eBay's sold-price API is restricted, so going rates are automated only through a paid API that permits it and otherwise flagged for him to check by hand. When a store answers with a 403 or 429, Drop Radar checks it less often, hosts are spaced out, and it never hides behind proxies.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-alerts-only",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What Drop Radar will never do",
+   "questions": [
+    "does drop radar buy things automatically",
+    "does drop radar solve captchas",
+    "does drop radar skip queues",
+    "what will drop radar never do",
+    "does drop radar get around bot protection",
+    "is drop radar a bot",
+    "does he still make every purchase in drop radar",
+    "does drop radar join queues for him",
+    "what are drop radar's hard limits",
+    "why is drop radar alerts only",
+    "can drop radar check out for him",
+    "what does drop radar refuse to do"
+   ],
+   "tags": [
+    "alerts only",
+    "no automation",
+    "captcha",
+    "queue",
+    "bot protection",
+    "limits",
+    "ethics",
+    "place orders",
+    "orders",
+    "purchase",
+    "automatic buying",
+    "buy for him"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#limits"
+    }
+   ],
+   "answer": "Drop Radar only ever alerts. It never buys, never joins or skips a queue, never solves a CAPTCHA and never tries to get around bot protection, and it uses no proxies. He still makes every purchase himself. I drew that line after reading the terms of all 22 stores: none permits automated checkout. The gain is on the speed side, with alerts in seconds, cart links and reminders, and the trade-off is that a bot would be faster at the final click.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-timeline",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar build timeline",
+   "questions": [
+    "what is the drop radar timeline",
+    "what shipped on day one of drop radar",
+    "what happened on october 22 in drop radar",
+    "when did drop radar go live",
+    "what was built on october 25 for drop radar",
+    "when was the drop radar ledger built",
+    "when did drop radar add the discord gateway",
+    "what did drop radar's version 1 include",
+    "when did drop radar's deep search start",
+    "when did drop radar begin the weekly check-in",
+    "how did drop radar develop day by day",
+    "what did you ship each day of the drop radar weekend"
+   ],
+   "tags": [
+    "timeline",
+    "october 2026",
+    "version 1",
+    "milestones",
+    "history",
+    "weekend"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#timeline"
+    }
+   ],
+   "answer": "Version 1 went live October 22, 2026 with the store feed, waiting-room, page and RSS watchers, Telegram, Pushover and ntfy alerts, bot commands, a dashboard, drop windows, reminders, feedback notes, and 14 more sources the same day. October 22 to 23 brought a quality reset, daily agent reviews and the Discord reader. October 23 to 24 fixed the loop-freeze and feedback-watcher bugs, added tap-to-choose buttons, and started the deep search, whose first run found the 100-piece watch. October 25 added nine Discord servers, retail-price-only filtering, checkout research on 22 stores, the ledger, the Gateway, cart links, reminders, the arrival log and the weekly check-in.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-quality-reset",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "The Drop Radar quality reset",
+   "questions": [
+    "what was the drop radar quality reset",
+    "why did drop radar change after day one",
+    "did he like the early drop radar alerts",
+    "what feedback did he give drop radar on the first day",
+    "how did drop radar move news and trackers off his phone",
+    "what did the person using drop radar teach you",
+    "why is the weekly check-in built into drop radar",
+    "how did user feedback shape drop radar",
+    "what did you change after he judged the alerts low-value",
+    "who runs the drop radar roadmap",
+    "what was the first big drop radar redesign",
+    "did the drop radar user criticize the first version"
+   ],
+   "tags": [
+    "feedback",
+    "user research",
+    "product management",
+    "redesign",
+    "roadmap",
+    "low-value alerts"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#lessons"
+    }
+   ],
+   "answer": "On October 22 to 23 he judged the early alerts low-value, and he was right. I reset the design within a day: only actionable alerts reach his phone, news and trackers moved to the dashboard, and the AI agent started daily reviews. That is why the weekly feedback check-in is built into Drop Radar rather than bolted on. The person using it runs the roadmap. Every large improvement since came from something he said, not from something I assumed he wanted.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-status-role",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Drop Radar status and Tayler's role",
+   "questions": [
+    "what is drop radar's status",
+    "what was your role on drop radar",
+    "is drop radar still running",
+    "where does drop radar run",
+    "is drop radar a personal project",
+    "who built drop radar",
+    "is drop radar open source",
+    "where is the drop radar showcase",
+    "did you build drop radar alone",
+    "is drop radar live in production",
+    "what hardware does drop radar run on",
+    "what is the drop radar github page"
+   ],
+   "tags": [
+    "status",
+    "role",
+    "builder",
+    "technical lead",
+    "home pc",
+    "hosting",
+    "showcase",
+    "personal project"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#story"
+    }
+   ],
+   "answer": "Drop Radar is a personal project I built from October 2026. I was the builder and technical lead. It has been live 24/7 since October 22, 2026, after a first build over one weekend, October 22 to 25. It runs on a home PC in standard-library Python, scheduled by Windows Task Scheduler. There is a public showcase page on GitHub. It is a system for one household, built for my husband, and not a product with customers or an SLA.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-chatgpt-opinion",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Using ChatGPT as a second opinion on Drop Radar",
+   "questions": [
+    "did you use chatgpt on drop radar",
+    "what was chatgpt's role in drop radar",
+    "what is the drop radar ranked top-10 plan",
+    "how did you get an outside opinion on drop radar",
+    "what free ideas did drop radar adopt from chatgpt",
+    "how did you decide big drop radar decisions",
+    "did you use more than one ai on drop radar",
+    "what did the outside consultant recommend for drop radar",
+    "how did you improve drop radar checkout odds under the no-bot rules",
+    "what was the drop radar plan for earlier alerts",
+    "why ask a second model about drop radar",
+    "what ai tools were used for drop radar"
+   ],
+   "tags": [
+    "chatgpt",
+    "second opinion",
+    "consultant",
+    "top 10",
+    "planning",
+    "claude code",
+    "multi-model"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#lessons"
+    }
+   ],
+   "answer": "I ran the big Drop Radar decisions past ChatGPT as an independent outside consultant, while a Claude Code subagent maintains the system. That included a ranked top-10 plan for earlier alerts and better checkout odds under the no-bot rules, and I adopted its strongest free ideas the same day. Having an outside model challenge the plan meant weak ideas were caught before I built them. Claude web research also powers the deep search, so the AI roles are separate: maintainer, researcher and reviewer.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-evidence-limits",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "What the Drop Radar results do and do not show",
+   "questions": [
+    "what does drop radar not prove",
+    "how do you know drop radar works",
+    "does drop radar have a catch rate",
+    "what are the limits of the drop radar evidence",
+    "is the 100-piece watch the only drop radar win",
+    "has drop radar been measured against bots",
+    "how much evidence is there for drop radar",
+    "what would you measure next for drop radar",
+    "is drop radar proven at scale",
+    "can drop radar beat bots",
+    "what are the weaknesses of drop radar",
+    "is drop radar a tested production system"
+   ],
+   "tags": [
+    "limitations",
+    "evidence",
+    "validation",
+    "catch rate",
+    "caveats",
+    "honest",
+    "scale",
+    "proof",
+    "strong",
+    "how strong",
+    "unproven",
+    "claims"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#limits"
+    }
+   ],
+   "answer": "The evidence is honest but small. The documented win is one find: a 100-piece watch the deep search surfaced in its first run, which he bought. The other numbers describe the build and the plumbing: about 40 sources, about a second from Discord, live since October 22, 2026, and 25 tests on fabricated data. I have not published a catch rate or compared it against bots. It serves one household on one home PC, and it only alerts, so it can speed him up but cannot guarantee he gets an item.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  },
+  {
+   "id": "drd-lessons-rules-first",
+   "section": "projects",
+   "section_label": "Projects",
+   "title": "Rules first, then speed in Drop Radar",
+   "questions": [
+    "what did drop radar teach you about rules and speed",
+    "why read store terms before building drop radar",
+    "what did you learn from drop radar about health checks",
+    "what did drop radar teach you about ai search",
+    "what lessons came from building drop radar",
+    "what would you do differently on drop radar",
+    "what is the lesson of drop radar's deep search",
+    "why does drop radar check for real arrivals",
+    "how does drop radar keep his accounts safe",
+    "what does 'healthy means it worked' mean in drop radar",
+    "what are the main takeaways from drop radar",
+    "does an ai that goes looking find different things in drop radar"
+   ],
+   "tags": [
+    "lessons",
+    "takeaways",
+    "accounts at risk",
+    "terms of service",
+    "health",
+    "ai discovery",
+    "weekend teach",
+    "reflection",
+    "retrospective",
+    "learned"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html#lessons"
+    }
+   ],
+   "answer": "Four lessons from Drop Radar. The person using it runs the roadmap. An AI that goes looking finds different things: feeds wait for a store to post, while the deep search hunts for small-batch editions and its first run found the watch. Healthy means it worked, not that it ran, so health now checks for real arrivals. And rules first, then speed: reading every store's terms before building meant every speed-up I shipped is one he can use without putting his accounts at risk.",
+   "sources": [
+    "page:drop-radar.html"
+   ]
+  }
+ ],
+ "tests": [
+  [
+   "what was the reason behind drop radar",
+   "drd-origin"
+  ],
+  [
+   "why did tayler start drop radar for her husband",
+   "drd-origin"
+  ],
+  [
+   "which feeds and pages does drop radar poll",
+   "drd-sources"
+  ],
+  [
+   "how does drop radar notice a drop is starting",
+   "drd-sources"
+  ],
+  [
+   "does drop radar suppress repeat notifications",
+   "drd-filtering"
+  ],
+  [
+   "how does drop radar keep the noise down",
+   "drd-filtering"
+  ],
+  [
+   "what priority tiers does drop radar notify with",
+   "drd-alert-levels"
+  ],
+  [
+   "which apps does drop radar push notifications to",
+   "drd-alert-levels"
+  ],
+  [
+   "how does drop radar help with checkout without botting",
+   "drd-checkout-help"
+  ],
+  [
+   "what does drop radar do before an announced release",
+   "drd-checkout-help"
+  ],
+  [
+   "how does drop radar compute sale profit",
+   "drd-ledger-inbox"
+  ],
+  [
+   "what does drop radar do with an email it cannot parse",
+   "drd-ledger-inbox"
+  ],
+  [
+   "what can he type into the drop radar bot",
+   "drd-bot-commands"
+  ],
+  [
+   "how does a screenshot become feedback in drop radar",
+   "drd-bot-commands"
+  ],
+  [
+   "after he sends a note what does the drop radar agent do",
+   "drd-agent-run"
+  ],
+  [
+   "does drop radar test its own code changes",
+   "drd-agent-run"
+  ],
+  [
+   "how often does drop radar review itself",
+   "drd-reviews"
+  ],
+  [
+   "how does the weekly check-in work in drop radar",
+   "drd-reviews"
+  ],
+  [
+   "why no frameworks in drop radar",
+   "drd-stdlib"
+  ],
+  [
+   "how big is the drop radar codebase",
+   "drd-stdlib"
+  ],
+  [
+   "how did you cut discord latency in drop radar",
+   "drd-discord-gateway"
+  ],
+  [
+   "does drop radar use discord's official api",
+   "drd-discord-gateway"
+  ],
+  [
+   "how do you detect silent failures in drop radar",
+   "drd-health-arrival"
+  ],
+  [
+   "does drop radar record detection and send times",
+   "drd-health-arrival"
+  ],
+  [
+   "what real-world defects did drop radar have",
+   "drd-live-bugs"
+  ],
+  [
+   "why did drop radar's loop stall",
+   "drd-live-bugs"
+  ],
+  [
+   "how did drop radar find the limited watch",
+   "drd-deep-search"
+  ],
+  [
+   "why does drop radar's search favor limited editions",
+   "drd-deep-search"
+  ],
+  [
+   "how many commits went into drop radar",
+   "drd-numbers"
+  ],
+  [
+   "what uptime and speed does drop radar have",
+   "drd-numbers"
+  ],
+  [
+   "does drop radar test that private files are ignored",
+   "drd-tests-privacy"
+  ],
+  [
+   "is real data used in drop radar's test suite",
+   "drd-tests-privacy"
+  ],
+  [
+   "what stores' terms did drop radar look at",
+   "drd-store-rules"
+  ],
+  [
+   "how does drop radar behave when a store blocks it",
+   "drd-store-rules"
+  ],
+  [
+   "will drop radar place orders for him",
+   "drd-alerts-only"
+  ],
+  [
+   "is there any captcha bypass in drop radar",
+   "drd-alerts-only"
+  ],
+  [
+   "what was in drop radar version 1",
+   "drd-timeline"
+  ],
+  [
+   "what did drop radar add on the last day of the weekend",
+   "drd-timeline"
+  ],
+  [
+   "how did drop radar's user shape its design",
+   "drd-quality-reset"
+  ],
+  [
+   "why did drop radar's first alerts get thrown out",
+   "drd-quality-reset"
+  ],
+  [
+   "is drop radar still live",
+   "drd-status-role"
+  ],
+  [
+   "what did tayler do on drop radar",
+   "drd-status-role"
+  ],
+  [
+   "did another model review the drop radar plan",
+   "drd-chatgpt-opinion"
+  ],
+  [
+   "how did you stress-test drop radar decisions",
+   "drd-chatgpt-opinion"
+  ],
+  [
+   "does drop radar have measured hit rate",
+   "drd-evidence-limits"
+  ],
+  [
+   "how strong is the proof that drop radar works",
+   "drd-evidence-limits"
+  ],
+  [
+   "what are the takeaways from the drop radar project",
+   "drd-lessons-rules-first"
+  ],
+  [
+   "what did the drop radar weekend teach you",
+   "drd-lessons-rules-first"
+  ]
+ ],
+ "gaps": [
+  "fun personal questions (favorite theme park, cartoon character) are not covered by the page text, so not written here"
+ ]
+}

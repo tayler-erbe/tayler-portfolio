@@ -1,0 +1,1141 @@
+{
+ "family": "aga",
+ "cards": [
+  {
+   "id": "aga-overview",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Agent Architecture: what the page is",
+   "questions": [
+    "what is the agent architecture page",
+    "what is the agent architecture project",
+    "explain how my agents work together",
+    "what does the agent architecture page cover",
+    "what is the 29 agent system",
+    "how do the 29 agents work together",
+    "what is the agent architecture system design",
+    "agent architecture overview",
+    "what does tayler's agent architecture page describe",
+    "how do her 29 AI agents share work",
+    "what is the shared queue memory and decision log system",
+    "is the agent architecture a personal project"
+   ],
+   "tags": [
+    "overview",
+    "system design",
+    "multi-agent",
+    "personal project",
+    "29 agents"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "It's the system design for the 29 AI agents I run across Skyrule and my other personal projects. They share one job queue, one memory, one decision log and an ownership map that tooling enforces, all on a single workstation with one GPU. The page covers who the agents are, how work moves, what stops them and what still needs me, plus Agent City, the 3D town I use to watch it. It's a personal project that runs daily, and the planned parts are marked as planned. I'm the designer and builder of the whole system.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-why-company",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Why organize agents like a small company",
+   "questions": [
+    "why did you organize the 29 agents like a small company",
+    "why model the agents on departments",
+    "why does every agent have a written charter",
+    "what is in an agent charter",
+    "what does a charter say an agent is not for",
+    "why charters with owners for the 29 agents",
+    "how did you decide who owns what among the agents",
+    "why twelve departments of Skyrule as agents",
+    "what are the three groups of agents in the architecture",
+    "how are the 29 agents grouped",
+    "what is the product organization of agents",
+    "company analogy for multi-agent systems"
+   ],
+   "tags": [
+    "charter",
+    "departments",
+    "ownership",
+    "org design",
+    "roles",
+    "scope",
+    "structure",
+    "company",
+    "ai agent charter"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#roster"
+    }
+   ],
+   "answer": "The hard problems in multi-agent work are the same ones a company has: who owns what, who may decide, and how work passes between people without getting lost. So every agent has a written charter saying what it is for and, just as important, what it is not for and who owns that instead. There are three groups. The product organization is twelve departments of Skyrule. Four cross-cutting agents check, route and block across all of them. The rest serve my other personal projects and the machine itself. All 29 run on the same rails.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-roster-limits",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "What agents may and may not do",
+   "questions": [
+    "what is the office of the founder agent allowed to do",
+    "can the domain practice agent decide what a rule means",
+    "what may the editorial agent not do",
+    "can the brand and marketing agent publish",
+    "what can the legal and trust agent do",
+    "which agents can block a merge",
+    "what does the platform and data agent own",
+    "what may the program management agent not decide",
+    "which agents run on Claude Sonnet versus local models",
+    "what does the site keeper agent do",
+    "what does the voice writer agent do",
+    "what does the foreman agent do"
+   ],
+   "tags": [
+    "roster",
+    "lanes",
+    "may not",
+    "agent boundaries",
+    "permissions",
+    "seats"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#roster"
+    }
+   ],
+   "answer": "Each lane pairs what an agent owns with what it may not do. The Office of the Founder drafts decision records for me but makes no ruling or ratification. Domain practice writes rule specs but doesn't decide what a rule means, and it doesn't write prose. Editorial verifies citations and prepares grading but gives no final grade. Brand and marketing drafts claims but publishes nothing. Legal and trust vetoes with reasons but gives no licensed opinion. The site keeper drafts changes on a branch and can't publish without my approval. The voice writer drafts public sentences and I approve each one.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-overseer",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "The Overseer: hourly health round",
+   "questions": [
+    "what does the overseer agent do",
+    "how does the overseer check the agents",
+    "what are the overseer verdicts",
+    "what did the overseer report on oct 19",
+    "how many agents were up on oct 19",
+    "does the overseer restart failed jobs",
+    "what counts as a stuck run for the overseer",
+    "after how many hours is a claude lane job stuck",
+    "overseer stuck thresholds 3 6 and 14 hours",
+    "can the overseer act or only check",
+    "how does the overseer ask each agent if its run worked",
+    "overseer up waiting watch down"
+   ],
+   "tags": [
+    "overseer",
+    "monitoring",
+    "health check",
+    "stuck jobs",
+    "verdicts",
+    "local model",
+    "hourly",
+    "allowed",
+    "only checks",
+    "never acts"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#governance"
+    }
+   ],
+   "answer": "Every hour the Overseer goes round every agent and the machine room. It looks for failed runs, stuck runs (over 3 hours on the Claude lane, 6 on cpu, 14 on the GPU lane), vanished processes, missed scheduled runs and offline runtimes. It also asks each agent, on a local model, whether its newest run did its job. Verdicts are up, waiting, watch or down. It only checks and never acts: nothing is queued, restarted or deleted. At 08:30 on Oct 19 it had checked 28 agents: 19 up, 5 waiting on me, 4 to watch, none down.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-one-queue",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Why one job queue",
+   "questions": [
+    "why did you build one job queue for the agents",
+    "why a single scheduler for 29 agents",
+    "what is the only thing that launches work in the agent system",
+    "what is a job in the agent queue",
+    "what does a queue job look like",
+    "why not several schedulers for agents",
+    "what is the cost of a single queue as critical infrastructure",
+    "how did you keep the job queue small",
+    "why is the queue written in python and file based",
+    "who decides when a job starts",
+    "can agents start jobs directly",
+    "why did you write the queue yourself"
+   ],
+   "tags": [
+    "job queue",
+    "scheduler",
+    "single point",
+    "launch decision",
+    "python",
+    "queue design",
+    "structure",
+    "json",
+    "lane"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#lifecycle"
+    }
+   ],
+   "answer": "All unattended work goes through one job queue I wrote in Python. A job is a small JSON object: an id, a lane, a command or a prompt, and optional gates. Agents, the town and I can add jobs, but only the queue decides when they start. With several schedulers nobody can answer \"why did this run now?\"; with one, every launch is a single logged decision with its evidence. The cost is that the queue becomes critical infrastructure, so I kept it small, file-based and covered by its own tests.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-lanes",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Queue lanes and concurrency limits",
+   "questions": [
+    "what lanes does the agent job queue have",
+    "what are the cpu vllm ollama and claude lanes",
+    "what is the concurrency limit of the vllm lane",
+    "why is the vllm lane limited to 1",
+    "why is the claude lane limit 22",
+    "what is the default claude lane limit in code",
+    "why did you raise the claude lane from 16 to 22",
+    "what does a lane represent in the queue",
+    "what runs in the cpu lane",
+    "what is the ollama lane for",
+    "has any job used the ollama lane",
+    "how does speed inside a vllm run work"
+   ],
+   "tags": [
+    "lanes",
+    "concurrency",
+    "limits",
+    "shared resource",
+    "vllm",
+    "claude lane",
+    "parallel",
+    "one job at a time",
+    "how many jobs"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#lifecycle"
+    }
+   ],
+   "answer": "A lane is a statement about a shared resource: what would break, or cost too much, if too many of these ran at once. As of Oct 19 the cpu lane allows 4 (scripts, checks, merges, the Overseer, news desks). The vllm lane allows 1 because there is one GPU, and speed inside a run comes from batched requests to the server, not parallel jobs. The ollama lane allows 1 and no queued job has used it yet. The claude lane allows 22, raised from 16 on Oct 18 for a release push and due to return to 16; the code default is 6.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-tick-lock",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "The tick, lock file and idle GPU fix",
+   "questions": [
+    "how often does the queue tick",
+    "what is the 15 minute tick",
+    "why does each finished job trigger a tick",
+    "what happened on oct 5 with the gpu idle",
+    "how does the lock file prevent duplicate launches",
+    "what happens to a lock older than five minutes",
+    "how do two ticks avoid launching the same job",
+    "windows task scheduler tick for the agent queue",
+    "what is a crashed tick",
+    "how does the queue run without a session open"
+   ],
+   "tags": [
+    "tick",
+    "lock file",
+    "scheduler",
+    "race condition",
+    "windows task scheduler",
+    "idle gpu"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#lifecycle"
+    }
+   ],
+   "answer": "Windows Task Scheduler runs a tick every 15 minutes with no session open. Each finished job also triggers a tick at once, because on Oct 5 the GPU sat idle between ticks and waiting for the next 15 minute mark wasted it. A lock file makes sure two ticks never launch the same job, and a lock older than five minutes is treated as a crashed tick and cleared. It's simple, and the stale-lock rule means a crash can't wedge the queue permanently.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-gates-retries",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Gates, attempts and retries",
+   "questions": [
+    "what gates can a queue job have",
+    "how many jobs waited on other jobs",
+    "what is a finish check in the queue",
+    "why decide done by evidence rather than exit code",
+    "how many attempts does a job get",
+    "how many automatic retries did the queue make",
+    "how many jobs failed or were cancelled as of oct 19",
+    "what happens if the wrapper vanished after a reboot",
+    "what is a not-before time on a job",
+    "how many jobs carried a priority"
+   ],
+   "tags": [
+    "gates",
+    "retries",
+    "dependencies",
+    "exit code",
+    "finish check",
+    "reboot",
+    "failed job",
+    "retry",
+    "attempts"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#lifecycle"
+    }
+   ],
+   "answer": "Of the 1,129 jobs added since Oct 2, 247 waited on other jobs, 61 had a not-before time, 120 had a start condition, 151 had a finish check and 373 carried a priority. The finish check decides \"done\" by evidence rather than by exit code. A job gets 3 attempts unless it says otherwise, and if the wrapper itself vanished, say after a reboot, the job goes back to the queue. Across 1,141 launches the queue made 65 automatic retries. As of Oct 19, 7 jobs ended failed and 49 were cancelled.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-launch-budget",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "The Claude launch budget and usage limits",
+   "questions": [
+    "how do you budget claude usage for agents",
+    "what is the weekly launch budget",
+    "why is the claude lane opt in per job",
+    "what is an approval note on a job",
+    "what happens when claude reports a usage limit",
+    "does a usage limit stop count as a failed attempt",
+    "why 130 launches a week",
+    "how do you keep half your weekly usage free",
+    "does the whole claude lane pause on a usage limit",
+    "what is the launch budget in the agent queue"
+   ],
+   "tags": [
+    "budget",
+    "claude usage",
+    "approval note",
+    "weekly cap",
+    "usage limit",
+    "cost control"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#lifecycle"
+    }
+   ],
+   "answer": "The Claude lane spends my own usage, so it's opt-in per job: a job without an approval note never starts there. A weekly budget caps launches at 130 this week, set by me, so at least half my weekly usage stays free for my own work. When Claude reports a usage limit, the whole lane pauses until the reset time it states, and that stop doesn't count as a failed attempt. One gap: I track Claude cost only as launches against the budget, not as tokens.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-self-scheduling",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Self-scheduling hooks and the GPU keeper",
+   "questions": [
+    "what is the gpu keeper agent",
+    "how often does the gpu keeper check the gpu lane",
+    "how many planning jobs has the gpu keeper queued",
+    "what does the periodic hook queue",
+    "can editing the config make the hook run any command",
+    "what is the allowlist for the periodic hook",
+    "how does the queue add work on its own",
+    "what is the hourly overseer round hook",
+    "what is the six hourly news fetch",
+    "how do you stop self-scheduling from running arbitrary commands"
+   ],
+   "tags": [
+    "gpu keeper",
+    "periodic hook",
+    "allowlist",
+    "self-scheduling",
+    "planning job",
+    "news fetch",
+    "idle gpu",
+    "keeps gpu busy"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#lifecycle"
+    }
+   ],
+   "answer": "Two hooks add work on their own. The GPU keeper checks every hour whether the GPU lane is empty and, if so, queues one planning job to line up the next GPU work; it has done that 173 times. A periodic hook queues the hourly Overseer round and the six-hourly news fetch, but only from an allowlist of scripts and arguments, at most hourly, and only with an approval note. Editing the config cannot make it run an arbitrary command, which is the point of the allowlist.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-files-not-chat",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Why files instead of agent chat",
+   "questions": [
+    "why don't the agents talk to each other in real time",
+    "why files with owners instead of agent to agent chat",
+    "how do the agents coordinate",
+    "why dated handoff documents",
+    "how many handoff documents are there",
+    "how do job dependencies pass work between departments",
+    "how do documents supersede each other",
+    "why supersede by date not version number",
+    "what are the 539 handoff documents",
+    "what is the benefit of coordinating through files"
+   ],
+   "tags": [
+    "handoffs",
+    "coordination",
+    "dependencies",
+    "agent communication",
+    "supersede",
+    "records",
+    "message each other",
+    "direct messaging",
+    "chat"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#coordination"
+    }
+   ],
+   "answer": "Agents don't talk to each other in real time. They coordinate through files with owners: dependencies in the queue, dated handoff documents, a shared memory and a decision log. I chose this over agent-to-agent chat because every exchange then leaves a record that a new session, a reviewer or I can read later, and nothing depends on two agents being awake at once. A job can name the jobs it waits for, so one department's output becomes another's input without polling. There are 539 handoff documents across 11 departments, and they supersede by date, never by version number.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-decision-log",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "The decision log and phone questions",
+   "questions": [
+    "how many founder decisions are logged",
+    "what is the append-only decision log",
+    "how do agents ask you a question",
+    "how do multiple choice questions with a recommended option work",
+    "how does a later line supersede an earlier decision",
+    "do agents search the log before asking",
+    "how do you answer agent questions on your phone",
+    "what is the morning brief page",
+    "what does a tap on the brief do",
+    "294 decisions since sep 30"
+   ],
+   "tags": [
+    "decision log",
+    "append-only",
+    "founder decisions",
+    "questions",
+    "phone",
+    "recall"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#coordination"
+    }
+   ],
+   "answer": "My decisions go into an append-only log: 294 entries since Sep 30. Questions reach me as multiple choice with a recommended option, often on my phone from a morning brief page, and a tap appends a line. A later line for the same question supersedes the earlier one, so history is never rewritten. Agents search the log before asking me anything, and memory recall always shows my recorded decisions first. That keeps me from answering the same question twice.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-shared-memory",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Shared memory rules enforced by tooling",
+   "questions": [
+    "how many memory files do the agents share",
+    "what are one fact memory files",
+    "who may write memories",
+    "does every memory need a source file",
+    "why is the memory body capped at 1200 characters",
+    "how are near duplicate memories refused",
+    "why does memory search run on the cpu",
+    "what embedding model does memory use",
+    "555 memory files across departments",
+    "what rules does the memory tool enforce"
+   ],
+   "tags": [
+    "memory",
+    "embedding",
+    "source hash",
+    "duplicates",
+    "cpu",
+    "recall",
+    "junk",
+    "valid memory",
+    "memory rules"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#coordination"
+    }
+   ],
+   "answer": "There are 555 one-fact memory files across the departments. Each department writes only its own memories and reads everyone's. The tool enforces the rules a model won't reliably hold on its own: every memory names a source file that exists (its hash is stored), the body is capped at 1,200 characters, and near-duplicates are refused. Search runs on a small embedding model kept on the CPU, so recall still works while the GPU is busy.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-memory-sleep",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Memory sleep: nightly pruning",
+   "questions": [
+    "what is memory sleep",
+    "what happens to memories every night",
+    "how are stale memories retired",
+    "what happens when a memory's source changed",
+    "what is the second pass of memory sleep",
+    "why is the memory judge switched off",
+    "what flags snapshots older than seven days",
+    "how do you stop memory from going stale"
+   ],
+   "tags": [
+    "memory sleep",
+    "stale memory",
+    "nightly pass",
+    "memory judge",
+    "evaluation",
+    "duplicates"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#coordination"
+    }
+   ],
+   "answer": "Every night a mechanical pass retires memories whose source is gone, hides ones whose source changed until an agent re-checks them, flags snapshots older than seven days, and flags duplicates. A second pass, where a local model checks memories against my decisions, is written but switched off until it passes its own evaluation. I won't let a model judge memories before I've measured how well it judges. The mechanical pass runs now; the judge pass is not live.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-ownership-layers",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Code ownership map and the scope guard",
+   "questions": [
+    "how is code ownership enforced for the agents",
+    "what is the machine readable ownership map",
+    "how many owned code paths are there",
+    "how many paths are reserved for you",
+    "how many product agents does the ownership map cover",
+    "what does the sync script do for agent scopes",
+    "what does the check mode do",
+    "why does the scope guard always exit 0",
+    "what does powershell do to non zero exit codes",
+    "why does a hook that blocks by exit code fail on windows",
+    "how does the scope guard deny a write",
+    "what is the explicit deny decision"
+   ],
+   "tags": [
+    "ownership map",
+    "scope guard",
+    "hook",
+    "powershell",
+    "least privilege",
+    "windows",
+    "write outside folder",
+    "out of scope",
+    "sandbox"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#coordination"
+    }
+   ],
+   "answer": "A machine-readable ownership map assigns every folder and code path to one of the 15 product agents: each department's own folder plus 62 owned code paths, with 5 paths reserved for me. A sync script writes each agent's scope from that map, and a check mode fails if any agent file drifts. The detail I'm glad I caught: on Windows, PowerShell collapses every non-zero exit to 1, which the agent runtime treats as a warning. So the scope guard always exits 0 and denies through an explicit \"deny\" decision in its output.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-claude-vs-local",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Claude versus local models: the split",
+   "questions": [
+    "why do some agents use claude and others local models",
+    "what runs on claude and what runs on the gpu",
+    "why is sensitive user data local only",
+    "how many claude lane jobs ran on sonnet opus and fable",
+    "which model do public facing drafts use",
+    "how is the model chosen per job",
+    "what is the rule for sensitive data and cloud models",
+    "what are the three criteria for the claude local split",
+    "usage privacy and fit split",
+    "where do overseer questions and news summaries run"
+   ],
+   "tags": [
+    "model routing",
+    "sonnet",
+    "opus",
+    "privacy",
+    "local models",
+    "qwen",
+    "choose model",
+    "pick model",
+    "per job"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#models"
+    }
+   ],
+   "answer": "The split follows three things: usage (Claude is budgeted; the GPU is mine to fill), privacy (sensitive user data never goes to a cloud model, a rule rather than a preference) and fit (bulk work wants throughput, review wants judgment). Claude runs engineering, review, planning and research synthesis. Local open models do extraction, generation, grading, local agents and every draft of public text, where I approve each draft. Of the 754 Claude-lane jobs since Oct 2, 458 ran on Sonnet, 270 on Opus and 26 on Fable, chosen per job so a status check doesn't cost what a design review does.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-seats",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Local model seats measured on the card",
+   "questions": [
+    "what are the local model seats",
+    "what is the code seat",
+    "what is the prose seat",
+    "what is the admin seat",
+    "what is the alt code seat",
+    "why is devstral not the default",
+    "how much did devstral spill to the cpu",
+    "how much memory did qwen3 coder 30b use at 32k context",
+    "why did you pick seats by measuring",
+    "temperature for the prose seat",
+    "which seat may draft public text",
+    "where is the seat to department mapping stored"
+   ],
+   "tags": [
+    "seats",
+    "qwen3 coder",
+    "devstral",
+    "temperature",
+    "context",
+    "measured",
+    "engineering departments",
+    "local engineering model"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#models"
+    }
+   ],
+   "answer": "Each department sits on a named local seat, mapped in one editable file, so no department is tied to a model in code. I picked seats by measuring on this card. Code is Qwen3 Coder 30B at temperature 0.15, which stayed fully on the GPU at a 32k context (about 30.5 GB). Prose is Qwen3 32B at 0.7 and is the only seat allowed to draft public text. Admin is the same base at 0.4. Alt-code is Devstral Small 2 24B, opt-in only, because it spilled about 18% to the CPU on the same task.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-gpu-lease",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "The GPU lease: one big model at a time",
+   "questions": [
+    "what is the gpu lease",
+    "why can't vllm and ollama share the gpu",
+    "how much of the gpu does vllm reserve",
+    "how much memory does a 32b qwen seat need on ollama",
+    "what happens when ollama collides with vllm",
+    "why does ollama run ten times slower on collision",
+    "what are the three vllm profiles",
+    "what gpu does the workstation have",
+    "rtx 5090 with 32 gb setup",
+    "what is the gpu lease holder rule",
+    "how is the gpu switch verified",
+    "what is the restore script"
+   ],
+   "tags": [
+    "gpu lease",
+    "rtx 5090",
+    "vllm",
+    "ollama",
+    "cpu spill",
+    "memory",
+    "two models",
+    "collision",
+    "share gpu",
+    "one gpu"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#models"
+    }
+   ],
+   "answer": "The workstation has one RTX 5090 with 32 GB. A vLLM server reserves 94% of the card when it starts, and a 32B Qwen seat on Ollama needs about 20 GB, so they can't share. When they collide Ollama doesn't fail loudly: it spills to the CPU and runs about ten times slower. So the GPU is a lease with exactly one holder: idle, a vLLM server (an 8B generation model, Qwen3 32B AWQ, or Qwen3 VL 32B for vision and extraction), or the local Ollama seats. After every switch I check actual memory use and server health rather than assuming it worked.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-switch-rule",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "GPU switches never interrupt running work",
+   "questions": [
+    "will a gpu switch interrupt a running job",
+    "what happens if a generation is live when a switch is requested",
+    "why refuse a switch while work is running",
+    "what are the gpu time windows",
+    "is the gpu scheduler live or a dry run",
+    "what runs overnight on the gpu",
+    "who holds the gpu in the daytime",
+    "what does the restore script do",
+    "why not race a half written output file"
+   ],
+   "tags": [
+    "gpu switch",
+    "dry run",
+    "time windows",
+    "restore",
+    "half-written output",
+    "refusal",
+    "kill running job",
+    "interrupt",
+    "extraction"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#models"
+    }
+   ],
+   "answer": "A switch never interrupts running GPU work. If a generation, extraction or grading process is live, a switch away from it is refused and asked again on the next tick. Generation can resume, but a half-written output file isn't worth a race for the sake of a schedule. A separate restore script hands the card back to the vision model after a temporary switch, with the same refusal when work is running. I also wrote time windows (generation overnight, local agents in the daytime), but that scheduler is a dry run today: it logs what it would do.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-review-gates",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Review gates, CI and protected tests",
+   "questions": [
+    "how do review gates work for the agents",
+    "who can block a merge or release",
+    "can you override the quality agent",
+    "what does the principal architect do before merge",
+    "what are protected tests",
+    "how many protected tests does ci prove ran",
+    "why is a green suite not enough",
+    "what is the pressure test of 84 probes",
+    "does ci run on ubuntu and windows",
+    "what does removing a protected test require",
+    "how are findings classified",
+    "what are the four kinds of finding"
+   ],
+   "tags": [
+    "quality gate",
+    "ci",
+    "protected tests",
+    "blocker",
+    "pressure test",
+    "findings",
+    "bad merge",
+    "deleted test",
+    "green suite"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#governance"
+    }
+   ],
+   "answer": "The quality agent can block a merge, release or content batch on quality, and the security agent can block one that weakens a control, each with a written reason; I can override either. The Principal Architect integrates changes and runs the ownership audit first. CI runs the product suite on Ubuntu and Windows, then proves that 14 protected tests actually ran and passed, because a deleted or skipped test leaves the build green and the guarantee gone. An 84-probe pressure test follows. Findings are one of four kinds: safety or evidence blocker, integration blocker, publication-only blocker, or later improvement. Nicer writing is never a blocker.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-test-counts",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Test counts and open failures",
+   "questions": [
+    "how many tests does the product suite run",
+    "how many product tests pass",
+    "which tests are failing",
+    "how many agent city tests are there",
+    "what is the job queue periodic hook test count",
+    "are the three failing tests hidden",
+    "1,496 of 1,499 tests",
+    "what is the state of the town test suite"
+   ],
+   "tags": [
+    "tests",
+    "pytest",
+    "passing",
+    "failures",
+    "open issues",
+    "oct 19",
+    "green",
+    "suite",
+    "test status"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#governance"
+    }
+   ],
+   "answer": "On Oct 19 the product suite ran 1,499 tests on my working checkout: 1,496 passed and 3 failed, all three in one module that is mid-change. Those three are open, not hidden. The job queue has its own tests for the periodic hook (10, passing), and Agent City has its own suite, which ran 340 tests that day with one error still open. I'd rather report the open failures plainly than quote a clean number I haven't earned.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-authority-levels",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Authority levels: what needs me",
+   "questions": [
+    "what are the authority levels",
+    "which decisions need the founder",
+    "what can agents decide without asking",
+    "what does a department head approve",
+    "what is a level 3 decision",
+    "what is the release boundary",
+    "does any agent publish or push",
+    "why does the shell guard deny git push",
+    "who authorises a full generation run",
+    "how did you stop agents asking about everything",
+    "what happens when the editorial check finds a prohibited problem"
+   ],
+   "tags": [
+    "authority",
+    "escalation",
+    "level 3",
+    "release boundary",
+    "git push",
+    "approval",
+    "production",
+    "deploy",
+    "only founder"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#governance"
+    }
+   ],
+   "answer": "On Oct 18 I wrote down which decisions actually need me, so agents stop asking about things they can safely decide. Level 1: agents act without asking on isolated bugs, tests, formatting, wording that keeps its meaning, approved requirements and changes that pass the checks. Level 2: a department head approves changes to internal checks and bounded technical changes within policy. Level 3 comes only to me: the evidence standard, product promises, sensitive data, significant spending, release scope, public deployment and a full generation run. No agent publishes; the shell guard denies every git push.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-agent-city-projection",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Agent City as a deterministic projection",
+   "questions": [
+    "how does agent city decide an agent's state",
+    "what is the state precedence in agent city",
+    "what does offline mean versus sleeping in agent city",
+    "how does agent city poll",
+    "why polling instead of server push",
+    "what does run now do in agent city",
+    "can run now bypass a usage pause",
+    "what are idempotent commands in agent city",
+    "what is the idempotency key window",
+    "what is the done log",
+    "how many finished jobs are in the done log",
+    "who can reach agent city"
+   ],
+   "tags": [
+    "agent city",
+    "projection",
+    "polling",
+    "idempotency",
+    "done log",
+    "private network",
+    "button",
+    "bypass rules",
+    "websockets",
+    "run now"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#observability"
+    }
+   ],
+   "answer": "Agent City is a read-mostly projection: it owns no scheduling and runs no work. One pure function turns a few authoritative fields into one state with fixed precedence: blocked, waiting on me, working, queued, offline, paused, scheduled soon, sleeping, idle. Unreachable means offline, never asleep. Browsers poll every 5 seconds with a cursor; I chose polling over push for simplicity. Run now sets aside one date gate and never overrides approvals, dependencies, a usage pause or the budget. Commands are previewable, and the same key within 24 hours returns the stored result. The Done log holds 1,060 finished jobs, and the town is reachable only over my private network.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  },
+  {
+   "id": "aga-known-limits",
+   "section": "skyrule",
+   "section_label": "Personal projects",
+   "title": "Known limits and what I would change",
+   "questions": [
+    "what would you do differently in the agent architecture",
+    "what are the known limits of the agent system",
+    "why is parsing text for usage limits fragile",
+    "what happened on oct 9 with the usage limit pattern",
+    "why would you use sqlite instead of json files",
+    "what are per job work contracts",
+    "are work contracts built",
+    "why are shell writes only guarded by heuristics",
+    "what would a sandbox change",
+    "which parts are only partly built",
+    "why is the foreman paused",
+    "what is not measured in the agent system"
+   ],
+   "tags": [
+    "limitations",
+    "lessons",
+    "sqlite",
+    "sandbox",
+    "work contracts",
+    "partly built",
+    "weakness",
+    "biggest problem",
+    "retrospective"
+   ],
+   "links": [
+    {
+     "label": "Agent Architecture",
+     "url": "agent-architecture.html#limits"
+    }
+   ],
+   "answer": "Five things. The queue detects a Claude usage limit by reading output, and on Oct 9 an agent's report mentioned the limit and paused the lane for a day; I anchored the pattern, but the real fix is a structured exit signal. Shell writes are guarded by heuristics, so I'd rather run each agent in a sandbox where out-of-scope paths aren't writable. Per-job work contracts (allowed paths, tools, done criteria, budget) are planned, not built. The queue keeps 1,129 jobs in one JSON file, and I'd use SQLite from day one. The foreman is paused and the memory judge is off.",
+   "sources": [
+    "page:agent-architecture.html"
+   ]
+  }
+ ],
+ "add_questions": {},
+ "tests": [
+  [
+   "what is this agent architecture page about",
+   "aga-overview"
+  ],
+  [
+   "give me a summary of the 29 agent system",
+   "aga-overview"
+  ],
+  [
+   "why did you structure your agents like a company",
+   "aga-why-company|arc-agent-org-redesign"
+  ],
+  [
+   "what is a charter for an ai agent",
+   "aga-why-company|ex-agent-guardrails"
+  ],
+  [
+   "can the brand agent post things publicly",
+   "aga-roster-limits"
+  ],
+  [
+   "which agent may not make rulings",
+   "aga-roster-limits"
+  ],
+  [
+   "how often does the overseer run",
+   "aga-overseer"
+  ],
+  [
+   "what is the overseer allowed to do",
+   "aga-overseer"
+  ],
+  [
+   "why is there a single queue launching all agent work",
+   "aga-one-queue"
+  ],
+  [
+   "how is a queue job structured",
+   "aga-one-queue|arc-hindsight-changes"
+  ],
+  [
+   "why only one job at a time on the gpu lane",
+   "aga-lanes"
+  ],
+  [
+   "how many jobs can the claude lane run",
+   "aga-lanes"
+  ],
+  [
+   "what stops two schedulers launching the same job",
+   "aga-tick-lock"
+  ],
+  [
+   "why did the gpu sit idle between ticks",
+   "aga-tick-lock"
+  ],
+  [
+   "how does the queue decide a job is finished",
+   "aga-gates-retries"
+  ],
+  [
+   "how many times is a failed agent job retried",
+   "aga-gates-retries"
+  ],
+  [
+   "how do you stop agents burning through claude usage",
+   "aga-launch-budget|arc-agent-budget-governance"
+  ],
+  [
+   "what pauses the claude lane",
+   "aga-launch-budget"
+  ],
+  [
+   "how does work get queued automatically",
+   "aga-self-scheduling"
+  ],
+  [
+   "what keeps the gpu from sitting idle",
+   "aga-self-scheduling"
+  ],
+  [
+   "why not let agents message each other directly",
+   "aga-files-not-chat"
+  ],
+  [
+   "how do departments hand work to each other",
+   "aga-files-not-chat"
+  ],
+  [
+   "how do you record the founder's decisions",
+   "aga-decision-log"
+  ],
+  [
+   "how do agents avoid asking repeat questions",
+   "aga-decision-log"
+  ],
+  [
+   "how do you stop agents storing junk memories",
+   "aga-shared-memory"
+  ],
+  [
+   "what makes a memory valid in your system",
+   "aga-shared-memory"
+  ],
+  [
+   "how does the system stop memories going out of date",
+   "aga-memory-sleep"
+  ],
+  [
+   "is the memory judge running",
+   "aga-memory-sleep"
+  ],
+  [
+   "why did the blocking hook not block on windows",
+   "aga-ownership-layers"
+  ],
+  [
+   "how do you stop an agent writing outside its folder",
+   "aga-ownership-layers|skyrule-agent-lanes"
+  ],
+  [
+   "which jobs go to claude and which stay local",
+   "aga-claude-vs-local"
+  ],
+  [
+   "how do you pick the model for each job",
+   "aga-claude-vs-local"
+  ],
+  [
+   "which model do the engineering departments run on locally",
+   "aga-seats"
+  ],
+  [
+   "why not use devstral by default",
+   "aga-seats"
+  ],
+  [
+   "what happens if two big models load on the same gpu",
+   "aga-gpu-lease|arc-gpu-sharing"
+  ],
+  [
+   "how do you share one gpu between servers",
+   "aga-gpu-lease|arc-gpu-sharing"
+  ],
+  [
+   "can a model switch kill a running extraction",
+   "aga-switch-rule"
+  ],
+  [
+   "is the gpu time window scheduler running",
+   "aga-switch-rule"
+  ],
+  [
+   "how do you make sure a deleted test does not hide",
+   "aga-review-gates"
+  ],
+  [
+   "what stops a bad merge in the agent system",
+   "aga-review-gates|aie-multi-agent"
+  ],
+  [
+   "is the test suite green",
+   "aga-test-counts"
+  ],
+  [
+   "how many agent city tests have errors",
+   "aga-test-counts"
+  ],
+  [
+   "which decisions are only yours",
+   "aga-authority-levels"
+  ],
+  [
+   "can the agents deploy to production",
+   "aga-authority-levels"
+  ],
+  [
+   "why does agent city poll instead of using websockets",
+   "aga-agent-city-projection"
+  ],
+  [
+   "can the button in the town bypass the rules",
+   "aga-agent-city-projection|arc-control-surface"
+  ],
+  [
+   "what is the biggest weakness of your queue",
+   "aga-known-limits|arc-hindsight-changes"
+  ],
+  [
+   "what is planned but not built in the agent system",
+   "aga-known-limits"
+  ]
+ ],
+ "gaps": [
+  "Fun questions (favorite theme park, cartoon character) in the user's relayed request: no source supports answers, so none were written."
+ ]
+}
