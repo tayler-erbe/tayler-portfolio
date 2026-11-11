@@ -75,7 +75,7 @@
      "url": "choosing-local-models-guide.html#basics"
     }
    ],
-   "answer": "Those numbers are not a ranking. 27B or 32B means roughly that many billion parameters, the numbers the model learned in training. It's a design choice that sets capacity, but it says nothing about how well the model was trained or how well it follows instructions. Version and release date identify a release, and its documentation may disclose training changes and data, yet neither size nor release date alone identifies the best model for a task. That's the first lesson of the guide: treat the label as a starting point and test the model on your own job.",
+   "answer": "Those numbers are not a ranking. 27B or 32B means roughly that many billion parameters, the numbers the model learned in training. It's a design choice that sets capacity, but it says nothing about how well the model was trained or how well it follows instructions. Version and release date identify a release, and its documentation may disclose training changes and data, yet neither size nor release date alone identifies the best model for a task. The guide treats size and release date as starting points, so the model still has to be tested on your own job.",
    "sources": [
     "page:choosing-local-models-guide.html"
    ]
@@ -517,7 +517,7 @@
      "url": "choosing-local-models-guide.html#method"
     }
    ],
-   "answer": "Freeze a set of real cases with code-based checks or answer keys, and keep failed and timed-out answers in the denominator so a model can't look better by failing quietly. Then account end to end: input and output tokens, retries, runtime and cost per successful case, plus latency and throughput. If you need long inputs, test quality at that length instead of trusting the advertised context limit. The idea is that the test measures your job, so the number you get is the one you'll live with in production.",
+   "answer": "Freeze a set of real cases with code-based checks or answer keys, and keep failed and timed-out answers in the denominator so a model can't look better by failing quietly. Then account end to end: input and output tokens, retries, runtime and cost per successful case, plus latency and throughput. If you need long inputs, test quality at that length instead of trusting the advertised context limit.",
    "sources": [
     "page:choosing-local-models-guide.html"
    ]
@@ -595,7 +595,7 @@
      "url": "choosing-local-models-guide.html#method"
     }
    ],
-   "answer": "Reproduce the baseline within a stated tolerance and investigate any mismatch. Separately, test the checks on known passing, failing and borderline examples, review the instructions for contradictions, and audit a sample by hand or with a validated grader. Reproducing the baseline alone doesn't prove the test is valid, because a harness can reproduce an old number and still have a broken checker. The prompt conflict I found in my own screen is the example I'd point to: the pipeline ran faithfully, and the instruction set was still contradictory.",
+   "answer": "Reproduce the baseline within a stated tolerance and investigate any mismatch. Separately, test the checks on known passing, failing and borderline examples, review the instructions for contradictions, and audit a sample by hand or with a validated grader. Reproducing the baseline alone doesn't prove the test is valid, because a harness can reproduce an old number and still have a broken checker. The prompt conflict in my own screen is a related example: a prompt review found two rules that contradicted each other.",
    "sources": [
     "page:choosing-local-models-guide.html"
    ]
@@ -708,7 +708,7 @@
      "url": "choosing-local-models-guide.html#finetune"
     }
    ],
-   "answer": "The order is: fix the instructions and checks, switch or route models, add retrieval or tools, and only then fine-tune. Fixing instructions is low effort and always first, because contradictions between rules are common. Switching or routing needs evaluation time, and fits once a candidate meets your pre-registered rule and its confirmation; a different model per stage can help when failures differ by stage. Retrieval or tools fit when the problem is missing or changing knowledge, not behavior. Fine-tuning needs data, training and validation, so it's for when the best prompt and model still miss your bar and you can produce enough good, representative examples.",
+   "answer": "The order is: fix the instructions and checks, switch or route models, add retrieval or tools, and only then fine-tune. Fixing instructions is low effort and always first, because the guide says to look for contradictions between rules. Switching or routing needs evaluation time, and fits once a candidate meets your pre-registered rule and its confirmation; a different model per stage can help when failures differ by stage. Retrieval or tools fit when the problem is missing or changing knowledge, not behavior. Fine-tuning needs data, training and validation, so it's for when the best prompt and model still miss your bar and you can produce enough good, representative examples.",
    "sources": [
     "page:choosing-local-models-guide.html"
    ]

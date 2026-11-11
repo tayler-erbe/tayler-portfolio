@@ -29,6 +29,9 @@
     "job monitor",
     "custom monitoring",
     "health check",
+    "monitoring app",
+    "currently monitored",
+    "tracked pipelines",
     "scheduled workflows",
     "observability",
     "build vs buy",
@@ -72,6 +75,9 @@
    "tags": [
     "modules",
     "code structure",
+    "learn the logic",
+    "onboarding teammate",
+    "how it works",
     "python application",
     "utility modules",
     "separation of concerns",
@@ -130,7 +136,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "Onboarding a pipeline takes no new monitor code. Pipelines under the standard pipelines directory are discovered automatically, and one living elsewhere, such as the proposal processing pipeline, is registered by adding its log path to an EXTRA_LOG_FILES list in config.py. Today the monitor watches pipeline_demo, which is auto-discovered, and proposal_processing, which is registered that way, and I later onboarded the quarterly workforce planning pipeline with a per-pipeline silence override. Because the logging contract is shared, any future pipeline built on it is monitorable from day one.",
+   "answer": "Onboarding a pipeline takes no new monitor code. Pipelines under the standard pipelines directory are discovered automatically, and one living elsewhere, such as the proposal processing pipeline, is registered by adding its log path to an EXTRA_LOG_FILES list in config.py. The current list names pipeline_demo, which is auto-discovered, and proposal_processing, which is registered that way. I also onboarded the quarterly workforce planning pipeline with a per-pipeline silence override. Because the logging contract is shared, any future pipeline built on it is monitorable from day one.",
    "sources": [
     "work_history.md:472",
     "work_history.md:473",
@@ -305,6 +311,9 @@
     "scope",
     "requirements",
     "caveats",
+    "cannot detect",
+    "blind spots",
+    "incident count",
     "coverage",
     "what it doesn't do",
     "email only",
@@ -316,7 +325,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "The monitor only sees pipelines that write the standard Parquet log, so a job outside the contract is invisible to it. Alerts go by email, and only CRITICAL severity sends one, so a stale WARNING or INFO appears only as context in a later message. It runs every 30 to 60 minutes, so detection is bounded by that cadence rather than being instant. My notes carry no count of incidents it has caught, so I won't offer one. What I can show is the design: absence detection, cascade separation and visible log failures. Grafana panels sit beside it for the quarterly pipeline.",
+   "answer": "The monitor only sees pipelines that write the standard Parquet log, so a job outside the contract is invisible to it. Alerts go by email, and only CRITICAL severity sends one, so a stale WARNING or INFO appears only as context in a later message. It is meant to run on cron every 30 to 60 minutes, so detection is bounded by that cadence rather than being instant. My notes carry no count of incidents it has caught, so I won't offer one. What I can show is the design: absence detection, cascade separation and visible log failures. For the quarterly pipeline I also added matching Grafana panel targets and threshold guidance.",
    "sources": [
     "work_history.md:466",
     "work_history.md:469",
@@ -350,6 +359,8 @@
    "tags": [
     "medium",
     "article",
+    "blog post",
+    "bigger than a utility",
     "platform ownership",
     "significance",
     "governance layer",
@@ -455,7 +466,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "I built it as a standardized Python transformation framework rather than a one-off script. It ingests the raw payroll Excel files, applies the business-rule mappings, removes duplicates, calculates the derived fields and writes clean, analytics-ready outputs. Putting the rules in a framework is what replaced the legacy approach, where the same steps were done by hand or half by hand and varied from run to run. My notes don't list the individual mapping rules or row volumes, so I can describe the structure but not those specifics.",
+   "answer": "I built it as a standardized Python transformation framework rather than a one-off script. It ingests the raw payroll Excel files, applies the business-rule mappings, removes duplicates, calculates the derived fields and writes clean, analytics-ready outputs. Putting the rules in a framework is what replaced the legacy approach, where the work was manual or semi-manual. My notes don't list the individual mapping rules or row volumes, so I can describe the structure but not those specifics.",
    "sources": [
     "work_history.md:520"
    ]
@@ -481,6 +492,8 @@
    ],
    "tags": [
     "file detection",
+    "upload type",
+    "CPA or PUA",
     "naming convention",
     "routing",
     "operator error",
@@ -495,7 +508,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "The pipeline decides for itself whether a file is CPA or PUA, based on the file's naming convention. That removes manual configuration, so nobody has to tell the system which kind of payroll file they uploaded, and it reduces operational risk because a wrong setting can't produce the wrong transformation. I treat it as a design principle: if a human choice can be inferred from something already reliable, infer it. The trade-off is that detection depends on people following the naming convention, and my notes don't describe how a misnamed file is handled.",
+   "answer": "The pipeline decides for itself whether a file is CPA or PUA, based on the file's naming convention. That removes manual configuration, so nobody has to tell the system which kind of payroll file they uploaded, and it reduces operational risk because there is no setting for anyone to get wrong. I treat it as a design principle: if a human choice can be inferred from something already reliable, infer it. The trade-off is that detection depends on people following the naming convention, and my notes don't describe how a misnamed file is handled.",
    "sources": [
     "work_history.md:522",
     "work_history.md:519"
@@ -538,7 +551,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "The pipeline is integrated with Box for both source and destination storage, so non-technical users trigger processing by uploading files. I operationalized the workflow with GitHub Actions, which gives one-click execution with no local environment setup. The reasoning is adoption: payroll staff shouldn't need Python, a laptop configuration or a command line to run a monthly job. The design pushes the technical work into the pipeline and leaves users with a familiar folder and a single action. My notes don't say how often it runs or what monitoring wraps it.",
+   "answer": "The pipeline is integrated with Box for both source and destination storage, so non-technical users trigger processing by uploading files. I operationalized the workflow with GitHub Actions, which gives one-click execution with no local environment setup. The reasoning is adoption: non-technical users shouldn't need Python, a local setup or a command line to run it. The design pushes the technical work into the pipeline and leaves users with a familiar folder and a single action. My notes don't say how often it runs or what monitoring wraps it.",
    "sources": [
     "work_history.md:521",
     "work_history.md:524"
@@ -613,6 +626,8 @@
     "production transition",
     "limitations",
     "metrics",
+    "numbers",
+    "evidence",
     "what's next",
     "honest answer",
     "deployment"
@@ -623,7 +638,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "It is near-final, with the production transition underway, so I describe it as nearly there rather than fully settled. The one quantified outcome I can stand behind is that manual processing went from hours to minutes. I don't have volumes, error rates or file counts in my notes, and I won't invent them. The design choices are clear: a standardized framework, file auto-detection, Box storage, GitHub Actions execution and versioned outputs. The honest gap is evidence at scale, which the production run will provide.",
+   "answer": "It is near-final, with the production transition underway, so I describe it as nearly there rather than fully settled. The one quantified outcome I can stand behind is that manual processing went from hours to minutes. I don't have volumes, error rates or file counts in my notes, and I won't invent them. The design choices are clear: a standardized framework, file auto-detection, Box storage, GitHub Actions execution and versioned outputs. The honest gap is evidence at scale, since the production transition is still underway.",
    "sources": [
     "work_history.md:515",
     "work_history.md:525"
@@ -652,6 +667,7 @@
    ],
    "tags": [
     "job classification",
+    "similar job postings",
     "semantic matching",
     "UIS HR",
     "streamlit",
@@ -693,6 +709,7 @@
     "BERT",
     "FAISS",
     "embeddings",
+    "titles same role",
     "vector search",
     "similarity",
     "retrieval",
@@ -705,7 +722,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "Job descriptions are turned into BERT embeddings and indexed with FAISS, so the Streamlit app can retrieve descriptions by meaning rather than shared words. That matters in HR, where the same work can appear under different titles and phrasing. FAISS handles fast nearest-neighbor lookup over the vectors. I used the same embedding-plus-FAISS pattern at much larger scale later, in the procurement system with 5.19 million vectors. For this prototype my notes don't give the corpus size, the exact BERT variant or retrieval metrics, so I can explain the design but not quantify it.",
+   "answer": "Job descriptions are turned into BERT embeddings and indexed with FAISS, so the Streamlit app can retrieve descriptions by meaning rather than shared words. That matters in HR, where the same work can appear under different titles and phrasing. FAISS handles fast nearest-neighbor lookup over the vectors. I used the same embedding-plus-FAISS pattern at much larger scale in the procurement system, with 5.19 million vectors. For this prototype my notes don't give the corpus size, the exact BERT variant or retrieval metrics, so I can explain the design but not quantify it.",
    "sources": [
     "work_history.md:709",
     "work_history.md:745"
@@ -734,6 +751,9 @@
     "TF-IDF",
     "PCA",
     "KNN",
+    "classifiers",
+    "baseline models",
+    "simple models",
     "logistic regression",
     "random forest",
     "classification pipelines",
@@ -746,7 +766,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "I built TF-IDF, PCA, KNN, logistic regression and Random Forest classification pipelines for the UIS HR job data, alongside the embedding search. Having several classical pipelines gives a baseline to compare against and a cheaper, more interpretable option than going straight to a neural model. TF-IDF captures the vocabulary, PCA reduces dimensionality, and the classifiers then separate job categories. My notes don't record which model won or what accuracy it reached, so I can't tell you a number or claim one pipeline outperformed another.",
+   "answer": "I built TF-IDF, PCA, KNN, logistic regression and Random Forest classification pipelines for the UIS HR job data, alongside the embedding search. TF-IDF captures the vocabulary, PCA reduces dimensionality, and KNN, logistic regression and Random Forest are the classifiers. My notes don't record which model won or what accuracy it reached, so I can't tell you a number or claim one pipeline outperformed another.",
    "sources": [
     "work_history.md:710",
     "work_history.md:711"
@@ -787,7 +807,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "I applied generative AI to expand job summaries and reduce classification redundancy. Short or near-duplicate descriptions are hard to separate, so expanding them gives the classifier and the embedding search more to work with, and it helps collapse classes that were redundant. I treat generated text as an aid to the pipeline, not as a source of truth. My notes don't name the model I used or measure how much the expansion changed results, so I can describe the purpose but not a measured improvement.",
+   "answer": "I applied generative AI to expand job summaries and reduce classification redundancy. The aim was cleaner classification, with less redundancy between classes. I treat generated text as an aid to the pipeline, not as a source of truth. My notes don't name the model I used or measure how much the expansion changed results, so I can describe the purpose but not a measured improvement.",
    "sources": [
     "work_history.md:711"
    ]
@@ -813,10 +833,12 @@
    ],
    "tags": [
     "limitations",
+    "accuracy",
     "evaluation",
     "prototype",
     "validation",
     "metrics",
+    "production ready",
     "next steps",
     "production readiness",
     "honest answer"
@@ -827,7 +849,7 @@
      "url": "index.html#projects"
     }
    ],
-   "answer": "It's a delivered prototype, not a production system, and my notes record no accuracy, recall or user-testing results for it, so I won't claim any. What it shows is design competence: semantic retrieval with BERT and FAISS, a set of classical classification pipelines for comparison, and generative AI used to tidy the data. The gap is an evaluation set. For the procurement system I built a 30-query hand-curated one, and a prototype like this would need the same before anyone relies on it.",
+   "answer": "It's a delivered prototype, not a production system, and my notes record no accuracy, recall or user-testing results for it, so I won't claim any. What it shows is design competence: semantic retrieval with BERT and FAISS, a set of classical classification pipelines, and generative AI used to expand job summaries. The gap is an evaluation set. For the procurement system I built a 30-query hand-curated one, and a prototype like this would need the same before anyone relies on it.",
    "sources": [
     "work_history.md:706",
     "work_history.md:707",
@@ -888,7 +910,7 @@
   ],
   [
    "what can't your pipeline monitor detect",
-   "whx-jm-limits"
+   "whx-jm-limits|ads-production-monitoring"
   ],
   [
    "is there any evidence of how many failures the monitor has flagged",
@@ -896,7 +918,7 @@
   ],
   [
    "is there a blog post about the pipeline alerting system you made",
-   "whx-jm-medium"
+   "whx-jm-medium|medium-silent-pipelines"
   ],
   [
    "is the pipeline monitor just a utility or something bigger",

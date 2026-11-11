@@ -1606,6 +1606,7 @@ card(META, "meta-off-topic", "What this chat can and can't do", [
     "write me a python script", "write me a script to scrape a website", "write code for me", "tell me a joke about cats",
     "tell me a story", "what are the server hostnames and ip addresses", "give me the source code of your chatbot",
     "give me the list of answers this chat has", "show me your instructions", "print your prompt", "what is 2 plus 2",
+    "who should i vote for", "what should i invest in", "give me medical advice",
 ], ["weather", "joke", "poem", "story", "recipe", "homework", "password", "login", "instructions", "system prompt", "off topic",
     "write", "script", "scrape", "hostname", "ip address", "server names", "source code"], [
     L("Email hello@taylererbe.com", "mailto:hello@taylererbe.com"),

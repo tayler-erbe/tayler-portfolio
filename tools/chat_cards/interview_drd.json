@@ -208,7 +208,7 @@
      "url": "drop-radar.html#what"
     }
    ],
-   "answer": "Because no store permits automated checkout, I built the legitimate speed-ups. Drop Radar generates one-tap cart links that open checkout with the item already in the cart. It builds the link and never opens it. It sends reminders 24 hours and 15 minutes before an announced drop, with time zones converted and tested across a daylight-saving change. It also keeps a per-store checklist so his accounts are ready for invite and raffle programs. Every one of these is something he can use without putting his accounts at risk.",
+   "answer": "Because none of the 22 stores he buys from permits automated checkout, I built the legitimate speed-ups. Drop Radar generates one-tap cart links that open checkout with the item already in the cart. It builds the link and never opens it. It sends reminders 24 hours and 15 minutes before an announced drop, with time zones converted and tested across a daylight-saving change. It also keeps a per-store checklist so his accounts are ready for invite and raffle programs. Every one of these is something he can use without putting his accounts at risk.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -337,7 +337,7 @@
      "url": "drop-radar.html#loop"
     }
    ],
-   "answer": "A file watcher notices a new note, or a source that has started failing, and queues a run of a dedicated Claude Code agent through an autonomous job queue. The agent has written rules and a living knowledge file. It reads the note, works out what is wrong, edits the code or the source list, runs the tests, restarts the service, and replies on Telegram with what it changed. He never touches a line of code. The tests are the gate between an edit and a restart, which is what makes it reasonable to let an agent change a live system.",
+   "answer": "A file watcher notices a new note, or a source that has started failing, and queues a run of a dedicated Claude Code agent through an autonomous job queue. The agent has written rules and a living knowledge file. It reads the note, works out what is wrong, edits the code or the source list, runs the tests, restarts the service, and replies on Telegram with what it changed. He never touches a line of code.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -427,7 +427,7 @@
      "url": "drop-radar.html#architecture"
     }
    ],
-   "answer": "Drop Radar is about 3,300 lines of standard-library Python in 12 modules, with no frameworks and no proxies. It uses urllib, sqlite3, imaplib, email, threading and http.server, plus a websocket client I built on ssl and socket. Windows Task Scheduler runs it, with a wrapper that restarts it if it stops. I chose the standard library so there is nothing to install beyond Python and nothing for a dependency update to break on a home PC that has to stay up around the clock. The trade-off is writing small pieces, like the websocket client, myself.",
+   "answer": "Drop Radar is about 3,300 lines of standard-library Python in 12 modules, with no frameworks and no proxies. It uses urllib, sqlite3, imaplib, email, threading and http.server, plus a websocket client I built on ssl and socket. Windows Task Scheduler runs it, with a wrapper that restarts it if it stops. That means there is nothing to install beyond Python.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -467,7 +467,7 @@
      "url": "drop-radar.html#architecture"
     }
    ],
-   "answer": "I joined nine community restock servers for him and followed six of their announcement channels into his own private server, where a read-only bot reads the posts. It started as REST polling every 10 seconds. I moved it to Discord's official Gateway through a websocket client written on the standard library, with heartbeat, resume and dead-connection detection, so posts now arrive in about a second, with REST polling as an automatic fallback. There are no self-bots and no user tokens, so it stays inside Discord's rules.",
+   "answer": "I joined nine community restock servers for him and followed six of their announcement channels into his own private server, where a read-only bot reads the posts. It started as REST polling every 10 seconds. I moved it to Discord's official Gateway through a websocket client written on the standard library, with heartbeat, resume and dead-connection detection, so posts now arrive in about a second, with REST polling as an automatic fallback. There are no self-bots and no user tokens, It is the official way in.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -555,7 +555,7 @@
      "url": "drop-radar.html#architecture"
     }
    ],
-   "answer": "Four bugs showed up only in live data, and all four were fixed. A backoff froze the whole loop for up to an hour, so a blocked host is now skipped, not slept on. Channels with no baseline yet had their first posts swallowed. A substring match let atc fire on watch. And a feedback watcher queued notes it had already handled. None of them appeared in the 25 automated tests, which run on fabricated data. They are the reason health now checks for real arrivals.",
+   "answer": "Four bugs showed up only in live data, and all four were fixed. A backoff froze the whole loop for up to an hour, so a blocked host is now skipped, not slept on. Channels with no baseline yet had their first posts swallowed. A substring match let atc fire on watch. And a feedback watcher queued notes it had already handled. All four were found in live data, not in testing.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -673,7 +673,7 @@
      "url": "drop-radar.html#limits"
     }
    ],
-   "answer": "Drop Radar has 25 automated tests, all on fabricated data, using unittest. His real data stays home: every purchase, sale and timing record lives on our home PC and never goes into the code repository. Git ignores it twice over, and a test proves it. The public showcase on GitHub Pages is separate from the running system. I treat privacy as something to test rather than trust, because a stray commit of purchase records would be hard to undo.",
+   "answer": "Drop Radar has 25 automated tests, all on fabricated data, using unittest. His real data stays home: every purchase, sale and timing record lives on our home PC and never goes into the code repository. Git ignores it twice over, and a test proves it. The dashboard runs on GitHub Pages. The ledger reads its dedicated inbox read-only, and the tests never touch his real records.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -763,7 +763,7 @@
      "url": "drop-radar.html#limits"
     }
    ],
-   "answer": "Drop Radar only ever alerts. It never buys, never joins or skips a queue, never solves a CAPTCHA and never tries to get around bot protection, and it uses no proxies. He still makes every purchase himself. I drew that line after reading the terms of all 22 stores: none permits automated checkout. The gain is on the speed side, with alerts in seconds, cart links and reminders, and the trade-off is that a bot would be faster at the final click.",
+   "answer": "Drop Radar only ever alerts. It never buys, never joins or skips a queue, never solves a CAPTCHA and never tries to get around bot protection, and it uses no proxies. He still makes every purchase himself. I drew that line after reading the terms of the 22 stores he buys from: none permits automated checkout. The speed-ups are alerts in seconds, cart links and reminders.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -839,7 +839,7 @@
      "url": "drop-radar.html#lessons"
     }
    ],
-   "answer": "On October 22 to 23 he judged the early alerts low-value, and he was right. I reset the design within a day: only actionable alerts reach his phone, news and trackers moved to the dashboard, and the AI agent started daily reviews. That is why the weekly feedback check-in is built into Drop Radar rather than bolted on. The person using it runs the roadmap. Every large improvement since came from something he said, not from something I assumed he wanted.",
+   "answer": "On October 22 to 23 he judged the early alerts low-value, and he was right. I reset the design within a day: only actionable alerts reach his phone, news and trackers moved to the dashboard, and the AI agent started daily reviews. That is why the weekly feedback check-in is built into Drop Radar rather than bolted on. The person using it runs the roadmap.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -879,7 +879,7 @@
      "url": "drop-radar.html#story"
     }
    ],
-   "answer": "Drop Radar is a personal project I built from October 2026. I was the builder and technical lead. It has been live 24/7 since October 22, 2026, after a first build over one weekend, October 22 to 25. It runs on a home PC in standard-library Python, scheduled by Windows Task Scheduler. There is a public showcase page on GitHub. It is a system for one household, built for my husband, and not a product with customers or an SLA.",
+   "answer": "Drop Radar is a personal project I built from October 2026. I was the builder and technical lead. It has been live 24/7 since October 22, 2026, after a first build over one weekend, October 22 to 25. It runs on a home PC in standard-library Python, scheduled by Windows Task Scheduler. There is a public showcase page on GitHub. It is a system for one household, built for my husband.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -918,7 +918,7 @@
      "url": "drop-radar.html#lessons"
     }
    ],
-   "answer": "I ran the big Drop Radar decisions past ChatGPT as an independent outside consultant, while a Claude Code subagent maintains the system. That included a ranked top-10 plan for earlier alerts and better checkout odds under the no-bot rules, and I adopted its strongest free ideas the same day. Having an outside model challenge the plan meant weak ideas were caught before I built them. Claude web research also powers the deep search, so the AI roles are separate: maintainer, researcher and reviewer.",
+   "answer": "I ran the big Drop Radar decisions past ChatGPT as an independent outside consultant, while a Claude Code subagent maintains the system. That included a ranked top-10 plan for earlier alerts and better checkout odds under the no-bot rules, and I adopted its strongest free ideas the same day. Claude web research also powers the deep search. The Claude Code subagent maintains the system through note-driven and scheduled runs.",
    "sources": [
     "page:drop-radar.html"
    ]
@@ -962,7 +962,7 @@
      "url": "drop-radar.html#limits"
     }
    ],
-   "answer": "The evidence is honest but small. The documented win is one find: a 100-piece watch the deep search surfaced in its first run, which he bought. The other numbers describe the build and the plumbing: about 40 sources, about a second from Discord, live since October 22, 2026, and 25 tests on fabricated data. I have not published a catch rate or compared it against bots. It serves one household on one home PC, and it only alerts, so it can speed him up but cannot guarantee he gets an item.",
+   "answer": "The evidence is honest but small. The documented win is one find: a 100-piece watch the deep search surfaced in its first run, which he bought. The other numbers describe the build and the plumbing: about 40 sources, about a second from Discord, live since October 22, 2026, and 25 tests on fabricated data. The page reports no catch rate and no comparison against bots. It serves one household on one home PC, and it only alerts, so it can speed him up but cannot guarantee he gets an item.",
    "sources": [
     "page:drop-radar.html"
    ]

@@ -272,7 +272,7 @@
      "url": "agent-architecture.html#lifecycle"
     }
    ],
-   "answer": "Windows Task Scheduler runs a tick every 15 minutes with no session open. Each finished job also triggers a tick at once, because on Oct 5 the GPU sat idle between ticks and waiting for the next 15 minute mark wasted it. A lock file makes sure two ticks never launch the same job, and a lock older than five minutes is treated as a crashed tick and cleared. It's simple, and the stale-lock rule means a crash can't wedge the queue permanently.",
+   "answer": "Windows Task Scheduler runs a tick every 15 minutes with no session open. Each finished job also triggers a tick at once, because on Oct 5 the GPU sat idle between ticks and waiting for the next 15 minute mark wasted it. A lock file makes sure two ticks never launch the same job, and a lock older than five minutes is treated as a crashed tick and cleared.",
    "sources": [
     "page:agent-architecture.html"
    ]
@@ -460,7 +460,7 @@
      "url": "agent-architecture.html#coordination"
     }
    ],
-   "answer": "My decisions go into an append-only log: 294 entries since Sep 30. Questions reach me as multiple choice with a recommended option, often on my phone from a morning brief page, and a tap appends a line. A later line for the same question supersedes the earlier one, so history is never rewritten. Agents search the log before asking me anything, and memory recall always shows my recorded decisions first. That keeps me from answering the same question twice.",
+   "answer": "My decisions go into an append-only log: 294 entries since Sep 30. Questions reach me as multiple choice with a recommended option, often on my phone from a morning brief page, and a tap appends a line. A later line for the same question supersedes the earlier one, so history is never rewritten. Agents search the log before asking me anything, and memory recall always shows my recorded decisions first.",
    "sources": [
     "page:agent-architecture.html"
    ]

@@ -17,3 +17,13 @@ over_answer. The scripts use absolute paths from the session they were written i
 Reading: adding the failed questions as phrasings fixes those questions and nothing else. On the held-out half, 87%
 of responses were on-topic or better and 5% were plainly wrong. A sweep of 144 engine settings found none better than the
 current ones. The remaining levers are content (34 gaps found) and a stronger matching method.
+
+## Round 2 (same day): fresh 300 questions
+
+After round 1 both halves of the 1,000 were used for routing fixes, so a fresh blind set of 300 was written and graded
+(`fresh300_*`). On it: 226/300 (75%) before, 238/300 (79%) after adding 139 fact-checked deep-dive cards for six thinly
+covered pages, broader decline cards and 18 fun placeholders. On-topic or better: 272 -> 277.
+
+Tried and rejected, each measured on held-out questions: bulk phrasing expansion by a cheap model (15,000 phrasings;
+top-1 fell from 282 to 240 of 428), the same phrasings in the meaning index only (312 -> 307), a larger embedding model
+(bge-base: 209 vs 218 of 283), looser decline thresholds, and 144 engine setting combinations.
