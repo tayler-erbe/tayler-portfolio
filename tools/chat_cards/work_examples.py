@@ -1785,23 +1785,172 @@ changes. All of it is personal-project work.
 # ---- fun questions waiting for Tayler's answers: the chat recognises them and shows its "not answered yet" card ----
 FUN = ("personal", "Personal")
 for _slug, _title, _qs in [
-    ("theme-park", "Favorite theme park", ["favorite theme park", "what's your favorite theme park", "disneyland or universal", "favorite amusement park", "do you like theme parks", "favorite ride", "favorite roller coaster"]),
-    ("cartoon-character", "Favorite cartoon character", ["favorite cartoon character", "who is your favorite cartoon character", "favorite cartoon", "favorite animated character", "favorite cartoon as a kid"]),
-    ("animated-movie", "Favorite animated movie", ["favorite disney movie", "favorite animated movie", "favorite pixar movie", "favorite studio ghibli film"]),
-    ("tv-show", "Favorite TV show", ["favorite tv show", "what shows do you watch", "what are you watching right now", "favorite series", "what do you binge watch"]),
-    ("holiday", "Favorite holiday", ["favorite holiday", "what's your favorite holiday", "christmas or halloween", "favorite time of year"]),
     ("season", "Favorite season", ["favorite season", "summer or winter", "favorite weather", "what's your favorite season"]),
-    ("ice-cream", "Favorite ice cream", ["favorite ice cream flavor", "what's your favorite ice cream", "favorite ice cream"]),
-    ("animal", "Favorite animal", ["favorite animal", "what's your favorite animal", "what animal would you be", "spirit animal"]),
-    ("board-game", "Favorite board game", ["favorite board game", "favorite card game", "do you play board games", "favorite game night game"]),
-    ("morning-night", "Morning person or night owl?", ["morning person or night owl", "are you a morning person", "are you a night owl", "when do you do your best work"]),
-    ("candy", "Favorite candy", ["favorite candy", "what's your favorite candy", "favorite halloween candy", "chocolate or fruity candy"]),
-    ("superhero", "Favorite superhero", ["favorite superhero", "marvel or dc", "who is your favorite superhero"]),
-    ("breakfast", "Favorite breakfast", ["favorite breakfast", "what do you eat for breakfast", "pancakes or waffles"]),
-    ("first-concert", "First concert", ["first concert", "what was your first concert", "best concert you've been to"]),
-    ("podcast", "Favorite podcast", ["favorite podcast", "what podcasts do you listen to", "podcast recommendations"]),
-    ("childhood-toy", "Favorite childhood toy", ["favorite childhood toy", "favorite toy as a kid", "what did you play with as a kid"]),
-    ("dream-vacation", "Dream vacation", ["dream vacation", "where would you go on vacation", "bucket list trip", "beach or mountains vacation"]),
-    ("emoji", "Most-used emoji", ["favorite emoji", "most used emoji", "what emoji do you use the most"]),
 ]:
     card(FUN, "fun-pending-" + _slug, _title, _qs, [_slug.replace("-", " "), "fun", "favorite"], [], "", state="PENDING")
+
+
+# ---- fun answers in Tayler's words (voice note, 11 Nov 2026; tidied, nothing added; children's ages left out) ----
+def fun(slug, title, qs, tags, answer):
+    card(FUN, "fun-" + slug, title, qs, tags + ["fun", "favorite"], [], answer, sources=["Tayler, voice note, 11 Nov 2026"])
+
+fun("theme-park", "Favorite theme park and rides", [
+    "favorite theme park", "what's your favorite theme park", "disneyland or universal", "favorite amusement park", "do you like theme parks",
+    "favorite ride", "favorite roller coaster", "favorite disneyland ride", "are you a disney adult", "have you been to tokyo disney",
+    "legoland or seaworld", "best ride at disneyland",
+], ["theme park", "disneyland", "tokyo disneysea", "rides", "space mountain", "radiator springs", "legoland", "seaworld"], """
+Disneyland, mostly because of how many good memories I have there with my kids. Living in San Diego we also do Legoland and
+SeaWorld. My favorite ride anywhere is Journey to the Center of the Earth at Tokyo Disney, which was so cool. At Disneyland,
+Space Mountain is still solidly good, Rise of the Resistance is great, and Pirates of the Caribbean is pure nostalgia. At
+California Adventure it's the Cars ride, and it has to be the single rider line: my son and I once rode it about six times in
+a row. For the record, I am not a Disney adult. Before kids I thought those people needed to be studied.
+""")
+
+fun("cartoon-character", "Favorite cartoon character", [
+    "favorite cartoon character", "who is your favorite cartoon character", "favorite cartoon", "fav cartoon", "favorite animated character",
+    "favorite cartoon as a kid", "favorite disney princess", "favorite animated movie", "favorite disney movie", "favorite studio ghibli film",
+    "do you like ghibli", "favorite pixar movie",
+], ["cartoon", "totoro", "ghibli", "disney princess", "merida", "brave", "animated"], """
+Totoro. It might be a generic answer, but I love Totoro, and I got to visit the Ghibli Museum in Tokyo, which was really
+cool. If I had to pick a Disney princess, it's Merida from Brave.
+""")
+
+fun("zelda", "My favorite game of all time: Ocarina of Time", [
+    "favorite video game of all time", "favorite zelda game", "do you play zelda", "ocarina of time", "what game are you playing right now",
+    "what games do you play with your kids", "breath of the wild or tears of the kingdom", "most nostalgic game", "favorite game ever",
+    "what did your family dress up as for halloween",
+], ["zelda", "ocarina of time", "breath of the wild", "tears of the kingdom", "link", "nintendo", "nostalgia", "halloween costume"], """
+Zelda: Ocarina of Time, hands down, no contest. Replaying the new release has been one of the most nostalgic experiences of
+my adult life. I literally cried at the opening scene, with the horse running across and that music. In the game you play
+songs to move through time, and hearing them really does send me back to being a kid. The best part is sharing it with my
+son, who grew up watching us play Breath of the Wild and Tears of the Kingdom and now gets to play as young Link himself.
+For Halloween 2026 he was Link, I was a fairy, my littlest was a dragon and my husband was a Bokoblin.
+""")
+
+fun("tv-shows", "What I watch", [
+    "favorite tv show", "what shows do you watch", "what are you watching right now", "favorite series", "what do you binge watch",
+    "do you like horror", "favorite horror show", "favorite netflix show", "favorite comedy movies", "do you like adam sandler",
+    "what kind of movies do you like", "favorite scary show",
+], ["tv", "netflix", "horror", "haunting of hill house", "wednesday", "sabrina", "dark comedy", "adam sandler", "comedy"], """
+I like scary, weird and a little arty: psychological horror and dark comedies. The Haunting of Hill House, Brand New Cherry
+Flavor, Something Very Bad Is Going to Happen, the newer Sabrina and Wednesday. Otherwise it's seasonal: Halloween movies all
+October and Christmas movies all December. And for comedy, I'll take straight-up ridiculous. Almost any Adam Sandler movie
+will do, plus the classics with Chris Farley, John Candy and Bill Murray. I did go through a cult horror phase, Toxic Avenger
+and all that. Honestly, those movies aren't very good, and I think I was trying to be cooler than I am.
+""")
+
+fun("holiday", "Favorite holiday", [
+    "favorite holiday", "what's your favorite holiday", "christmas or halloween", "favorite time of year", "do you like halloween",
+    "do you like christmas", "do you throw halloween parties",
+], ["holiday", "christmas", "halloween", "trick or treating", "christmas lights", "kids"], """
+Christmas, with Halloween a close second. Right now Christmas still wins because my kids are little. The reason I love both
+is them: seeing them light up when we walk down the street looking at Christmas lights, throwing Halloween parties for them
+and trick-or-treating with all their friends. Those holidays were fun before kids, but not the way they are when your
+children are in the golden age of childhood.
+""")
+
+fun("ice-cream", "Favorite ice cream", [
+    "favorite ice cream flavor", "what's your favorite ice cream", "favorite ice cream", "chocolate or vanilla", "favorite dessert flavor",
+], ["ice cream", "cookie dough", "butterscotch pecan", "cookie monster", "chocolate"], """
+Chocolate chip cookie dough, and it probably hasn't changed since I was about four. Butterscotch pecan is a close second,
+sometimes I'm just in the mood for chocolate, and if there's no cookie dough I'm always good with Cookie Monster, which is
+basically a beefed-up version of the same thing.
+""")
+
+fun("animal", "Favorite animal", [
+    "favorite animal", "what's your favorite animal", "what animal would you be", "spirit animal", "favorite big cat",
+    "do you like tigers", "favorite zoo animal",
+], ["animal", "white tiger", "tiger", "lion", "big cats", "golden retriever", "otter"], """
+A white tiger. As a little kid I was obsessed with lions, tigers and any big cat, and that's still my answer. There's a game
+where you name your favorite animal, then a second, then a third. The first is supposedly who you wish you were, the second
+is how other people see you, and the third is how you see yourself. Mine come out as white tiger, golden retriever and
+otter, which I think is pretty funny.
+""")
+
+fun("board-game", "Favorite board games", [
+    "favorite board game", "favorite card game", "do you play board games", "favorite game night game", "what games do you play with your kids",
+    "do you like murder mystery games", "favorite family game",
+], ["board game", "murder mystery", "unsolved case", "charades", "cupcake game", "game night"], """
+Lately it's those unsolved murder mystery case games, where you get all the evidence and have to work out who did it. Really
+interesting, but hard, a little stressful, and you need to buckle in for about eight hours. It's a clear-your-day,
+maybe-the-power-went-out kind of game. With my kids it's charades, and a Disney princess cupcake game where you build the
+cupcake before the queen beats you.
+""")
+
+fun("morning-night", "Morning person or night owl?", [
+    "morning person or night owl", "are you a morning person", "are you a night owl", "when do you do your best work", "do you sleep",
+    "how much sleep do you get",
+], ["morning", "night owl", "sleep", "insomnia", "early riser"], """
+A bit of both, and not by choice. I usually stay up late, and then my kids and a million responsibilities get me up early,
+so I burn the candle at both ends. I'm a morning person the way someone running from a bear is a runner.
+""")
+
+fun("candy", "Favorite candy", [
+    "favorite candy", "what's your favorite candy", "favorite halloween candy", "favorite candy bar", "favorite chocolate", "do you like chocolate",
+], ["candy", "snickers", "chocolate", "see's candies", "candy bar"], """
+Snickers. A lot about me has changed over time, but apparently not my taste in sugar: Snickers and cookie dough ice cream
+since I was little. For chocolate itself, I love See's Candies. Good quality chocolate is hard to find these days, and when I
+can get my hands on it, that's my favorite.
+""")
+
+fun("superhero", "Favorite superhero", [
+    "favorite superhero", "marvel or dc", "who is your favorite superhero", "do you like superhero movies", "favorite anime character",
+], ["superhero", "one punch man", "marvel", "dc", "anime"], """
+I'm not really into superheroes, but if I had to pick one, One Punch Man.
+""")
+
+fun("breakfast", "Favorite breakfast", [
+    "favorite breakfast", "what do you eat for breakfast", "pancakes or waffles", "sweet or savory breakfast", "breakfast burrito or breakfast sandwich",
+    "favorite brunch",
+], ["breakfast", "breakfast sandwich", "croissant", "english muffin", "breakfast burrito", "pancakes", "waffles"], """
+A breakfast sandwich. I'm not big on sugary breakfasts; if I'm having pancakes or waffles it's more likely at night. A ham
+and cheese croissant, or an English muffin with ham and egg, is the one thing I could eat almost every day. A breakfast
+burrito comes second, only because it's usually too much breakfast. A breakfast sandwich with a coffee is the perfect one.
+Chef's kiss.
+""")
+
+fun("first-concert", "First concert", [
+    "first concert", "what was your first concert", "best concert you've been to", "what concerts have you been to", "have you seen slipknot",
+    "favorite live show",
+], ["concert", "blondie", "slipknot", "rammstein", "tool", "live music", "san francisco"], """
+Technically Blondie, with my mom, when I was a kid. The first one I went to with friends was Slipknot in San Francisco, with
+Rammstein on the bill and I think Tool as well. I was only 11 or 12 and it ran late, so we couldn't stay for the whole
+thing.
+""")
+
+fun("podcast", "Favorite podcast", [
+    "favorite podcast", "what podcasts do you listen to", "podcast recommendations", "do you listen to podcasts",
+], ["podcast", "podcasts", "listening"], """
+I don't really listen to podcasts, so I don't have a good answer for this one. Ask me about music instead.
+""")
+
+fun("childhood-toy", "Favorite childhood toy", [
+    "favorite childhood toy", "favorite toy as a kid", "what did you play with as a kid", "what did you want for christmas as a kid",
+    "did you have stuffed animals", "were you an artsy kid",
+], ["toy", "stuffed animals", "white tiger", "art supplies", "crayons", "pastels", "childhood"], """
+Stuffed animals and art supplies. I had a mountain of stuffed animals on my bed, with a white tiger as the favorite. But
+whenever anyone asked what I wanted for Christmas, it was the same answer every time: art supplies. Paints, crayons, markers,
+pastels, anything I could get my hands on.
+""")
+
+fun("dream-vacation", "Dream vacation", [
+    "dream vacation", "where would you go on vacation", "bucket list trip", "ideal vacation", "what's your perfect holiday trip",
+    "where do you want to travel",
+], ["vacation", "travel", "beach", "historical cities", "relax", "wine", "kids"], """
+I love my kids more than the sun, moon and stars, but my dream vacation is one where I'm not managing two small children the
+whole time. Somewhere I've never been, with no crowds: beautiful beaches or historical cities, living like a local, good
+food and good wine, sleeping in late, swimming in beautiful pools or oceans, or just relaxing in nature.
+""")
+
+fun("emoji", "Most-used emoji", [
+    "favorite emoji", "most used emoji", "what emoji do you use the most", "top emojis",
+], ["emoji", "emojis"], """
+I went and checked. My top three are 🫤, 🫠 and 😆, which probably says something.
+""")
+
+PATCHES["answer-q65-christmas-movies"] = {
+    "answer": "Once December hits, I'm pretty much only watching Christmas movies, and it's one of my favorite things to do. "
+              "My favorites are Elf, Klaus, A Boy Called Christmas, Scrooged, The Santa Clause and the animated Grinch, which "
+              "is also one of my kids' favorites.",
+    "add_questions": ["what do you watch in december", "do you like elf", "favorite grinch movie"],
+}
