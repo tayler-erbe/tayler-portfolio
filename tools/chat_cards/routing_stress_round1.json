@@ -1,0 +1,319 @@
+{
+ "ex-what-i-can-help-with": [
+  "why should my company hire her over another ai engineer?"
+ ],
+ "tech-vector-dbs": [
+  "which vector databases has she used?"
+ ],
+ "experience-timeline": [
+  "what did she do before joining the university of illinois?"
+ ],
+ "roles-wanted": [
+  "target roles",
+  "where do you see yourself in five years?"
+ ],
+ "index-stakeholders": [
+  "stakeholder management",
+  "who has tayler worked with at the university"
+ ],
+ "tech-big-data-platforms": [
+  "has she worked with snowflake or bigquery"
+ ],
+ "aie-deployment": [
+  "does tayler know how to deploy models"
+ ],
+ "now-latest-personal-build": [
+  "what has she done outside her day job"
+ ],
+ "education": [
+  "what is her education, does she have any graduate degree, and how does a cognitive science degree connect to the ai engineering work she does now?"
+ ],
+ "iv-impact": [
+  "give me the three strongest pieces of evidence that she can ship, with numbers, and tell me who the work was delivered to."
+ ],
+ "ex-industries": [
+  "she's only been at one employer. how broad is her experience really, what different domains has she covered there, and has she done anything outside the university?"
+ ],
+ "vit-ttft-prefill": [
+  "how do you measure time to first token versus total latency in your benchmarks?"
+ ],
+ "ex-capacity-planning": [
+  "if i gave you a single 24 gb gpu, how many concurrent users could you support on an 8b model?"
+ ],
+ "aie-hybrid-retrieval": [
+  "what do you mean by hybrid search in the bill platform, and how are the two signals combined?",
+  "you use rerankers?",
+  "bm25 anywhere in your stack?"
+ ],
+ "aie-ai-security": [
+  "how would you design a guardrail layer for a customer-facing chatbot at a bank?",
+  "how do you think about prompt injection in a rag system that reads uploaded documents?",
+  "how do you red team prompts?"
+ ],
+ "aie-testing-ai-code": [
+  "how do you test code that calls a nondeterministic model?"
+ ],
+ "ex-dashboards-apps": [
+  "how is the streamlit app wired to the data and the models behind it?"
+ ],
+ "fde-rapid-apps": [
+  "why streamlit for an executive-facing product and not react with a real backend?",
+  "how fast can you go from a first stakeholder conversation to a working demo?"
+ ],
+ "arc-multi-agent-architecture": [
+  "what would fail if the agent system went from 29 agents to 300?",
+  "does she use langgraph or crewai to orchestrate her agents?",
+  "skyrule's page says 15 agents but another page says 29, which is right, and how many tests does the product have passing?"
+ ],
+ "ex-performance-engineering": [
+  "ever done load testing on an llm endpoint?"
+ ],
+ "ex-ocr": [
+  "handled handwriting ocr?",
+  "can ai read handwriting?"
+ ],
+ "medium-legislative-azure-prototype-access": [
+  "is the legislative app behind sso?",
+  "can i log in and try the bill tracker myself?"
+ ],
+ "ex-rag-example": [
+  "rag experience"
+ ],
+ "aie-slo-capacity": [
+  "latency throughput tradeoff"
+ ],
+ "aie-llm-serving": [
+  "does tayler know how to tune vllm"
+ ],
+ "skyrule-agents": [
+  "did she design the agent system alone"
+ ],
+ "fde-deployment-topology": [
+  "can she design for azure or only on-prem"
+ ],
+ "archival-images": [
+  "how does her archival pipeline classify sensitive images"
+ ],
+ "fde-design-no-internet": [
+  "does tayler have experience working in locked down or secure environments"
+ ],
+ "iv-embedding-model-choices": [
+  "waht embeding model does the bill serach use"
+ ],
+ "ads-validation-strategy": [
+  "how did you design the held-out set for the bill passage model?"
+ ],
+ "uic-class-weights": [
+  "how did you handle class imbalance in the student retention model?"
+ ],
+ "ea-lda-topic-counts": [
+  "how did you choose the number of topics for lda?"
+ ],
+ "tech-ml-libraries": [
+  "used h2o automl?"
+ ],
+ "ads-evaluation-metrics": [
+  "what metrics do you usually report?"
+ ],
+ "uic-smote-configuration": [
+  "did she use smote on the enrollment data"
+ ],
+ "uic-models": [
+  "for the enrollment classifier, how many rows and features did you have, how did you balance the classes, what did you compare the random forest against, and what did uic leadership do with the result?"
+ ],
+ "iv-class-imbalance": [
+  "say i hand you a churn dataset with 2% positives, lots of missing fields and a time component. how do you split it, what metric do you optimize, and how do you set the alert threshold?"
+ ],
+ "ex-etl-pipeline": [
+  "describe a pipeline you built end to end, from source system to the people using the output."
+ ],
+ "ade-stage-boundary-checks": [
+  "what data quality checks run before a pipeline's output is published?"
+ ],
+ "ade-metadata-normalization": [
+  "what metadata do you capture for each document that goes through the archival pipeline?"
+ ],
+ "aie-reembedding": [
+  "how do you build and refresh the embeddings behind the faiss index?"
+ ],
+ "ade-logging-contract": [
+  "how do you log pipeline runs so that someone else can debug a failure?",
+  "what's your logging setup?"
+ ],
+ "iv-sql-experience": [
+  "you write sql by hand?",
+  "do you know sql well?"
+ ],
+ "ade-orchestration-choice": [
+  "how do you schedule jobs?"
+ ],
+ "ade-anti-join-cdc": [
+  "any cdc experience?"
+ ],
+ "aie-git-workflow": [
+  "do you do code review on pipelines?"
+ ],
+ "ade-knime-to-python": [
+  "knime to python migration"
+ ],
+ "job-monitoring": [
+  "what did tayler build for monitoring scheduled jobs"
+ ],
+ "fde-magic-link-auth": [
+  "what authentication did you put in front of the apps you deployed on azure?"
+ ],
+ "fde-debugging-uncontrolled": [
+  "what would you do if the customer's it team blocked the tool you planned to deploy with?",
+  "what do you do when the vpn is the problem"
+ ],
+ "fde-box-integration": [
+  "have you integrated with box or other document storage apis?"
+ ],
+ "iv-handover-documentation": [
+  "do you write the deployment and ops documentation yourself, and what does it include?"
+ ],
+ "iv-end-to-end-ownership": [
+  "how comfortable are you being the only engineer on site with a customer?"
+ ],
+ "tech-hardware": [
+  "any linux admin skills?"
+ ],
+ "con-hardware-advice": [
+  "can you size a server for us?"
+ ],
+ "aie-serving-choice": [
+  "on-prem llm hosting"
+ ],
+ "ex-production-deployment": [
+  "has tayler deployed anything customers actually use daily"
+ ],
+ "ex-discovery-scoping": [
+  "say we drop you into a hospital network on monday with a locked-down laptop, no cloud access and an oracle database nobody has documented. what do you do in the first two weeks, and what would you ref"
+ ],
+ "ex-local-vs-hosted": [
+  "our customers run everything on their own servers and won't let data out. which of your projects is closest to that, what models did you run, and on what hardware?",
+  "tayler's take on local vs cloud llms",
+  "does she think companies should run their own models"
+ ],
+ "con-governance-risk": [
+  "what governance should be in place before an organisation rolls out a chatbot to staff?"
+ ],
+ "ex-privacy": [
+  "what privacy techniques did you use on the email archive?"
+ ],
+ "ex-model-evaluation": [
+  "which models have you benchmarked?",
+  "for the document intelligence study, how many models and tasks were there, how were failed or cut-off answers counted, and was there any confirmation on unseen data?"
+ ],
+ "persona-context": [
+  "rag vs just a big context window?"
+ ],
+ "ex-governance-docs": [
+  "ai governance experience"
+ ],
+ "procure-problem": [
+  "does she understand procurement processes"
+ ],
+ "con-should-we-use-llm": [
+  "how do you decied if ai is even neccessary"
+ ],
+ "con-privacy-compliance": [
+  "what are the risk's of using chatgpt with company data"
+ ],
+ "con-tco-cost-advice": [
+  "is it cheeper to run models ourself"
+ ],
+ "con-accuracy-bar": [
+  "suppose a pilot hits 85% accuracy and the client wanted 95. how do you handle that conversation, and what are the options you'd put on the table?"
+ ],
+ "legacy-file-search": [
+  "can you help us organise twenty years of old files on a shared drive?"
+ ],
+ "aie-design-doc-extraction": [
+  "we have thousands of scanned paper records. can those be made searchable?"
+ ],
+ "iv-validating-llm-output": [
+  "how would we know the ai is giving correct answers?"
+ ],
+ "tech-integrations": [
+  "can you work with the systems we already have instead of replacing them?"
+ ],
+ "uic-enrollment": [
+  "can you predict which students or customers are likely to leave?",
+  "how accurate was the student dropout model?"
+ ],
+ "persona-messy-data": [
+  "can you look at are spreadsheet mess"
+ ],
+ "email-archiving": [
+  "can ai summarize our emails"
+ ],
+ "iv-hallucination": [
+  "we tried a chatbot from a vendor last year and it made things up constantly. why would yours be different, and how would you prove it before we pay for the whole thing?",
+  "how does she feel about ai hallucinations"
+ ],
+ "ex-solo-and-team": [
+  "team player or lone wolf?"
+ ],
+ "index-domains": [
+  "you've spent your whole career inside one university system. what makes you think you can adapt to customers in industries you've never seen, with different politics, pace and expectations, and how wo"
+ ],
+ "ex-agentic-workflows": [
+  "how many jobs has the agent queue actually finished"
+ ],
+ "ex-fine-tuning": [
+  "when should you fine tune a local model"
+ ],
+ "ex-contracts": [
+  "document eval datasets"
+ ],
+ "iv-partner-teams": [
+  "who asked for the email project in the first place"
+ ],
+ "email-role-status": [
+  "is the email anonymizer in production yet?"
+ ],
+ "ex-generation-eval": [
+  "why was the text generator only keeping 3 out of every 20 pieces?",
+  "what was the rule for switching models, and was it set before the test",
+  "can the screening result be read as one model being better than another in general?"
+ ],
+ "ocr-benchmark": [
+  "how accurate was the ocr on the 15th century books?"
+ ],
+ "hr-workforce": [
+  "what did tayler build for hr?"
+ ],
+ "legacy-roadmap": [
+  "legacy ai voice status"
+ ],
+ "vllm-eval-gpu": [
+  "how many experiment cells were in the vllm sweep and how long did it run"
+ ],
+ "vllm-original-why-reversed": [
+  "was the first model choice wrong then?"
+ ],
+ "aie-proxy-metrics": [
+  "does valid json mean the extraction was actually correct?"
+ ],
+ "persona-jobs-at-risk": [
+  "what does tayler think ai will do to jobs over the next ten years?"
+ ],
+ "tech-claude": [
+  "claude or chatgpt, which does she use more"
+ ],
+ "medium-human-worth-vibe-coding": [
+  "what's her opinion on vibe coding?"
+ ],
+ "agent-city-characters-pipeline": [
+  "does tayler draw the characters herself"
+ ],
+ "answer-q62-music-lately": [
+  "what music does she listen to when working"
+ ],
+ "chatbot-how-built": [
+  "is this conversation being recorded",
+  "will tayler see my questions?",
+  "are you chatgpt"
+ ]
+}

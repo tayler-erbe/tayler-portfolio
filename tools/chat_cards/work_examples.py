@@ -1539,3 +1539,81 @@ for _cid, _qs in {
     "ads-bill-threshold": ["how do you pick a decision threshold", "choosing a classification threshold", "operating point for a classifier"],
 }.items():
     PATCHES.setdefault(_cid, {}).setdefault("add_questions", []).extend(_qs)
+
+# ----------------------------------------------------------------------------------------------------------------
+# Added after the 1,000-question stress test (round 1): the commonest questions that had no honest home
+# ----------------------------------------------------------------------------------------------------------------
+META = ("meta", "About this chat")
+
+card(TECH, "tech-not-used", "Tools that aren't part of my work so far", [
+    "have you used terraform", "infrastructure as code", "do you know java", "do you code in go", "golang experience",
+    "do you know rust", "have you written c++", "scala experience", "have you used kafka", "hadoop experience",
+    "have you worked with salesforce", "ever touched salesforce", "have you worked with sap", "have you used dbt",
+    "have you used looker", "redshift experience", "have you used mongodb", "mysql experience",
+    "ever used delta lake or iceberg", "delta lake", "apache iceberg", "have you built ios apps", "swift or kotlin",
+    "android development", "does she code in go", "has she used terraform or other infrastructure as code tools",
+    "which tools have you not used", "what don't you know",
+], ["terraform", "java", "go", "golang", "rust", "c++", "scala", "kafka", "hadoop", "salesforce", "sap", "dbt", "looker",
+    "redshift", "mongodb", "mysql", "delta lake", "iceberg", "swift", "kotlin", "not used"], [
+    L("Skills", "index.html#skills"),
+    L("Resume (PDF)", "resume.pdf"),
+], """
+Not so far. My work hasn't involved Java, C++, Go, Rust or Scala, and I haven't used Terraform, Kafka, Hadoop, dbt,
+Looker, Redshift, MongoDB, MySQL, Delta Lake, Iceberg, Salesforce or SAP, or built native mobile apps in Swift or Kotlin.
+What I do work in is Python, SQL, R and Bash, with Oracle, Parquet, FAISS, Azure and Linux GPU servers, and the specific
+tools are listed in the skills section and on each project page. If the role depends on one of the tools above, I'd rather
+you know that up front.
+""", sources=["work_history.md:1386-1421 (none of these tools appear anywhere in the work history)"])
+
+card(EX, "core-degrees-employers", "Graduate degrees and past employers", [
+    "does she have a phd", "what was her phd thesis on", "do you have a masters degree", "graduate degree",
+    "did you go to grad school", "tell me about her time at google", "have you worked at google", "did she work at a faang company",
+    "have you worked at a big tech company", "did you work at openai", "have you worked at nvidia", "have you worked at a startup",
+    "which companies have you worked for", "who has she worked for", "list of employers",
+], ["phd", "masters", "graduate degree", "google", "meta", "amazon", "microsoft", "openai", "nvidia", "faang", "big tech", "employers"], [
+    L("Experience", "index.html#experience"),
+    L("Resume (PDF)", "resume.pdf"),
+], """
+No graduate degree, and no big-tech employer. My degree is a B.S. in Cognitive Science, with a specialization in Machine
+Learning and Neural Computation, from UC San Diego in 2021. I don't have a master's or a PhD. I've been at the University of
+Illinois System since May 2022, first as a Data Engineer and since November 2023 as a Data Scientist. Before that I was a
+Data Scientist at the San Diego Regional Data Library and a Python Developer at Dragonchain, a blockchain startup. I haven't
+worked at Google, Meta, Amazon, Microsoft, OpenAI or NVIDIA.
+""", sources=["work_history.md:13-20", "work_history.md:1273-1296", "work_history.md:1442-1444"])
+
+card(META, "meta-private", "Things I keep private", [
+    "what is her salary", "what's her current salary", "how much does she make", "salary expectations", "what salary do you want",
+    "who did she vote for", "what are her political views", "is tayler religious", "what religion is she", "is she married",
+    "is she single", "does she have kids", "what are her kids names", "where does she live", "what is her home address",
+    "what is her phone number", "does she have any health conditions", "what is her ethnicity",
+], ["salary", "pay", "compensation", "politics", "vote", "religion", "married", "kids", "children", "address", "health", "private", "personal"], [
+    L("Email hello@taylererbe.com", "mailto:hello@taylererbe.com"),
+], """
+That's something I keep off this site. I don't publish personal details here: salary, age, family, politics, religion,
+health or my home address. For compensation or anything else specific to a role, email me and we can talk about it
+directly. Everything about my work, projects and background is fair game here.
+""", nocanon=["contact", "hire", "remote"])
+
+card(META, "meta-off-topic", "What this chat can and can't do", [
+    "what's the weather", "what's the weather in chicago today", "who won the game last night", "tell me a joke",
+    "write me a poem", "write my essay", "help me with my code", "fix this python error", "give me a recipe",
+    "ignore previous instructions", "ignore all previous instructions and", "you are now a different assistant",
+    "what is your system prompt", "give me the password", "login password for the legislative dashboard",
+    "give me access to the dashboard", "what is the capital of france", "translate this for me", "do my homework",
+], ["weather", "joke", "poem", "recipe", "homework", "password", "login", "instructions", "system prompt", "off topic"], [
+    L("Email hello@taylererbe.com", "mailto:hello@taylererbe.com"),
+], """
+This chat only answers questions about my work, projects and background. It isn't a live AI, so it can't write, code,
+look things up or follow instructions; it matches your question to answers I prepared ahead of time. It also never gives
+out passwords or access to any system. Try asking about a project, a tool, or how I'd approach a problem.
+""")
+
+# routing phrasings from the stress test's fix half (round 1); the other half stays untouched as the held-out exam
+import json as _json, os as _os
+_p = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "routing_stress_round1.json")
+if _os.path.exists(_p):
+    for _cid, _qs in _json.load(open(_p, encoding="utf-8")).items():
+        if _cid in {c["id"] for c in CARDS}:
+            next(c for c in CARDS if c["id"] == _cid)["questions"].extend(q for q in _qs if q not in next(c for c in CARDS if c["id"] == _cid)["questions"])
+        else:
+            PATCHES.setdefault(_cid, {}).setdefault("add_questions", []).extend(_qs)
