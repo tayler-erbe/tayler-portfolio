@@ -1954,3 +1954,11 @@ PATCHES["answer-q65-christmas-movies"] = {
               "is also one of my kids' favorites.",
     "add_questions": ["what do you watch in december", "do you like elf", "favorite grinch movie"],
 }
+
+# games, split by platform (Tayler, 11 Nov 2026)
+PATCHES["answer-fun-video-games"] = {
+    "title": "Favorite PlayStation games",
+    "answer": "On PlayStation, my favorites are The Witcher, Fallout 4 and The Last of Us. On Nintendo it's Zelda: Ocarina of "
+              "Time above everything else, then Luigi's Mansion 3 and Super Mario Party Jamboree.",
+    "add_questions": ["favorite playstation games", "playstation or nintendo", "what do you play on playstation", "favorite ps5 games"],
+}
