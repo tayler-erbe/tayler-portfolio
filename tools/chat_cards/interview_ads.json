@@ -1696,12 +1696,13 @@
      "url": "legislative-pipeline.html"
     }
    ],
-   "answer": "Precision at a threshold matches how the model is used: an analyst sees a flagged bill and wants to know how often a flag is right. At 0.70 on the held-out 103rd General Assembly, 75.1% of the bills the model flagged were correct calls, it caught 76.2% of the bills it should have, and the median first call came 21 days before the floor vote. The warning measure needs safeguards so no prediction made after the outcome is counted. I'd defend 0.70 as an operating point where precision and recall are nearly balanced, not as an optimum, since the right threshold depends on how many flags a team can review; that's how I framed flag volume on the retirement report. And it's one held-out Assembly, which I report as such, not a long prospective record.",
+   "answer": "Precision at a threshold matches how the model is used: an analyst sees a flagged bill and wants to know how often a flag is right. At 0.70 on the held-out 103rd General Assembly, 75.1% of the bills the model flagged were correct calls, it caught 76.2% of the bills it should have, and the median first call came 21 days before the floor vote. The warning measure needs safeguards so no prediction made after the outcome is counted. The 0.70 itself isn't a tuned optimum. I picked it as an illustrative operating point, to show how much lead time you get at a given level of certainty, and the validation results in the platform let you choose your own threshold and see the lead time and accuracy that come with it. The right threshold depends on how many flags a team can review. And it's one held-out Assembly, which I report as such, not a long prospective record.",
    "sources": [
     "work_history.md:149",
     "work_history.md:155",
     "page:legislative-pipeline.html",
-    "work_history.md:796"
+    "work_history.md:796",
+    "Tayler, 11 Nov 2026 (why 0.70)"
    ]
   },
   {

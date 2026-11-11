@@ -1654,12 +1654,12 @@ card(EX, "core-clients-internal", "Who my clients have been", [
     L("Projects", "index.html#projects"),
     LAB_LINK,
 ], """
-My clients so far have been inside the University of Illinois System, where I work as an internal consultant and builder for
-other units: the Institute of Government and Public Affairs and Academic Affairs on legislation, the University Library and
-records management on archives, Sponsored Programs Administration on research proposals, Illinois HR on workforce analytics,
-purchasing on procurement, and UIC on enrollment. Each came with its own stakeholders, data and constraints. I haven't yet
-done paid consulting for outside organizations; my Applied AI Lab is where I publish the advisory work that isn't tied to
-one unit.
+My work so far has all been inside the University of Illinois System, building for other units: the Institute of
+Government and Public Affairs and Academic Affairs on legislation, the University Library and records management on
+archives, Sponsored Programs Administration on research proposals, Illinois HR on workforce analytics, purchasing on
+procurement, and UIC on enrollment. Each came with its own stakeholders, data and constraints. I haven't done any outside
+consulting yet, and I wouldn't call what I've done consulting in the formal sense. My Applied AI Lab is where I publish
+the advisory-style work that isn't tied to one unit.
 """, sources=["work_history.md:1350-1385", "page:index.html", "lab index"])
 
 card(EX, "core-knowledge-graphs", "Knowledge graphs and graph-based retrieval", [
@@ -1699,3 +1699,76 @@ Austin, Texas area. I'm not available for roles that require travel. I'm a U.S. 
 I'm eligible for a security clearance, though I don't hold one today. For anything else about logistics, email me.
 """, sources=["jobhunter profile.json: city_state, willing_to_relocate, remote_preference, notice_period, earliest_start_date, travel, us_citizen"],
      nocanon=["contact"])
+
+
+# ---- Tayler's own answers, 11 Nov 2026 (voice notes; tidied, nothing added) ----
+OWN = ("answers", "In my words")
+
+card(OWN, "answer-cogsci-helps", "How my cognitive science degree helps", [
+    "how does a cognitive science degree help you in this work", "how does cognitive science help with ai",
+    "why does a cognitive science background matter", "is your degree relevant to ai", "what did you study and how does it apply",
+    "how does neuroscience relate to generative ai", "what does cognitive science have to do with machine learning",
+    "did you double major", "what courses did you take", "how does her degree help", "cognitive science and ai",
+], ["cognitive science", "degree", "neuroscience", "nanoengineering", "human computer interaction", "hci", "coursework", "interdisciplinary"], [
+    L("About", "index.html#about"),
+], """
+My degree was in machine learning and neural computation, so I took neuroscience, cognitive science and statistics, and
+for a while I was a double major with nanoengineering. Every course I've taken, however different, has turned out to be
+applicable in some way. Cognitive science is about how the brain learns and processes information, and the brain is in
+many ways the model for generative AI. I often reach for neuroscience as the biological picture of how these models think.
+It also keeps me on the human side. Everything AI does is for human consumption in one way or another, so the
+human-computer interaction and the cognitive effects of AI matter as much as the model does.
+""", sources=["Tayler, voice note, 11 Nov 2026"], prior=0.85)
+
+card(OWN, "answer-skills-that-matter", "Hard skills or the ability to learn?", [
+    "what matters more hard skills or the ability to learn", "what skills matter most for working with ai",
+    "are data scientists the right people to use ai", "who is best suited to work with ai", "do you need a data scientist to use ai",
+    "is domain knowledge more important than technical skill", "what makes someone good at ai work", "generalist or specialist for ai",
+    "what do you look for in people who build with ai",
+], ["hard skills", "ability to learn", "generalist", "domain knowledge", "jack of all trades", "data scientist"], [
+    L("About", "index.html#about"),
+], """
+I think data scientists who've worked in generative AI, text analytics and natural language processing are probably the
+best suited to knowing how to use AI, because we have a foundational understanding of how it works. But at this point I
+don't think hard skills are the most important thing. It's the ability to learn, to think constructively and broadly, to
+be a jack of all trades. On a team solving a specific problem, people with niche domain knowledge of the thing being built
+often bring more to the table than a pure data scientist. Data scientists are generalists by nature, though: you have to be
+ready to work with every kind of data and every kind of problem.
+""", sources=["Tayler, voice note, 11 Nov 2026"], prior=0.85)
+
+card(EX, "core-no-papers", "Academic papers and publications", [
+    "has tayler published any academic papers", "have you published research", "do you have publications",
+    "any peer reviewed papers", "have you written a paper", "where do you publish your work", "google scholar",
+], ["papers", "publications", "academic", "peer reviewed", "research papers", "medium"], [
+    L("Medium", "https://medium.com/@tayler.erbe"),
+    LAB_LINK,
+], """
+No, I haven't published academic papers. My writing is on Medium, where I cover production ML monitoring, deploying AI to
+Azure, archival AI and what AI means for human work, and my studies and briefs are in my Applied AI Lab, each with its
+method and limits stated.
+""", sources=["Tayler, 11 Nov 2026", "work_history.md:1346"])
+
+card(EX, "core-research-portfolio-size", "How big is the research portfolio my pipeline supports?", [
+    "how big is the research portfolio", "is the research portfolio 517 million or 1.5 billion", "how much research funding does the pipeline cover",
+    "what is the 517m figure", "university of illinois research funding size", "how much funding do the proposals represent",
+], ["research portfolio", "517m", "1.5 billion", "funding", "sponsored programs", "proposals and awards"], [
+    L("Research proposal processing", "research-proposal-processing.html"),
+], """
+About $517M a year. That's the figure I use for the University of Illinois System research portfolio that the proposals
+pipeline supports. You may also see about $1.5B, which is total funding booked; only about $517M of that is actually
+allocated to the research itself, with the rest going to other costs that return to the university. The smaller number is
+the more accurate one.
+""", sources=["Tayler, 11 Nov 2026", "page:index.html"])
+
+card(EX, "core-agent-count", "How many agents do I run?", [
+    "how many agents do you run", "is it 15 agents or 29", "skyrule says 15 agents but another page says 29 which is right",
+    "how many ai agents does she have", "number of agents", "how big is the agent organization", "has the agent count changed",
+], ["agents", "29 agents", "15 agents", "agent count", "agent organization"], [
+    L("Agent architecture", "agent-architecture.html"),
+    L("Skyrule", "skyrule.html"),
+], """
+It was 29 when I wrote the architecture page in October 2026, and it keeps moving. The 15 you may see is the Skyrule
+engineering organization on its own; 29 counted every agent across Skyrule and my other personal projects, all on the same
+job queue, memory and ownership rules. Since then I've added projects and consolidated some agents, so the exact number
+changes. All of it is personal-project work.
+""", sources=["Tayler, 11 Nov 2026", "page:agent-architecture.html", "work_history.md:1137"])
