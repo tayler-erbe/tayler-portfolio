@@ -1621,22 +1621,6 @@ if _os.path.exists(_p):
 # ---- stress test round 2: content gaps that the sources can answer ----
 GUIDE = L("Choosing a local model (guide)", "choosing-local-models-guide.html")
 
-card(EX, "drop-radar-overview", "Drop Radar: what it is and who it's for", [
-    "what is drop radar", "what is drop radar and who was it made for", "tell me about drop radar", "drop radar project",
-    "what does drop radar do", "who uses drop radar", "why did you build drop radar", "the drop alert system",
-    "what is the collectors alert system", "does drop radar buy things automatically", "is drop radar a checkout bot",
-    "how long did drop radar take to build",
-], ["drop radar", "drop alert", "collectibles", "limited releases", "restock", "telegram", "personal project"], [
-    L("Drop Radar", "drop-radar.html"),
-], """
-Drop Radar is a personal project: a real-time alert system I built for my husband over one weekend in October 2026. He
-collects limited releases (trading cards, collectible toys, watches) and kept losing drops to bots. It watches about 40
-stores and sources around the clock, pings his phone within seconds when something goes live, and improves itself from
-the notes he texts it, through a Claude Code agent that edits the code, runs the tests and replies with what changed. It
-only ever alerts. It never buys, joins a queue or gets around bot protection, because none of the 22 stores he buys from
-permits automated checkout. Its deep search found a 100-piece limited-edition watch that sold out in minutes, and he got one.
-""", sources=["page:drop-radar.html"])
-
 card(EX, "guide-model-names", "Reading a model's name: 27B, 35B-A3B, Q4_K_M, AWQ", [
     "what does q4_k_m mean", "what does the q4_k_m at the end of a model name actually mean", "35b-a3b meaning",
     "what does 35b-a3b mean", "what does awq mean", "what do the numbers in a model name mean", "is a 32b model better than a 27b",
@@ -1696,3 +1680,22 @@ for _cid, _qs in {
                           "do you store what i type", "is this conversation being recorded", "will tayler see my questions"],
 }.items():
     PATCHES.setdefault(_cid, {}).setdefault("add_questions", []).extend(_qs)
+
+
+# recruiter logistics, from her standard application answers (jobhunter profile.json, 11 Nov 2026)
+card(EX, "core-logistics", "Start date, location and logistics", [
+    "when can you start", "how soon could she start a new position", "start date availability", "what is your notice period",
+    "earliest start date", "where are you based", "where is she located", "where's she based", "what city do you live in",
+    "what time zone are you in", "are you willing to relocate", "would you relocate", "are you open to travel", "how much travel can you do",
+    "do you need visa sponsorship", "does she need sponsorship", "are you a us citizen", "can you get a security clearance",
+    "do you have a security clearance", "is she remote",
+], ["start date", "notice", "availability", "location", "based", "relocate", "relocation", "travel", "sponsorship", "citizen", "clearance", "time zone"], [
+    L("Email hello@taylererbe.com", "mailto:hello@taylererbe.com"),
+    L("Resume (PDF)", "resume.pdf"),
+], """
+I can start about two weeks after an offer, and sooner if needed. I'm based in San Diego, California, and I strongly
+prefer fully remote work; I'm also open to hybrid or in-office roles in San Diego, the Raleigh, North Carolina area or the
+Austin, Texas area. I'm not available for roles that require travel. I'm a U.S. citizen, so I don't need sponsorship, and
+I'm eligible for a security clearance, though I don't hold one today. For anything else about logistics, email me.
+""", sources=["jobhunter profile.json: city_state, willing_to_relocate, remote_preference, notice_period, earliest_start_date, travel, us_citizen"],
+     nocanon=["contact"])

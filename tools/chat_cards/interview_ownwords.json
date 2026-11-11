@@ -1,0 +1,1499 @@
+{
+ "family": "own_words",
+ "cards": [
+  {
+   "id": "answer-exp-career-growth",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How did you go from data engineer to leading AI work?",
+   "questions": [
+    "how did you go from data engineer to leading ai work",
+    "tell me about your career path",
+    "how long have you been at the university of illinois"
+   ],
+   "tags": [
+    "career",
+    "growth"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I joined the Advanced Analytics team in May 2022 as a Data Engineer, working mostly in KNIME with Python and SQL alongside it. As my work moved into machine learning and applied AI, I was reclassified to Data Scientist in November 2023. For the next two years I functionally led the team's AI work as a senior individual contributor, owning institution-wide AI platforms across HR, payroll, policy, governance and archives, and I was an active member of the Generative AI Committee. In November 2025 I moved to the AI Solutions Team.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-exp-current-role",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What do you do in your current role?",
+   "questions": [
+    "what do you do in your current role",
+    "what's your job",
+    "what does your day-to-day look like",
+    "where do you work now"
+   ],
+   "tags": [
+    "current",
+    "role"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Since November 2025 I've been a Data Scientist in Applied AI and Solutions Engineering on the AI Solutions Team at AITS, working remotely for stakeholders across the University of Illinois System. I design, build, deploy and operate applied AI systems end to end, from discovery through architecture, modeling and infrastructure to long-term production ownership. Right now that includes the Legislative Intelligence Platform, the RIMS archival pipeline, a recovered and rebuilt workforce forecasting system, and the Linux environment our production pipelines run on.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-exp-early-projects",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What did you work on as a data engineer?",
+   "questions": [
+    "what did you work on as a data engineer",
+    "what was your first job at the university",
+    "have you managed interns",
+    "have you used snowflake"
+   ],
+   "tags": [
+    "early",
+    "projects"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "Lots of concurrent institutional projects. I set up Snowflake connections through KNIME, DBeaver and Python for the ChromeRiver project and built ETL into Oracle; built SQL Server connector workflows and an off-contract spending analysis for food services; and wrote a PDF-to-text topic and keyword extraction prototype that informed my later document NLP work. I also evaluated Alteryx, IBM and SAS analytics platforms, including their AutoML features, for tool modernization, and helped review, interview and select interns, then coordinated and delegated their work.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-exp-education-certs",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What's your education and training?",
+   "questions": [
+    "what's your education and training",
+    "where did you go to school",
+    "what did you study",
+    "do you have any certifications"
+   ],
+   "tags": [
+    "education",
+    "certs"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I have a B.S. in Cognitive Science with a specialization in Machine Learning and Neural Computation from UC San Diego (2018 to 2021), which covered neural networks, AI, computer science and computational modeling of cognition. Before that I earned an Associate in Arts with an emphasis in mathematics and science at MiraCosta College (2017 to 2018). My certifications include the TDWI Machine Learning Bootcamp with Python (August 2023) and Basic Proficiency in the KNIME Analytics Platform.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-exp-governance",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What governance work do you do?",
+   "questions": [
+    "what governance work do you do",
+    "do you work on ai governance",
+    "what is esgc"
+   ],
+   "tags": [
+    "governance"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I write the documentation that new AI initiatives need to get through the Enterprise Systems Governance Committee. I was sole author of five-document dossiers for the Research Funding and Workforce Analytics Intelligence Platforms, working directly with each sponsor on the submissions and ROI documentation, and I led the on-prem open-source LLM evaluation that locked model selection for both. Neither initiative is moving forward at this time, but the groundwork carries over: the methods, the evaluation and the documentation approach are reusable for the next project that needs them.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-exp-legis-evolution",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How has the Legislative Intelligence Platform grown over time?",
+   "questions": [
+    "how has the legislative intelligence platform grown over time",
+    "how did the legislative project start",
+    "how much did the bill model improve"
+   ],
+   "tags": [
+    "legis",
+    "evolution"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "It started as my early data engineering work: a legislation and higher-education trending news project where I scraped and consolidated data from Govinfo and Voteview, tested news APIs, and used fuzzy matching and topic modeling to pull legislative acts out of local news. The first platform version used two-stage LLM summarization, semantic chunking, FAISS and MiniLM vector search, and RAG to extract 12+ signals per bill, feeding a Microsoft Copilot chatbot on GPT-4.1 for executive questions. Its stage-specific passage models were around 67% accurate, with a beta dashboard on Azure App Service. The production platform I delivered in August 2026 reframed prediction as survival and runs as a multi-service Azure app rescoring 50,501 bills every day. After I rebuilt the training corpus in September, the retrained model reached 75.1% precision and 76.2% recall on a held-out General Assembly, with a median of 21 days' warning.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-exp-payroll-procurement",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What other automation have you built at the university?",
+   "questions": [
+    "what other automation have you built at the university",
+    "have you replaced excel workflows",
+    "have you used microsoft fabric"
+   ],
+   "tags": [
+    "payroll",
+    "procurement"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "I rebuilt the CPA payroll transformation in Python, replacing legacy Excel workflows with monthly automation, and started the parallel PUA conversion. I built a procurement software detection system using RAG plus keyword classification across more than 300,000 product descriptions, and Microsoft Fabric and Synapse notebooks for PDF and feature extraction using a local GPU through Ollama. I also started the team's migration from KNIME to Python.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-exp-sez-research",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What did you do at the San Diego Regional Data Library?",
+   "questions": [
+    "what did you do at the san diego regional data library",
+    "have you done geospatial work",
+    "what research have you done",
+    "what's your experience with satellite data"
+   ],
+   "tags": [
+    "sez",
+    "research"
+   ],
+   "links": [
+    {
+     "label": "Experience",
+     "url": "index.html#experience"
+    }
+   ],
+   "answer": "From June to December 2021 I worked there as a data scientist on a geospatial project that used nighttime light intensity as a satellite proxy for economic activity, a method development economists use where official statistics are thin. I used regression to measure the impact of Special Economic Zones, comparing economic indicators between zone and non-zone regions across a decade of pixel-luminosity data, and built reproducible Python workflows with pandas, geopandas and scikit-learn.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Experience, Education and Certifications sections (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-fun-music-forever",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Is there a band you could listen to forever?",
+   "questions": [
+    "is there a band you could listen to forever",
+    "what music are you into",
+    "favourite band",
+    "what's on your spotify"
+   ],
+   "tags": [
+    "music",
+    "forever"
+   ],
+   "links": [],
+   "answer": "Doesn't exist. I get tired of basically every band eventually, even the ones I love. My taste is all over the place: on one playlist you'll find the Melvins, Duster, Thievery Corporation, Gábor Szabó, Matthew Halsall, LA LOM and Tommy Guerrero. Psychedelic jazz, heavy experimental rock, instrumental hip-hop, downtempo, Latin grooves, all in the span of three songs. I'd rather keep discovering something new than play the same thing over and over.",
+   "prior": 0.85,
+   "sources": [
+    "her voice answer and Spotify (23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-fun-teleport",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "If you could teleport anywhere right now, where would you go?",
+   "questions": [
+    "if you could teleport anywhere right now, where would you go",
+    "where would you go on vacation",
+    "dream travel destination",
+    "what would your perfect day off look like"
+   ],
+   "tags": [
+    "teleport"
+   ],
+   "links": [],
+   "answer": "Honestly? My couch. With my kids leaving me alone for 24 hours. That would be a vacation. I'd probably miss them before the day was over, but that's really all I want. Every trip since the kids were born has been hard. Japan, Topanga, Raleigh: if it wasn't a playground or a kid activity, it was impossible, and dinner out was a disaster. The best one so far was a resort in Arizona, and only because all we did was go from the hotel room to the pool and back. Still exhausting, just the easiest. So right now, any trip I imagine makes me cringe a little. I think I just want my children to be a bit older. I love them more than anything; I just haven't had a real day off in a while.",
+   "prior": 0.85,
+   "sources": [
+    "her voice answer (23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-agent-city",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What is Agent City?",
+   "questions": [
+    "what is agent city",
+    "tell me about your ai agents",
+    "what's the 3d world you built"
+   ],
+   "tags": [
+    "agent",
+    "city"
+   ],
+   "links": [
+    {
+     "label": "Agent City",
+     "url": "agent-city.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "I run about 30 AI agents on my own machine as a hobby. They clear my inbox, write news reports, do personal research and keep my knowledge bases up to date, each with a specific job across my side projects. As they got more done, following everything through chats and logs got exhausting, so I built a 3D world to visualize and interact with the system. I call it Agent City; it's a working title. Each agent has its own office, and the town is built around places I love: Geisel Library at UCSD, a Topanga Canyon retreat, Downtown Cary Park with a treehouse, and a jazz kissaten cafe with Spotify hooked up and a mushroom agent behind the counter who suggests records. I can walk into a building, sit down with an agent and talk through its work, or hold a board meeting with the agents I choose. The town shows me completed tasks, recent decisions, bottlenecks and what needs my input. It feels a little like a Black Mirror episode, but honestly it brings me real joy. It's the modern version of decorating my cubicle, except it's a whole world that's functional and feels like me.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-agent-city-future",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Where is Agent City headed?",
+   "questions": [
+    "where is agent city headed",
+    "what's next for agent city",
+    "will your agents talk to each other"
+   ],
+   "tags": [
+    "agent",
+    "city",
+    "future"
+   ],
+   "links": [
+    {
+     "label": "Agent City",
+     "url": "agent-city.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "The direction is a real working town: agents walking around, bouncing ideas off each other and assigning each other tasks. They already coordinate and hand off work, and I can bring them together to discuss decisions. The Geisel Library replica is where I want them to find knowledge gaps, research them and bring the findings back into project discussions. A project scout looks for opportunities and specialists evaluate them. And I'd love to build customizable virtual listening rooms with personal music agents, so people can design a little world around the music they love.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-agents-how",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How do your AI agents work together?",
+   "questions": [
+    "how do your ai agents work together",
+    "how do you manage 30 ai agents",
+    "how do you keep ai agents from making a mess",
+    "do your agents use claude or local models"
+   ],
+   "tags": [
+    "agents",
+    "how"
+   ],
+   "links": [
+    {
+     "label": "Agent City",
+     "url": "agent-city.html"
+    },
+    {
+     "label": "Agent architecture",
+     "url": "agent-architecture.html"
+    }
+   ],
+   "answer": "Each agent has a defined role, its own niche domain knowledge, responsibilities, history and persistent memory. A program manager, a principal architect and a founder agent coordinate the work and make decisions between the others. They hand tasks between departments, and file ownership is enforced, so an agent can only change what it owns. Decisions go into shared records, and a job queue manages schedules, dependencies, retries and approval gates. I can swap an agent's \"brain\" for the task: a stronger cloud model like Claude for demanding work, or one of about 20 models stored locally to save tokens. I decide when it's worth spending money. I set direction and make the decisions that need me. The agents coordinate the routine work and run overnight, with quality and security checks built in.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-distributed-local-ai",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What do you think of running AI across cheap consumer devices?",
+   "questions": [
+    "what do you think of running ai across cheap consumer devices",
+    "can you run big ai models on small devices",
+    "what's the future of local ai",
+    "will ai end up in everyday devices"
+   ],
+   "tags": [
+    "distributed",
+    "local",
+    "ai"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "What I find most interesting is treating consumer hardware as a distributed inference cluster instead of just buying a bigger GPU. Seeing a 70B model run across a few Raspberry Pis and Mac minis completely changed how I think about local AI. I can imagine affordable AI built into toys, cameras, home assistants and everyday appliances, all powered by a small fabric of inexpensive devices working together. The model doesn't care if the hardware looks pretty; it just needs the work to get done.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn comment (2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-frontier-costs",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Will the best AI models stay affordable?",
+   "questions": [
+    "will the best ai models stay affordable",
+    "is there an ai bubble",
+    "what happens when ai gets expensive",
+    "do you think open models will win"
+   ],
+   "tags": [
+    "frontier",
+    "costs"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "I share the concern. Even when model weights are free to download, the hardware to run them can still be far out of reach. My hope is that \"highly capable\" won't always mean huge and expensive. Distillation, better training and more efficient designs give us reasons to keep pushing for more intelligence with less compute. I'd love smaller models to become something we choose because they do the job well, not just because we've been priced out of everything else.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-hosted-api-concerns",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What's the downside of relying on hosted AI APIs?",
+   "questions": [
+    "what's the downside of relying on hosted ai apis",
+    "why do you run models locally",
+    "is it safe to send your data to ai companies",
+    "cloud ai or local ai"
+   ],
+   "tags": [
+    "hosted",
+    "api",
+    "concerns"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "Privacy is a big part of it, but it's also about control: over pricing and over whether a model stays available. Hosted APIs are genuinely useful. I just like running models independently when I can, because having the model and your data on your own hardware gives you more control over what you share and with whom. The catch is that getting there with large models takes a lot of money upfront, plus time and technical commitment. For startups, independent founders and research labs that independence often isn't affordable, and that gap matters when we talk about AI being accessible to everyone.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-idempotency",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What does idempotent mean?",
+   "questions": [
+    "what does idempotent mean",
+    "what is idempotency",
+    "why do retries need to be safe"
+   ],
+   "tags": [
+    "idempotency"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "Breaking down the word itself: \"idem\" is Latin for \"the same\", and \"potent\" comes from the Latin for \"power\" or \"ability\". So idempotent means, roughly, \"having the same effect\": doing something again has no additional effect after the first time. In a pipeline, that means a retry can't create duplicate records or payments.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn comment (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-money-leverage",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What's your take on saving money and early retirement?",
+   "questions": [
+    "what's your take on saving money and early retirement",
+    "what do you think about the fire movement",
+    "should i skip the latte to retire early",
+    "what's your philosophy on money"
+   ],
+   "tags": [
+    "money",
+    "leverage"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "It's not about how much you save, it's about financial leverage. Money is a tool, not an asset, unless you're doing something with it. The goal is to turn money into more income: investments, career growth, creating jobs or businesses, anything that creates value beyond just saving. That's where real freedom comes from. If you save 97% of a small paycheck by eating lentils in a basement, and I save the same share of a bigger paycheck and still buy the latte, neither of us has escaped the system. Different sized cages, both still prisons. Mine just has coffee.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn comment (2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-open-weights-access",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Are open-weight models really accessible?",
+   "questions": [
+    "are open-weight models really accessible",
+    "what do you think about open-source ai models",
+    "can you run big open models at home",
+    "why does model size matter"
+   ],
+   "tags": [
+    "open",
+    "weights",
+    "access"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "Free to download doesn't mean affordable to run. The biggest open models can write and debug software and reason through complex tasks, but running them yourself takes multiple high-end machines or enterprise GPUs. For perspective, renting eight H200 GPUs at about $5.29 per GPU-hour comes to roughly $30,000 a month if you leave them running. That's an illustration, not a quote. Cloud rentals and hosted APIs help, and APIs can be much cheaper for individuals, but then you depend on another company to run the model for you. So the accessibility conversation needs to go further. I want highly capable models that run on hardware people can realistically own. The next goal should be getting more intelligence out of less computing power.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-play-in-engineering",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Do you miss hands-on work as more gets automated?",
+   "questions": [
+    "do you miss hands-on work as more gets automated",
+    "is automation making engineering boring",
+    "how do you keep work fun"
+   ],
+   "tags": [
+    "play",
+    "in",
+    "engineering"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "I wonder how many engineers are missing some of the hands-on work as more of it gets automated. For me, bringing creativity and play back into the process has been a major upgrade. Building Agent City, personalizing it and making it feel like a game means checking in on my projects is something I genuinely look forward to.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-li-saas-cloning",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Is AI a threat to software companies?",
+   "questions": [
+    "is ai a threat to software companies",
+    "can ai clone software",
+    "what's the future of saas",
+    "will ai disrupt software companies"
+   ],
+   "tags": [
+    "saas",
+    "cloning"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "I think all SaaS faces a very real risk of being replicated, with competitors independently rewriting software to offer the same functionality. The biggest advantages established companies will keep are the data no one else has and the capital to access better resources. But as engineers start rebuilding existing software and selling it for less or making it open source, the big players will have to compete with products that are just as good at a fraction of the cost, built with minimal overhead. I feel like this could snowball very quickly.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn posts and comments (Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-me-art-background",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Did your art background go to waste?",
+   "questions": [
+    "did your art background go to waste",
+    "are you still an artist",
+    "do you use your design background",
+    "was art a waste of time"
+   ],
+   "tags": [
+    "art",
+    "background"
+   ],
+   "links": [],
+   "answer": "For a long time I thought it had. I took art, design, web design, animation and illustration, then moved into the technical side because art wasn't paying the bills. Now it's the opposite. With AI taking on more of the hard technical work, my creative background is coming back as one of my biggest strengths. Funny how that works.",
+   "prior": 0.85,
+   "sources": [
+    "her own words in chat, 24 Oct 2026 (reply to a LinkedIn post on generalists and AI) (2026-10-24)"
+   ]
+  },
+  {
+   "id": "answer-me-favorite-part-building",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What's your favorite part of building something?",
+   "questions": [
+    "what's your favorite part of building something",
+    "what do you love about your work",
+    "do you see yourself as a software engineer"
+   ],
+   "tags": [
+    "favorite",
+    "part",
+    "building"
+   ],
+   "links": [],
+   "answer": "Delivery. Creating the thing people actually use and interact with. I love getting inside the heads of the people who'll use it, how they want to use it, and making it not just good but beautiful. I never wanted to just be a coder. I love every part of creating a solution.",
+   "prior": 0.85,
+   "sources": [
+    "her own words in chat, 24 Oct 2026 (reply to a LinkedIn post on generalists and AI) (2026-10-24)"
+   ]
+  },
+  {
+   "id": "answer-me-why-data-science",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Why did you go into data science?",
+   "questions": [
+    "why did you go into data science",
+    "what drew you to data science",
+    "why data"
+   ],
+   "tags": [
+    "why",
+    "data",
+    "science"
+   ],
+   "links": [],
+   "answer": "I've always been fascinated by understanding people. Data science let me pull hard-to-get information out of data to understand people in ways that weren't possible before: the psychological, social and behavioral side. I wanted to use that to make us more human and connect us. Honestly, I also learned the hard technical skills because they were hireable, but understanding people was always the real draw.",
+   "prior": 0.85,
+   "sources": [
+    "her own words in chat, 24 Oct 2026 (reply to a LinkedIn post on generalists and AI) (2026-10-24)"
+   ]
+  },
+  {
+   "id": "answer-op-ai-multidisciplinary",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What's your take on AI and multidisciplinary people?",
+   "questions": [
+    "what's your take on ai and multidisciplinary people",
+    "is it better to be a generalist now",
+    "how has ai changed who succeeds",
+    "jack of all trades or ace of one"
+   ],
+   "tags": [
+    "ai",
+    "multidisciplinary"
+   ],
+   "links": [],
+   "answer": "AI handles a lot of the hard technical work now, which lowers the barrier to the deep technical side. The beautiful part is that it frees people up to be multidisciplinary and own a whole solution end to end. Being a jack of all trades has never been more of an advantage. Specialists still matter, but people with broad interests are the ones I think will really excel with AI.",
+   "prior": 0.85,
+   "sources": [
+    "her own words in chat, 24 Oct 2026 (reply to a LinkedIn post on generalists and AI) (2026-10-24)"
+   ]
+  },
+  {
+   "id": "answer-op-ai-team-of-six",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How has AI changed the way solutions get built?",
+   "questions": [
+    "how has ai changed the way solutions get built",
+    "do you still need a big team",
+    "how has ai changed product development"
+   ],
+   "tags": [
+    "ai",
+    "team",
+    "of",
+    "six"
+   ],
+   "links": [],
+   "answer": "It used to take a team: one person for data science and modeling, one for software engineering, one for DevOps, one for the platform. Now one person can deliver a full solution in less time than a team of six used to need. There's still room for people who go deep in one area, but the shape of the work has changed.",
+   "prior": 0.85,
+   "sources": [
+    "her own words in chat, 24 Oct 2026 (reply to a LinkedIn post on generalists and AI) (2026-10-24)"
+   ]
+  },
+  {
+   "id": "answer-op-miss-hard-debugging",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Do you miss the hard technical grind?",
+   "questions": [
+    "do you miss the hard technical grind",
+    "do you miss debugging",
+    "is ai taking the fun out of coding"
+   ],
+   "tags": [
+    "miss",
+    "hard",
+    "debugging"
+   ],
+   "links": [],
+   "answer": "I get why some people do. There's a real win in beating a brutal bug. But I'd rather spend less time in the weeds. The win I get now is watching a full product come to life the way I imagined it, and there's so much freedom in that. AI turned product development into a garden to plant.",
+   "prior": 0.85,
+   "sources": [
+    "her own words in chat, 24 Oct 2026 (reply to a LinkedIn post on generalists and AI) (2026-10-24)"
+   ]
+  },
+  {
+   "id": "answer-proj-bill-leakage",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How do you know the bill passage model isn't too good to be true?",
+   "questions": [
+    "how do you know the bill passage model isn't too good to be true",
+    "how accurate is the bill passage model",
+    "how did you validate the legislative model",
+    "how do you prevent data leakage"
+   ],
+   "tags": [
+    "bill",
+    "leakage"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "A model this accurate at predicting passage should make you suspicious, because procedural history leaks the answer. So I apply the leakage guard at a single point before aggregation, split at bill level rather than row level, and keep the raw labeled history as an audit artifact so the guard can be inspected rather than trusted. That suspicion paid off. In September 2026 I traced gaps in the training corpus to a status filter: passed bills were almost missing, and resolutions were pooled with bills, inflating the success rate to 30.4% from a true 13.2%. I rebuilt the corpus from 46,815 to 117,722 bills and retrained on the corrected definitions. The honest numbers are the ones I publish now: on a held-out General Assembly, 75.1% precision and 76.2% recall at a 0.70 threshold, with a median of 21 days' warning before the floor vote. Adding each bill's title and synopsis lifted introduction-time ROC-AUC from 0.561 to 0.845, confirmed by an ablation study and three leakage checks. Catching your own inflated numbers is the job.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-build",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How did you build Drop Radar in a weekend?",
+   "questions": [
+    "how did you build drop radar in a weekend",
+    "what tech stack is drop radar built on",
+    "how long did drop radar take",
+    "how do you use ai agents to build software"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "build"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "By working the way I do on all my projects: with AI agents. A dedicated Claude Code agent owns the system, with written rules and a living knowledge file, and a job queue runs its daily and weekly reviews while I sleep. Under the hood it's plain Python: store feeds, waiting-room detection, page and RSS watchers, a Telegram bot, Discord's official live connection, a dashboard on GitHub Pages, and an email-reading ledger. When I wanted a second opinion on strategy, I ran it past ChatGPT and took its best free ideas the same day.",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-discord",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How is Drop Radar connected to Discord?",
+   "questions": [
+    "how is drop radar connected to discord",
+    "does drop radar use discord",
+    "how do you filter restock alerts"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "discord"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "The collector community lives on Discord, so I joined my husband to nine of the best free restock servers and wired their alert channels into his own private server, where Drop Radar's bot reads them over Discord's official live connection. Posts arrive in about a second. Then it filters hard: online only, retail price only, from the real store. No resellers, no marked-up third-party listings, and no \"spotted at a store three states away.\"",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-ledger",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How does Drop Radar track purchases and sales?",
+   "questions": [
+    "how does drop radar track purchases and sales",
+    "does drop radar help with reselling",
+    "how does the purchase tracker work"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "ledger"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "My husband has a dedicated inbox now. Every order confirmation, shipping notice and eBay sale lands there, and the system reads it automatically: what he bought, when, what he paid, whether it shipped, and what it's worth now. It works out his eBay profit after fees, reminds him before a ship-by deadline, and suggests what to sell and what to hold. All of it stays on our home computer, never on the public website.",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-lessons",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What did you learn building Drop Radar?",
+   "questions": [
+    "what did you learn building drop radar",
+    "what was the hardest part of building drop radar",
+    "what makes a good personal ai tool"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "lessons"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "That the person using the thing is the real product manager. His first verdict on my early alerts was brutal and fair, and every big improvement came from his feedback, which is why the weekly check-in is built in. And that the best tech gives people time back. Success isn't more notifications. It's my husband putting his phone down because he trusts it'll tell him when something matters.",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-no-bots",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Why doesn't Drop Radar just buy things automatically?",
+   "questions": [
+    "why doesn't drop radar just buy things automatically",
+    "is drop radar a buying bot",
+    "is it legal to use bots for drops",
+    "does it auto-checkout"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "no",
+    "bots"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "I looked into it properly. Every major store bans checkout bots in its terms and quietly runs bot detection, and some cancel bot orders outright. I didn't want to put his accounts or his orders at risk. So Drop Radar does the part a person can't: it watches everything, all the time, and gets him there in time. Where a store allows it, the alert even opens checkout with the item already in his cart. He still taps Buy himself.",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-self-improving",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How does Drop Radar improve itself?",
+   "questions": [
+    "how does drop radar improve itself",
+    "how does the ai in drop radar work",
+    "can your app update itself",
+    "what makes drop radar different from other alert bots"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "self",
+    "improving"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "This is my favorite part. The Telegram bot isn't just an alert channel, it's a two-way line to an AI agent. My husband can text it, send a voice note or a screenshot: \"watch this brand,\" \"that alert was junk,\" \"this came in too late.\" The agent reads it, works out the fix, rewrites its own code or adds new sources, tests it, and replies with what it changed. He never touches a line of code. And once a week it checks in on its own, asking what's working and what isn't, so the people using it are the ones steering it.",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-what",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What is Drop Radar?",
+   "questions": [
+    "what is drop radar",
+    "tell me about the drop alert app you built",
+    "what did you build for your husband",
+    "what's your weekend project",
+    "what is drop radar and who was it made for",
+    "tell me about drop radar",
+    "drop radar project",
+    "what does drop radar do",
+    "who uses drop radar",
+    "the drop alert system",
+    "what is the collectors alert system"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "what",
+    "drop alert",
+    "collectibles",
+    "limited releases",
+    "personal project"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "Drop Radar is the alert system I built for my husband in a weekend. He's a lifelong collector: he worked at a card shop when he was 12, and even with a completely different career he's always loved collecting and reselling. For months he was glued to his phone hunting drops and losing every one to bots, because limited items sell out in minutes. So I built something that watches about 40 stores and sources around the clock and pings his phone the moment something he wants goes live. He's on his phone way less now, and we get our evenings back.",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-drop-radar-win",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Did Drop Radar actually work?",
+   "questions": [
+    "did drop radar actually work",
+    "has drop radar been successful",
+    "what was drop radar's first win"
+   ],
+   "tags": [
+    "drop",
+    "radar",
+    "win"
+   ],
+   "links": [
+    {
+     "label": "Drop Radar",
+     "url": "drop-radar.html"
+    }
+   ],
+   "answer": "Within days! It found a limited-edition watch, only 100 made, that sold out in minutes, and my husband got one. The funny part is that none of the scripted trackers caught it. The AI deep search did, by hunting the web for small-batch limited editions. That taught me something: for the rarest drops, an AI that goes looking beats a feed that waits.",
+   "prior": 0.85,
+   "sources": [
+    "her own account of the Drop Radar build and the project record (25 Oct 2026) (2026-10-25)"
+   ]
+  },
+  {
+   "id": "answer-proj-email-archive",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How did you handle 79,000 legacy emails?",
+   "questions": [
+    "how did you handle 79,000 legacy emails",
+    "tell me about the email archive project",
+    "how do you protect pii in archives"
+   ],
+   "tags": [
+    "email",
+    "archive"
+   ],
+   "links": [
+    {
+     "label": "Email archiving",
+     "url": "email-archiving.html"
+    }
+   ],
+   "answer": "The email pipeline processed more than 79,000 legacy .eml files: recursive ingestion with metadata extraction, regex header parsing, fuzzy-matched sender analysis, and LDA topic modeling with topic labels generated by LLaMA. To protect people's information I used Presidio to detect more than ten kinds of personal data, with five anonymization strategies covering substitution, redaction, masking and hashing, and the summaries the LLM writes are made from de-identified text.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-enrollment-exogenous",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "Did economic factors help predict enrollment?",
+   "questions": [
+    "did economic factors help predict enrollment",
+    "what did you learn from the enrollment forecasts",
+    "did outside factors matter for enrollment"
+   ],
+   "tags": [
+    "enrollment",
+    "exogenous"
+   ],
+   "links": [
+    {
+     "label": "UIC enrollment",
+     "url": "uic-enrollment.html"
+    }
+   ],
+   "answer": "I tested external economic and demographic factors as extra inputs to the ARIMA enrollment forecasts. The correlations were weak. That was still a useful result: it told leadership something real about how little those outside forces were moving enrollment trends, which shaped their decisions.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-legis-app",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How does the Legislative Insights platform work for its users?",
+   "questions": [
+    "how does the legislative insights platform work for its users",
+    "how does the legislative app personalize results",
+    "how do users log in to the legislative platform",
+    "what's the architecture of the legislative app"
+   ],
+   "tags": [
+    "legis",
+    "app"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "It's a multi-tab Azure app that gives University leadership a working view of state legislation affecting the institution. The proof of concept was approved in February 2026, and I delivered it to the Institute of Government and Public Affairs as a production platform in August 2026. Sign-in is passwordless: magic links with HMAC-signed tokens that expire, and sessions that survive container recycles. It uses Azure Functions, Cosmos DB and Communication Services, with inference split between Azure OpenAI and on-prem vLLM. It was the first multi-service cloud AI deployment in my team's history. Each stakeholder defines their own analytical lens, applied across the full active-bill corpus, so the same bill reaches a budget analyst and an AI-ethics researcher framed differently.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-legis-debugging",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What production problems did you hit deploying to Azure?",
+   "questions": [
+    "what production problems did you hit deploying to azure",
+    "what's the hardest bug you've debugged",
+    "what went wrong with your azure deployment"
+   ],
+   "tags": [
+    "legis",
+    "debugging"
+   ],
+   "links": [
+    {
+     "label": "Legislative pipeline",
+     "url": "legislative-pipeline.html"
+    }
+   ],
+   "answer": "Two stand out. A startup command was getting the container killed by a health-check timeout, so the app looked like it was crashing when it was really just starting too slowly. The other was a campus firewall terminating the Cosmos DB connection at the TLS layer. That one meant re-architecting scoring into a hybrid split rather than fighting the network.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-monitor-failures",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What kinds of failures does your monitoring system catch?",
+   "questions": [
+    "what kinds of failures does your monitoring system catch",
+    "how do you detect silent pipeline failures",
+    "how do you avoid alert fatigue"
+   ],
+   "tags": [
+    "monitor",
+    "failures"
+   ],
+   "links": [],
+   "answer": "It catches script failures, upstream cascade failures, missing or skipped runs, failures that only show up after server downtime, and silent pipelines, which it spots with start and end marker rows each job writes. Alerts are tiered by severity: critical if it happened within 24 hours, warning within 7 days, and info for anything older or caused upstream. That keeps alert fatigue down without losing the diagnostic detail, and each email includes the error type, traceback, run ID, stage name and timestamp.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-rims-delivery",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How do you run a project across two organizations?",
+   "questions": [
+    "how do you run a project across two organizations",
+    "how do you manage projects",
+    "how do you track dependencies",
+    "do you do project management as well as engineering"
+   ],
+   "tags": [
+    "rims",
+    "delivery"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I built and run the work breakdown, the milestone plan and a project board shared by both organizations. Every issue has an owner, its dependencies, explicit acceptance criteria and a link to the design section it implements. Blocked is a column rather than a label. That keeps the cross-organizational dependencies visible, things like appraisal policy, service account authorization and where the PII mapping store lives, so nobody can quietly lose track of them.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-rims-handoff",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How are you handing the archival system over to the Library?",
+   "questions": [
+    "how are you handing the archival system over to the library",
+    "how do you mentor engineers",
+    "how do you train someone to take over a system",
+    "what's your approach to handoffs"
+   ],
+   "tags": [
+    "rims",
+    "handoff"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I designed the engagement so the Library owns the result rather than depending on AITS. The incoming engineer's first professional project is a task ladder: it starts with environment setup and climbs to owning pipeline stages outright, with real deliverables rather than support work. I also gave her the manifest schema to review and sign off, with an explicit invitation to overturn my calls. If she's going to own it, she should get a real say in how it's built.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-rims-manifest",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How did you design the archival pipeline so someone else can own it?",
+   "questions": [
+    "how did you design the archival pipeline so someone else can own it",
+    "why single-writer ownership",
+    "how do you make a pipeline maintainable",
+    "what's the manifest schema"
+   ],
+   "tags": [
+    "rims",
+    "manifest"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "I wrote an eight-stage pipeline design and a 116-column manifest schema that every stage reads and writes. Every field has exactly one owner: no stage writes a column another stage owns. That one rule is what makes each part independently testable, re-runnable and replaceable by an engineer other than me. If a stage breaks, you can fix and re-run just that stage without wondering what else it touched.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-rims-pipeline",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What is the RIMS archival pipeline?",
+   "questions": [
+    "what is the rims archival pipeline",
+    "tell me about your archival pipeline",
+    "what are you working on now at the university",
+    "what is rims"
+   ],
+   "tags": [
+    "rims",
+    "pipeline"
+   ],
+   "links": [
+    {
+     "label": "Archival image intelligence",
+     "url": "archival-image-intelligence.html"
+    }
+   ],
+   "answer": "It's the production build that brings three of my archival AI proofs of concept, for email, images and mixed-format legacy files, together into one operational pipeline for the University Library and AITS Information Governance. I'm the technical lead and architect, and it started in August 2026. The work came by request: the University Archivist asked me to build the system, hand it off to the Library, and train her newly hired engineer toward owning it fully while I do. The stack is Python, Siegfried, ExifTool, FAISS, vLLM, LLaVA, Presidio, the Box API and Linux, and I'm also scoping the infrastructure to process the Archives at full corpus scale.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-throughput-966",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How did you discover the archive throughput problem?",
+   "questions": [
+    "how did you discover the archive throughput problem",
+    "why did you evaluate vllm",
+    "how do you find performance bottlenecks"
+   ],
+   "tags": [
+    "throughput"
+   ],
+   "links": [
+    {
+     "label": "Throughput study",
+     "url": "archival-image-throughput-evaluation.html"
+    }
+   ],
+   "answer": "Summarization was running at 34.78 seconds per record one at a time. That works out to roughly 966 hours for 100,000 records, and I traced it to the model being reloaded on every call. That led to a controlled serving-stack evaluation, which showed the real constraint was request serialization, not the hardware. Moving the backend to vLLM gave a 6.22x gain on the same hardware and cut full-corpus image processing from 22 hours to 3.7.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-workforce-likelihood",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What was wrong with the workforce report's likelihood column?",
+   "questions": [
+    "what was wrong with the workforce report's likelihood column",
+    "have you ever found a statistical error in production",
+    "what is calibration and why does it matter"
+   ],
+   "tags": [
+    "workforce",
+    "likelihood"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "During stakeholder review I found that a column shown to leadership as a likelihood had never been calibrated against what actually happened, and readers were taking it literally. I replaced it with observed-rate bands, with cut points frozen out-of-time and validated by leave-one-year-out testing, and I wrote the stakeholder communication explaining the change. A number leadership reads as a probability has to behave like one.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-workforce-rebuild",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How did you make sure the workforce system can't be lost again?",
+   "questions": [
+    "how did you make sure the workforce system can't be lost again",
+    "how do you document systems",
+    "how do you make pipelines resilient"
+   ],
+   "tags": [
+    "workforce",
+    "rebuild"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "I rebuilt it in Python with the specification frozen as a machine-checkable output contract, 4 files, 21 sheets and 436 columns, checked automatically on every run. I also built the point-in-time training panel the original never had. It runs quarterly on the institutional Linux server, is wired into cross-pipeline job monitoring, and is under version control, so it can't disappear with a server decommission again. I wrote a plain-language guide for leadership and a 33-page technical reference, and led the technical review with stakeholder leadership. Its outputs are summarized for executive leadership, including the President's office and CIO level.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proj-workforce-recovery",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How did you recover a system that had no backup?",
+   "questions": [
+    "how did you recover a system that had no backup",
+    "tell me about a time something went badly wrong",
+    "what's the hardest recovery you've done",
+    "tell me about the workforce planning system"
+   ],
+   "tags": [
+    "workforce",
+    "recovery"
+   ],
+   "links": [
+    {
+     "label": "HR workforce analytics",
+     "url": "hr-workforce-analytics.html"
+    }
+   ],
+   "answer": "The workforce planning system's platform was decommissioned and the developer who wrote it had left. The workflow, its SQL, the trained model and the documentation were all gone, with no recoverable backup, a quarterly deliverable due and the stakeholder blocked mid-cycle. I ordered the recovery by how perishable the evidence was rather than by what was convenient. I reconstructed the specification from surviving output files and recovered handoff notes, then restored the outstanding deliverable and verified it against three prior production runs. I also told the stakeholders, without being asked, that the model had been retrained. They needed to know.",
+   "prior": 0.85,
+   "sources": [
+    "her LinkedIn Projects section (pasted 23 Oct 2026) (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-rec-great-manager",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What makes a great manager, in your view?",
+   "questions": [
+    "what makes a great manager, in your view",
+    "what do you look for in a manager",
+    "who was your best boss",
+    "what kind of manager do you work best with"
+   ],
+   "tags": [
+    "great",
+    "manager"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "I worked for about three and a half years under a manager who later became the University of Illinois System's Chief Data and Analytics Officer, and he's my model for it. He gave guidance and oversight while still giving people room to lead and grow. I always felt trusted to own my work, and I knew he was there for support, direction and advocacy when I needed it. He noticed and appreciated hard work, and he made opportunities for other people to lead. He was also brilliant at bringing people together. Working across three universities and many departments is complicated, and he could communicate, handle disagreements diplomatically and build consensus between groups with very different priorities. That balance of trust, support and connection is what I try to give my own team.",
+   "prior": 0.85,
+   "sources": [
+    "recommendations she wrote on LinkedIn (pasted 23 Oct 2026); people named by role only (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-rec-interns-outcomes",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What happened to the interns you supervised?",
+   "questions": [
+    "what happened to the interns you supervised",
+    "did your interns get jobs",
+    "do you write recommendations for your team"
+   ],
+   "tags": [
+    "interns",
+    "outcomes"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "I'm proud of them. Two joined as Data Science Analyst Interns and did such strong work that we kept them on after they graduated to support our most complex projects. Others have gone on to data science and AI roles in industry and healthcare, including an AI/ML engineer role and data science positions at a bank and a children's hospital. I write recommendations for the people I supervise, and I try to make each one specific about what they actually built, because that's what helps them most.",
+   "prior": 0.85,
+   "sources": [
+    "recommendations she wrote on LinkedIn (pasted 23 Oct 2026); people named by role only (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-rec-leadership-style",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What's your leadership style, according to your team?",
+   "questions": [
+    "what's your leadership style, according to your team",
+    "how do you manage people",
+    "what are you like as a manager",
+    "how do you lead remote teams"
+   ],
+   "tags": [
+    "leadership",
+    "style"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "The people who reported to me describe it better than I can. They say I lead with empathy, encourage curiosity, and create an environment where people feel supported to take initiative and grow. They mention that I turn complex analytical goals into clear, actionable plans, explain the why behind a solution, balance high expectations with understanding, and give thoughtful, practical feedback. One wrote that I kept a remote team aligned and motivated, and kept track of my own projects and every team member's. Another said I advocated for better resources so the team could work efficiently and stay current.",
+   "prior": 0.85,
+   "sources": [
+    "her public LinkedIn recommendations (pasted 23 Oct 2026); recommenders named by role only (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-rec-legislative-team",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What was it like leading the team on the legislative project?",
+   "questions": [
+    "what was it like leading the team on the legislative project",
+    "how did the legislative project start as a team effort",
+    "what tools did your team use"
+   ],
+   "tags": [
+    "legislative",
+    "team"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "I led all of our team's projects, and the legislative one was the biggest. A team member who worked on it remembered that I came up with many different ways to collect and process data on upcoming Illinois legislation to build a model predicting whether bills would pass, and showed the team how to use tools like Pinecone and Azure for NLP analysis of the bills. The same person mentioned my KNIME work, integrating Python scripts for things like topic modeling into workflows for client projects such as an accessibility project, and that I could quickly tell whether a model or analysis would actually be useful for a project.",
+   "prior": 0.85,
+   "sources": [
+    "her public LinkedIn recommendations (pasted 23 Oct 2026); recommenders named by role only (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-rec-mentoring-interns",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "How do you mentor junior data scientists and interns?",
+   "questions": [
+    "how do you mentor junior data scientists and interns",
+    "have you mentored anyone",
+    "how do you develop junior people",
+    "what do your former interns say"
+   ],
+   "tags": [
+    "mentoring",
+    "interns"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "I guide people onto the right track and then let them explore and learn from their own mistakes. My former manager described it exactly that way, and said it prepared my interns to complete practical projects in the workforce. I take time to answer questions thoroughly so people build confidence, and I push them to think past the conventional solution. Several people I mentored have said it shaped how they approach problems, more structured and more creative at the same time. Many of them have gone on to data science, analytics and machine learning roles, and I'm proud of that.",
+   "prior": 0.85,
+   "sources": [
+    "her public LinkedIn recommendations (pasted 23 Oct 2026); recommenders named by role only (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-rec-team-built",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What did your team build while you led it?",
+   "questions": [
+    "what did your team build while you led it",
+    "what projects did your team work on",
+    "what was your team like",
+    "how big was your team"
+   ],
+   "tags": [
+    "team",
+    "built"
+   ],
+   "links": [
+    {
+     "label": "LinkedIn",
+     "url": "https://www.linkedin.com/in/tayler-erbe-194374141"
+    }
+   ],
+   "answer": "As the team lead I supervised data science analysts and interns, and we covered a lot of ground. On the legislative work, team members automated ingestion from LegiScan and ILGA, applied topic modeling, clustering and LLM summarization to bill text, built Tableau dashboards and network graphs of trends across states, and explored a graph-based recommender that predicted how legislators would vote by treating members as users and bills as items. Other projects included job classification standardization with TF-IDF, cosine similarity and retrieval-augmented techniques; procurement data classification over millions of rows using embeddings, clustering and zero-shot classification; screen-readable accessibility versions of Tableau files for people with disabilities; and machine learning and time-series models for student enrollment.",
+   "prior": 0.85,
+   "sources": [
+    "recommendations she wrote on LinkedIn (pasted 23 Oct 2026); people named by role only (2026-10-23)"
+   ]
+  },
+  {
+   "id": "answer-proudest-project",
+   "section": "answers",
+   "section_label": "In my words",
+   "title": "What's the project you're proudest of?",
+   "questions": [
+    "what's the project you're proudest of",
+    "what are you most proud of building",
+    "what's your best project",
+    "what project best shows how you think"
+   ],
+   "tags": [
+    "proudest",
+    "project"
+   ],
+   "links": [],
+   "answer": "The projects I'm proudest of are my two most recent personal projects, Skyrule and Agent City. Plenty of people have tried to build what each of them does, but none of them approached it the way I did. Skyrule is an AI relational-intelligence platform that helps people understand themselves and the people in their life, built by a team of AI agents I direct. Agent City is the 3D world I built to see and work with those agents: each has an office, and I can walk in and talk through its work. What makes me proud isn't the technical complexity. It's the approach: taking problems people have tried to solve for years and looking at them through a completely different lens. They're the clearest examples of how I work. I'm not interested in reproducing what's already been built; I want to find a better, more intuitive or entirely unexpected way of doing it.",
+   "prior": 0.85,
+   "sources": [
+    "her own words (2026-10-23)"
+   ]
+  }
+ ],
+ "tests": [],
+ "held_back": [
+  [
+   "li_dinosaur_prank",
+   "What's the story behind the dinosaur prank?",
+   "mentions your son and family"
+  ],
+  [
+   "rec_what_people_say",
+   "What do people who've worked with you say about you?",
+   "quotes a former manager"
+  ],
+  [
+   "li_digital_trust",
+   "How does AI change who we can trust online?",
+   "mentions your son"
+  ]
+ ]
+}
