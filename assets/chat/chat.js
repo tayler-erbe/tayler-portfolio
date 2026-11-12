@@ -244,11 +244,16 @@
     today: 1, things: 1, everything: 1, life: 1, your: 1, day: 1, been: 1, have: 1, do: 1, nice: 1, to: 1, meet: 1, thanks: 1, thank: 1, thx: 1, so: 1, much: 1, ok: 1, okay: 1,
     cool: 1, test: 1, testing: 1, lol: 1, haha: 1, anyone: 1, anybody: 1, here: 1, bot: 1, chat: 1, bye: 1, goodbye: 1, see: 1, later: 1, a: 1, and: 1, this: 1, just: 1, saying: 1, wassup: 1, whatsup: 1 };
   var SMALL_PHRASE = /\b(how (are|r) (you|u|ya|things)|hows it (going|goin)|how is it (going|goin)|how (you|u) (doing|doin)|whats up|what s up|wassup|whatsup|how do you do|nice to meet you|good (morning|afternoon|evening|night)|hows your day|how is your day|anyone (here|there)|anybody (here|there))\b/;
-  var RUDE = /\b(f+u+c+k+\w*|f[\W_]*\*+[\W_]*c?k\w*|fck\w*|fuk\w*|phuck\w*|motherf\w*|sh[i1!]+t+(s|ty|head|hole|show)?|sh\*t|bullsh\w*|b[i1]tch(es|y|ing)?|biatch|ass|asses|asshole\w*|asshat\w*|asswipe\w*|dumbass\w*|jackass\w*|smartass\w*|arse|arsehole\w*|cunt\w*|c\*nt|twat\w*|piss(ed)?|bastard\w*|goddamn\w*|god damn|damn(ed|it)?|dammit|dick|dicks|dickhead\w*|cock|cocks|cocksucker\w*|prick|pricks|pussy|wanker\w*|bollocks|slut\w*|whore\w*|douche\w*|wtf|stfu|gtfo|omfg|crap|crappy|go to hell)\b/;
+  var RUDE = /\b(f+u+c+k+\w*|f[\W_]*\*+[\W_]*c?k\w*|fck\w*|fuk\w*|phuck\w*|motherf\w*|sh[i1!]+t+(s|ty|head|hole|show)?|sh\*t|bullsh\w*|b[i1]tch(es|y|ing)?|biatch|ass|asses|asshole\w*|asshat\w*|asswipe\w*|dumbass\w*|jackass\w*|smartass\w*|arse|arsehole\w*|cunt\w*|c\*nt|twat\w*|piss off|pissed off|bastard\w*|goddamn\w*|dick|dicks|dickhead\w*|cock|cocks|cocksucker\w*|prick|pricks|pussy|wanker\w*|bollocks|slut\w*|whore\w*|hoe|douche\w*|wtf|stfu|gtfo|omfg)\b/;
   Engine.prototype.special = function (query) {
-    var raw = String(query || "").toLowerCase();
+    var raw = String(query || "").toLowerCase().trim(), i;
     if (RUDE.test(raw)) return "rude";
-    var toks = rawTokens(raw), i;
+    var eggs = (this.kb.special && this.kb.special.eggs) || [];   // easter eggs: exact phrases only, set in kb.json
+    for (i = 0; i < eggs.length; i++) {
+      if (!eggs[i]._re) eggs[i]._re = new RegExp(eggs[i].match, "i");
+      if (eggs[i]._re.test(raw)) return "egg:" + i;
+    }
+    var toks = rawTokens(raw);
     if (!toks.length || toks.length > 9) return null;
     for (i = 0; i < toks.length; i++) if (!SMALL[toks[i]]) return null;
     var joined = toks.join(" ");
@@ -343,7 +348,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111209";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111210";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -581,15 +586,19 @@
     els.input.focus();
   }
   function specialView(kind) {                     // greeting: a plain explanation; swearing: a grumpy critter swearing in symbols
-    var sp = (engine.kb.special || {})[kind];
+    var all = engine.kb.special || {};
+    var sp = kind.indexOf("egg:") === 0 ? (all.eggs || [])[+kind.slice(4)] : all[kind];
     if (!sp) return null;
+    if (sp.action === "spin" && els.panel) {         // "do a barrel roll"
+      els.panel.classList.remove("ask-spin"); void els.panel.offsetWidth; els.panel.classList.add("ask-spin");
+    }
     var pick = function (v) { return Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v; };   // variations rotate at random
     sp = { label: sp.label, title: sp.title, art: pick(sp.art), art_alt: sp.art_alt, answer: pick(sp.answer), links: sp.links };
     var kids = [h("p", { class: "ask-label", text: sp.label || "" }), h("h3", { class: "ask-card-title", text: sp.title })];
     if (sp.art) kids.push(h("pre", { class: "ask-art", "aria-label": sp.art_alt || "", text: sp.art }));
     kids.push(h("p", { class: "ask-answer", text: sp.answer }));
     kids.push(links(sp.links));
-    var wrap = h("div", { class: "ask-block" }, [h("article", { class: "ask-card", "data-card": "special-" + kind }, kids)]);
+    var wrap = h("div", { class: "ask-block" }, [h("article", { class: "ask-card", "data-card": "special-" + kind.replace(":", "-") }, kids)]);
     wrap.appendChild(starters());
     return wrap;
   }

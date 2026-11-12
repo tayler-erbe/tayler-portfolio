@@ -1983,3 +1983,8 @@ SPECIAL = {
         "links": [],
     },
 }
+
+
+# easter eggs (eggs.py), added to the special responses
+import eggs as _eggs
+SPECIAL["eggs"] = _eggs.EGGS

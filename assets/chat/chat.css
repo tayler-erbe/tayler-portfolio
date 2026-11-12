@@ -74,3 +74,6 @@
 }
 
 .ask-art { margin: 0; padding: var(--space-2) 0; font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.15; color: var(--accent); white-space: pre; overflow-x: auto; }
+.ask-spin { animation: ask-roll 0.9s ease-in-out 1; }
+@keyframes ask-roll { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ask-spin { animation: none; } }
