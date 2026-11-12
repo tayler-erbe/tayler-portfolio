@@ -595,12 +595,12 @@
     var pick = function (v) { return Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v; };   // variations rotate at random
     var answer = kind === "soap" && Array.isArray(sp.answer) ? sp.answer[Math.min(rudeCount - 4, sp.answer.length - 1)] : pick(sp.answer);   // soap lines escalate in order
     sp = { label: sp.label, title: String(sp.title || "").replace("{n}", rudeCount), art: pick(sp.art), art_alt: sp.art_alt, answer: answer, links: sp.links };
-    var kids = [h("p", { class: "ask-label", text: sp.label || "" }), h("h3", { class: "ask-card-title", text: sp.title })];
+    var silent = kind === "soap" && rudeCount > 4;   // after the first soap: no words, no suggestions, just more soap
+    var kids = silent ? [] : [h("p", { class: "ask-label", text: sp.label || "" }), h("h3", { class: "ask-card-title", text: sp.title })];
     if (sp.art) kids.push(h("pre", { class: "ask-art", "aria-label": sp.art_alt || "", text: sp.art }));
-    kids.push(h("p", { class: "ask-answer", text: sp.answer }));
-    kids.push(links(sp.links));
+    if (!silent) { kids.push(h("p", { class: "ask-answer", text: sp.answer })); kids.push(links(sp.links)); }
     var wrap = h("div", { class: "ask-block" }, [h("article", { class: "ask-card", "data-card": "special-" + kind.replace(":", "-") }, kids)]);
-    wrap.appendChild(starters());
+    if (kind !== "soap") wrap.appendChild(starters());
     return wrap;
   }
   function ask(q, label) {
