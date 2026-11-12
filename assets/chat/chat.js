@@ -348,7 +348,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111210";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111212";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -372,7 +372,7 @@
     failed: "The answers could not load.",
     you: "You asked"
   };
-  var engine = null, loading = null, els = {}, embedder = null, embLoading = null, embState = "off";
+  var engine = null, loading = null, els = {}, embedder = null, embLoading = null, embState = "off", rudeCount = 0;
 
   function h(tag, attrs, kids) {
     var e = document.createElement(tag);
@@ -593,7 +593,8 @@
       els.panel.classList.remove("ask-spin"); void els.panel.offsetWidth; els.panel.classList.add("ask-spin");
     }
     var pick = function (v) { return Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v; };   // variations rotate at random
-    sp = { label: sp.label, title: sp.title, art: pick(sp.art), art_alt: sp.art_alt, answer: pick(sp.answer), links: sp.links };
+    var answer = kind === "soap" && Array.isArray(sp.answer) ? sp.answer[Math.min(rudeCount - 4, sp.answer.length - 1)] : pick(sp.answer);   // soap lines escalate in order
+    sp = { label: sp.label, title: String(sp.title || "").replace("{n}", rudeCount), art: pick(sp.art), art_alt: sp.art_alt, answer: answer, links: sp.links };
     var kids = [h("p", { class: "ask-label", text: sp.label || "" }), h("h3", { class: "ask-card-title", text: sp.title })];
     if (sp.art) kids.push(h("pre", { class: "ask-art", "aria-label": sp.art_alt || "", text: sp.art }));
     kids.push(h("p", { class: "ask-answer", text: sp.answer }));
@@ -604,7 +605,9 @@
   }
   function ask(q, label) {
     load().then(function () {
-      var kind = !label && engine.special(q), view = kind && specialView(kind);
+      var kind = !label && engine.special(q);
+      if (kind === "rude" && ++rudeCount > 3 && (engine.kb.special || {}).soap) kind = "soap";   // counted in this page only, never stored
+      var view = kind && specialView(kind);
       if (view) { append(h("div", { class: "ask-block" }, [userLine(q)])); append(view); els.input.focus(); return null; }
       return searchBest(q);
     }).then(function (res) {

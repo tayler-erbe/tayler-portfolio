@@ -1979,7 +1979,11 @@ SPECIAL = {
         "title": "Whoa there",
         "art": open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "rude_art.txt"), encoding="utf-8").read().rstrip("\n").split("\n---8<---\n"),
         "art_alt": "Q*bert, swearing back in symbols",
-        "answer": "I don't think Q*bert likes your language.",
+        "answer": ["I don't think Q*bert likes your language.",
+                   "Q*bert is disappointed you would say such a thing.",
+                   "Q*bert is shocked, dismayed and disappointed.",
+                   "Q*bert has heard enough of that, thank you.",
+                   "Q*bert would like a word. A nicer word."],
         "links": [],
     },
 }
@@ -1988,3 +1992,16 @@ SPECIAL = {
 # easter eggs (eggs.py), added to the special responses
 import eggs as _eggs
 SPECIAL["eggs"] = _eggs.EGGS
+
+
+# after more than three bad words in one visit, Q*bert hands over soap and a toothbrush (chat.js counts in memory only)
+SPECIAL["soap"] = {
+    "label": "About this chat",
+    "title": "Strike {n}",
+    "art": open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "soap_art.txt"), encoding="utf-8").read().rstrip("\n"),
+    "art_alt": "A bar of soap with bubbles, and a toothbrush",
+    "answer": ["Q*bert has run out of patience. Here's a bar of soap and a toothbrush.",
+               "Still going? Q*bert is shocked, dismayed and disappointed. Soap and toothbrush, as promised.",
+               "Wash that mouth out. Q*bert will wait."],
+    "links": [],
+}
