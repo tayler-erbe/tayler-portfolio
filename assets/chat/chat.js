@@ -245,6 +245,18 @@
     cool: 1, test: 1, testing: 1, lol: 1, haha: 1, anyone: 1, anybody: 1, here: 1, bot: 1, chat: 1, bye: 1, goodbye: 1, see: 1, later: 1, a: 1, and: 1, this: 1, just: 1, saying: 1, wassup: 1, whatsup: 1 };
   var SMALL_PHRASE = /\b(how (are|r) (you|u|ya|things)|hows it (going|goin)|how is it (going|goin)|how (you|u) (doing|doin)|whats up|what s up|wassup|whatsup|how do you do|nice to meet you|good (morning|afternoon|evening|night)|hows your day|how is your day|anyone (here|there)|anybody (here|there))\b/;
   var RUDE = /\b(f+u+c+k+\w*|f[\W_]*\*+[\W_]*c?k\w*|fck\w*|fuk\w*|phuck\w*|motherf\w*|sh[i1!]+t+(s|ty|head|hole|show)?|sh\*t|bullsh\w*|b[i1]tch(es|y|ing)?|biatch|ass|asses|asshole\w*|asshat\w*|asswipe\w*|dumbass\w*|jackass\w*|smartass\w*|arse|arsehole\w*|cunt\w*|c\*nt|twat\w*|piss off|pissed off|bastard\w*|goddamn\w*|dick|dicks|dickhead\w*|cock|cocks|cocksucker\w*|prick|pricks|pussy|wanker\w*|bollocks|slut\w*|whore\w*|hoe|douche\w*|wtf|stfu|gtfo|omfg)\b/;
+  // visitors who are unsure what to do: explain the panel and offer good first questions
+  var HELP = /^(help|help me|helpp*|\?+|huh|what|wut|um+|hmm+|confused|im confused|i am confused|lost|im lost|i am lost|what do i do|what do i do now|what do i do here|what am i supposed to do( here| with this)?|what should i (do|ask|type)( here)?|what can i (do|ask|type)( here)?|what can you do|what do you do here|can i ask (you )?(a |some )?questions?|may i ask (you )?a question|can you help( me)?|how do i (use|start|begin|do anything with) (this|it|this chat|this thing)|how do i use this( chat| thing)?|how does this (work|thing work)|how do you use this( chat)?|what is this( thing| chat)?( for)?|whats this( for)?|what is this chat (even )?(good )?for|what is the point( of this( chat| thing)?)?|whats the point( of this( chat| thing)?)?|i dont (get|understand) (it|this|the point( of this( chat)?)?)|i dont know what to (ask|do|type)|this (doesnt|does not) make (any )?sense|this makes no sense|i dont get it|where do i (start|begin)|how do i start|give me (some )?(ideas|examples|suggestions)|any suggestions|what kind of questions can i ask|what questions can i ask|what can i ask about|okay now what|ok now what|now what|so what do i do)$/;
+
+  var ADJ = "(cool|awesome|amazing|impressive|great|neat|nice|smart|intelligent|brilliant|genius|talented|incredible|fantastic|beautiful|clever|fun|dope|sick|rad|sweet|wonderful|excellent|outstanding|remarkable|inspiring|interesting|creative|unique|helpful|useful|well done|well made|well built|thoughtful|gifted|skilled|sharp|legit|on point|next level)";
+  var WOW = new RegExp("^(wow+|woah+|whoa+|omg|ooh+|dang|damn)?\\s*(that|this|it|thats|its)?\\s*(is|s)?\\s*(really|so|very|super|pretty|seriously|truly|actually|quite)?\\s*(cool|awesome|amazing|impressive|neat|nice|sick|rad|dope|brilliant|incredible|fantastic|wild|sweet|fun|beautiful|clever|great)?\\s*(work|stuff|site|chat|app|page|job|build|project|idea|one)?$");
+  var PRAISE = new RegExp("\\b(" +
+    "(this|that|it|its|thats|she|shes|her|her work|tayler|taylor|you|youre|your (site|work|chat|portfolio|page|app|projects?)|the (chat|site|work|app|bot|page|portfolio|qbert)|what you built|what she built|what you made|everything here)\\s+(here |there )?(is |was |are |were |seems |seem |looks |look |sounds |feels |seems like |like )?(shes |she is |its |it is |a |an |such a |one )?(really |so |very |super |pretty |incredibly |seriously |genuinely |truly |actually |quite |extremely )*" + ADJ + "\\b" +
+    "|i (really |truly |genuinely |actually |honestly )?(like|love|enjoy|appreciate|admire|dig) (this|that|it|her|the|your|what|how)" +
+    "|i (am|m) (so |very |really )?(impressed|blown away|inspired)|(i am|im) (a )?(big|huge|massive) fan" +
+    "|^(i )?(really )?(love|like|dig) (this|it|that)( a lot| so much)?$|^((well|nicely) done|(good|great|nice|amazing) (job|work)|bravo|kudos|props|hats off|mind blown|blown away|this rocks|you rock|she rocks)$)");
+  var QWORD = /^(what|whats|how|hows|why|which|who|whos|where|when|can|could|does|do|did|is|are|was|were|have|has|had|tell|show|list|give|explain|describe|walk|will|would|should|any|ever)\b/;
+
   Engine.prototype.special = function (query) {
     var raw = String(query || "").toLowerCase().trim(), i;
     if (RUDE.test(raw)) return "rude";
@@ -253,6 +265,14 @@
       if (!eggs[i]._re) eggs[i]._re = new RegExp(eggs[i].match, "i");
       if (eggs[i]._re.test(raw)) return "egg:" + i;
     }
+    var plain = raw.replace(/[’']/g, "").replace(/[?!.,]+/g, " ").replace(/\s+/g, " ").trim();
+    if (!plain && /\?/.test(raw)) return "help";
+    var plain0 = plain.replace(/^i (really )?think (that )?/, "");
+    plain = plain.replace(/^(ok|okay|so|well|um+|hmm+|hey|hi|hello|uh+|alright|right)\s+/, "");
+    if (HELP.test(plain)) return "help";
+    var words = plain.split(" ").length;               // a compliment is a short statement, never a question
+    if (words <= 30 && !/\?/.test(raw) && !QWORD.test(plain) && !/\b(most|coolest|best|favorite|favourite|biggest)\b/.test(plain) &&
+        ((WOW.test(plain) && plain.length > 0 && /[a-z]/.test(plain) && !/^(that|this|it|thats|its|is|s|work|stuff|site|chat|app|page|job|build|project|idea|one)$/.test(plain) && !/^(nice|sweet|great|fun|cool)$/.test(plain) || /^(wow+|woah+|whoa+|omg|cool|awesome|amazing|impressive|neat|sick|rad|dope|brilliant|incredible|fantastic)$/.test(plain)) || PRAISE.test(plain) || PRAISE.test(plain0))) return "compliment";
     var toks = rawTokens(raw);
     if (!toks.length || toks.length > 9) return null;
     for (i = 0; i < toks.length; i++) if (!SMALL[toks[i]]) return null;
@@ -348,7 +368,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111212";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111218";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -594,19 +614,27 @@
     }
     var pick = function (v) { return Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v; };   // variations rotate at random
     var answer = kind === "soap" && Array.isArray(sp.answer) ? sp.answer[Math.min(rudeCount - 4, sp.answer.length - 1)] : pick(sp.answer);   // soap lines escalate in order
-    sp = { label: sp.label, title: String(sp.title || "").replace("{n}", rudeCount), art: pick(sp.art), art_alt: sp.art_alt, answer: answer, links: sp.links };
+    sp = { label: sp.label, title: String(sp.title || "").replace("{n}", rudeCount), art: pick(sp.art), art_alt: sp.art_alt, answer: answer, links: sp.links, suggestions: sp.suggestions, suggestions_label: sp.suggestions_label };
     var silent = kind === "soap" && rudeCount > 4;   // after the first soap: no words, no suggestions, just more soap
     var kids = silent ? [] : [h("p", { class: "ask-label", text: sp.label || "" }), h("h3", { class: "ask-card-title", text: sp.title })];
     if (sp.art) kids.push(h("pre", { class: "ask-art", "aria-label": sp.art_alt || "", text: sp.art }));
     if (!silent) { kids.push(h("p", { class: "ask-answer", text: sp.answer })); kids.push(links(sp.links)); }
     var wrap = h("div", { class: "ask-block" }, [h("article", { class: "ask-card", "data-card": "special-" + kind.replace(":", "-") }, kids)]);
-    if (kind !== "soap") wrap.appendChild(starters());
+    if (sp.suggestions && sp.suggestions.length) {   // the help reply brings its own longer list of first questions
+      wrap.appendChild(h("div", { class: "ask-block ask-starters" }, [h("p", { class: "ask-label", text: sp.suggestions_label || TEXT.starters }),
+        h("ul", { class: "ask-chips" }, sp.suggestions.map(function (x) { return h("li", null, [chip(x, function () { ask(x); })]); }))]));
+    } else if (kind !== "soap") wrap.appendChild(starters());
     return wrap;
   }
   function ask(q, label) {
     load().then(function () {
       var kind = !label && engine.special(q);
       if (kind === "rude" && ++rudeCount > 3 && (engine.kb.special || {}).soap) kind = "soap";   // counted in this page only, never stored
+      var sp0 = kind && kind.indexOf("egg:") === 0 ? ((engine.kb.special || {}).eggs || [])[+kind.slice(4)] : null;
+      if (sp0 && sp0.action === "random") {         // "surprise me": show one answer from a small pool
+        var pool = (sp0.pool || []).map(function (id) { return engine.kb.cards.filter(function (c) { return c.id === id && c.answer; })[0]; }).filter(Boolean);
+        if (pool.length) { append(h("div", { class: "ask-block" }, [userLine(q), cardView(pool[Math.floor(Math.random() * pool.length)])])); els.input.focus(); return null; }
+      }
       var view = kind && specialView(kind);
       if (view) { append(h("div", { class: "ask-block" }, [userLine(q)])); append(view); els.input.focus(); return null; }
       return searchBest(q);

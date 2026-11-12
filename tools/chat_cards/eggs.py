@@ -62,3 +62,64 @@ EGGS = [
 for _e in EGGS:
     _e.setdefault("label", EGG_LABEL)
     _e.setdefault("links", [])
+
+# ---- everyday ways people talk to the panel: replies that point them somewhere useful ----
+ABOUT = "About this chat"
+INTENTS = [
+    {"id": "thanks", "match": r"^(thanks|thank you|thx|ty|thank u|thanks so much|thank you so much|appreciate it|much appreciated|cheers)( (a lot|so much|tayler|again|for this|for the info))?[!. ]*$",
+     "title": "You're welcome!",
+     "answer": ["You're welcome! Ask another question any time, or reach Tayler directly by email.",
+                "Happy to help. There's plenty more in here if you have another question."]},
+    {"id": "bye", "match": r"^(bye+|goodbye|good bye|bye bye|see ya|see you( later| around)?|later|cya|ttyl|gotta go|got to go|im out|i'm out|peace( out)?|take care|have a good (one|day|night|weekend))[!. ]*$",
+     "title": "Thanks for stopping by",
+     "answer": "Thanks for stopping by! If you'd like to talk to Tayler directly, her email and resume are below.",
+     "links": [{"label": "Email hello@taylererbe.com", "url": "mailto:hello@taylererbe.com"}, {"label": "Resume (PDF)", "url": "resume.pdf"}]},
+    {"id": "joke", "match": r"^(tell me a joke|tell a joke|tell me something funny|joke|jokes|say something funny|make me laugh|know any (good )?jokes|got any jokes)[!.? ]*$",
+     "title": "A data joke",
+     "answer": ["A SQL query walks into a bar, walks up to two tables and asks, \"Can I join you?\"",
+                "There are 10 kinds of people in the world: those who understand binary and those who don't.",
+                "Tayler's model told her it was 99% accurate. Then she checked for leakage.",
+                "I'd tell you a joke about UDP, but you might not get it.",
+                "Why did the GPU sit idle? Its server was serving one request at a time. (Tayler fixed that one: 6.22 times faster.)"]},
+    {"id": "laugh", "match": r"^(lol+|lmao+|lmfao+|haha+|hahaha+|hehe+|rofl|😂+|🤣+|😆+)[!. ]*$",
+     "title": "Glad you're having fun",
+     "answer": "Glad you're having fun. Rumor has it there are a few easter eggs hidden in here."},
+    {"id": "eggs", "match": r"^((are there )?(any )?(easter eggs?|secrets?|hidden (features|things|stuff)|cheat codes?)( in here)?|what easter eggs are there)[!.? ]*$",
+     "title": "There might be",
+     "answer": "There might be. Try a famous cheat code, something a certain fairy would shout, the name of a big forest spirit, or the meaning of life. And whatever you do, don't swear in front of Q*bert."},
+    {"id": "love", "match": r"^(i love you|ily|love you|i love u|marry me|will you marry me|are you single|date me|will you go out with me)[!.? ]*$",
+     "title": "Aww",
+     "answer": "That's sweet, but Q*bert says let's keep it professional. Ask about Tayler's work instead."},
+    {"id": "mash", "match": r"^(asdf\w*|qwer\w*|zxcv\w*|jkl;?\w*|[asdfghjkl;]{5,}|[qwertyuiop]{6,}|[zxcvbnm]{6,}|(.)\2{5,}|blah( blah)+|lorem ipsum.*|test test.*|aaa+h*|ugh+|meh)[!.? ]*$",
+     "title": "Hmm",
+     "answer": ["That looks like a cat walked across the keyboard. Here are some real questions to try.",
+                "Not sure what that was, but here are some good places to start."]},
+    {"id": "surprise", "match": r"^(surprise me|random|random question|show me something( random| interesting| fun)?|tell me something (interesting|cool|fun|random)( about (her|tayler))?|i'?m feeling lucky|feeling lucky)[!.? ]*$",
+     "action": "random",
+     "pool": ["fun-zelda", "fun-theme-park", "fun-animal", "fun-breakfast", "answer-proj-drop-radar-what", "skyrule", "bill-prediction",
+              "vllm-throughput", "procurement", "answer-me-why-data-science", "fun-first-concert", "answer-cogsci-helps", "ocr-overview"],
+     "title": "", "answer": ""},
+    {"id": "recruiter", "match": r"^((hi|hello|hey)[,!. ]*)?(i'?m|i am|this is) (a |an )?(\w+ )?(recruiter|technical recruiter|hiring manager|talent (acquisition|partner)( lead)?|sourcer|talent scout|headhunter)\b[^?]{0,60}$",
+     "title": "Welcome",
+     "answer": "Welcome! These are the questions recruiters and hiring managers usually start with. Tap one, or ask your own.",
+     "suggestions_label": "For recruiters",
+     "suggestions": ["What roles is she looking for?", "When can she start?", "Is she open to contract work?", "Show me examples of data science projects",
+                     "Tell me about her performance engineering", "What has she deployed to production?", "Resume", "How can I contact her?"]},
+    {"id": "engineer", "match": r"^((hi|hello|hey)[,!. ]*)?(i'?m|i am) (a |an )?(\w+ )?(engineer|software engineer|ml engineer|ai engineer|data scientist|data engineer|developer|dev|architect|tech lead|cto|vp of engineering|principal engineer|staff engineer|researcher)\b[^?]{0,60}$",
+     "title": "Welcome",
+     "answer": "Welcome! Tayler has answered a lot of technical questions in here. These are good ones to start with, or ask your own.",
+     "suggestions_label": "Technical questions",
+     "suggestions": ["How would she design a RAG system?", "Explain continuous batching", "How does she detect data leakage?",
+                     "Design semantic search over millions of products", "How does she choose a model?", "What breaks first at 10x scale?",
+                     "How does she evaluate LLM output?", "Walk me through one of her models end to end"]},
+    {"id": "client", "match": r"^((hi|hello|hey)[,!. ]*)?((i'?m|i am) (a |an )?(\w+ )?(business owner|founder|client|potential client|small business owner|nonprofit|operations lead|manager at)|(we'?re|we are) (a |an )?(\w+ )?(small business|business|startup|company|team|nonprofit|firm|agency|school|hospital|university|org|organization))\b[^?]{0,80}$",
+     "title": "Welcome",
+     "answer": "Welcome! If you're thinking about bringing AI into your work, these are good questions to start with. Tayler is also open to contract work.",
+     "suggestions_label": "For teams and businesses",
+     "suggestions": ["What can she help a team with?", "Is our data ready for AI?", "Should we use local models or an API?",
+                     "When is AI the wrong tool?", "Can AI read our contracts?", "How do you keep LLM costs down?", "Is she open to contract work?", "How can I contact her?"]},
+]
+for _e in INTENTS:
+    _e.setdefault("label", ABOUT)
+    _e.setdefault("links", [])
+EGGS = EGGS + INTENTS

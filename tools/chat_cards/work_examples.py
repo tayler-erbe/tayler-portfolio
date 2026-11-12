@@ -2005,3 +2005,41 @@ SPECIAL["soap"] = {
                "Wash that mouth out. Q*bert will wait."],
     "links": [],
 }
+
+# visitors who are unsure what to do with the panel
+SPECIAL["help"] = {
+    "label": "About this chat",
+    "title": "How this works",
+    "answer": "Just ask a question about Tayler: her work, her projects, the tools she uses, how she'd approach a problem, or "
+              "anything else you want to know about her. She has answered a lot of questions ahead of time, and whatever you "
+              "type is matched to the closest answer, with links to the full case study and her contact details where they "
+              "help. It isn't a conversation, so ask one thing at a time. If you're not sure where to start, try one of these.",
+    "suggestions_label": "Good places to start",
+    "suggestions": [
+        "Who is Tayler?",
+        "What has she built?",
+        "Show me examples of data science projects",
+        "Tell me about her performance engineering",
+        "How does she choose a model?",
+        "How would she design a RAG system?",
+        "What roles is she looking for?",
+        "When can she start?",
+        "What is Skyrule?",
+        "Favorite theme park",
+    ],
+    "links": [{"label": "Email hello@taylererbe.com", "url": "mailto:hello@taylererbe.com"}],
+}
+
+PATCHES.setdefault("projects-list", {}).setdefault("add_questions", []).extend(
+    ["what has she built", "what has tayler built", "what have you built", "what did she build"])
+
+# compliments: a short statement of praise about the chat, the site or Tayler
+SPECIAL["compliment"] = {
+    "label": "About this chat",
+    "title": "Thank you!",
+    "answer": ["Thank you very much for the compliment! Tayler genuinely appreciates anyone who's curious and wants to learn more about her and her work.",
+               "Thank you for acknowledging the work. It means a lot, and Tayler genuinely appreciates you taking the time to look around.",
+               "Thank you for that! Tayler really appreciates the kind words, and anyone curious enough to dig into her work.",
+               "That's very kind, thank you. If you'd like to keep exploring, here are a few good places to go next."],
+    "links": [{"label": "Email hello@taylererbe.com", "url": "mailto:hello@taylererbe.com"}],
+}
