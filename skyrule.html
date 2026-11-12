@@ -46,18 +46,19 @@
 
     <div class="toc">
       <a href="#what"><span class="toc-num">01</span><span class="toc-name">What Skyrule Is</span></a>
-      <a href="#sources"><span class="toc-num">02</span><span class="toc-name">Source Material</span></a>
-      <a href="#provenance"><span class="toc-num">03</span><span class="toc-name">The Rule Store</span></a>
-      <a href="#model"><span class="toc-num">04</span><span class="toc-name">The Relationship Model</span></a>
-      <a href="#timing"><span class="toc-num">05</span><span class="toc-name">Time</span></a>
-      <a href="#groups"><span class="toc-num">06</span><span class="toc-name">Groups</span></a>
-      <a href="#generation"><span class="toc-num">07</span><span class="toc-name">Validator-Gated Generation</span></a>
-      <a href="#evaluation"><span class="toc-num">08</span><span class="toc-name">Statistical Evaluation</span></a>
-      <a href="#local"><span class="toc-num">09</span><span class="toc-name">Local LLM Stack</span></a>
-      <a href="#org"><span class="toc-num">10</span><span class="toc-name">The Agent Organization</span></a>
-      <a href="#orchestration"><span class="toc-num">11</span><span class="toc-name">Orchestration &amp; Model Routing</span></a>
-      <a href="#governance"><span class="toc-num">12</span><span class="toc-name">Quality, Security &amp; Data</span></a>
-      <a href="#next"><span class="toc-num">13</span><span class="toc-name">Timeline &amp; Next</span></a>
+      <a href="#why"><span class="toc-num">02</span><span class="toc-name">Why It Matters</span></a>
+      <a href="#sources"><span class="toc-num">03</span><span class="toc-name">Source Material</span></a>
+      <a href="#provenance"><span class="toc-num">04</span><span class="toc-name">The Rule Store</span></a>
+      <a href="#model"><span class="toc-num">05</span><span class="toc-name">The Relationship Model</span></a>
+      <a href="#timing"><span class="toc-num">06</span><span class="toc-name">Time</span></a>
+      <a href="#groups"><span class="toc-num">07</span><span class="toc-name">Groups</span></a>
+      <a href="#generation"><span class="toc-num">08</span><span class="toc-name">Validator-Gated Generation</span></a>
+      <a href="#evaluation"><span class="toc-num">09</span><span class="toc-name">Statistical Evaluation</span></a>
+      <a href="#local"><span class="toc-num">10</span><span class="toc-name">Local LLM Stack</span></a>
+      <a href="#org"><span class="toc-num">11</span><span class="toc-name">Built Like a Company</span></a>
+      <a href="#orchestration"><span class="toc-num">12</span><span class="toc-name">Orchestration &amp; Model Routing</span></a>
+      <a href="#governance"><span class="toc-num">13</span><span class="toc-name">Quality, Security &amp; Data</span></a>
+      <a href="#next"><span class="toc-num">14</span><span class="toc-name">Timeline &amp; Next</span></a>
     </div>
   </div>
 
@@ -83,10 +84,25 @@
     </div>
   </section>
 
+  <!-- WHY -->
+  <section id="why">
+    <div class="section-header">
+      <div class="section-tag">02 / Why It Matters</div>
+      <h2 class="section-title">An old written system, treated as data</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>There are a lot of astrology apps, and most of them are thin. I am not asking anyone to believe in astrology. Whatever you think of it, astrology is one of the oldest written systems for describing people: centuries of books that set out, in detail, how a person's character, emotions and relationships are supposed to work and how they change over time. That is a large, structured body of claims about human behavior, and almost nobody has treated it as data.</p>
+
+      <p>The easy route would have been to scrape a modern astrology site or ask a language model. Modern sites disagree with each other, and language models do not reliably reproduce what the original texts say. So I went back to the sources: I read the books, extracted what they actually state, verified it against the page, and encoded it in a form that can be measured and tested. The interesting part of this project is that work, done with the rigor I would bring to any data science problem.</p>
+    </div>
+  </section>
+
   <!-- 02 SOURCES -->
   <section id="sources">
     <div class="section-header">
-      <div class="section-tag">02 / Source Material</div>
+      <div class="section-tag">03 / Source Material</div>
       <h2 class="section-title">It starts with the books</h2>
       <div class="section-line"></div>
     </div>
@@ -101,58 +117,58 @@
   <!-- 03 PROVENANCE -->
   <section id="provenance">
     <div class="section-header">
-      <div class="section-tag">03 / The Rule Store</div>
+      <div class="section-tag">04 / The Rule Store</div>
       <h2 class="section-title">Every rule traces to a book, a page and a quote</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p48 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule with a deterministic Python chart engine underneath, exposed through a versioned FastAPI layer. The engine must reproduce <strong>279 reference spans</strong> exactly for regression control. Above it runs a sourced-rule pipeline over a <strong>76-title licensed corpus</strong>. The process starts with whole-chapter extraction, followed by independent verification from a second model, then a verbatim-quote gate, page re-checks, quarantine, and staged release into a rule store.</p>
+      <p>I built Skyrule with a deterministic Python chart engine underneath, exposed through a versioned FastAPI layer. The engine must reproduce <strong>279 reference spans</strong> exactly for regression control. Above it runs a sourced-rule pipeline over a <strong>76-title licensed corpus</strong>. The process starts with whole-chapter extraction, followed by independent verification from a second model, then a verbatim-quote gate, page re-checks, quarantine, and staged release into a rule store.</p>
 
-      <!-- Qwen draft p49 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule to trace every number in the product to a rule, a page, and an engine event. On October 6, 2026, I released <strong>4,256 verified rules</strong> for use.</p>
+      <p>I built Skyrule to trace every number in the product to a rule, a page, and an engine event. On October 6, 2026, I released <strong>4,256 verified rules</strong> for use.</p>
 
-      <p>The natural unit is a <em>signification</em>: a sentence in a source that says what a condition in the sky means for a person. The pipeline turns each one into a structured rule with seven required parts: the <strong>trigger</strong> (the sky or chart condition), the <strong>natal target</strong> that makes it personal, the <strong>timing</strong>, the themes, the modifiers, the <strong>source</strong> (author, book and page) and the tradition. For example, William Lilly writes, "If Saturn transits the ascending degree, he excites the native to gravity, to soberness, to melancholy." That becomes a transit rule: Saturn, conjunction, natal Ascendant, with its effects and its uncertainty recorded.</p>
+      <p>The natural unit is a <em>signification</em>: a sentence in a source that says what a condition in the sky means for a person. William Lilly, for example, writes, "If Saturn transits the ascending degree, he excites the native to gravity, to soberness, to melancholy." Instead of leaving that as prose, the pipeline turns it into a structured rule that records the direction of its effect on specific parts of a person's behavior, together with its source and its uncertainty. That is what makes rules from different authors measurable and comparable, and it is why any number in the product can be traced back to a page.</p>
 
-      <p>Three layers are kept apart and never merged: the author's exact words, the structured paraphrase, and the research tags that say which behaviors a passage supports. On October 9 and 10 I extracted and verified <strong>1,242 more rules</strong> from five books, of which 525 were cleared after a rights review.</p>
+      <p>On October 9 and 10 I extracted and verified <strong>1,242 more rules</strong> from five books, of which 525 were cleared after a rights review.</p>
     </div>
   </section>
 
   <!-- 04 MODEL -->
   <section id="model">
     <div class="section-header">
-      <div class="section-tag">04 / The Relationship Model</div>
+      <div class="section-tag">05 / The Relationship Model</div>
       <h2 class="section-title">One value per goal, never a score</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <p>The model describes people with <strong>ten behavioral dimensions</strong>: closeness, independence, communication, emotional sensitivity, ambition, assertion, steadiness, care, play and repair. It reads a relationship through <strong>six goals</strong>: be closer, be understood, be taken seriously, give them room to shine, be able to count on each other, and keep things easy. Between two people it looks for <strong>eleven named interaction mechanisms</strong>, each with two directed sides, because what one person experiences is not what the other does.</p>
+      <p>The model describes each person along a fixed set of behavioral dimensions, and it reads a relationship through the goals a person might have for it, such as being closer or being able to count on each other. Between two people it looks at how their tendencies meet, separately for each side, because what one person experiences is not what the other does.</p>
 
-      <p>It is specified as explicit functions. A person's state at a given time is a function of two things: their natal chart, which is fixed, and the current sky, which changes every day. A pair's dynamic is a function of both charts and both states. The output is one value per goal for each kind of relationship, because what someone wants from a partner differs from what they want from a co-worker or a sibling, and a goal that does not exist for a relation kind is refused.</p>
+      <p>Each goal gets its own value, for each kind of relationship, since what someone wants from a partner differs from what they want from a co-worker or a sibling. There is <strong>no total, ranking or compatibility score</strong>, even internally, and that rule is enforced in code and tests. Difference is information, so the writing never calls a relationship bad.</p>
 
-      <p>There is no total, ranking or compatibility score, even internally, and that rule is enforced in code and tests. Difference is information, so the writing never calls a relationship bad. All <strong>206 weights</strong> sit in a ledger with a stated basis, and all 206 are marked provisional: <strong>none is calibrated yet</strong>. The prototype passes 120 checks and kills 22 of 22 deliberate mutants.</p>
+      <p>Every weight in the model sits in a ledger with a stated basis. All <strong>206 weights</strong> are marked provisional and <strong>none is calibrated yet</strong>; fitting them to real outcomes is a pre-registered study still to run. The prototype passes 120 checks and kills 22 of 22 deliberate mutants. I am keeping the model's internals off this page on purpose. What I can show is how it was built and how it is checked.</p>
     </div>
   </section>
 
   <!-- 05 TIMING -->
   <section id="timing">
     <div class="section-header">
-      <div class="section-tag">05 / Time</div>
+      <div class="section-tag">06 / Time</div>
       <h2 class="section-title">The same two people, different on different days</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <p>The sky keeps moving, so the model is a time series. A moving planet makes an aspect to a point in someone's chart (a transit), the chart advances one house per year of life (a profection), the sun returns to its natal position (a solar return), and progressions advance the chart symbolically. The unit is an <em>episode</em>: one moving body making one aspect to one natal point, from entering orb to leaving it, with its exact day.</p>
+      <p>The sky keeps moving, so the model is a time series. Everything is computed from the chart engine and the rule store, which means the same two people can be shown on any day, past or future, in a consistent way that stays tied to the original sources. The same event lands differently in different charts, so two people have different dynamics at different points in time.</p>
 
-      <p>The same event lands differently in different charts, so the same two people have different dynamics at different points in time. Measured on one invented chart across 2026, <strong>365 of 365 days</strong> had at least one active episode, and the active set changed on <strong>321 of 364 days</strong> (88%). The product shows this as a ladder: the sky, what it activates in you, who else in your circle the same sky touches, and what the overlap means for each shared goal on that day.</p>
+      <p>Measured on one invented chart across 2026, <strong>365 of 365 days</strong> had at least one active event, and the active set changed on <strong>321 of 364 days</strong> (88%). The product shows this as a ladder: the sky, what it activates in you, who else in your circle the same sky touches, and what the overlap means for each shared goal on that day.</p>
     </div>
   </section>
 
   <!-- 06 GROUPS -->
   <section id="groups">
     <div class="section-header">
-      <div class="section-tag">06 / Groups</div>
+      <div class="section-tag">07 / Groups</div>
       <h2 class="section-title">Beyond pairs</h2>
       <div class="section-line"></div>
     </div>
@@ -167,15 +183,15 @@
   <!-- 07 GENERATION -->
   <section id="generation">
     <div class="section-header">
-      <div class="section-tag">07 / Generation</div>
+      <div class="section-tag">08 / Generation</div>
       <h2 class="section-title">The model proposes; code checks every claim</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p54 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>The system begins by analyzing the input to determine what it supports. A local model then generates claims one at a time, and code verifies each before the model writes a sentence. After the model writes, code checks again. I review everything before it is released.</p>
+      <p>The system begins by analyzing the input to determine what it supports. A local model then generates claims one at a time, and code verifies each before the model writes a sentence. After the model writes, code checks again. I review everything before it is released.</p>
 
-      <!-- TODO(qwen, 14 Oct): current text kept; Qwen drafts failed the fact-check in three rounds (see skyrule_p55_r3.check.md). Final per the Founder's ruling. --><p>I iterated the validator through <strong>seven versions</strong> from my own reviews, adding checks for
+      <p>I iterated the validator through <strong>seven versions</strong> from my own reviews, adding checks for
       truncated claims, unsupported causal leaps, attributing a trait to the wrong person, and claims the inputs
       do not establish. Every new check is tested before use three ways:</p>
     </div>
@@ -190,35 +206,35 @@
     </table>
 
     <div class="prose">
-      <!-- Qwen draft p62_r4 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>A pilot on the 32B model showed that an over-literal check was rejecting acceptable text. I adjusted both the prompt and the check, which improved plan acceptance from 6 of 31 to 14 of 31. Usable output increased from about 690 to about 1,280 pieces per GPU-hour.</p>
+      <p>A pilot on the 32B model showed that an over-literal check was rejecting acceptable text. I adjusted both the prompt and the check, which improved plan acceptance from 6 of 31 to 14 of 31. Usable output increased from about 690 to about 1,280 pieces per GPU-hour.</p>
     </div>
   </section>
 
   <!-- 08 EVALUATION -->
   <section id="evaluation">
     <div class="section-header">
-      <div class="section-tag">08 / Evaluation</div>
+      <div class="section-tag">09 / Evaluation</div>
       <h2 class="section-title">Grading 2.6 million pieces honestly</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p65_r3 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>Grading the 2.6-million-piece library three times over was measured at about 5,600 GPU-hours and was not feasible. I designed a grading strategy that replaces this with <strong>statistical lot acceptance sampling</strong> using exact binomial plans with stated producer and consumer risk. It adds code checks on every piece and brief-level grading before expansion and includes a plan for a distilled grader.</p>
+      <p>Grading the 2.6-million-piece library three times over was measured at about 5,600 GPU-hours and was not feasible. I designed a grading strategy that replaces this with <strong>statistical lot acceptance sampling</strong> using exact binomial plans with stated producer and consumer risk. It adds code checks on every piece and brief-level grading before expansion and includes a plan for a distilled grader.</p>
 
-      <!-- Qwen draft p66 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I set each performance bar before testing and report results as a point estimate and <strong>Wilson 95% lower bound</strong>. For example, a precision gate passed at 84 of 96 (87.5%). An independent model labels claims in each batch, and its agreement with my verdicts is measured. Those labels then become a regression set for the validator.</p>
+      <p>I set each performance bar before testing and report results as a point estimate and <strong>Wilson 95% lower bound</strong>. For example, a precision gate passed at 84 of 96 (87.5%). An independent model labels claims in each batch, and its agreement with my verdicts is measured. Those labels then become a regression set for the validator.</p>
     </div>
   </section>
 
   <!-- 09 LOCAL -->
   <section id="local">
     <div class="section-header">
-      <div class="section-tag">09 / Local LLM Stack</div>
+      <div class="section-tag">10 / Local LLM Stack</div>
       <h2 class="section-title">A self-hosted inference workstation</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p38 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a self-hosted inference workstation using an <strong>RTX 5090 32 GB</strong>, Ryzen 9 9950X, and 64 GB RAM to run vLLM in WSL. It serves AWQ and FP8 quantized models through OpenAI-compatible endpoints and can hot-switch between two models with automatic restore.</p>
+      <p>I built a self-hosted inference workstation using an <strong>RTX 5090 32 GB</strong>, Ryzen 9 9950X, and 64 GB RAM to run vLLM in WSL. It serves AWQ and FP8 quantized models through OpenAI-compatible endpoints and can hot-switch between two models with automatic restore.</p>
     </div>
 
     <table class="dt">
@@ -231,7 +247,7 @@
     </table>
 
     <div class="prose">
-      <!-- TODO(qwen, 14 Oct): current text kept; Qwen drafts failed the fact-check in three rounds (see skyrule_p45_r3.check.md). Final per the Founder's ruling. --><p>This is the same discipline as my <a href="archival-image-throughput-evaluation.html" class="link">vLLM throughput work</a>
+      <p>This is the same discipline as my <a href="archival-image-throughput-evaluation.html" class="link">vLLM throughput work</a>
       at the University of Illinois, applied to my own hardware: measure first, then change one thing.</p>
     </div>
   </section>
@@ -239,61 +255,65 @@
   <!-- 10 ORG -->
   <section id="org">
     <div class="section-header">
-      <div class="section-tag">10 / Agent Organization</div>
+      <div class="section-tag">11 / Built Like a Company</div>
       <h2 class="section-title">A company made of agents</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p22 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I designed the Skyrule team as a <strong>15-agent AI engineering organization</strong>, mirroring a real company with fourteen departments and a Principal Architect. These include the domain practice, relational science, editorial, product design, platform and data engineering, AI and performance engineering, QA and compliance, data science, brand and marketing, legal and trust, finance and operations, program management, the office of the founder, and security and IP protection.</p>
+      <p>I set Skyrule up as a company from the start. The question I wanted to answer was how far one person can take a real product with a team of specialized agents, hiring as few people as possible. When I do hire, an astrologer for example, the plan is that each person works alongside the agent for their department, inside the same system, so that decisions and the reasoning behind them stay on the record.</p>
+
+      <p>I designed the Skyrule team as a <strong>15-agent AI engineering organization</strong>, mirroring a real company with fourteen departments and a Principal Architect. These include the domain practice, relational science, editorial, product design, platform and data engineering, AI and performance engineering, QA and compliance, data science, brand and marketing, legal and trust, finance and operations, program management, the office of the founder, and security and IP protection.</p>
     </div>
 
     <div class="insight-box" style="margin-top:1.5rem;">
       <div class="insight-box-title">Lanes enforced by tooling, not by instruction</div>
-      <!-- Qwen draft p25_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a system where code ownership is defined in a machine-readable map and enforced by tooling, so agents cannot change files outside their scope. This turns least privilege from a request into an enforced control.</p>
+      <p>I built a system where code ownership is defined in a machine-readable map and enforced by tooling, so agents cannot change files outside their scope. This turns least privilege from a request into an enforced control.</p>
     </div>
 
     <div class="kv">
-      <div class="k">Decision continuity</div><!-- Qwen draft p27_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built an append-only log to record founder decisions verbatim. Agents reference this log before asking previously answered questions.</div>
-      <div class="k">Session continuity</div><!-- Qwen draft p29_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built a mission file, open-threads register, handoff documents, and coordinator brief to ensure any new agent session could resume without loss.</div>
-      <div class="k">Code review</div><!-- Qwen draft p31 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I reviewed and integrated 29 pull requests from a cloud engineering agent. Before merging, I ran an isolated checkout with the full test suite and regression controls.</div>
+      <div class="k">Decision continuity</div><div class="v">I built an append-only log to record founder decisions verbatim. Agents reference this log before asking previously answered questions.</div>
+      <div class="k">Session continuity</div><div class="v">I built a mission file, open-threads register, handoff documents, and coordinator brief to ensure any new agent session could resume without loss.</div>
+      <div class="k">Code review</div><div class="v">I reviewed and integrated 29 pull requests from a cloud engineering agent. Before merging, I ran an isolated checkout with the full test suite and regression controls.</div>
+
+      <p>How the agents work together has its own page, <a href="agent-architecture.html" class="link">Agent Architecture</a>. <a href="agent-city.html" class="link">Agent City</a> is a separate hobby project, an experimental 3D view of the same agents that is still in progress.</p>
     </div>
   </section>
 
   <!-- 11 ORCHESTRATION -->
   <section id="orchestration">
     <div class="section-header">
-      <div class="section-tag">11 / Orchestration</div>
+      <div class="section-tag">12 / Orchestration</div>
       <h2 class="section-title">Work that runs while I sleep</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p34 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built an autonomous job queue and GPU scheduler in Python that runs on a 15-minute tick. It has separate lanes for CPU, local-model, and cloud-model jobs, and handles priorities, dependencies, start conditions, finish checks, and retry limits. It includes a usage-budget guard and will pause and resume automatically when a model usage limit is reached. Since early October 2026, it has launched <strong>650+ unattended jobs</strong>, including overnight GPU extraction runs and parallel multi-agent research batches.</p>
+      <p>I built an autonomous job queue and GPU scheduler in Python that runs on a 15-minute tick. It has separate lanes for CPU, local-model, and cloud-model jobs, and handles priorities, dependencies, start conditions, finish checks, and retry limits. It includes a usage-budget guard and will pause and resume automatically when a model usage limit is reached. Since early October 2026, it has launched <strong>650+ unattended jobs</strong>, including overnight GPU extraction runs and parallel multi-agent research batches.</p>
     </div>
   </section>
 
   <!-- 12 GOVERNANCE -->
   <section id="governance">
     <div class="section-header">
-      <div class="section-tag">12 / Governance</div>
+      <div class="section-tag">13 / Governance</div>
       <h2 class="section-title">Quality, security and data protection</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="kv">
-      <div class="k">Quality governance</div><!-- Qwen draft p70_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built a register of quality bars, each with proof set before measuring. The quality function can block with a written reason. A weekly review follows, and re-runnable evidence is required for every "done" claim.</div>
-      <div class="k">Security &amp; IP</div><!-- Qwen draft p72_r3 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built a dedicated security and IP-protection function into Skyrule with the authority to block any merge or release that weakens a control. A weekly security review is part of the routine.</div>
-      <div class="k">Privacy by design</div><!-- TODO(qwen, 14 Oct): current text kept; Qwen drafts failed the fact-check in three rounds (see skyrule_p74_r3.check.md). Final per the Founder's ruling. --><div class="v">Users' personal chart data is never sent to a cloud model and never appears in code, tests, logs or commits; fabricated fixtures only. Consent is the gate for storing anyone else's data</div>
-      <div class="k">Rights</div><!-- Qwen draft p76_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I maintain rights records and built a quote-permitted gate. The licensed book text remains outside the repository.</div>
-      <div class="k">Engineering practice</div><!-- Qwen draft p78_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I maintain 1,375 automated tests passing on the integration branch as of October 12, 2026, including known-bad controls that must fail. A release gate blocks any unapproved input changes.</div>
+      <div class="k">Quality governance</div><div class="v">I built a register of quality bars, each with proof set before measuring. The quality function can block with a written reason. A weekly review follows, and re-runnable evidence is required for every "done" claim.</div>
+      <div class="k">Security &amp; IP</div><div class="v">I built a dedicated security and IP-protection function into Skyrule with the authority to block any merge or release that weakens a control. A weekly security review is part of the routine.</div>
+      <div class="k">Privacy by design</div><div class="v">Users' personal chart data is never sent to a cloud model and never appears in code, tests, logs or commits; fabricated fixtures only. Consent is the gate for storing anyone else's data</div>
+      <div class="k">Rights</div><div class="v">I maintain rights records and built a quote-permitted gate. The licensed book text remains outside the repository.</div>
+      <div class="k">Engineering practice</div><div class="v">I maintain 1,375 automated tests passing on the integration branch as of October 12, 2026, including known-bad controls that must fail. A release gate blocks any unapproved input changes.</div>
     </div>
   </section>
 
   <!-- 13 NEXT -->
   <section id="next">
     <div class="section-header">
-      <div class="section-tag">13 / Timeline</div>
+      <div class="section-tag">14 / Timeline</div>
       <h2 class="section-title">Where it stands</h2>
       <div class="section-line"></div>
     </div>
@@ -309,11 +329,11 @@
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p95_r4 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p><strong>Next:</strong> The plan is to regenerate the library on the new generator, validate the automated grader to an 85% agreement bar measured at the <strong>Wilson 95% lower bound</strong>, and build consent-gated accounts with deletion and export. An invited beta of about ten people will open, followed by a pre-registered calibration study to fit the provisional weights to real outcomes. A public launch is planned for Q1 2027.</p>
+      <p><strong>Next:</strong> The plan is to regenerate the library on the new generator, validate the automated grader to an 85% agreement bar measured at the <strong>Wilson 95% lower bound</strong>, and build consent-gated accounts with deletion and export. An invited beta of about ten people will open, followed by a pre-registered calibration study to fit the provisional weights to real outcomes. A public launch is planned for Q1 2027.</p>
     </div>
 
     <div class="tag-row" style="margin-top:1.5rem;">
-      <span class="tag tag-warm">Personal Project</span><span class="tag tag-accent">Claude Code Subagents</span><span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Qwen3-32B AWQ</span><span class="tag">FP8 / AWQ Quantization</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">pytest</span><span class="tag">Acceptance Sampling</span><span class="tag">Wilson Intervals</span><span class="tag">Mutation Testing</span><span class="tag">RTX 5090</span>
+      <span class="tag tag-warm">Personal Project</span><span class="tag tag-accent">Multi-Agent Systems</span><span class="tag tag-accent">vLLM</span><span class="tag tag-accent">Qwen3-32B AWQ</span><span class="tag">FP8 / AWQ Quantization</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">pytest</span><span class="tag">Acceptance Sampling</span><span class="tag">Wilson Intervals</span><span class="tag">Mutation Testing</span><span class="tag">RTX 5090</span>
     </div>
   </section>
 
