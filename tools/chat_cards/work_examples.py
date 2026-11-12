@@ -1978,11 +1978,8 @@ SPECIAL = {
         "label": "About this chat",
         "title": "Whoa there",
         "art": open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "rude_art.txt"), encoding="utf-8").read().rstrip("\n").split("\n---8<---\n"),
-        "art_alt": "A round little creature with a tube nose, swearing in symbols: @!#?@!&#%",
-        "answer": ["Same to you, in symbols. This chat only knows how to answer questions about my work, so let's try that instead.",
-                   "He said what he said. Now, want to ask about my work instead?",
-                   "That's his entire vocabulary. Mine is bigger: ask me about a project.",
-                   "Language! This chat only answers questions about my work, so give one of those a try."],
+        "art_alt": "Q*bert, swearing back in symbols",
+        "answer": "I don't think Q*bert likes your language.",
         "links": [],
     },
 }

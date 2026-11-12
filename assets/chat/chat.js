@@ -244,7 +244,7 @@
     today: 1, things: 1, everything: 1, life: 1, your: 1, day: 1, been: 1, have: 1, do: 1, nice: 1, to: 1, meet: 1, thanks: 1, thank: 1, thx: 1, so: 1, much: 1, ok: 1, okay: 1,
     cool: 1, test: 1, testing: 1, lol: 1, haha: 1, anyone: 1, anybody: 1, here: 1, bot: 1, chat: 1, bye: 1, goodbye: 1, see: 1, later: 1, a: 1, and: 1, this: 1, just: 1, saying: 1, wassup: 1, whatsup: 1 };
   var SMALL_PHRASE = /\b(how (are|r) (you|u|ya|things)|hows it (going|goin)|how is it (going|goin)|how (you|u) (doing|doin)|whats up|what s up|wassup|whatsup|how do you do|nice to meet you|good (morning|afternoon|evening|night)|hows your day|how is your day|anyone (here|there)|anybody (here|there))\b/;
-  var RUDE = /\b(f+u+c+k+\w*|f[\W_]*\*+[\W_]*c?k\w*|fck\w*|fuk\w*|motherf\w*|sh[i1!]+t+\w*|bullsh\w*|b[i1]tch\w*|a+ss+hole\w*|cunt\w*|piss\w*|bastard\w*|goddamn\w*|damn\w*|dammit|wtf|stfu|crap\w*|douche\w*|jackass)\b/;
+  var RUDE = /\b(f+u+c+k+\w*|f[\W_]*\*+[\W_]*c?k\w*|fck\w*|fuk\w*|phuck\w*|motherf\w*|sh[i1!]+t+(s|ty|head|hole|show)?|sh\*t|bullsh\w*|b[i1]tch(es|y|ing)?|biatch|ass|asses|asshole\w*|asshat\w*|asswipe\w*|dumbass\w*|jackass\w*|smartass\w*|arse|arsehole\w*|cunt\w*|c\*nt|twat\w*|piss(ed)?|bastard\w*|goddamn\w*|god damn|damn(ed|it)?|dammit|dick|dicks|dickhead\w*|cock|cocks|cocksucker\w*|prick|pricks|pussy|wanker\w*|bollocks|slut\w*|whore\w*|douche\w*|wtf|stfu|gtfo|omfg|crap|crappy|go to hell)\b/;
   Engine.prototype.special = function (query) {
     var raw = String(query || "").toLowerCase();
     if (RUDE.test(raw)) return "rude";
@@ -343,7 +343,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111208";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111209";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
