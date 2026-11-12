@@ -1977,17 +1977,8 @@ SPECIAL = {
     "rude": {
         "label": "About this chat",
         "title": "Whoa there",
-        "art": "\n".join([
-            r"      \  |  /",
-            r"    .-'''''''-.        .----------.",
-            r"   /  >     <  \      (  @!#?@!!   )",
-            r"  |      ~      |  o   '----------'",
-            r"   \   .---.   /  o",
-            r"    '-._____.-'",
-            r"      _|   |_",
-            r"     (__) (__)",
-        ]),
-        "art_alt": "A small grumpy round critter swearing in symbols: @!#?@!!",
+        "art": open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "rude_art.txt"), encoding="utf-8").read().rstrip("\n"),
+        "art_alt": "A round little creature with a tube nose, swearing in symbols: @!#?@!&#%",
         "answer": "Same to you, in symbols. This chat only knows how to answer questions about my work, so let's try that "
                   "instead.",
         "links": [],
