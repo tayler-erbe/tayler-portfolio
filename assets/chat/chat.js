@@ -237,6 +237,25 @@
              confident: confident, mode: "hybrid", embTop: smax, ranked: ids.slice(0, 30).map(function (id) { return byId[id]; }) };
   };
 
+  // small talk and swearing are not questions: the panel answers them itself instead of searching
+  var HELLO = /^(hi|hello|hey|heya|hiya|yo|sup|howdy|greetings|hola|morning|afternoon|evening|thanks|thank|thx|test|testing|lol|haha|bye|goodbye|ok|okay|cool|nice)$/;
+  var SMALL = { hi: 1, hello: 1, hey: 1, heya: 1, hiya: 1, yo: 1, sup: 1, howdy: 1, greetings: 1, hola: 1, good: 1, morning: 1, afternoon: 1, evening: 1, night: 1,
+    how: 1, hows: 1, are: 1, r: 1, you: 1, u: 1, ya: 1, doing: 1, doin: 1, is: 1, it: 1, going: 1, goin: 1, whats: 1, what: 1, s: 1, up: 1, new: 1, there: 1, tayler: 1, taylor: 1,
+    today: 1, things: 1, everything: 1, life: 1, your: 1, day: 1, been: 1, have: 1, do: 1, nice: 1, to: 1, meet: 1, thanks: 1, thank: 1, thx: 1, so: 1, much: 1, ok: 1, okay: 1,
+    cool: 1, test: 1, testing: 1, lol: 1, haha: 1, anyone: 1, anybody: 1, here: 1, bot: 1, chat: 1, bye: 1, goodbye: 1, see: 1, later: 1, a: 1, and: 1, this: 1, just: 1, saying: 1, wassup: 1, whatsup: 1 };
+  var SMALL_PHRASE = /\b(how (are|r) (you|u|ya|things)|hows it (going|goin)|how is it (going|goin)|how (you|u) (doing|doin)|whats up|what s up|wassup|whatsup|how do you do|nice to meet you|good (morning|afternoon|evening|night)|hows your day|how is your day|anyone (here|there)|anybody (here|there))\b/;
+  var RUDE = /\b(f+u+c+k+\w*|f[\W_]*\*+[\W_]*c?k\w*|fck\w*|fuk\w*|motherf\w*|sh[i1!]+t+\w*|bullsh\w*|b[i1]tch\w*|a+ss+hole\w*|cunt\w*|piss\w*|bastard\w*|goddamn\w*|damn\w*|dammit|wtf|stfu|crap\w*|douche\w*|jackass)\b/;
+  Engine.prototype.special = function (query) {
+    var raw = String(query || "").toLowerCase();
+    if (RUDE.test(raw)) return "rude";
+    var toks = rawTokens(raw), i;
+    if (!toks.length || toks.length > 9) return null;
+    for (i = 0; i < toks.length; i++) if (!SMALL[toks[i]]) return null;
+    var joined = toks.join(" ");
+    for (i = 0; i < toks.length; i++) if (HELLO.test(toks[i])) return "greeting";
+    return SMALL_PHRASE.test(joined) ? "greeting" : null;
+  };
+
   Engine.prototype.search = function (query, qvec) {
     var res = this.searchBm25(query);
     return qvec && this.emb ? this.hybrid(res, qvec) : res;
@@ -324,7 +343,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111202";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111203";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -561,8 +580,24 @@
     append(h("div", { class: "ask-block" }, [userLine(card.title), cardView(card)]));
     els.input.focus();
   }
+  function specialView(kind) {                     // greeting: a plain explanation; swearing: a grumpy critter swearing in symbols
+    var sp = (engine.kb.special || {})[kind];
+    if (!sp) return null;
+    var kids = [h("p", { class: "ask-label", text: sp.label || "" }), h("h3", { class: "ask-card-title", text: sp.title })];
+    if (sp.art) kids.push(h("pre", { class: "ask-art", "aria-label": sp.art_alt || "", text: sp.art }));
+    kids.push(h("p", { class: "ask-answer", text: sp.answer }));
+    kids.push(links(sp.links));
+    var wrap = h("div", { class: "ask-block" }, [h("article", { class: "ask-card", "data-card": "special-" + kind }, kids)]);
+    wrap.appendChild(starters());
+    return wrap;
+  }
   function ask(q, label) {
-    load().then(function () { return searchBest(q); }).then(function (res) {
+    load().then(function () {
+      var kind = !label && engine.special(q), view = kind && specialView(kind);
+      if (view) { append(h("div", { class: "ask-block" }, [userLine(q)])); append(view); els.input.focus(); return null; }
+      return searchBest(q);
+    }).then(function (res) {
+      if (!res) return;
       var block = h("div", { class: "ask-block" }, [userLine(label || q)]);
       if (res.best) {
         block.appendChild(cardView(res.best.card));

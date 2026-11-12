@@ -72,3 +72,5 @@
 @media (prefers-reduced-motion: reduce) {
   .ask-root *, .ask-root *::before, .ask-root *::after { transition: none !important; scroll-behavior: auto !important; }
 }
+
+.ask-art { margin: 0; padding: var(--space-2) 0; font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.15; color: var(--accent); white-space: pre; overflow-x: auto; }

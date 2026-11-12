@@ -95,6 +95,8 @@ def main():
             c.pop("answer", None)
     pos = max(i for i, c in enumerate(kb["cards"]) if c["section"] == "core") + 1
     kb["cards"][pos:pos] = new_cards
+    if getattr(w, "SPECIAL", None):
+        kb["special"] = w.SPECIAL
     if getattr(w, "FALLBACK", None):
         kb["fallback"] = w.FALLBACK
     extra = os.path.join(HERE, "synonyms_extra.json")   # extra alias groups (the "keyword net"), each kept only if tests improve

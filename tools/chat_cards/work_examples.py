@@ -1962,3 +1962,34 @@ PATCHES["answer-fun-video-games"] = {
               "Time above everything else, then Luigi's Mansion 3 and Super Mario Party Jamboree.",
     "add_questions": ["favorite playstation games", "playstation or nintendo", "what do you play on playstation", "favorite ps5 games"],
 }
+
+# ---- responses the panel gives without searching (chat.js Engine.special): small talk and swearing ----
+SPECIAL = {
+    "greeting": {
+        "label": "About this chat",
+        "title": "Hi! Quick heads-up",
+        "answer": "Hello! This isn't actually a conversational chat, so I can't do small talk. It's a searchable Q&A: I've answered "
+                  "a lot of questions about my work, projects and background, and whatever you ask is matched to the closest "
+                  "answer, with links and contact details where they help. So the best way to use it is to just ask a question. "
+                  "Try one of these, or type your own.",
+        "links": [{"label": "Email hello@taylererbe.com", "url": "mailto:hello@taylererbe.com"}],
+    },
+    "rude": {
+        "label": "About this chat",
+        "title": "Whoa there",
+        "art": "\n".join([
+            r"      \  |  /",
+            r"    .-'''''''-.        .----------.",
+            r"   /  >     <  \      (  @!#?@!!   )",
+            r"  |      ~      |  o   '----------'",
+            r"   \   .---.   /  o",
+            r"    '-._____.-'",
+            r"      _|   |_",
+            r"     (__) (__)",
+        ]),
+        "art_alt": "A small grumpy round critter swearing in symbols: @!#?@!!",
+        "answer": "Same to you, in symbols. This chat only knows how to answer questions about my work, so let's try that "
+                  "instead.",
+        "links": [],
+    },
+}
