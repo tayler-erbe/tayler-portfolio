@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Skyrule &middot; Personal Project &middot; Tayler Erbe</title>
-  <meta name="description" content="Skyrule, a personal project: a multi-agent AI engineering organization, a self-hosted local LLM stack, and validator-gated content generation with founder-in-the-loop review and dedicated quality and security governance." />
+  <meta name="description" content="Skyrule, a personal project: a sourced-rule inference system built from original texts, a per-goal relationship model with no compatibility score, and a self-hosted LLM pipeline checked by validators, statistics and founder review." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="assets/site.css" />
@@ -34,8 +34,8 @@
 
   <div class="hero">
     <div class="hero-eyebrow">Tayler Erbe &middot; Personal Project &middot; Aug 2026 to Present</div>
-    <h1>Skyrule<br><span>Agentic AI &amp; Local LLMs</span></h1>
-    <!-- Qwen draft p02 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p class="hero-desc">Skyrule is a personal project I built outside my employment, designed to help people understand themselves and the relationships in their lives. Using astrology as its interpretive lens, it visualizes how those connections shift over time through calendar views and timelines. The engineering underpinning is a rule-based inference system, supported by a 15-agent AI team. Content is generated via a <strong>self-hosted LLM stack</strong> and is validated through automated checks, statistical testing, and final review by me.</p>
+    <h1>Skyrule<br><span>A Sourced-Rule Inference System</span></h1>
+    <p class="hero-desc">Skyrule is a personal project I am building outside my employment. It helps a person understand themselves and the people in their life, and see how those relationships move through time. Astrology is the interpretive lens. The engineering underneath is a <strong>sourced-rule inference system</strong>: rules extracted from original texts going back to the 1480s, a relationship model that gives one value per goal and never a compatibility score, and a self-hosted LLM pipeline whose output is checked by code, by statistics and by me.</p>
 
     <div class="hero-meta">
       <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Active build &middot; pre-beta &middot; public launch planned Q1 2027</div></div>
@@ -45,153 +45,64 @@
     </div>
 
     <div class="toc">
-      <a href="#org"><span class="toc-num">01</span><span class="toc-name">The Agent Organization</span></a>
-      <a href="#orchestration"><span class="toc-num">02</span><span class="toc-name">Orchestration &amp; Model Routing</span></a>
-      <a href="#local"><span class="toc-num">03</span><span class="toc-name">Local LLM Stack</span></a>
-      <a href="#provenance"><span class="toc-num">04</span><span class="toc-name">Provenance-First Knowledge</span></a>
-      <a href="#generation"><span class="toc-num">05</span><span class="toc-name">Validator-Gated Generation</span></a>
-      <a href="#evaluation"><span class="toc-num">06</span><span class="toc-name">Statistical Evaluation</span></a>
-      <a href="#governance"><span class="toc-num">07</span><span class="toc-name">Quality, Security &amp; Data</span></a>
-      <a href="#next"><span class="toc-num">08</span><span class="toc-name">Timeline &amp; Next</span></a>
+      <a href="#what"><span class="toc-num">01</span><span class="toc-name">What Skyrule Is</span></a>
+      <a href="#sources"><span class="toc-num">02</span><span class="toc-name">Source Material</span></a>
+      <a href="#provenance"><span class="toc-num">03</span><span class="toc-name">The Rule Store</span></a>
+      <a href="#model"><span class="toc-num">04</span><span class="toc-name">The Relationship Model</span></a>
+      <a href="#timing"><span class="toc-num">05</span><span class="toc-name">Time</span></a>
+      <a href="#groups"><span class="toc-num">06</span><span class="toc-name">Groups</span></a>
+      <a href="#generation"><span class="toc-num">07</span><span class="toc-name">Validator-Gated Generation</span></a>
+      <a href="#evaluation"><span class="toc-num">08</span><span class="toc-name">Statistical Evaluation</span></a>
+      <a href="#local"><span class="toc-num">09</span><span class="toc-name">Local LLM Stack</span></a>
+      <a href="#org"><span class="toc-num">10</span><span class="toc-name">The Agent Organization</span></a>
+      <a href="#orchestration"><span class="toc-num">11</span><span class="toc-name">Orchestration &amp; Model Routing</span></a>
+      <a href="#governance"><span class="toc-num">12</span><span class="toc-name">Quality, Security &amp; Data</span></a>
+      <a href="#next"><span class="toc-num">13</span><span class="toc-name">Timeline &amp; Next</span></a>
     </div>
   </div>
 
   <div class="stat-strip">
-    <div class="stat-item"><div class="stat-big">15</div><div class="stat-desc">AI agents with written charters</div></div>
-    <div class="stat-item"><div class="stat-big">650+</div><div class="stat-desc">Unattended jobs launched by the queue</div></div>
-    <div class="stat-item"><div class="stat-big">1,375</div><div class="stat-desc">Automated tests passing (Oct 12, 2026)</div></div>
     <div class="stat-item"><div class="stat-big">4,256</div><div class="stat-desc">Verified, sourced rules lifted (Oct 6, 2026)</div></div>
+    <div class="stat-item"><div class="stat-big">22,700</div><div class="stat-desc">Pages of early printed books read</div></div>
+    <div class="stat-item"><div class="stat-big">206</div><div class="stat-desc">Model weights, all still marked provisional</div></div>
+    <div class="stat-item"><div class="stat-big">1,375</div><div class="stat-desc">Automated tests passing (Oct 12, 2026)</div></div>
   </div>
 
-  <!-- 01 ORG -->
-  <section id="org">
+  <!-- 01 WHAT -->
+  <section id="what">
     <div class="section-header">
-      <div class="section-tag">01 / Agent Organization</div>
-      <h2 class="section-title">A company made of agents</h2>
+      <div class="section-tag">01 / What Skyrule Is</div>
+      <h2 class="section-title">A sourced-rule inference system</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p22 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I designed the Skyrule team as a <strong>15-agent AI engineering organization</strong>, mirroring a real company with fourteen departments and a Principal Architect. These include the domain practice, relational science, editorial, product design, platform and data engineering, AI and performance engineering, QA and compliance, data science, brand and marketing, legal and trust, finance and operations, program management, the office of the founder, and security and IP protection.</p>
-    </div>
+      <p>Skyrule helps a person understand themselves and the people in their life, and see how those relationships move through time on a calendar and a timeline. Astrology is the interpretive lens. The engineering problem is a data problem: source a formal set of rules from original texts, encode them, and apply them to each person's chart as the sky changes.</p>
 
-    <div class="insight-box" style="margin-top:1.5rem;">
-      <div class="insight-box-title">Lanes enforced by tooling, not by instruction</div>
-      <!-- Qwen draft p25_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a system where code ownership is defined in a machine-readable map and enforced by tooling, so agents cannot change files outside their scope. This turns least privilege from a request into an enforced control.</p>
-    </div>
-
-    <div class="kv">
-      <div class="k">Decision continuity</div><!-- Qwen draft p27_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built an append-only log to record founder decisions verbatim. Agents reference this log before asking previously answered questions.</div>
-      <div class="k">Session continuity</div><!-- Qwen draft p29_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built a mission file, open-threads register, handoff documents, and coordinator brief to ensure any new agent session could resume without loss.</div>
-      <div class="k">Code review</div><!-- Qwen draft p31 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I reviewed and integrated 29 pull requests from a cloud engineering agent. Before merging, I ran an isolated checkout with the full test suite and regression controls.</div>
+      <p>Underneath it are four parts. A <strong>deterministic astronomical chart engine</strong>. A <strong>rule store</strong> in which every rule traces to a book, a page and a verbatim quote. A <strong>per-goal relationship model</strong> that deliberately never produces a total, a rank or a compatibility score. And a <strong>locally hosted LLM content pipeline</strong> gated by automated validators, statistical acceptance testing and my own review. I conceived the product, designed the system and run it day to day as founder, product owner and technical lead.</p>
     </div>
   </section>
 
-  <!-- 02 ORCHESTRATION -->
-  <section id="orchestration">
+  <!-- 02 SOURCES -->
+  <section id="sources">
     <div class="section-header">
-      <div class="section-tag">02 / Orchestration</div>
-      <h2 class="section-title">Work that runs while I sleep</h2>
+      <div class="section-tag">02 / Source Material</div>
+      <h2 class="section-title">It starts with the books</h2>
       <div class="section-line"></div>
     </div>
 
     <div class="prose">
-      <!-- Qwen draft p34 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built an autonomous job queue and GPU scheduler in Python that runs on a 15-minute tick. It has separate lanes for CPU, local-model, and cloud-model jobs, and handles priorities, dependencies, start conditions, finish checks, and retry limits. It includes a usage-budget guard and will pause and resume automatically when a model usage limit is reached. Since early October 2026, it has launched <strong>650+ unattended jobs</strong>, including overnight GPU extraction runs and parallel multi-agent research batches.</p>
+      <p>Every rule in the product starts in a primary source, not a modern summary. The rule pipeline runs over a <strong>76-title licensed corpus</strong>. Alongside it I read <strong>170 scanned early printed books, about 22,700 pages</strong>, printed from the 1480s to the 1850s: Latin, early-modern English with old spelling, gothic type, and a few in Hebrew, Persian and Greek, with multi-column layouts, tables, diagrams and woodcuts.</p>
+
+      <p>The text layers that came with the archive scans had destroyed every astrological symbol, so the pages had to be read again from the images, on one self-hosted GPU workstation with open-weights models. That work has its own case study: <a href="historical-book-ocr.html" class="link">Historical book OCR</a>.</p>
     </div>
   </section>
 
-
-  <!-- 03 AGENT CITY -->
-  <section id="agent-city">
-    <div class="section-header">
-      <div class="section-tag">03 / Agent City</div>
-      <h2 class="section-title">Agent City</h2>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="prose">
-      <!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I launched Agent City on 15 October 2026 as a pixel-art city that works as the operations console for my AI agents and side projects. By 18 October, I had rebuilt it as a 3D world that runs in the browser, written in plain JavaScript with three.js; the 2D city is still there as a second view. I built it because tasks were finishing across several projects, decisions were being made, and some work was waiting on other work. I wanted to see where each project stood, what had changed, and where I was needed. The 3D world is not a distraction. It's a place where I show up more often because I enjoy it, and that makes me more present for the work.</p>
-    </div>
-
-    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
-      <img src="assets/shots/agent-city-3d-map.jpg" alt="Agent City in 3D: an island town with seven labelled neighbourhoods" loading="lazy">
-      <figcaption>Agent City in 3D, 18 Oct 2026: the whole map</figcaption>
-    </figure>
-
-    <div class="prose">
-      <!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>The world has 30 agents in seven neighbourhoods: a town center, a university campus, a creative quarter, an operations corner, a news and discovery district, a park and canyon, and a beach neighbourhood. The buildings are places I love, rebuilt in 3D: Geisel Library at UC San Diego, a Topanga Canyon retreat, a Cary park with a treehouse and slide, and a jazz kissaten café and record shop. There are 32 characters. I designed the concept art; they were turned into rigged, animated 3D models on my own GPU with open models and cleaned up in Blender by script.</p>
-    </div>
-
-    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
-      <img src="assets/shots/agent-city-characters.jpg" alt="The 32 Agent City characters standing in rows" loading="lazy">
-      <figcaption>The 32 characters, 3D models made on my own GPU from my concept art</figcaption>
-    </figure>
-
-    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
-      <img src="assets/shots/agent-city-geisel.jpg" alt="Geisel Library rebuilt in 3D on the Agent City campus" loading="lazy">
-      <figcaption>Geisel Library on the campus</figcaption>
-    </figure>
-
-    <div class="insight-box" style="margin-top:1.5rem;">
-      <div class="insight-box-title">Built to be operated, not watched</div>
-      <!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>Every animation maps to real state from the job queue: an agent is shown working only while its job is actually running. The town shows who is working, who needs me, what is scheduled, and what is offline. The place is not for show, it’s a control panel. I made a rule early on: the town must only reflect real system state. No fake motion, no busy-looking agents. That rule keeps the whole thing honest.</p>
-    </div>
-
-    <h3 class="subhead">What works today</h3>
-    <div class="kv"><!-- Qwen draft skyrule_agent_city_v2 (18 Oct), fact-checked: pass. Awaiting Tayler's approval. -->
-      <div class="k">Offices you can walk into</div><div class="v">Every agent has its own office. I can walk in, sit down, and chat with the agent about what it is working on.</div>
-      <div class="k">Board rooms</div><div class="v">I pick which agents join and brainstorm a topic with them live.</div>
-      <div class="k">Choose the brain</div><div class="v">For every conversation I choose the model: Claude Sonnet or Opus, or open models running locally on my own GPU through vLLM or Ollama. ChatGPT is wired in and waits only for a key.</div>
-      <div class="k">The Desk</div><div class="v">One page for the whole operation: today’s items that need me, a calendar with day, week and month views of finished jobs, running and queued jobs and my decisions, plus decisions, documents, projects, places and search.</div>
-      <div class="k">Done log and chat log</div><div class="v">The Done log keeps every finished job for good, newest first, with its report and the files it made: 1,031 finished jobs so far. The chat log keeps every conversation and board room.</div>
-      <div class="k">The Kissaten DJ</div><div class="v">A music agent behind the café counter that runs on a local model. I tell it my mood, it remembers my taste in a notebook it asks before saving to, and its suggestions appear as cards.</div>
-      <div class="k">Overseer</div><div class="v">It goes round every agent each hour: it flags failed, stuck or missed runs and asks each agent, on a local model, whether its last run did its job. It checks and never acts.</div>
-      <div class="k">Private by default</div><div class="v">It is reachable only over my private network, from my phone or laptop, over HTTPS; sign-in is checked against my private network identity; it never listens on the public internet.</div>
-    </div>
-
-    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
-      <img src="assets/shots/agent-city-office-chat.jpg" alt="Inside the GPU Keeper's office, with a chat with the agent open beside it" loading="lazy">
-      <figcaption>A chat with the GPU Keeper in its office, on a local model</figcaption>
-    </figure>
-
-    <figure class="shot"><!-- captions and alt text: plain labels by Claude, awaiting Tayler's approval -->
-      <img src="assets/shots/agent-city-kissaten-dj.jpg" alt="Inside the jazz kissaten: the Kissaten DJ suggests records in a chat panel" loading="lazy">
-      <figcaption>The Kissaten DJ suggesting records in the café</figcaption>
-    </figure>
-  </section>
-
-  <!-- 03 LOCAL -->
-  <section id="local">
-    <div class="section-header">
-      <div class="section-tag">04 / Local LLM Stack</div>
-      <h2 class="section-title">A self-hosted inference workstation</h2>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="prose">
-      <!-- Qwen draft p38 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a self-hosted inference workstation using an <strong>RTX 5090 32 GB</strong>, Ryzen 9 9950X, and 64 GB RAM to run vLLM in WSL. It serves AWQ and FP8 quantized models through OpenAI-compatible endpoints and can hot-switch between two models with automatic restore.</p>
-    </div>
-
-    <table class="dt">
-      <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
-      <tbody>
-        <tr><td>Regeneration throughput</td><td class="num">14,200 to 15,100 / GPU-hr</td><td>Pieces of content per GPU-hour, measured</td></tr>
-        <tr><td>Grading throughput</td><td class="num">576 &rarr; 1,411 / GPU-hr</td><td>Raised by tuning concurrency from 6 to 24 workers</td></tr>
-        <tr><td>Context window</td><td class="num">4,096 &rarr; 16,384 tokens</td><td>Sized with KV-cache arithmetic and a benchmark before adopting</td></tr>
-      </tbody>
-    </table>
-
-    <div class="prose">
-      <!-- TODO(qwen, 14 Oct): current text kept; Qwen drafts failed the fact-check in three rounds (see skyrule_p45_r3.check.md). Final per the Founder's ruling. --><p>This is the same discipline as my <a href="archival-image-throughput-evaluation.html" class="link">vLLM throughput work</a>
-      at the University of Illinois, applied to my own hardware: measure first, then change one thing.</p>
-    </div>
-  </section>
-
-  <!-- 04 PROVENANCE -->
+  <!-- 03 PROVENANCE -->
   <section id="provenance">
     <div class="section-header">
-      <div class="section-tag">05 / Provenance</div>
-      <h2 class="section-title">Every number traces to a source</h2>
+      <div class="section-tag">03 / The Rule Store</div>
+      <h2 class="section-title">Every rule traces to a book, a page and a quote</h2>
       <div class="section-line"></div>
     </div>
 
@@ -199,13 +110,64 @@
       <!-- Qwen draft p48 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule with a deterministic Python chart engine underneath, exposed through a versioned FastAPI layer. The engine must reproduce <strong>279 reference spans</strong> exactly for regression control. Above it runs a sourced-rule pipeline over a <strong>76-title licensed corpus</strong>. The process starts with whole-chapter extraction, followed by independent verification from a second model, then a verbatim-quote gate, page re-checks, quarantine, and staged release into a rule store.</p>
 
       <!-- Qwen draft p49 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built Skyrule to trace every number in the product to a rule, a page, and an engine event. On October 6, 2026, I released <strong>4,256 verified rules</strong> for use.</p>
+
+      <p>The natural unit is a <em>signification</em>: a sentence in a source that says what a condition in the sky means for a person. The pipeline turns each one into a structured rule with seven required parts: the <strong>trigger</strong> (the sky or chart condition), the <strong>natal target</strong> that makes it personal, the <strong>timing</strong>, the themes, the modifiers, the <strong>source</strong> (author, book and page) and the tradition. For example, William Lilly writes, "If Saturn transits the ascending degree, he excites the native to gravity, to soberness, to melancholy." That becomes a transit rule: Saturn, conjunction, natal Ascendant, with its effects and its uncertainty recorded.</p>
+
+      <p>Three layers are kept apart and never merged: the author's exact words, the structured paraphrase, and the research tags that say which behaviors a passage supports. On October 9 and 10 I extracted and verified <strong>1,242 more rules</strong> from five books, of which 525 were cleared after a rights review.</p>
     </div>
   </section>
 
-  <!-- 05 GENERATION -->
+  <!-- 04 MODEL -->
+  <section id="model">
+    <div class="section-header">
+      <div class="section-tag">04 / The Relationship Model</div>
+      <h2 class="section-title">One value per goal, never a score</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>The model describes people with <strong>ten behavioral dimensions</strong>: closeness, independence, communication, emotional sensitivity, ambition, assertion, steadiness, care, play and repair. It reads a relationship through <strong>six goals</strong>: be closer, be understood, be taken seriously, give them room to shine, be able to count on each other, and keep things easy. Between two people it looks for <strong>eleven named interaction mechanisms</strong>, each with two directed sides, because what one person experiences is not what the other does.</p>
+
+      <p>It is specified as explicit functions. A person's state at a given time is a function of two things: their natal chart, which is fixed, and the current sky, which changes every day. A pair's dynamic is a function of both charts and both states. The output is one value per goal for each kind of relationship, because what someone wants from a partner differs from what they want from a co-worker or a sibling, and a goal that does not exist for a relation kind is refused.</p>
+
+      <p>There is no total, ranking or compatibility score, even internally, and that rule is enforced in code and tests. Difference is information, so the writing never calls a relationship bad. All <strong>206 weights</strong> sit in a ledger with a stated basis, and all 206 are marked provisional: <strong>none is calibrated yet</strong>. The prototype passes 120 checks and kills 22 of 22 deliberate mutants.</p>
+    </div>
+  </section>
+
+  <!-- 05 TIMING -->
+  <section id="timing">
+    <div class="section-header">
+      <div class="section-tag">05 / Time</div>
+      <h2 class="section-title">The same two people, different on different days</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>The sky keeps moving, so the model is a time series. A moving planet makes an aspect to a point in someone's chart (a transit), the chart advances one house per year of life (a profection), the sun returns to its natal position (a solar return), and progressions advance the chart symbolically. The unit is an <em>episode</em>: one moving body making one aspect to one natal point, from entering orb to leaving it, with its exact day.</p>
+
+      <p>The same event lands differently in different charts, so the same two people have different dynamics at different points in time. Measured on one invented chart across 2026, <strong>365 of 365 days</strong> had at least one active episode, and the active set changed on <strong>321 of 364 days</strong> (88%). The product shows this as a ladder: the sky, what it activates in you, who else in your circle the same sky touches, and what the overlap means for each shared goal on that day.</p>
+    </div>
+  </section>
+
+  <!-- 06 GROUPS -->
+  <section id="groups">
+    <div class="section-header">
+      <div class="section-tag">06 / Groups</div>
+      <h2 class="section-title">Beyond pairs</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <p>The model is not limited to two people. Per-goal alignment can be computed for yourself, for pairs and for groups: a team, a family, a circle of friends. The same goal lens applies at each level, so a group view shows where a group coheres and where it pulls apart, goal by goal, at a point in time. Days may be ranked for a goal. People never are.</p>
+
+      <p>This part is designed and built into the model, and it is not yet calibrated. The next step is a pre-registered forced-choice study that fits the 206 provisional weights to real outcomes. Until then, every number is labelled provisional.</p>
+    </div>
+  </section>
+
+  <!-- 07 GENERATION -->
   <section id="generation">
     <div class="section-header">
-      <div class="section-tag">06 / Generation</div>
+      <div class="section-tag">07 / Generation</div>
       <h2 class="section-title">The model proposes; code checks every claim</h2>
       <div class="section-line"></div>
     </div>
@@ -232,10 +194,10 @@
     </div>
   </section>
 
-  <!-- 06 EVALUATION -->
+  <!-- 08 EVALUATION -->
   <section id="evaluation">
     <div class="section-header">
-      <div class="section-tag">07 / Evaluation</div>
+      <div class="section-tag">08 / Evaluation</div>
       <h2 class="section-title">Grading 2.6 million pieces honestly</h2>
       <div class="section-line"></div>
     </div>
@@ -247,10 +209,74 @@
     </div>
   </section>
 
-  <!-- 07 GOVERNANCE -->
+  <!-- 09 LOCAL -->
+  <section id="local">
+    <div class="section-header">
+      <div class="section-tag">09 / Local LLM Stack</div>
+      <h2 class="section-title">A self-hosted inference workstation</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <!-- Qwen draft p38 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a self-hosted inference workstation using an <strong>RTX 5090 32 GB</strong>, Ryzen 9 9950X, and 64 GB RAM to run vLLM in WSL. It serves AWQ and FP8 quantized models through OpenAI-compatible endpoints and can hot-switch between two models with automatic restore.</p>
+    </div>
+
+    <table class="dt">
+      <thead><tr><th>Measure</th><th>Result</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Regeneration throughput</td><td class="num">14,200 to 15,100 / GPU-hr</td><td>Pieces of content per GPU-hour, measured</td></tr>
+        <tr><td>Grading throughput</td><td class="num">576 &rarr; 1,411 / GPU-hr</td><td>Raised by tuning concurrency from 6 to 24 workers</td></tr>
+        <tr><td>Context window</td><td class="num">4,096 &rarr; 16,384 tokens</td><td>Sized with KV-cache arithmetic and a benchmark before adopting</td></tr>
+      </tbody>
+    </table>
+
+    <div class="prose">
+      <!-- TODO(qwen, 14 Oct): current text kept; Qwen drafts failed the fact-check in three rounds (see skyrule_p45_r3.check.md). Final per the Founder's ruling. --><p>This is the same discipline as my <a href="archival-image-throughput-evaluation.html" class="link">vLLM throughput work</a>
+      at the University of Illinois, applied to my own hardware: measure first, then change one thing.</p>
+    </div>
+  </section>
+
+  <!-- 10 ORG -->
+  <section id="org">
+    <div class="section-header">
+      <div class="section-tag">10 / Agent Organization</div>
+      <h2 class="section-title">A company made of agents</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <!-- Qwen draft p22 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I designed the Skyrule team as a <strong>15-agent AI engineering organization</strong>, mirroring a real company with fourteen departments and a Principal Architect. These include the domain practice, relational science, editorial, product design, platform and data engineering, AI and performance engineering, QA and compliance, data science, brand and marketing, legal and trust, finance and operations, program management, the office of the founder, and security and IP protection.</p>
+    </div>
+
+    <div class="insight-box" style="margin-top:1.5rem;">
+      <div class="insight-box-title">Lanes enforced by tooling, not by instruction</div>
+      <!-- Qwen draft p25_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built a system where code ownership is defined in a machine-readable map and enforced by tooling, so agents cannot change files outside their scope. This turns least privilege from a request into an enforced control.</p>
+    </div>
+
+    <div class="kv">
+      <div class="k">Decision continuity</div><!-- Qwen draft p27_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built an append-only log to record founder decisions verbatim. Agents reference this log before asking previously answered questions.</div>
+      <div class="k">Session continuity</div><!-- Qwen draft p29_r2 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I built a mission file, open-threads register, handoff documents, and coordinator brief to ensure any new agent session could resume without loss.</div>
+      <div class="k">Code review</div><!-- Qwen draft p31 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><div class="v">I reviewed and integrated 29 pull requests from a cloud engineering agent. Before merging, I ran an isolated checkout with the full test suite and regression controls.</div>
+    </div>
+  </section>
+
+  <!-- 11 ORCHESTRATION -->
+  <section id="orchestration">
+    <div class="section-header">
+      <div class="section-tag">11 / Orchestration</div>
+      <h2 class="section-title">Work that runs while I sleep</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="prose">
+      <!-- Qwen draft p34 (14 Oct), fact-checked: pass. Awaiting Tayler's approval. --><p>I built an autonomous job queue and GPU scheduler in Python that runs on a 15-minute tick. It has separate lanes for CPU, local-model, and cloud-model jobs, and handles priorities, dependencies, start conditions, finish checks, and retry limits. It includes a usage-budget guard and will pause and resume automatically when a model usage limit is reached. Since early October 2026, it has launched <strong>650+ unattended jobs</strong>, including overnight GPU extraction runs and parallel multi-agent research batches.</p>
+    </div>
+  </section>
+
+  <!-- 12 GOVERNANCE -->
   <section id="governance">
     <div class="section-header">
-      <div class="section-tag">08 / Governance</div>
+      <div class="section-tag">12 / Governance</div>
       <h2 class="section-title">Quality, security and data protection</h2>
       <div class="section-line"></div>
     </div>
@@ -264,10 +290,10 @@
     </div>
   </section>
 
-  <!-- 08 NEXT -->
+  <!-- 13 NEXT -->
   <section id="next">
     <div class="section-header">
-      <div class="section-tag">09 / Timeline</div>
+      <div class="section-tag">13 / Timeline</div>
       <h2 class="section-title">Where it stands</h2>
       <div class="section-line"></div>
     </div>

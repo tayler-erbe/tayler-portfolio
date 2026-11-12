@@ -116,6 +116,10 @@ def main():
         if c["section"] == "opinions" or re.match(r"^(persona-|answer-(op|li|q))", c["id"]):
             links.append(("My writing on Medium", "https://medium.com/@tayler.erbe"))
         c["links"] = [{"label": a, "url": b} for a, b in links[:3]]
+    for c in kb["cards"]:                          # the Agent City section moved off the Skyrule page (12 Nov 2026)
+        for l in c.get("links", []):
+            if l["url"] == "skyrule.html#agent-city":
+                l["url"] = "agent-city.html"
     kb["built"] = datetime.date.today().isoformat()
     out = a.out or KB
     with open(out, "w", encoding="utf-8") as f:
