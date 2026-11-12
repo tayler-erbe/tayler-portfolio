@@ -343,7 +343,7 @@
   // ------------------------------------------------------------------ UI
   var SCRIPT = document.currentScript;
   var SRC = SCRIPT && SCRIPT.src ? SCRIPT.src : "assets/chat/chat.js";
-  var DATA_VERSION = "2026111205";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
+  var DATA_VERSION = "2026111206";                 // bump with every new kb.json, so a cached copy is never reused (no page edit needed)
   var VERSION = (SRC.split("?")[1] ? SRC.split("?")[1] + "&" : "") + "d=" + DATA_VERSION;   // chat.js?v=... passes v= on too
   var BASE = SRC.split("?")[0].replace(/[^\/]*$/, "");
   var KB_URL = BASE + "kb.json" + (VERSION ? "?" + VERSION : "");
@@ -583,6 +583,8 @@
   function specialView(kind) {                     // greeting: a plain explanation; swearing: a grumpy critter swearing in symbols
     var sp = (engine.kb.special || {})[kind];
     if (!sp) return null;
+    var pick = function (v) { return Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v; };   // variations rotate at random
+    sp = { label: sp.label, title: sp.title, art: pick(sp.art), art_alt: sp.art_alt, answer: pick(sp.answer), links: sp.links };
     var kids = [h("p", { class: "ask-label", text: sp.label || "" }), h("h3", { class: "ask-card-title", text: sp.title })];
     if (sp.art) kids.push(h("pre", { class: "ask-art", "aria-label": sp.art_alt || "", text: sp.art }));
     kids.push(h("p", { class: "ask-answer", text: sp.answer }));
