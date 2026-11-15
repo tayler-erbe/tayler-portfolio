@@ -416,8 +416,36 @@ card(EX, "ex-document-processing", "How I process documents", [
 I treat a document as several extraction problems: running text, tables, charts, flattened spreadsheets and clause
 evidence, each with its own test. My production proposal pipeline turns attachments into annotated, classified text
 analysts can query by research field. The next step is a system design in my Lab for reading proposals and awards with local models and showing the evidence for every value. The model picks block IDs and code copies the source text, so nothing is paraphrased. The
-intake pipeline design runs one stage and one model at a time on a single GPU, with nothing overwritten. That one is
-design only so far: tested on fictional documents, accuracy not yet measured.
+intake pipeline runs one stage and one model at a time on a single GPU, with nothing overwritten. On a test set built with
+a known answer for every value, it beat one large model on the fields that matter most and finished faster. Accuracy on
+real documents isn't measured yet.
+""")
+
+card(EX, "ex-routed-pipeline", "Multi-model routed pipeline vs one large model", [
+    "multi model routed pipeline",
+    "routed pipeline results",
+    "one large model vs many small models",
+    "why not use one big model for everything",
+    "did routing beat a single model",
+    "mixture of experts vs routing",
+    "best model for each task",
+    "intake pipeline results",
+    "how accurate is the intake pipeline",
+    "assembly line pipeline",
+], ["routing", "routed", "pipeline", "single model", "intake", "results", "assembly line", "mixture of experts"], [
+    L("Intake pipeline brief", "https://tayler-erbe.github.io/intake-pipeline-lab-public/brief/#results"),
+    L("Document intelligence", "document-intelligence-evaluation.html"),
+    LAB_LINK,
+], """
+My model evaluation found no single model that reads every part of a document well, so I built a multi-model routed
+pipeline from it. Each document is split into its parts, and each kind of part goes to the model that tested best for it:
+tables to PaddleOCR-VL 1.6, scanned pages to Nemotron 3.5 Parse, charts to Qwen3-VL 32B, and Qwen3 32B finds the fields.
+It runs like an assembly line on one 32 GB GPU, one model at a time across the whole batch.
+
+I tested it against Qwen3-VL 32B doing every step on the same card. Real labelled samples were too few to score, so I
+built a test set with a known answer for every value. On critical fields the routed pipeline got 94.3% against 86.6%,
+and it finished in 75 minutes against about 2 hours 10 minutes. On all values the two were close, 87.7% against 86.4%.
+A smaller routed set sized for a smaller card got 76.3%. Accuracy on real documents is the next test.
 """)
 
 card(EX, "ex-solutions-architecture", "An example of AI solutions architecture", [
