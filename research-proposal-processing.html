@@ -172,7 +172,7 @@
     <div class="stat-desc">Keyword Extraction Ensemble</div>
   </div>
   <div class="stat-item">
-    <div class="stat-big">Idempotent</div>
+    <div class="stat-big">Incremental</div>
     <div class="stat-desc">Anti-Join Change Detection</div>
   </div>
 </div>
@@ -197,11 +197,11 @@
     <div>
       <div class="callout">
         <div class="callout-label">Institutional Impact</div>
-        <p>Every proposal and award in the University of Illinois System now carries a structured NLP annotation — keywords, entities, and HERDS field classification — that makes unstructured proposal content queryable for the first time. Outputs feed analyst dashboards and lay the foundation for a Research Proposal Intelligence platform.</p>
+        <p>Every proposal in the University of Illinois System now carries a structured NLP annotation — keywords and HERDS field classification — and every award carries its extracted text, which makes unstructured proposal content queryable for the first time. Outputs feed analyst dashboards and lay the foundation for a Research Proposal Intelligence platform.</p>
       </div>
       <div class="callout" style="border-left-color: var(--accent2); margin-top: 1rem;">
         <div class="callout-label" style="color: var(--accent2);">Two Parallel Pipelines</div>
-        <p><strong style="color:var(--text)">Proposals:</strong> submitted proposal attachments, classified by research field and annotated for downstream analytics. Rebuilds the governance filter that gates which proposals enter production.<br/><br/><strong style="color:var(--text)">Awards:</strong> funded award attachments, annotated the same way, producing the success-labeled corpus that future predictive work will train on.</p>
+        <p><strong style="color:var(--text)">Proposals:</strong> submitted proposal attachments, classified by research field and annotated for downstream analytics. Rebuilds the governance filter that gates which proposals enter production.<br/><br/><strong style="color:var(--text)">Awards:</strong> funded award attachments, text-extracted and searchable (no NLP; keywords and field classification aren't meaningful at award level), producing the success-labeled corpus that future predictive work will train on.</p>
       </div>
     </div>
   </div>
@@ -218,7 +218,7 @@
     <div class="prose">
       <p>The University of Illinois System manages roughly $517M in annual research funding. Small marginal improvements in how proposals are strategized, positioned, and supported translate into millions of dollars in additional direct research funding — and further millions in indirect cost recovery that sustains core institutional operations.</p>
       <p>Until now, leadership could answer financial and operational questions about the portfolio (who submitted, what was funded, by which sponsor) but not analytical ones about the <strong>content</strong> of the work. The questions that matter for strategy — <em>which research areas are our strongest submissions in, where are we underperforming relative to our capacity, which sponsors align with which kinds of proposals</em> — all require the proposal text itself as a structured input.</p>
-      <p>This pipeline is the data infrastructure that makes those questions answerable. Every proposal carries a consistent, machine-generated summary of its research content, and every award carries the same. Paired with existing financial and administrative data, the combined layer supports descriptive analytics today and LLM-driven feature extraction tomorrow.</p>
+      <p>This pipeline is the data infrastructure that makes those questions answerable. Every proposal carries a consistent, machine-generated summary of its research content, and every award carries its full extracted text. Paired with existing financial and administrative data, the combined layer supports descriptive analytics today and LLM-driven feature extraction tomorrow.</p>
     </div>
     <div>
       <div class="insight-grid" style="margin-top: 0;">
@@ -228,7 +228,7 @@
         </div>
         <div class="insight-box">
           <div class="insight-box-title">After</div>
-          <p>Every proposal and award carries extracted keywords, entities, and a HERDS field classification. Content is queryable in Oracle alongside existing financial data.</p>
+          <p>Every proposal carries extracted keywords and a HERDS field classification; every award carries its extracted text. Content is queryable in Oracle alongside existing financial data.</p>
         </div>
         <div class="insight-box">
           <div class="insight-box-title">Decision Intelligence</div>
@@ -274,7 +274,7 @@
       <div class="step-num">03</div>
       <div class="step-content">
         <div class="step-title">Text Extraction · PDF with Magic-Byte Validation</div>
-        <div class="step-body">PyMuPDF extraction with a magic-byte validator that catches DOCX files misnamed as <code>.pdf</code> — a real pattern in the source system. Invalid payloads are tagged and routed out instead of crashing the batch.</div>
+        <div class="step-body">pypdf extraction with a magic-byte validator that catches DOCX files misnamed as <code>.pdf</code> — a real pattern in the source system. Invalid payloads are tagged and routed out instead of crashing the batch.</div>
       </div>
     </div>
     <div class="pipeline-step">
@@ -309,7 +309,7 @@
       <div class="step-num">08</div>
       <div class="step-content">
         <div class="step-title">Write · Three Staging Tables, MERGE Semantics</div>
-        <div class="step-body">Writes to <strong>three staging tables</strong> serving three audiences: raw-text (engineering audit), NLP-annotated (downstream ML), and production-aggregated (analyst-facing view). Every write is idempotent (<code>INSERT … WHERE NOT EXISTS</code> or <code>MERGE</code>), post-write row counts are verified, and rollback SQL is printed on every successful run.</div>
+        <div class="step-body">Writes to <strong>three staging tables</strong> serving three audiences: raw-text (engineering audit), NLP-annotated (downstream ML), and production-aggregated (analyst-facing view). Writes use <code>INSERT … WHERE NOT EXISTS</code> or <code>MERGE</code>, post-write row counts are verified, and rollback SQL is printed as guidance on every successful run.</div>
       </div>
     </div>
     <div class="pipeline-step">
@@ -408,8 +408,8 @@
       <div class="detail-body">Raw-text, NLP-annotated, and production-aggregated staging tables serve three different audiences and make debugging tractable. Engineering can trace any row in the production view back through its NLP annotations back to the original extracted text. Analysts only see the production view.</div>
     </div>
     <div class="detail-item">
-      <div class="detail-label">Idempotency by Construction</div>
-      <div class="detail-body">Every insert is <code>WHERE NOT EXISTS</code> or <code>MERGE</code>. Re-running the pipeline on an already-processed batch is a no-op. The one exception — the production TRUNCATE — is double-gated behind <code>dry_run=False</code> AND <code>confirm_production=True</code> flags that must both be set explicitly.</div>
+      <div class="detail-label">Incremental Writes</div>
+      <div class="detail-body">Every insert is <code>WHERE NOT EXISTS</code> or <code>MERGE</code>. Already-processed rows are skipped, though end-to-end retry safety hasn't been independently tested. The one exception — the production TRUNCATE — is double-gated behind <code>dry_run=False</code> AND <code>confirm_production=True</code> flags that must both be set explicitly.</div>
     </div>
     <div class="detail-item">
       <div class="detail-label">Rollback SQL Inline</div>
@@ -417,7 +417,7 @@
     </div>
     <div class="detail-item">
       <div class="detail-label">Magic-Byte Validation</div>
-      <div class="detail-body">A non-trivial number of <code>.pdf</code> attachments in the source system are actually DOCX files with the wrong extension. PyMuPDF raises on these. A four-byte magic-number check up front catches them, and they're routed to a rejection bucket with a reason code instead of crashing the batch.</div>
+      <div class="detail-body">A non-trivial number of <code>.pdf</code> attachments in the source system are actually DOCX files with the wrong extension. The PDF reader (pypdf) raises on these. A four-byte magic-number check up front catches them, and they're routed to a rejection bucket with a reason code instead of crashing the batch.</div>
     </div>
   </div>
 </section>
@@ -492,7 +492,7 @@
       <div class="callout-label" style="color: var(--accent); margin-bottom: 0.75rem;">Infrastructure</div>
       <div class="tag-row" style="margin-top: 0;">
         <span class="tag tag-accent">Python 3.12</span>
-        <span class="tag tag-accent">PyMuPDF</span>
+        <span class="tag tag-accent">pypdf</span>
         <span class="tag tag-accent">PyYAML</span>
         <span class="tag tag-accent">Jupyter</span>
         <span class="tag tag-accent">Linux</span>

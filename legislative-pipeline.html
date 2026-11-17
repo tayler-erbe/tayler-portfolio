@@ -125,7 +125,7 @@
       <div class="k">Design</div><div class="v">15-cell grid &mdash; 3 models &times; 5 chunk sizes, 2 repeats per cell, ~15 hours unattended</div>
       <div class="k">Service levels</div><div class="v">Declared <em>before</em> execution rather than fitted to results</div>
       <div class="k">Resource analysis</div><div class="v">USE method applied to the GPU &mdash; utilization, saturation, errors sampled alongside throughput</div>
-      <div class="k">Qualitative review</div><div class="v">Blind three-criterion rubric, authored for this task, with a review-companion tool</div>
+      <div class="k">Qualitative review</div><div class="v">Blind three-criterion rubric, authored for this task and scored by Claude Opus (a model-graded check, not measured accuracy), with a review-companion tool</div>
       <div class="k">Deliverables</div><div class="v">Formal decision record, stakeholder deck, consolidated metrics, reproducible artifact bundle</div>
     </div>
 
@@ -150,7 +150,7 @@
       case study</a>), the comparison no longer held &mdash; different batching behaviour, different
       effective cost per token. Rather than carry forward a stale decision, the evaluation was re-run over the
       weekend of <strong>17 May 2026</strong> against a contemporary quantized lineup: Mistral 7B v0.3 AWQ,
-      Qwen 2.5 7B AWQ, and Llama 3.1 8B AWQ.</p>
+      Qwen 2.5 7B AWQ, and Llama 3.1 8B AWQ (a fourth, Qwen 2.5 14B AWQ, was eliminated).</p>
       <p style="margin-top:.8rem;">Production moved to <strong>Llama 3.1 8B AWQ</strong>, upgrading from the
       3B-class model the pipeline had been running. The larger model became affordable specifically because
       the serving migration had recovered the headroom to pay for it.</p>
@@ -335,7 +335,7 @@
     </div>
 
     <div class="prose">
-      <p>0.9944 on passage prediction is the kind of result that should make a reviewer distrust the pipeline
+      <p>0.9944 on floor-vote prediction is the kind of result that should make a reviewer distrust the pipeline
       before they believe the model, and it made me distrust mine. Procedural history leaks by construction:
       the actions that <em>record</em> a bill passing live in the same table as the actions that
       <em>predict</em> it. Without a guard, the model learns to read the answer.</p>

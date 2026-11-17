@@ -149,7 +149,7 @@ Three examples. Bill passage: a classifier I tuned for precision and warning tim
 at a 0.70 threshold on a held-out Assembly. UIC enrollment: a model that flags students at risk of discontinuing,
 about 82% accuracy, grouped into high, medium and low tiers for advisors. There the team's comparison chose H2O over CatBoost because its
 error stayed under 5% for every class, while CatBoost missed 47.71% of the Discontinued class, the one that mattered
-most. Research proposals: every SPA proposal and award is classified into HERDS research fields automatically.
+most. Research proposals: every SPA proposal is classified into HERDS research fields automatically.
 """)
 
 card(EX, "ex-performance-engineering", "An example of performance engineering", [
@@ -395,7 +395,7 @@ card(EX, "ex-etl-pipeline", "An end-to-end ETL pipeline in production", [
 ], """
 The research proposals pipeline. It connects to live Oracle databases and pulls proposal attachments stored as BLOBs. It
 runs an 11-step NLP chain (TF-IDF, KeyBERT and LDA fusion, then HERDS classification) and writes structured results back
-to Oracle. It runs unattended on a cron schedule, with idempotent writes and a printed rollback. It covers every SPA
+to Oracle. It runs unattended on a cron schedule, with incremental MERGE writes and printed rollback guidance. It covers every SPA
 research proposal and award across UIUC and UIC, and it's the foundation for the Research Proposal Intelligence
 platform supporting the System's ~$517M annual research portfolio. I scoped, designed and built it end to end.
 """)

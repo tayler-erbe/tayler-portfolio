@@ -177,17 +177,17 @@
       </tr>
       <tr>
         <td>Qwen 2.5 7B</td>
-        <td>~38%</td><td>~44%</td><td class="td-hi">~52%</td><td>~35%</td><td class="td-lo">~10%</td>
-        <td>~52% @ 900</td>
+        <td>—</td><td>—</td><td class="td-hi">41.8%</td><td>—</td><td class="td-lo">—</td>
+        <td>41.8% @ 900</td>
       </tr>
       <tr>
         <td>Llama 3.2 3B</td>
-        <td>~28%</td><td>~25%</td><td>~22%</td><td>~18%</td><td class="td-lo">~5%</td>
-        <td>~28% @ 500</td>
+        <td>18.6%</td><td>—</td><td>—</td><td>—</td><td class="td-lo">—</td>
+        <td>18.6% @ 500</td>
       </tr>
     </tbody>
   </table>
-  <p style="font-size:.8rem;color:var(--muted2);margin-top:.5rem;margin-bottom:1.5rem">Approximate values from evaluation report. The 2,800-token collapse was model-independent — all three lost 10–11 of 15 fields with 60–67% EMPTY parse rates.</p>
+  <p style="font-size:.8rem;color:var(--muted2);margin-top:.5rem;margin-bottom:1.5rem">Mistral values are approximate; for Qwen and Llama only the recorded peaks are shown. The 2,800-token collapse was model-independent — all three lost 10–11 of 15 fields with 60–67% EMPTY parse rates.</p>
 
   <div class="callout amber" style="margin-bottom:2rem">
     <div class="callout-label">◆ The chunk-size cliff</div>
@@ -201,7 +201,7 @@
       <tr><td>Qwen 2.5 7B</td><td>900</td><td class="td-hi">1.87</td><td>Highest single score in review</td></tr>
       <tr class="winner"><td><strong>Mistral 7B</strong></td><td>500</td><td class="td-hi">1.68</td><td>Winner at 500 tokens; lowest variance — decision basis</td></tr>
       <tr><td>Mistral 7B</td><td>900</td><td>1.58</td><td>Close second</td></tr>
-      <tr><td>Llama 3.2 3B</td><td>500</td><td class="td-lo">~1.2</td><td>Last; recurring policy-domain mis-tag</td></tr>
+      <tr><td>Llama 3.2 3B</td><td>500</td><td class="td-lo">1.43</td><td>Last; recurring policy-domain mis-tag</td></tr>
     </tbody>
   </table>
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tayler Erbe | Archival Image Pipeline — vLLM vs Ollama Throughput</title>
-  <meta name="description" content="Tayler Erbe, Data Scientist at the University of Illinois System, characterized image classification inference throughput on a single NVIDIA L4 GPU. A migration from Ollama to vLLM delivered a 6.22x speedup on the same hardware and same model, taking a 12,125-image archival corpus from 22 hours to 3.7 hours." />
+  <meta name="description" content="Tayler Erbe, Data Scientist at the University of Illinois System, characterized image classification inference throughput on a single NVIDIA L4 GPU. A migration from Ollama to vLLM delivered a 6.22x speedup over the production setup on the same hardware (3.6x from the serving stack alone, same base model), taking a 12,125-image archival corpus from 22 hours to 3.7 hours." />
   <meta name="keywords" content="Tayler Erbe, performance engineering, vLLM, Ollama, LLaVA, NVIDIA L4, GPU inference, continuous batching, throughput, image classification, University of Illinois" />
   <meta name="author" content="Tayler Erbe" />
   <meta name="robots" content="index, follow" />
@@ -60,7 +60,7 @@
     <p class="hero-desc">
       A controlled performance characterization of a production image-classification pipeline on a single
       NVIDIA L4 GPU. Diagnosing request serialization in Ollama, then migrating to vLLM continuous batching
-      delivered a <strong>6.22× throughput improvement</strong> on the same hardware and same model —
+      delivered a <strong>6.22× throughput improvement</strong> over the production setup on the same hardware (3.6× from the serving stack alone, same base model) —
       taking a 12,125-image archival corpus from 22 hours to 3.7 hours.
     </p>
 
@@ -148,7 +148,7 @@
       <div>
         <div class="callout">
           <div class="callout-label">Baseline Observation</div>
-          <p>At production settings the L4 was at <strong>28–31% GPU utilization</strong> with <strong>6.1 GB of 23 GB VRAM</strong> in use — and pulling 27W of its 72W TDP. The hardware was idle the majority of the time. A faster GPU would not have helped.</p>
+          <p>At production settings the L4 was at <strong>28–31% GPU utilization</strong> with <strong>6.1 GB of 23 GB VRAM</strong> in use — and drawing about 49 W of its 72 W TDP. The hardware was idle the majority of the time. A faster GPU would not have helped.</p>
         </div>
         <div class="callout" style="border-left-color: var(--accent2); margin-top: 1rem;">
           <div class="callout-label" style="color: var(--accent2);">Investigation Framework</div>
@@ -170,7 +170,7 @@
       <div class="section-line"></div>
     </div>
     <div class="prose" style="margin-bottom: 2rem;">
-      <p>Three experiments were run against the same image corpus and recorded with sub-percent precision. Each experiment isolates one variable; the benchmark harness sampled GPU utilization, VRAM, and power at one-second intervals concurrently with the inference run so that throughput and resource numbers come from the <strong>same window of clock time</strong>, not separate runs averaged after the fact.</p>
+      <p>Three experiments were run against the same image corpus and recorded together. Each experiment isolates one variable; the benchmark harness sampled GPU utilization, VRAM, and power every 500 ms (2 Hz) concurrently with the inference run so that throughput and resource numbers come from the <strong>same window of clock time</strong>, not separate runs averaged after the fact.</p>
     </div>
     <div class="pipeline">
       <div class="pipeline-step">
@@ -184,7 +184,7 @@
         <div class="step-num">02</div>
         <div>
           <div class="step-title">Experiment 2 — Ollama Concurrency Sweep</div>
-          <div class="step-body">With C-v4 locked and <code class="inline">llava-llama3</code> serving on Ollama, ran the same 50-image batch at client concurrency <strong>C = 1, 2, 4, 8</strong>. Recorded p50/p95 latency, end-to-end throughput, GPU utilization, VRAM, and wall power for each setting. Set <code class="inline">OLLAMA_NUM_PARALLEL=4</code> to rule out a default-config explanation.</div>
+          <div class="step-body">With C-v4 locked and <code class="inline">llava-llama3</code> serving on Ollama, ran the same 30-image batch at client concurrency <strong>C = 1, 2, 4, 8</strong>. Recorded p50/p95 latency, end-to-end throughput, GPU utilization, VRAM, and wall power for each setting. Set <code class="inline">OLLAMA_NUM_PARALLEL=4</code> to rule out a default-config explanation.</div>
         </div>
       </div>
       <div class="pipeline-step">
@@ -212,7 +212,7 @@
       <div class="section-line"></div>
     </div>
     <div class="prose" style="margin-bottom: 1rem;">
-      <p>The Ollama concurrency sweep produced a signature pattern: <strong>throughput stayed flat at ~9 images per minute across all concurrency levels</strong> while p50 latency inflated by 8.18× from C=1 to C=8. GPU utilization held at 28–31% throughout. VRAM was constant. Power was flat at 27W.</p>
+      <p>The Ollama concurrency sweep produced a signature pattern: <strong>throughput stayed flat at ~9 images per minute across all concurrency levels</strong> while p50 latency inflated by 8.18× from C=1 to C=8. GPU utilization held at 28–31% throughout. VRAM was constant. Power was flat at about 49 W.</p>
       <p>This is the unmistakable fingerprint of <strong>request serialization at the serving layer</strong>: the daemon was accepting concurrent connections but processing them one at a time, so additional in-flight requests simply queued and inflated latency without producing any extra throughput. The hardware was never the bottleneck.</p>
     </div>
 

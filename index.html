@@ -327,7 +327,7 @@
         </div>
         <div class="project-num">09</div>
         <div class="project-title">Archival Image Processing : vLLM vs Ollama Inference Throughput Evaluation</div>
-        <p class="project-desc">Performance engineering case study on a single NVIDIA L4 GPU. Controlled benchmark methodology isolated request serialization in the production Ollama serving layer as the throughput bottleneck — not the hardware or model. Migration to vLLM continuous batching delivered a <strong>6.22× speedup at C=8</strong> on the same hardware and same model class, taking the 12,125-image archival corpus from 22 hours to 3.7 hours with GPU utilization rising from 28% to 97%.</p>
+        <p class="project-desc">Performance engineering case study on a single NVIDIA L4 GPU. Controlled benchmark methodology isolated request serialization in the production Ollama serving layer as the throughput bottleneck — not the hardware or model. Migration to vLLM continuous batching delivered a <strong>6.22× speedup at C=8</strong> over the production setup on the same hardware (3.6× from the serving stack alone), taking the 12,125-image archival corpus from 22 hours to 3.7 hours with GPU utilization rising from 28% to 97%.</p>
         <div class="project-tags">
           <span class="tag tag-accent">vLLM</span><span class="tag tag-accent">LLaVA</span><span class="tag tag-accent">NVIDIA L4</span><span class="tag">Continuous Batching</span><span class="tag">GPU Profiling</span><span class="tag">Performance Engineering</span>
         </div>
@@ -375,9 +375,9 @@
         </div>
         <div class="project-num">12</div>
         <div class="project-title">Document Intelligence on One GPU · Local Model Evaluation</div>
-        <p class="project-desc">Model evaluation case study that starts by defining the problem: proposal packets, contracts, research awards and reports keep their most useful facts in scanned text, budget tables, charts, spreadsheets flattened into PDF and clauses buried deep in the document. Eleven open-weight models across seven frozen tasks, measured under a conformance-checked protocol and sized for a single NVIDIA L4 or L40S, public benchmarks only, no model grading another. Findings: in a pre-registered final round on fresh data, the 0.9B PaddleOCR-VL-1.6 beat Qwen3-VL 32B on financial tables (0.852 vs 0.762 TEDS, 97.4% numeric recall); Nemotron 3.5 Parse wrote the best page text at 140 cases a minute; the same self-check method moves one model up 26.5 points and another down 43.5 on chart questions; and on 60 fresh contract documents, local Qwen3 32B answered 18 of 30 entailment questions against 12 for a hosted model. Includes an interactive results explorer and an evidence-by-ID extraction design for clause questions.</p>
+        <p class="project-desc">Model evaluation case study that starts by defining the problem: proposal packets, contracts, research awards and reports keep their most useful facts in scanned text, budget tables, charts, spreadsheets flattened into PDF and clauses buried deep in the document. Eleven open-weight models across seven frozen tasks, measured under a conformance-checked protocol and sized for a single NVIDIA L4 or L40S, public benchmarks only, no model grading another. Findings: in a pre-registered final round on fresh data, the 0.9B PaddleOCR-VL-1.6 beat Qwen3-VL 32B on financial tables (0.852 vs 0.762 TEDS, 97.4% numeric recall); Nemotron 3.5 Parse was the strongest single-model page reader at 140 cases a minute; the same self-check method moves one model up 26.5 points and another down 43.5 on chart questions; and on 60 fresh contract documents, local Qwen3 32B answered 18 of 30 entailment questions against 12 for a hosted model. Includes an interactive results explorer and an evidence-by-ID extraction design for clause questions.</p>
         <div class="project-tags">
-          <span class="tag tag-accent">Model Evaluation</span><span class="tag tag-accent">Open-Weight Models</span><span class="tag tag-accent">Private Data</span><span class="tag">OCR</span><span class="tag">Table Extraction</span><span class="tag">Chart QA</span><span class="tag">Evidence-Linked Extraction</span><span class="tag">L4 · L40S</span><span class="tag">Ollama · vLLM</span>
+          <span class="tag tag-accent">Model Evaluation</span><span class="tag tag-accent">Open-Weight Models</span><span class="tag">OCR</span><span class="tag">Table Extraction</span><span class="tag">Chart QA</span><span class="tag">Evidence-Linked Extraction</span><span class="tag">L4 · L40S</span><span class="tag">Ollama · vLLM</span>
         </div>
       </div>
 
@@ -414,7 +414,7 @@
         </div>
         <div class="project-num" style="color: var(--accent3);">&#10022; 12</div>
         <div class="project-title">Skyrule &middot; Agentic AI Organization &amp; Local LLM Stack</div>
-        <p class="project-desc">A self-funded personal project (August 2026 &ndash; present): a relational-intelligence product built by a <strong>15-agent AI engineering organization</strong> I designed, with code ownership enforced by tooling and an autonomous job queue and GPU scheduler that has launched <strong>650+ unattended jobs</strong>. A self-hosted vLLM stack on an RTX 5090 runs quantized open-weights models; every generated claim passes code validators before founder review, and quality is accepted by statistical sampling with bars set before measurement. Dedicated quality-governance and security functions can block a release. 1,375 automated tests passing.</p>
+        <p class="project-desc">A self-funded personal project (August 2026 &ndash; present): a relational-intelligence product built by a <strong>15-agent AI engineering organization</strong> I designed, with code ownership enforced by tooling and an autonomous job queue and GPU scheduler that has launched <strong>2,400+ unattended jobs</strong> (as of Oct 26, 2026). A self-hosted vLLM stack on an RTX 5090 runs quantized open-weights models; every generated claim passes code validators before founder review, and quality is accepted by statistical sampling with bars set before measurement. Dedicated quality-governance and security functions can block a release. 1,375 automated tests passing.</p>
         <div class="project-tags">
           <span class="tag tag-accent">Multi-Agent Systems</span><span class="tag tag-accent">vLLM</span><span class="tag">Qwen3-32B AWQ</span><span class="tag">LLM Validation</span><span class="tag">Acceptance Sampling</span><span class="tag">FastAPI</span><span class="tag">Personal Project</span>
         </div>
@@ -564,7 +564,7 @@
     <div class="exp-entry">
       <div class="exp-meta"><div class="exp-date">Nov 2023 – Present</div><div class="exp-org">AITS · AI Solutions Team<br>(formerly Advanced Analytics)<br>University of Illinois System</div></div>
       <div class="exp-content">
-        <div class="exp-title">Data Scientist · Applied AI & Advanced Analytics Lead</div>
+        <div class="exp-title">Data Scientist · Applied AI & Advanced Analytics</div>
         <p class="exp-desc">Reclassified from Data Engineer to Data Scientist in Nov 2023. Functionally assumed Advanced Analytics team lead role in early 2023 following major team departures and organizational restructuring — owning architecture, delivery, prioritization, governance, and executive engagement for multiple institutional AI platforms. Moved with the analytics function to the new AI Solutions Team in Nov 2025 (team move, no formal title change).</p>
         <div class="exp-highlights">
           <div class="exp-highlight">Architected and deployed the <strong>Legislative Intelligence Platform</strong> to Azure App Service — the first production cloud AI deployment in team history</div>
@@ -573,7 +573,7 @@
           <div class="exp-highlight">Regular presenter to <strong>executive leadership, governance committees, and the Enterprise Architecture Committee</strong>; member, university-wide Generative AI Committee</div>
           <div class="exp-highlight">Architected the <strong>Linux-based AI execution environment</strong> supporting all production AI pipelines; built custom pipeline monitoring and alerting platform (MLflow/Airflow equivalent)</div>
           <div class="exp-highlight">Led production throughput engineering migrating from Ollama to vLLM continuous batching — <strong>6.22× speedup on the same GPU</strong></div>
-          <div class="exp-highlight">Validated bill passage prediction on a held-out General Assembly: <strong>75.1% precision, 76.2% recall, median 21 days&#8217; warning</strong> (September 2026)</div>
+          <div class="exp-highlight">Validated floor-vote prediction on a held-out General Assembly: <strong>75.1% precision, 76.2% recall, median 21 days&#8217; warning</strong> (September 2026)</div>
           <div class="exp-highlight">Technical lead, architect and project manager for the <strong>RIMS archival pipeline production build</strong> across AITS and the University Library, mentoring the Library&#8217;s engineer toward full ownership</div>
           <div class="exp-highlight">Recovered and rebuilt a lost <strong>quarterly retirement-risk forecasting system</strong> end to end in Python, delivering the outstanding report the same day and correcting long-standing statistical defects</div>
         </div>

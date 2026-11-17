@@ -552,7 +552,7 @@
       <div class="prose">
         <p>The Method 2 LLaVA Direct pipeline was running at <strong>~9 images per minute</strong> in production — meaning a full pass over the 12,125-image corpus required <strong>roughly 22 hours</strong>. This constraint became binding as the project moved from POC to operational scale-up.</p>
         <p>A controlled performance characterization on the same NVIDIA L4 GPU isolated the bottleneck as the <strong>serving layer</strong> rather than the hardware or model. GPU utilization was sitting at <strong>28–31%</strong> while p50 latency inflated 8.18× under concurrent requests — the diagnostic signature of request serialization at the Ollama daemon.</p>
-        <p>Migrating to vLLM 0.6.6 with continuous batching, holding the same model class and identical hardware, recovered the unused capacity: <strong>55.4 images per minute</strong> at C=8, with GPU utilization climbing to <strong>97%</strong>. A same-model control rerun confirmed the speedup was attributable to the serving architecture rather than a model swap.</p>
+        <p>Migrating to vLLM 0.6.6 with continuous batching, on identical hardware, recovered the unused capacity: <strong>55.4 images per minute</strong> at C=8, with GPU utilization climbing to <strong>97%</strong>. A same-model control rerun confirmed the speedup was attributable to the serving architecture rather than a model swap.</p>
         <p>The full benchmark methodology, the four supporting charts, and the apples-to-apples model-architecture control are documented in the companion case study.</p>
       </div>
       <div>

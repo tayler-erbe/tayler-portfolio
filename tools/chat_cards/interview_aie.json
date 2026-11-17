@@ -1526,7 +1526,7 @@
      "url": "vllm-inference-throughput-evaluation.html"
     }
    ],
-   "answer": "I sample GPU utilization, VRAM and power in the same window as the workload, because averages from separate runs hide the signature I'm looking for. On the archival image job, one-second nvidia-smi sampling showed 28 to 31% utilization with VRAM and power flat while latency climbed, which meant the GPU was waiting on serialized requests; a faster card would have recovered nothing. After the move to vLLM the same card ran at 96 to 97%, 19 to 20 GB of VRAM and 71 to 72W, against about 27W before. I apply the USE method (utilization, saturation, errors) and preflight every run to confirm the GPU is idle first, at 3 MiB used. Longer sweeps also track temperature and KV cache against alarms; the L4 peaked at 70°C.",
+   "answer": "I sample GPU utilization, VRAM and power in the same window as the workload, because averages from separate runs hide the signature I'm looking for. On the archival image job, 2 Hz (every 500 ms) GPU sampling showed 28 to 31% utilization with VRAM and power flat while latency climbed, which meant the GPU was waiting on serialized requests; a faster card would have recovered nothing. After the move to vLLM the same card ran at 96 to 97%, 19 to 20 GB of VRAM and 71 to 72W, against about 49 W before. I apply the USE method (utilization, saturation, errors) and preflight every run to confirm the GPU is idle first, at 3 MiB used. Longer sweeps also track temperature and KV cache against alarms; the L4 peaked at 70°C.",
    "sources": [
     "work_history.md:294",
     "work_history.md:295",
