@@ -1056,11 +1056,10 @@ card(EX, "ex-what-i-can-help-with", "What I can help a team with", [
     L("About", "index.html#about"),
     LAB_LINK,
 ], """
-Five kinds of work. Data engineering: pipelines that turn documents and databases into data people can check. Performance
+Four kinds of work. Data engineering: pipelines that turn documents and databases into data people can check. Performance
 engineering: benchmarking, throughput, GPU use and cost, like the 6.22x speedup on one GPU. AI solutions architecture:
 model selection, infrastructure and deployment, like the legislative platform on Azure. Forward-deployed engineering:
-working directly with the people who have the problem and building what they need. AI consulting: making trade-offs plain
-and recommending what's worth building. I own projects from discovery through delivery and stay close to the evidence.
+working directly with the people who have the problem and building what they need. I own projects from discovery through delivery and stay close to the evidence.
 """)
 
 card(EX, "ex-industries", "Domains and industries I've worked in", [
@@ -1166,7 +1165,7 @@ card(EX, "ex-data-scientist-or-engineer", "Data scientist or engineer?", [
 Both. My title is Data Scientist on the AI Solutions Team at the University of Illinois System. I joined as a Data
 Engineer in May 2022 and was reclassified in November 2023. Day to day I design, build and measure end-to-end systems:
 pipelines, model evaluation, inference performance and AI solutions in production. The roles I'm targeting are Data
-Engineer, Performance Engineer, AI Solutions Architect, Forward-Deployed Engineer and AI Consultant.
+Engineer, Performance Engineer, AI Solutions Architect and Forward-Deployed Engineer.
 """, prior=0.6)
 
 card(EX, "ex-solo-and-team", "Working solo and on a team", [
