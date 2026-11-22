@@ -292,13 +292,21 @@ def build():
         order = [C, C, C, L1, L1, L2, L2, L2, L2, L1, L1, C, C, C, R2, R2, R2, R2, C, C, C, HALF, SHUT, SHUT, SHUT, SHUT, SHUT, HALF]
         center('face ahead', assets['face ahead'], sx, sy, cels=order, hold=4 / 9)
 
-    @group('Clouds inside the sky', 'Drawn from your approved picture, each with its whole outline: the bank above the sun, the long bank behind the tree, the small cloud to its right.',
+    @group('Clouds inside the sky', 'Drawn from your approved picture: eight cloud pieces laid along one arc that runs from low on the left, behind the tree, up and over the sun, mirroring the veil edge and separating night from the sun; plus the small cloud to the right of the tree.',
            'Each rocks a degree or two on a pin and shifts a few pixels, on different cycles.', 'Ready')
     def _():
-        c1 = resized(piece('ap_cloud_1'), 262)
-        center('cloud above the sun', c1, 474, 306, sway=[1.7, 5.0, 0], slide=[4, 1, 5.0, 0])
-        c2 = resized(piece('ap_cloud_2'), 300)
-        center('cloud behind the tree', c2, 330, 590, sway=[-1.5, 6.2, .8], slide=[-4, 1, 6.2, .8])
+        # One arc of cloud running from low on the left, behind the tree, up and over the sun to the right edge,
+        # parallel to the veil's edge: the boundary between night and the sun, as in the approved picture.
+        # (x, y, width, tilt in degrees, piece, mirrored): a low bank on the left rising behind the tree, then the
+        # bank over the sun tilted along the veil's curve, flattening toward the right edge.
+        arc = [(226, 552, 200, 20, 'ap_cloud_1', 0), (186, 600, 270, 6, 'ap_cloud_1', 0), (252, 584, 250, 12, 'ap_cloud_2', 1), (304, 548, 210, 30, 'ap_cloud_1', 1),
+               (392, 356, 205, 36, 'ap_cloud_1', 0), (448, 322, 245, 25, 'ap_cloud_1', 1), (512, 298, 245, 17, 'ap_cloud_1', 1),
+               (570, 280, 205, 11, 'ap_cloud_2', 1)]
+        for j, (x, y, w, ang, name, flip) in enumerate(arc):
+            im = resized(piece(name), w)
+            if flip: im = im.transpose(Image.FLIP_LEFT_RIGHT)
+            center(f'arc cloud {j + 1}', lean(im, ang), x, y,
+                   sway=[(1.4 + .3 * (j % 3)) * (-1) ** j, 4.4 + .7 * (j % 4), j * .8], slide=[3 * (-1) ** j, 1, 5.0 + .6 * j, j])
         c3 = resized(piece('ap_cloud_3'), 92)
         center('cloud right of the tree', c3, 470, 612, sway=[1.6, 4.4, 2.0], slide=[3, -1, 4.4, 2.0])
 
