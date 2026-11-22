@@ -4,7 +4,7 @@
 
 | File | Use |
 | --- | --- |
-| [celestial-opening.html](current/celestial-opening.html) | Standalone 1.38 MB browser prototype with its WebP assets embedded |
+| [celestial-opening.html](current/celestial-opening.html) | Standalone browser prototype with its WebP assets embedded |
 | [celestial-motion.gif](current/celestial-motion.gif) | Looping 12-second preview of the same artwork |
 | [approved-portrait.webp](current/approved-portrait.webp) | Approved composition reference for scale and placement |
 | [animation-still.webp](current/animation-still.webp) | The layered render at its resting pose |
@@ -27,9 +27,10 @@
 | [04 · First paper cutouts](studies/04-first-paper-cutouts/) | Tested rigid sprite turns, cloud-bank offsets, mesh-like clockwork, branch pivots and an alternate face cel. The layering worked structurally. The new placement exposed too much of the veil and gave the gears too little visual weight. |
 | [05 · Approved layout with layered reveal](studies/05-layered-portrait/) | Returned to the preferred portrait, increased the visual weight of the clockwork and interleaved moving sheets. The stepped mechanical motion was close. The cloud banks still read too small, the planets too large, and the pale highlights too muted relative to the original engraving. |
 | [06 · Broader cloud banks](studies/06-broader-cloud-banks/) | Kept the approved layout and stepped cutout motion. Rebuilt the reveal with larger, near-ivory cloud banks and planets roughly one-third smaller. Compared with the approved portrait, the banks still read as many small scalloped puffs, and the turning sun rays and their backing came out grey beside the portrait's warm gold. |
-| [Current · Drawn cloud banks](current/) | Replaced the stacked puffs with five long cloud banks drawn for this reveal (`cloud_banks/`: ivory crowns, slate engraved shadows, a hanging skirt of streaks). Order below the clockwork is bank, ribbon, bank, ribbon and zigzag, bank, ribbon, bank, bank; three small planets sit between sheets. The sun's backing is now taken from the approved portrait and the rays are graded to its gold-cream. Motion is unchanged: nine poses a second, the same pivots and timings. |
+| [07 · Drawn cloud banks](studies/07-drawn-cloud-banks/) | Replaced the stacked puffs with five long cloud banks drawn for this reveal (`cloud_banks/`: ivory crowns, slate engraved shadows, a hanging skirt of streaks). Order below the clockwork is bank, ribbon, bank, ribbon and zigzag, bank, ribbon, bank, bank; three small planets sit between sheets. The sun's backing is now taken from the approved portrait and the rays are graded to its gold-cream. Motion is unchanged: nine poses a second, the same pivots and timings. |
+| [Current · More movement](current/) | Same composition. The crescent moon is now its own piece (cut from the portrait, sky patched beneath) and rocks and drifts. Stars turn about three times faster and every third one rocks in place. Cloud banks and ribbons travel about twice as far on shorter cycles. Four more leaf clumps lifted from the portrait rock on the tree, and the two existing boughs and the grass swing wider. Still nine poses a second. The clouds inside the dome (around the sun and above the hills) are part of the portrait plate and do not move. |
 
-The earlier HTML and GIF variants were rebuilt from retained sources and preview media for this archive. Their original Library versions were unavailable for an exact byte comparison. The current HTML and GIF are the drawn-cloud-bank revision, built together from `source/` in one run. The previous two passes are preserved in Studies 05 and 06.
+The earlier HTML and GIF variants were rebuilt from retained sources and preview media for this archive. Their original Library versions were unavailable for an exact byte comparison. The current HTML and GIF are the more-movement revision, built together from `source/` in one run. Earlier passes are preserved in Studies 05 to 07.
 
 Known differences from the approved portrait in the current still: the reveal is brighter and busier than the portrait's quieter grey-blue banks; the ringed planet near the upper gear is very small; the rays are a separate plate, so their exact shapes differ from the portrait's.
 

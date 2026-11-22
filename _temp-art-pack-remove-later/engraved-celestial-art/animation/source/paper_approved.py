@@ -73,23 +73,56 @@ def find_stars(plate):
         if donor is None: continue
         clean.paste(donor,(l,t),mask)
         specs.append((f'star {len(specs)+1:02d}',cut,cx,cy,(cx-l,cy-t),
-                      rng.choice([-1,1])*rng.uniform(4,16)))
+                      rng.choice([-1,1])*rng.uniform(14,58)))
     return clean,specs
+
+def lift_moon(plate):
+    # Cut the crescent off the plate as its own paper piece and patch the sky beneath it.
+    rgb=np.asarray(plate.convert('RGB'),dtype=np.int16)
+    r,g,b=rgb.transpose(2,0,1)
+    yy,xx=np.indices((H,W))
+    near=((xx-472)/78)**2+((yy-95)/78)**2<1
+    comps,n=label((r>112)&(r-b>-6)&near,np.ones((3,3),dtype=int))
+    sizes=[(comps==i).sum() for i in range(1,n+1)]
+    body=binary_dilation(comps==1+int(np.argmax(sizes)),iterations=2)
+    ys,xs=np.where(body)
+    l,t,rr,bb=xs.min()-3,ys.min()-3,xs.max()+4,ys.max()+4
+    soft=Image.fromarray(np.uint8(gaussian_filter(body.astype(np.float32),.6)*255))
+    cut=window(plate,soft).crop((l,t,rr,bb))
+    ring=binary_dilation(body,iterations=14)&~binary_dilation(body,iterations=4)&(r<95)
+    tone=rgb[ring].mean(0); spread=rgb[ring].std(0)
+    night=np.asarray(resized(piece('b01_night_sky'),W,H).convert('RGB'),dtype=np.float32)
+    patch=(night-night[ring].mean(0))/(night[ring].std(0)+1e-3)*spread*.8+tone
+    clean=plate.copy()
+    cover=Image.fromarray(np.uint8(gaussian_filter(binary_dilation(body,iterations=3).astype(np.float32),1.1)*255))
+    clean.paste(Image.fromarray(np.clip(patch,0,255).astype('uint8')).convert('RGBA'),(0,0),cover)
+    return clean,cut,((l+rr)/2,(t+bb)/2)
+
+def bough(key,box,pivot,sway):
+    # A leafy clump lifted from the approved portrait; it rocks about the point where it joins the tree.
+    l,t,r,b=box
+    cut=alpha_mask(approved.crop(box),(2,2,r-l-3,b-t-3),'ellipse',3.0)
+    add(key,cut,pivot[0],pivot[1],(pivot[0]-l,pivot[1]-t),sway=sway)
 
 def with_grounded_foliage():
     # Two small branch tips and foreground paper-grass pieces. The trunk and traveler
     # are carried by the exact approved backdrop and do not move.
     branch=stock('tree',(269,470),(146,203,229,287),59,1.02)
-    add('small right bough',branch,358,573,(7,48),sway=[2.85,11.2,0])
+    add('small right bough',branch,358,573,(7,48),sway=[5.2,6.4,0])
     tip=stock('tree',(269,470),(161,96,268,178),66,1.02)
-    add('outer bough tip',tip,353,444,(14,48),sway=[2.1,14,0])
+    add('outer bough tip',tip,353,444,(14,48),sway=[4.4,7.6,0])
+    bough('crown clump',(300,378,412,452),(372,450),[3.4,5.2,.6])
+    bough('left clump',(226,470,326,548),(322,520),[-4.2,6.8,1.9])
+    bough('upper right clump',(382,452,452,512),(386,500),[4.6,4.6,2.7])
+    bough('lower right clump',(352,566,470,640),(360,618),[-3.8,7.4,.9])
     grass=stock('plants',(550,239),(72,64,261,214),40,.82)
-    add('grass at the tree roots',grass,438,803,(19,29),sway=[4.0,13,0])
+    add('grass at the tree roots',grass,438,803,(19,29),sway=[6.5,5.8,0])
     blades=stock('plants',(550,239),(67,64,250,209),35,.75)
-    add('near blades',blades,290,912,(17,25),sway=[-3.2,10,0])
+    add('near blades',blades,290,912,(17,25),sway=[-6.0,4.9,0])
 
 def make():
     plate,stars=find_stars(approved)
+    plate,moon,moon_at=lift_moon(plate)
     add('approved foreground and frame',plate,0,0)
 
     # Keep layer edges visible: parallel slanted ribbons and alternating
@@ -125,10 +158,10 @@ def make():
         im=grade(resized(piece(name),w),sat,light,(1,.985,.95))
         center(key,lean(im,angle),x,y,slide=[dx,dy,period,0],clip='reveal')
 
-    sheet('high silver pattern','b05_light_band_1',159,64,313,0,-2,1,36,.66,.77)
-    bank('far bank behind the gears','bank_1',226,98,420,8,4,-1,32,.66,.95)
-    sheet('gold patterned sheet','b06_light_band_2',165,120,395,4,-5,2,29,.69,.90)
-    sheet('far solar disc','b03_sun_rays',247,-2,181,-3,2,2,40,.69,.83)
+    sheet('high silver pattern','b05_light_band_1',159,64,313,0,-4,2,22,.66,.77)
+    bank('far bank behind the gears','bank_1',226,98,420,8,8,-2,19,.66,.95)
+    sheet('gold patterned sheet','b06_light_band_2',165,120,395,4,-10,4,17,.69,.90)
+    sheet('far solar disc','b03_sun_rays',247,-2,181,-3,4,4,24,.69,.83)
     ringed=stock('x4_planets',(550,314),(0,4,222,148),25,.86)
     center('far ringed planet',ringed,236,128,spin=-2.6,slide=[4,1,29,0],clip='reveal')
 
@@ -148,23 +181,25 @@ def make():
 
     # Below the clockwork: bank, ribbon, bank, pattern, bank. Each later sheet overlaps
     # the one before it, and the small planets sit between sheets so only part of each shows.
-    sheet('rainbow disc','b04_rainbow',152,186,112,0,3,-1,27,.77,.93)
-    bank('broad bank over the rainbow','bank_3',104,236,600,9,-5,2,23)
-    sheet('first engraved ribbon','b05_light_band_1',112,300,330,8,-7,2,24,.55,.84)
+    sheet('rainbow disc','b04_rainbow',152,186,112,0,6,-2,16,.77,.93)
+    bank('broad bank over the rainbow','bank_3',104,236,600,9,-10,4,14)
+    sheet('first engraved ribbon','b05_light_band_1',112,300,330,8,-15,4,14,.55,.84)
     blue=stock('x4_planets',(550,314),(268,180,397,307),15,.89)
     center('middle blue planet',blue,152,276,spin=3.7,slide=[-4,2,22,0],clip='reveal')
-    bank('second broad bank','bank_2',60,350,560,10,7,-3,19)
-    sheet('second engraved ribbon','b06_light_band_2',70,402,285,10,9,-4,21,.55,.86)
-    sheet('lower zigzag pattern','b12_zigzag_glow',72,424,230,11,9,-4,19,.66,.92)
+    bank('second broad bank','bank_2',60,350,560,10,15,-6,11)
+    sheet('second engraved ribbon','b06_light_band_2',70,402,285,10,19,-8,13,.55,.86)
+    sheet('lower zigzag pattern','b12_zigzag_glow',72,424,230,11,19,-8,11,.66,.92)
     red=stock('x4_planets',(550,314),(408,10,531,139),14,.82)
     center('near rust planet',red,60,436,spin=-4.4,slide=[4,-3,19,0],clip='reveal')
-    bank('third bank over the pattern','bank_4',30,500,540,12,-8,4,16)
-    sheet('third engraved ribbon','b05_light_band_1',40,530,250,12,6,-3,20,.55,.84)
-    bank('near bank','bank_5',10,566,500,13,8,-4,13)
-    bank('lowest bank by the hand','bank_3',0,622,420,16,-5,3,15)
+    bank('third bank over the pattern','bank_4',30,500,540,12,-17,8,10)
+    sheet('third engraved ribbon','b05_light_band_1',40,530,250,12,13,-6,12,.55,.84)
+    bank('near bank','bank_5',10,566,500,13,17,-8,8)
+    bank('lowest bank by the hand','bank_3',0,622,420,16,-10,6,9)
 
-    for name,cut,x,y,pivot,spin in stars:
-        add(name,cut,x,y,pivot,spin=spin)
+    for i,(name,cut,x,y,pivot,spin) in enumerate(stars):
+        if i%3==0: add(name,cut,x,y,pivot,sway=[22 if spin>0 else -22,1.2+(i%7)*.35,i*.9])
+        else: add(name,cut,x,y,pivot,spin=spin)
+    center('crescent moon',moon,moon_at[0],moon_at[1],sway=[5.5,6.2,0],slide=[5,-2,8.5,0])
 
     # A clean solar paper backing and full rays cut from the separate engraving plate.
     # The backing is the approved portrait blurred until the old rays disappear, so the
