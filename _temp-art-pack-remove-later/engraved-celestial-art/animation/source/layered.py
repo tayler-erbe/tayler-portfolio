@@ -213,7 +213,7 @@ def build():
         center('far ringed planet', ringed, 236, 128, spin=-2.6, slide=[4, 1, 29, 0], clip='reveal')
 
     @group('Behind the veil: the clockwork', 'Existing clean pieces: the large brass gear, the blue spoked wheel, its cream crescent, the hub and the upper gear.',
-           'Each turns on its own pivot at its own speed: the wheel one way, the crescent and hub the other, the upper gear meshing against the big gear.', 'Ready')
+           'The big gear, the blue wheel and its cream crescent turn together as one wheel; the hub turns against it; the upper gear meshes against the big gear and turns the other way.', 'Ready')
     def _():
         def clock_gear(box, w):
             g = stock('w4_gears', (550, 420), box, w, .84)
@@ -221,7 +221,7 @@ def build():
         center('upper meshing gear', lean(clock_gear((336, 11, 550, 230), 103), -9), 155, 73, spin=-5.4, clip='reveal')
         center('main brass gear', lean(clock_gear((0, 0, 395, 398), 230), 186), 20.6, 141, spin=2.82, clip='reveal')
         center('blue wheel spokes', source('w1_wheel_only', 200, sat=.73, light=.88), 20.6, 141, spin=2.82, clip='reveal')
-        add('wheel crescent', source('w2_crescent_only', 72, 190, sat=.73, light=.91), 20.6, 141, (3, 95), spin=-1.9, clip='reveal')
+        add('wheel crescent', source('w2_crescent_only', 72, 190, sat=.73, light=.91), 20.6, 141, (3, 95), spin=2.82, clip='reveal')
         center('wheel hub', source('w3_hub', 34, sat=.75, light=.84), 20.6, 141, spin=-3.9, clip='reveal')
 
     @group('Behind the veil: banks, ribbons and planets', 'Existing clean pieces: the rainbow, five broad cloud banks, three engraved ribbons, the zigzag band and two small planets tucked between them.',
@@ -243,22 +243,22 @@ def build():
         bank('lowest bank by the hand', 'bank_3', 0, 640, 440, 16, -10, 6, 9)
 
     @group('Stars', 'Stars drawn from your approved picture (eight-point engraved gold stars), one separate piece per star, placed where your stars are and at their sizes.',
-           'A third spin (each at its own speed and direction), a third swell and shrink by about a fifth, a third rock back and forth.', 'Ready')
+           'Slow and varied: a third turn slowly (each at its own speed and direction), a third swell and shrink by 10 to 20 percent, a third rock back and forth while breathing a little.', 'Ready')
     def _():
         rng = Random(31)
         import glob as _g
         n_art = len(_g.glob(str(PA.work.parent.parent / 'paper_parts' / 'ap_star_*.png')))
         art = [grade(piece(f'ap_star_{i:02d}'), .95, .98, (1, .95, .78)) for i in range(1, n_art + 1)]
         for i, (cx, cy, size) in enumerate(star_positions()):
-            im = resized(rng.choice(art), max(11, round(size * 1.35 + 4)))
+            im = resized(rng.choice(art), max(9, round(size * 1.12 + 3)))
             key = f'clean star {i + 1:02d}'
-            spin = rng.choice([-1, 1]) * rng.uniform(40, 170)
+            spin = rng.choice([-1, 1]) * rng.uniform(5, 32)
             if i % 3 == 0:
-                center(key, im, cx, cy, pulse=[.20, 1.6 + (i % 5) * .45, i * 1.3])
+                center(key, im, cx, cy, pulse=[rng.uniform(.10, .22), rng.uniform(3.0, 7.5), rng.uniform(0, 6.3)])
             elif i % 3 == 1:
                 center(key, im, cx, cy, spin=spin)
             else:
-                center(key, im, cx, cy, sway=[22 if spin > 0 else -22, 1.2 + (i % 7) * .35, i * .9])
+                center(key, im, cx, cy, sway=[rng.uniform(8, 18) * (1 if spin > 0 else -1), rng.uniform(3.0, 7.0), rng.uniform(0, 6.3)], pulse=[rng.uniform(.06, .14), rng.uniform(4.0, 8.0), rng.uniform(0, 6.3)])
 
     @group('Moon', 'Her clean crescent piece, turned and sized to sit where the approved moon sits.',
            'Rocks gently back and forth and drifts a few pixels (as you liked it).', 'Ready')
@@ -348,7 +348,7 @@ def build():
                  ('pc_bit_4', 270, 905, 66), ('pc_bit_6', 440, 800, 60)]
         for i, (n, x, y, w) in enumerate(spots):
             im = grade(resized(piece(n), round(w * 1.35)), .80, .86)
-            add(f'grass {i + 1}', im, x, y, (im.width / 2, im.height * .96), sway=[(5 + i % 3) * (-1) ** i, 2.4 + (i % 4) * .6, i * .8])
+            add(f'grass {i + 1}', im, x, y, (im.width / 2, im.height * .96), sway=[(4 + i % 3) * (-1) ** i, 5.0 + (i % 4) * 1.1, i * .8])
 
     flowers = [('pc_bit_11', 515, 840, 122), ('pc_bit_13', 560, 860, 96), ('pc_bit_12', 425, 925, 124), ('pc_bit_14', 330, 930, 84)]
 
@@ -361,7 +361,7 @@ def build():
             add(f'flower stem {i + 1}', sim, x, y, (stem.width / 2, stem.height * .96))
             hx = x - stem.width / 2 + cx
             hy = y - stem.height * .96 + cy
-            center(f'flower head {i + 1}', grade(head, .86, .92), hx, hy, spin=(7 + 3 * i) * (-1) ** i)
+            center(f'flower head {i + 1}', grade(head, .86, .92), hx, hy, spin=(2.2 + 1.1 * i) * (-1) ** i)
 
     @group('Rocks', 'Her clean rocks piece along the bottom left.', 'Still.', 'Ready')
     def _():
