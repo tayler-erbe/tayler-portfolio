@@ -32,7 +32,7 @@ def alpha_mask(im,coords,shape='polygon',blur=.45):
     result.putalpha(Image.fromarray((np.asarray(im.getchannel('A'),dtype=np.float32)*np.asarray(mask)/255).astype('uint8')))
     return result
 
-def add(key,im,x,y,origin=(0,0),size=1,slide=None,sway=None,spin=0,clip=None,variant=None):
+def add(key,im,x,y,origin=(0,0),size=1,slide=None,sway=None,spin=0,clip=None,variant=None,cels=None,hold=None):
     assets[key]=im
     row={'key':key,'at':[x,y],'pivot':list(origin)}
     if size!=1: row['scale']=size
@@ -41,6 +41,7 @@ def add(key,im,x,y,origin=(0,0),size=1,slide=None,sway=None,spin=0,clip=None,var
     if spin: row['spin']=spin
     if clip: row['clip']=clip
     if variant: row['variant']=variant
+    if cels: row['cels']=cels; row['hold']=hold
     layers.append(row)
 
 def center(key,im,x,y,**kwargs):
@@ -242,6 +243,7 @@ def render(seconds):
     for row in layers:
         key=row['key']
         if row.get('variant') and 1.3<((t+.3)%6.2)<2.4: key=row['variant']
+        if row.get('cels'): key=row['cels'][floor(t/row['hold']+1e-7)%len(row['cels'])]
         im=assets[key]
         x,y,ang=pose(row,t)
         px,py=row['pivot']

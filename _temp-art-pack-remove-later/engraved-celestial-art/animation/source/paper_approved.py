@@ -221,14 +221,21 @@ def make():
     add('independent solar rays',rays,sx,sy,pivot,spin=4.4,clip='dome')
     face=approved.crop((sx-62,sy-62,sx+62,sy+62))
     face=alpha_mask(face,(0,0,123,123),'ellipse',.8)
-    yy,xx=np.indices((face.height,face.width),dtype=np.float32)
-    field=np.zeros_like(xx)
-    for eye in [43,87]:
-        field+=2.8*np.exp(-(((xx-eye)/7)**2+((yy-49)/4.8)**2))
-    rgba=np.asarray(face)
-    glance=Image.fromarray(np.stack([map_coordinates(rgba[:,:,i],[yy,xx+field],order=1,mode='nearest') for i in range(4)],axis=-1))
-    assets['sun glances sideways']=glance
-    center('sun medallion',face,sx,sy,variant='sun glances sideways')
+    # Eye cels drawn from the approved face: the eyes travel slowly from side to side,
+    # then the lids lower and close. Each cel is matched to the approved medallion's size and tone.
+    want=np.asarray(face.convert('RGB'),dtype=np.float32)[np.asarray(face.getchannel('A'))>200].mean(0)
+    def cel(name):
+        im=resized(piece(name),face.width,face.height)
+        got=np.asarray(im.convert('RGB'),dtype=np.float32)[np.asarray(im.getchannel('A'))>200].mean(0)
+        im=grade(im,.86,1,tuple(want/got))
+        return alpha_mask(im,(0,0,face.width-1,face.height-1),'ellipse',.8)
+    names={'sun medallion':'eyes_ahead','sun looks left':'eyes_left','sun looks far left':'eyes_far_left',
+           'sun looks far right':'eyes_far_right','sun lids lowering':'eyes_half','sun eyes closed':'eyes_closed'}
+    for key,name in names.items():
+        if key!='sun medallion': assets[key]=cel(name)
+    C,L1,L2,R2,HALF,SHUT='sun medallion','sun looks left','sun looks far left','sun looks far right','sun lids lowering','sun eyes closed'
+    order=[C,C,C,L1,L1,L2,L2,L2,L2,L1,L1,C,C,C,R2,R2,R2,R2,C,C,C,HALF,SHUT,SHUT,SHUT,SHUT,SHUT,HALF]
+    center('sun medallion',cel('eyes_ahead'),sx,sy,cels=order,hold=4/9)
 
     with_grounded_foliage()
     frame_mask=Image.new('L',(W,H),255)
@@ -238,5 +245,11 @@ def make():
 
 if __name__=='__main__':
     make()
+    ks=['sun looks far left','sun looks left','sun medallion','sun looks far right','sun lids lowering','sun eyes closed']
+    strip=Image.new('RGBA',(496*7,496),'#777')
+    strip.alpha_composite(approved.crop((518-62,449-62,518+62,449+62)).resize((496,496),RESAMPLE),(0,0))
+    for i,k in enumerate(ks,1):
+        strip.alpha_composite(assets[k].resize((496,496),RESAMPLE),(i*496,0))
+    strip.convert('RGB').save(work/'eye-cels.jpg',quality=92)
     for t in [0,3,6]:
         render(t).convert('RGB').save(work/f'cloud-revision-{t}.jpg',quality=93)

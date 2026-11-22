@@ -17,6 +17,7 @@ Layered, hand-coloured engraving-style pieces for building a slowly animated ope
 | `variety_sheets/` | 24 stars, 6 sun faces, 10 moons and phases, 8 planets, 6 trees, each on magenta in a loose grid | Cut each piece out by connected components. `x1_stars` has a hazy ground. |
 | `loose_pieces/` | 14 extra single pieces (sun, moon phases, clouds, rocks, plants, landscape strips, borders, stars) | Same engraving style. |
 | `cloud_banks/` | 5 long cloud banks with a hanging skirt of engraved streaks (`bank_1` small and far to `bank_5` rising to the right) | Transparent PNGs, already cut out. Used by the animation's reveal. |
+| `sun_eye_cels/` | 6 sun-face medallions differing only in the eyes: far left, left, ahead, far right, half closed, closed | Transparent PNGs, already cut out. Used by the animation's sun. |
 | `reference/` | The original engraving | Target layout. |
 
 ## Cleanup every piece needs
