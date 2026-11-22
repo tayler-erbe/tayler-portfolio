@@ -111,6 +111,50 @@ def veil_rim():
     return im.resize((W, H), RESAMPLE)
 
 
+def clean_gear(box, w, clean_side):
+    """A gear cut from the gear sheet, rebuilt from its own clean half: the other half of the crop carries bits of the
+    neighbouring gears, so it is replaced by the clean half turned 180 degrees about the gear's centre (the gears
+    are eight-fold symmetric, so the result is the same gear, whole)."""
+    g = stock('w4_gears', (550, 420), box, w, .84)
+    a = np.asarray(g.getchannel('A')) > 128
+    H0, W0 = a.shape
+    if clean_side == 'left':
+        ys, xs = np.where(a[:, :W0 // 3])
+        cy = (ys.min() + ys.max()) / 2; r = (ys.max() - ys.min()) / 2; cx = xs.min() + r
+    else:
+        ys, xs = np.where(a[:, 2 * W0 // 3:])
+        cy = (ys.min() + ys.max()) / 2; r = (ys.max() - ys.min()) / 2; cx = xs.max() + 2 * W0 // 3 - r
+    # refine the centre: the gear looks the same turned a quarter turn, so the true centre is where the clean
+    # upper quarter, turned 90 degrees, best matches the clean lower quarter on the same side
+    from scipy.ndimage import map_coordinates
+    lum = np.asarray(g.convert('L'), dtype=np.float32) * a
+    sgn = -1 if clean_side == 'left' else 1
+    best = None
+    for dy in np.arange(-6, 6.5, 1):
+        for dx in np.arange(-6, 6.5, 1):
+            x0, y0 = cx + dx, cy + dy
+            ty, tx = np.mgrid[2:int(r * .9):2, 2:int(r * .9):2]
+            px = x0 + sgn * tx; py = y0 - ty          # upper quarter on the clean side
+            qx = x0 + sgn * ty; qy = y0 + tx          # the same points turned a quarter turn
+            v1 = map_coordinates(lum, [py.ravel(), px.ravel()], order=1)
+            v2 = map_coordinates(lum, [qy.ravel(), qx.ravel()], order=1)
+            sc = -np.mean((v1 - v2) ** 2)
+            if best is None or sc > best[0]:
+                best = (sc, x0, y0)
+    cx, cy = best[1], best[2]
+    yy, xx = np.indices(a.shape)
+    half = (xx < cx) if clean_side == 'left' else (xx >= cx)
+    keep = half & (np.hypot(xx - cx, yy - cy) <= r + 1.5)
+    rgba = np.asarray(g).copy()
+    rgba[..., 3] = np.where(keep, rgba[..., 3], 0)
+    side = Image.fromarray(rgba)
+    whole = Image.new('RGBA', g.size)
+    whole.alpha_composite(side)
+    whole.alpha_composite(side.rotate(180, resample=Image.BICUBIC, center=(cx, cy)))
+    r_i = int(np.ceil(r)) + 2
+    return whole.crop((int(cx - r_i), int(cy - r_i), int(cx + r_i), int(cy + r_i)))
+
+
 def star_positions():
     """Centre and size of every star in the approved portrait (big ones included)."""
     rgb = np.asarray(approved.convert('RGB'), dtype=np.int16)
@@ -201,46 +245,74 @@ def build():
         im = grade(resized(piece(name), w), sat, light, (1, .985, .95))
         center(key, lean(im, angle), x, y, slide=[dx, dy, period, 0], clip='reveal')
 
-    @group('Behind the veil: far layers', 'Existing clean pieces: a far sun disc, two patterned ribbons, a far cloud bank and a small ringed planet.',
-           'Each sheet slides a few pixels on its own slow cycle, alternating directions. The disc and the planet turn slowly.', 'Ready')
+    # Depth rule (multiplane): the farther a sheet sits, the smaller it is drawn and the slower and shorter it slides;
+    # the nearer, the larger, faster and farther. Neighbouring sheets slide in opposite directions.
+    def depth_motion(d, j):
+        amp = 3 + 17 * d
+        period = 24 - 15 * d
+        sgn = 1 if j % 2 == 0 else -1
+        return [sgn * amp, -sgn * amp * .32, period, j * .9]
+
+    def depth_scale(d):
+        return .82 + .40 * d
+
+    def sheet_d(key, name, x, y, w, angle, d, j, sat=.72, light=.86):
+        im = source(name, round(w * depth_scale(d)), sat=sat, light=light)
+        center(key, lean(im, angle), x, y, slide=depth_motion(d, j), clip='reveal')
+
+    def bank_d(key, name, x, y, w, angle, d, j, sat=.74, light=.98):
+        im = grade(resized(piece(name), round(w * depth_scale(d))), sat, light, (1, .985, .95))
+        center(key, lean(im, angle), x, y, slide=depth_motion(d, j), clip='reveal')
+
+    @group('Behind the veil: far layers', 'Existing clean pieces: a far sun disc, two patterned ribbons and two far cloud banks (one fills the space above the rainbow).',
+           'The farthest sheets: drawn smallest and sliding slowest and shortest (about 3 to 6 pixels over about 20 seconds), alternating directions. The disc turns slowly.', 'Ready')
     def _():
-        sheet('high silver pattern', 'b05_light_band_1', 159, 64, 313, 0, -4, 2, 22, .66, .77)
-        bank('far bank behind the gears', 'bank_1', 226, 98, 420, 8, 8, -2, 19, .66, .95)
-        sheet('gold patterned sheet', 'b06_light_band_2', 165, 120, 395, 4, -10, 4, 17, .69, .90)
+        sheet_d('high silver pattern', 'b05_light_band_1', 159, 64, 313, 0, .00, 0, .66, .77)
+        bank_d('far bank behind the gears', 'bank_1', 226, 98, 420, 8, .05, 1, .66, .95)
+        sheet_d('gold patterned sheet', 'b06_light_band_2', 165, 120, 395, 4, .10, 2, .69, .90)
         disc = lean(source('b03_sun_rays', 181, sat=.69, light=.83), -3)
         center('far solar disc', disc, 247, -2, spin=3.0, clip='reveal')
-        ringed = stock('x4_planets', (550, 314), (0, 4, 222, 148), 25, .86)
-        center('far ringed planet', ringed, 236, 128, spin=-2.6, slide=[4, 1, 29, 0], clip='reveal')
+        bank_d('far bank above the rainbow', 'bank_2', 196, 160, 360, 7, .15, 3, .66, .95)
 
     @group('Behind the veil: the clockwork', 'Existing clean pieces: the large brass gear, the blue spoked wheel, its cream crescent, the hub and the upper gear.',
-           'The big gear, the blue wheel and its cream crescent turn together as one wheel; the hub turns against it; the upper gear meshes against the big gear and turns the other way.', 'Ready')
+           'The big gear and the blue wheel turn together; the cream crescent is a fixed bracket in front of them (it does not move, like the rim in the original); the hub turns against the wheel; the upper gear meshes with the big gear and turns the other way.', 'Ready')
     def _():
-        def clock_gear(box, w):
-            g = stock('w4_gears', (550, 420), box, w, .84)
-            return alpha_mask(g, (1, 1, g.width - 2, g.height - 2), 'ellipse', .6)
-        center('upper meshing gear', lean(clock_gear((336, 11, 550, 230), 103), -9), 155, 73, spin=-5.4, clip='reveal')
-        center('main brass gear', lean(clock_gear((0, 0, 395, 398), 230), 186), 20.6, 141, spin=2.82, clip='reveal')
+        big = grade(resized(piece('gear_whole_big'), 236), .62, .80, (1, .97, .86))
+        small = grade(resized(piece('gear_whole_small'), 104), .62, .80, (1, .97, .86))
+        # tooth counts 32 and 20: the small gear turns 32/20 as fast, the other way, so the teeth stay meshed
+        center('upper meshing gear', small, 155, 73, spin=-2.82 * 32 / 20, clip='reveal')
+        center('main brass gear', big, 20.6, 141, spin=2.82, clip='reveal')
         center('blue wheel spokes', source('w1_wheel_only', 200, sat=.73, light=.88), 20.6, 141, spin=2.82, clip='reveal')
-        add('wheel crescent', source('w2_crescent_only', 72, 190, sat=.73, light=.91), 20.6, 141, (3, 95), spin=2.82, clip='reveal')
+        add('wheel crescent', source('w2_crescent_only', 72, 190, sat=.73, light=.91), 20.6, 141, (3, 95), clip='reveal')
         center('wheel hub', source('w3_hub', 34, sat=.75, light=.84), 20.6, 141, spin=-3.9, clip='reveal')
 
     @group('Behind the veil: banks, ribbons and planets', 'Existing clean pieces: the rainbow, five broad cloud banks, three engraved ribbons, the zigzag band and two small planets tucked between them.',
-           'Every sheet slides on its own cycle; nearer sheets travel farther and faster, neighbours in opposite directions. Planets turn.', 'Ready')
+           'Depth rule: each sheet nearer the viewer is drawn a little larger and slides farther and faster (from about 7 px over 20 s just in front of the gears, to about 20 px over 9 s for the nearest bank); neighbours slide in opposite directions. Planets turn.', 'Ready')
     def _():
-        sheet('rainbow disc', 'b04_rainbow', 152, 186, 112, 0, 6, -2, 16, .77, .93)
-        bank('broad bank over the rainbow', 'bank_3', 104, 236, 600, 9, -10, 4, 14)
-        sheet('first engraved ribbon', 'b05_light_band_1', 112, 300, 330, 8, -15, 4, 14, .55, .84)
-        blue = stock('x4_planets', (550, 314), (268, 180, 397, 307), 15, .89)
-        center('middle blue planet', blue, 152, 276, spin=3.7, slide=[-4, 2, 22, 0], clip='reveal')
-        bank('second broad bank', 'bank_2', 60, 350, 560, 10, 15, -6, 11)
-        sheet('second engraved ribbon', 'b06_light_band_2', 70, 402, 285, 10, 19, -8, 13, .55, .86)
-        sheet('lower zigzag pattern', 'b12_zigzag_glow', 72, 424, 230, 11, 19, -8, 11, .66, .92)
-        red = stock('x4_planets', (550, 314), (408, 10, 531, 139), 14, .82)
-        center('near rust planet', red, 60, 436, spin=-4.4, slide=[4, -3, 19, 0], clip='reveal')
-        bank('third bank over the pattern', 'bank_4', 30, 500, 540, 12, -17, 8, 10)
-        sheet('third engraved ribbon', 'b05_light_band_1', 40, 530, 250, 12, 13, -6, 12, .55, .84)
-        bank('near bank', 'bank_5', 10, 566, 500, 13, 17, -8, 8)
-        bank('lowest bank by the hand', 'bank_3', 0, 640, 440, 16, -10, 6, 9)
+        stack = [('S', 'rainbow disc', 'b04_rainbow', 160, 184, 112, 0, .78, .93),
+                 ('B', 'broad bank over the rainbow', 'bank_3', 104, 236, 560, 9),
+                 ('S', 'first engraved ribbon', 'b05_light_band_1', 112, 300, 330, 8, .55, .84),
+                 ('P', 'middle blue planet', (268, 180, 397, 307), 152, 276, 15, 3.7),
+                 ('B', 'second broad bank', 'bank_2', 60, 350, 540, 10),
+                 ('S', 'second engraved ribbon', 'b06_light_band_2', 70, 402, 285, 10, .55, .86),
+                 ('S', 'lower zigzag pattern', 'b12_zigzag_glow', 72, 424, 230, 11, .66, .92),
+                 ('P', 'near rust planet', (408, 10, 531, 139), 60, 436, 14, -4.4),
+                 ('B', 'third bank over the pattern', 'bank_4', 30, 500, 520, 12),
+                 ('S', 'third engraved ribbon', 'b05_light_band_1', 40, 530, 250, 12, .55, .84),
+                 ('B', 'near bank', 'bank_5', 10, 566, 470, 13),
+                 ('B', 'lowest bank by the hand', 'bank_3', 0, 640, 420, 16)]
+        n = len(stack)
+        for j, it in enumerate(stack):
+            d = .25 + .75 * j / (n - 1)          # 0.25 just in front of the clockwork, 1.0 the nearest sheet
+            if it[0] == 'S':
+                _, key, name, x, y, w, ang, sat, light = it
+                sheet_d(key, name, x, y, w, ang, d, j + 4, sat, light)
+            elif it[0] == 'B':
+                _, key, name, x, y, w, ang = it
+                bank_d(key, name, x, y, w, ang, d, j + 4)
+            else:
+                _, key, box, x, y, w, spin = it
+                center(key, stock('x4_planets', (550, 314), box, w, .86), x, y, spin=spin, slide=depth_motion(d, j + 4), clip='reveal')
 
     @group('Stars', 'Stars drawn from your approved picture (eight-point engraved gold stars), one separate piece per star, placed where your stars are and at their sizes.',
            'Slow and varied: a third turn slowly (each at its own speed and direction), a third swell and shrink by 10 to 20 percent, a third rock back and forth while breathing a little.', 'Ready')
