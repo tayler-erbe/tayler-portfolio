@@ -16,6 +16,7 @@ Layered, hand-coloured engraving-style pieces for building a slowly animated ope
 | `wheel_parts/` | `w1_wheel_only`, `w2_crescent_only`, `w3_hub`, `w4_gears` | Built to move as a clockwork: wheel and crescent counter-rotate about one centre, hub against the wheel, cogs mesh with the rim. `w2` and `w3` have a faint glow haze to remove. |
 | `variety_sheets/` | 24 stars, 6 sun faces, 10 moons and phases, 8 planets, 6 trees, each on magenta in a loose grid | Cut each piece out by connected components. `x1_stars` has a hazy ground. |
 | `loose_pieces/` | 14 extra single pieces (sun, moon phases, clouds, rocks, plants, landscape strips, borders, stars) | Same engraving style. |
+| `cloud_banks/` | 5 long cloud banks with a hanging skirt of engraved streaks (`bank_1` small and far to `bank_5` rising to the right) | Transparent PNGs, already cut out. Used by the animation's reveal. |
 | `reference/` | The original engraving | Target layout. |
 
 ## Cleanup every piece needs

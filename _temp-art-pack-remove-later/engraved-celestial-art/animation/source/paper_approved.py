@@ -79,9 +79,9 @@ def find_stars(plate):
 def with_grounded_foliage():
     # Two small branch tips and foreground paper-grass pieces. The trunk and traveler
     # are carried by the exact approved backdrop and do not move.
-    branch=stock('tree',(269,470),(146,203,229,287),59,.82)
+    branch=stock('tree',(269,470),(146,203,229,287),59,1.02)
     add('small right bough',branch,358,573,(7,48),sway=[2.85,11.2,0])
-    tip=stock('tree',(269,470),(161,96,268,178),66,.80)
+    tip=stock('tree',(269,470),(161,96,268,178),66,1.02)
     add('outer bough tip',tip,353,444,(14,48),sway=[2.1,14,0])
     grass=stock('plants',(550,239),(72,64,261,214),40,.82)
     add('grass at the tree roots',grass,438,803,(19,29),sway=[4.0,13,0])
@@ -119,13 +119,18 @@ def make():
             im=Image.fromarray(np.clip(rgb,0,255).astype('uint8'))
         center(key,lean(im,angle),x,y,slide=[dx,dy,period,0],clip='reveal')
 
+    def bank(key,name,x,y,w,angle,dx,dy,period,sat=.74,light=.98):
+        # Broad cloud banks drawn for this reveal: near-ivory crowns, slate engraved
+        # shadows and a hanging skirt of streaks, like the approved portrait's own banks.
+        im=grade(resized(piece(name),w),sat,light,(1,.985,.95))
+        center(key,lean(im,angle),x,y,slide=[dx,dy,period,0],clip='reveal')
+
     sheet('high silver pattern','b05_light_band_1',159,64,313,0,-2,1,36,.66,.77)
-    sheet('far cloud sheet','b07_cloud_far',178,79,341,6,4,-1,32,.48,.98,1.22)
-    sheet('gold patterned sheet','b06_light_band_2',165,115,395,3,-5,2,29,.69,.90)
+    bank('far bank behind the gears','bank_1',226,98,420,8,4,-1,32,.66,.95)
+    sheet('gold patterned sheet','b06_light_band_2',165,120,395,4,-5,2,29,.69,.90)
     sheet('far solar disc','b03_sun_rays',247,-2,181,-3,2,2,40,.69,.83)
-    ringed=stock('x4_planets',(550,314),(0,4,222,148),31,.86)
-    center('far ringed planet',ringed,208,106,spin=-2.6,slide=[4,1,29,0],clip='reveal')
-    sheet('clouds behind the wheel','b08_cloud_2',168,143,347,8,5,-2,22,.49,.97,1.21)
+    ringed=stock('x4_planets',(550,314),(0,4,222,148),25,.86)
+    center('far ringed planet',ringed,236,128,spin=-2.6,slide=[4,1,29,0],clip='reveal')
 
     # Wheel centres and apparent scale follow the approved portrait.
     def clock_gear(box,w):
@@ -141,33 +146,36 @@ def make():
     add('wheel counter-rotating crescent',crescent,20.6,141,(3,85),spin=-1.9,clip='reveal')
     center('wheel hub',source('w3_hub',30,sat=.75,light=.84),20.6,141,spin=-3.9,clip='reveal')
 
-    sheet('clouds in front of wheel','b09_cloud_3',142,198,321,10,6,-2,18,.51,.96,1.26)
-    sheet('rainbow disc','b04_rainbow',150,180,108,0,3,-1,27,.77,.93)
-    # This arc is tucked back beneath its own cloud bank.
-    sheet('bright bank over rainbow','b07_cloud_far',145,210,320,8,-5,2,23,.47,1.01,1.30)
-    sheet('first engraved ribbon','b05_light_band_1',124,235,339,4,-7,2,24,.49,.84)
-    sheet('deep scalloped cloud','b10_cloud_4',96,266,295,12,8,-3,19,.49,1.00,1.38)
-    blue=stock('x4_planets',(550,314),(268,180,397,307),19,.89)
-    center('middle blue planet',blue,84,300,spin=3.7,slide=[-4,2,22,0],clip='reveal')
-    sheet('middle scalloped cloud','b08_cloud_2',83,319,265,11,-8,3,17,.50,.98,1.40)
-    sheet('second engraved ribbon','b06_light_band_2',81,352,268,8,9,-4,21,.51,.84)
-    sheet('cloud over patterned band','b09_cloud_3',78,379,270,13,-9,5,15,.49,.99,1.39)
-    sheet('lower zigzag pattern','b12_zigzag_glow',53,410,211,12,9,-4,19,.55,.83)
-    red=stock('x4_planets',(550,314),(408,10,531,139),19,.82)
-    center('near rust planet',red,45,442,spin=-4.4,slide=[4,-3,19,0],clip='reveal')
-    sheet('clouds around near planet','b10_cloud_4',51,457,250,12,-8,4,16,.47,1.00,1.34)
-    sheet('nearest cloud sheet','b11_cloud_near',46,512,242,13,10,-5,13,.48,1.01,1.38)
-    sheet('low cloud in front of all sheets','b08_cloud_2',10,573,218,18,-6,3,15,.49,.95,1.24)
+    # Below the clockwork: bank, ribbon, bank, pattern, bank. Each later sheet overlaps
+    # the one before it, and the small planets sit between sheets so only part of each shows.
+    sheet('rainbow disc','b04_rainbow',152,186,112,0,3,-1,27,.77,.93)
+    bank('broad bank over the rainbow','bank_3',104,236,600,9,-5,2,23)
+    sheet('first engraved ribbon','b05_light_band_1',112,300,330,8,-7,2,24,.55,.84)
+    blue=stock('x4_planets',(550,314),(268,180,397,307),15,.89)
+    center('middle blue planet',blue,152,276,spin=3.7,slide=[-4,2,22,0],clip='reveal')
+    bank('second broad bank','bank_2',60,350,560,10,7,-3,19)
+    sheet('second engraved ribbon','b06_light_band_2',70,402,285,10,9,-4,21,.55,.86)
+    sheet('lower zigzag pattern','b12_zigzag_glow',72,424,230,11,9,-4,19,.66,.92)
+    red=stock('x4_planets',(550,314),(408,10,531,139),14,.82)
+    center('near rust planet',red,60,436,spin=-4.4,slide=[4,-3,19,0],clip='reveal')
+    bank('third bank over the pattern','bank_4',30,500,540,12,-8,4,16)
+    sheet('third engraved ribbon','b05_light_band_1',40,530,250,12,6,-3,20,.55,.84)
+    bank('near bank','bank_5',10,566,500,13,8,-4,13)
+    bank('lowest bank by the hand','bank_3',0,622,420,16,-5,3,15)
 
     for name,cut,x,y,pivot,spin in stars:
         add(name,cut,x,y,pivot,spin=spin)
 
     # A clean solar paper backing and full rays cut from the separate engraving plate.
-    paper=Image.new('RGBA',(W,H))
-    neutral=source('sky_patch',254,385,.39,1.08)
-    paper.alpha_composite(neutral,(371,256))
-    add('paper behind the turning rays',window(paper,polygon_mask(solar,3.3)),0,0)
-    rays=source('sun_face',345,sat=.66,light=.92)
+    # The backing is the approved portrait blurred until the old rays disappear, so the
+    # turning rays sit on the same warm paper tone as the rest of the plate.
+    paper=approved.filter(ImageFilter.GaussianBlur(11))
+    yy,xx=np.indices((H,W),dtype=np.float32)
+    # Fade the backing with distance from the sun so no corner of it shows beside the tree.
+    falloff=np.clip((196-np.hypot(xx-518,yy-449))/38,0,1)
+    backing=Image.fromarray((np.asarray(polygon_mask(solar,2.2),dtype=np.float32)*falloff).astype('uint8'))
+    add('paper behind the turning rays',window(paper,backing),0,0)
+    rays=grade(resized(piece('sun_face'),345),.72,.97,(1.0,.955,.84))
     pivot=(round(rays.width*.499),round(rays.height*.484))
     radius=58
     hole=Image.new('L',rays.size,255)
