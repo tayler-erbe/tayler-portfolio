@@ -372,7 +372,8 @@ def build():
     @group('Paper grain', 'Made in code: a faint paper and pencil grain over the whole picture, so every piece reads as the same sheet of paper.',
            'Still.', 'Ready')
     def _():
-        add('paper grain', paper_grain(), 0, 0)
+        g = paper_grain()
+        add('paper grain', g.resize((W // 2, H // 2), Image.BILINEAR), 0, 0, size=2)
 
     @group('Frame', 'The engraved frame from the approved portrait, with its inside fully cut away. It is the top layer and nothing shows outside it.',
            'Still.', 'Ready')
