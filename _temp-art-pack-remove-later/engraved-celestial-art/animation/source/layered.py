@@ -275,19 +275,18 @@ def build():
         c3 = grade(resized(piece('b07_cloud_far'), 150), .62, .97)
         center('cloud right of the tree', c3, 470, 612, sway=[1.6, 4.4, 2.0], slide=[3, -1, 4.4, 2.0])
 
-    @group('Distant hills and village', 'Clean paper piece drawn earlier from your picture: grey-violet hills, the village with its spire, hedgerows.',
-           'Still.', 'Draft piece: the village and hills are drawn differently from the approved picture.')
+    @group('Distant hills and village', 'Drawn from your approved picture as one cut-out strip: the grey-violet hills, the village with its spire, the hedgerows.',
+           'Still.', 'Ready (redrawn from your approved picture).')
     def _():
-        land = grade(resized(piece('pc_landscape'), 405), .62, .86)
-        add('hills and village', land, 172, 616)
+        land = resized(piece('ap_hills_village'), 560)
+        add('hills and village', land, 22, 606)
 
-    @group('Ground and fields', 'Her clean rolling-fields piece over a darker meadow piece.',
-           'Still.', 'Draft pieces: the fields are drawn differently from the approved picture (fewer hedgerows).')
+    @group('Ground and fields', 'Drawn from your approved picture: the striped fields and hedgerows coming forward to dark earth and grass.',
+           'Still.', 'Ready (redrawn from your approved picture).')
     def _():
-        g = piece('ground_fill')
-        meadow = g.crop((0, round(g.height * .70), g.width, g.height))
-        add('meadow', grade(resized(meadow, 548, 230), .62, .62), 27, 705)
-        add('fields', grade(resized(piece('landscape_foreground'), 560), .70, .78), 21, 684)
+        f = piece('ap_fields')
+        f = f.crop((0, round(f.height * .30), f.width, f.height))
+        add('fields', resized(f, 572, 262), 14, 712)
 
     tree, trunk, clumps = split_tree()
     tx, ty = 348 - tree.width / 2, 778 - tree.height
@@ -313,10 +312,10 @@ def build():
                  ('pc_bit_7', 520, 880, 95), ('pc_bit_9', 385, 880, 100), ('pc_bit_8', 455, 870, 90), ('pc_bit_10', 560, 790, 80),
                  ('pc_bit_4', 270, 905, 66), ('pc_bit_6', 440, 800, 60)]
         for i, (n, x, y, w) in enumerate(spots):
-            im = grade(resized(piece(n), w), .80, .86)
+            im = grade(resized(piece(n), round(w * 1.35)), .80, .86)
             add(f'grass {i + 1}', im, x, y, (im.width / 2, im.height * .96), sway=[(5 + i % 3) * (-1) ** i, 2.4 + (i % 4) * .6, i * .8])
 
-    flowers = [('pc_bit_11', 520, 812, 84), ('pc_bit_13', 556, 846, 66), ('pc_bit_12', 432, 892, 86), ('pc_bit_14', 345, 905, 60)]
+    flowers = [('pc_bit_11', 515, 840, 122), ('pc_bit_13', 560, 860, 96), ('pc_bit_12', 425, 925, 124), ('pc_bit_14', 330, 930, 84)]
 
     @group('Flowers', 'Four clean daisy pieces, each split into a still stem and a separate round flower head.',
            'The stems stay still; each flower head turns slowly on its centre (different speeds and directions).', 'Ready')
@@ -331,17 +330,22 @@ def build():
 
     @group('Rocks', 'Her clean rocks piece along the bottom left.', 'Still.', 'Ready')
     def _():
-        add('rocks', grade(resized(piece('rocks'), 340), .70, .82), 26, 868)
+        add('rocks', grade(resized(piece('rocks'), 420), .70, .82), 20, 858)
 
-    @group('The traveler', 'Clean paper piece drawn earlier from your picture: the kneeling traveler, his hand gripping the small gathered fold of the veil.',
-           'Still (he does not move).', 'Draft piece: his arm and fold are posed a little differently from the approved picture.')
+    @group('The traveler', 'Drawn from your approved picture: the kneeling traveler, his hand gripping the small gathered fold of the starry veil, which hangs behind him to the ground.',
+           'Still (he does not move).', 'Ready (redrawn from your approved picture).')
     def _():
-        man = grade(resized(piece('pc_man'), 392), .82, .9)
+        man = resized(piece('ap_traveler'), 350)
         a = np.asarray(man.getchannel('A')) > 128
         ys, xs = np.where(a)
         top = ys.min()
         hx = xs[ys < top + 6].mean()
         add('traveler', man, 82 - hx, 568 - top)
+
+    @group('Paper grain', 'Made in code: a faint paper and pencil grain over the whole picture, so every piece reads as the same sheet of paper.',
+           'Still.', 'Ready')
+    def _():
+        add('paper grain', paper_grain(), 0, 0)
 
     @group('Frame', 'The engraved frame from the approved portrait, with its inside fully cut away. It is the top layer and nothing shows outside it.',
            'Still.', 'Ready')
@@ -349,6 +353,47 @@ def build():
         m = Image.new('L', (W, H), 255)
         ImageDraw.Draw(m).rectangle((28, 26, 573, 934), fill=0)
         add('frame', window(approved, m), 0, 0)
+
+
+FLAT = {'sky', 'behind the veil backdrop', 'veil rim', 'frame', 'paper grain'}
+
+
+def paper_shadows(pad=4, dx=1.6, dy=2.4, blur=1.3, strength=.42):
+    """Bake a small offset shadow under every cut piece, like card lifted a millimetre off the one behind."""
+    done = {}
+    for row in layers:
+        if row['key'] in FLAT:
+            continue
+        keys = [row['key']] + ([row['variant']] if row.get('variant') else []) + list(row.get('cels') or [])
+        for k in dict.fromkeys(keys):
+            if k in done:
+                continue
+            im = assets[k]
+            canvas = Image.new('RGBA', (im.width + 2 * pad, im.height + 2 * pad))
+            sh = Image.new('RGBA', canvas.size)
+            a = Image.new('L', canvas.size)
+            a.paste(im.getchannel('A'), (pad + round(dx), pad + round(dy)))
+            a = a.filter(ImageFilter.GaussianBlur(blur)).point(lambda v: int(v * strength))
+            sh.paste((12, 10, 16, 255), (0, 0), a)
+            canvas.alpha_composite(sh)
+            canvas.alpha_composite(im, (pad, pad))
+            assets[k] = canvas
+            done[k] = True
+        px, py = row['pivot']
+        row['pivot'] = [px + pad, py + pad]
+
+
+def paper_grain():
+    rng = np.random.default_rng(8)
+    n = gaussian_filter(rng.standard_normal((H, W)).astype(np.float32), .7)
+    fib = gaussian_filter(rng.standard_normal((H, W)).astype(np.float32), (0.6, 5))
+    v = np.clip(.55 * n + .45 * fib, -3, 3)
+    a = np.clip(np.abs(v) * 14, 0, 40).astype('uint8')
+    rgb = np.where(v[..., None] > 0, np.array([255, 248, 230]), np.array([40, 30, 20])).astype('uint8')
+    im = Image.fromarray(np.dstack([rgb, a]), 'RGBA')
+    m = Image.new('L', (W, H), 0)
+    ImageDraw.Draw(m).rectangle((28, 26, 573, 934), fill=255)
+    return window(im, m)
 
 
 def render_rows(rows, t=0.0):
@@ -373,6 +418,7 @@ def checker(size, n=12):
 if __name__ == '__main__':
     import sys
     build()
+    paper_shadows()
     out = work / 'layer-plan'
     out.mkdir(parents=True, exist_ok=True)
     for i, (title, s, e, *_r) in enumerate(groups, 1):

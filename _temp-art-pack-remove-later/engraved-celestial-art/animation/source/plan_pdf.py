@@ -83,13 +83,10 @@ im, d = page()
 d.text((M, M), 'Before I build the motion', font=H1, fill=INK)
 y = M + 80
 y = para(d, M, y, '1. Please check the order and the movement of each layer (page 2). Tell me anything you want moved, added, removed or animated differently.', BODY)
-drafts = [(i, g[0], g[4]) for i, g in enumerate(groups, 1) if g[4].startswith('Draft')]
-y = para(d, M, y, f'2. {len(drafts)} layers use draft pieces drawn earlier tonight, which do not match your approved picture closely:', BODY)
-for i, t, st in drafts:
-    y = para(d, M + 30, y, f'Layer {i}, {t}: {st.split(":", 1)[1].strip()}', BODY, width=84)
-y = para(d, M, y, f'I recommend redrawing these {len(drafts)} from your approved picture as clean cut-out pieces: about $0.05 each, about ${0.05 * len(drafts):.2f} in total, from the art budget ($1.78 left of $10). Nothing is spent until you say yes.', BODY)
-y = para(d, M, y, '3. Once you approve, I build the moving version from exactly these layers (nine poses a second, as before) and send the HTML and the GIF together.', BODY)
-y = para(d, M, y, 'Known limit of this still: the stars are placed where your approved stars are, but a few faint ones were not picked up, so the sky has slightly fewer stars than your picture.', SMALL, fill=MUTE)
+y = para(d, M, y, '2. The traveler, the hills and village, and the fields are now drawn from your approved picture, so they keep its pen-and-ink lines and coloured-pencil colour.', BODY)
+y = para(d, M, y, '3. Four layers still read as digital next to them: the sky (made in code), the stars (her bright star pieces, glossier than your engraved ones), the clouds inside the sky, and the tree. I recommend drawing these four from your approved picture the same way: about $0.06 each, about $0.25 in total (art budget: $1.61 left of $10).', BODY)
+y = para(d, M, y, '4. Every piece now casts a small soft shadow on the layer behind it and the whole picture has a paper grain, so it reads as cut paper.', BODY)
+y = para(d, M, y, '5. Once you approve, I build the moving version from exactly these layers (nine poses a second, as before) and send the HTML and the GIF together.', BODY)
 pages.append(im)
 
 out = Path(sys.argv[1])
