@@ -21,7 +21,8 @@ work = PA.work
 groups = []          # (title, start, end, made_from, motion, status)
 
 # The reveal (behind the veil) runs down the left side to below the traveler's head.
-reveal = [(25, 24), *[(x - 1, y) for x, y in edge], (70, 640), (40, 700), (26, 760)]
+EDGE_PTS = [*edge, (70, 640), (40, 700), (26, 760), (26, 960)]
+reveal = [(25, 24), *[(x - 1, y) for x, y in EDGE_PTS[:-1]]]
 rig.reveal = reveal
 rig.veil = [(0, 0), (W, 0), (W, H), (0, H)]
 
@@ -69,6 +70,35 @@ def sky_gradient():
     return paper
 
 
+def edge_x(points):
+    """x of the veil's edge for every row, from the edge points (piecewise linear in y)."""
+    pts = sorted(points, key=lambda p: p[1])
+    ys = np.array([p[1] for p in pts], dtype=np.float32); xs = np.array([p[0] for p in pts], dtype=np.float32)
+    rows = np.arange(H, dtype=np.float32)
+    x = np.interp(rows, ys, xs)
+    top = rows < ys[0]
+    x[top] = xs[0] + (ys[0] - rows[top]) * (xs[0] - xs[1]) / max(1, ys[1] - ys[0])
+    return x
+
+
+def drawn_sky():
+    from scipy.ndimage import map_coordinates
+    sky = resized(piece('ap_sky'), W, H)
+    a = np.asarray(sky, dtype=np.float32)
+    al = a[..., 3] > 128
+    first = np.array([np.argmax(r) if r.any() else np.nan for r in al], dtype=np.float32)
+    ok = ~np.isnan(first)
+    first = np.interp(np.arange(H), np.where(ok)[0], first[ok])
+    first = gaussian_filter(first, 4)
+    target = edge_x(EDGE_PTS)
+    yy, xx = np.indices((H, W), dtype=np.float32)
+    xa, xt = first[:, None], target[:, None]
+    src = np.where(xx >= xt, xa + (xx - xt) * (W - 1 - xa) / np.maximum(1, W - 1 - xt), xx - (xt - xa))
+    out = np.stack([map_coordinates(a[..., i], [yy, src], order=1, mode='nearest') for i in range(4)], axis=-1)
+    out[..., 3] = np.where(xx < xt - 1, 0, out[..., 3])
+    return Image.fromarray(np.clip(out, 0, 255).astype('uint8'), 'RGBA')
+
+
 def veil_rim():
     """The rolled edge of the lifted veil, drawn along the approved edge, ending at the hand."""
     s = 3
@@ -106,7 +136,7 @@ def star_positions():
 def split_tree():
     """Her tree as a paper armature: the trunk and branches, plus separate leaf clumps.
     Each clump takes its own leaves and the twigs inside it, so nothing is left behind when it rocks."""
-    tree = resized(piece('tree'), 250)
+    tree = resized(piece('tree'), 262)
     a = np.asarray(tree, dtype=np.int16)
     r, g, b, al = a[..., 0], a[..., 1], a[..., 2], a[..., 3]
     leaf = (al > 100) & (g >= r - 4) & (g > b + 18)
@@ -147,10 +177,10 @@ def split_daisy(name, w):
 
 
 def build():
-    @group('Sky', 'Made in code: a painted gradient from night navy to warm cream around the sun, with an engraved hatch and stipple.',
+    @group('Sky (the veil)', 'Drawn from your approved picture: the empty starry-sky sheet, engraved navy fading through blue-grey stipple to warm cream where the sun sits, with its own rolled edge. Bent row by row so the edge follows your curve exactly.',
            'Still.', 'Ready')
     def _():
-        add('sky', sky_gradient(), 0, 0)
+        add('sky', drawn_sky(), 0, 0)
 
     @group('Behind the veil: backdrop', 'Made in code from the clean night-sky and pale-sky engravings. Shown only where the veil is lifted.',
            'Still.', 'Ready')
@@ -212,18 +242,15 @@ def build():
         bank('near bank', 'bank_5', 10, 566, 500, 13, 17, -8, 8)
         bank('lowest bank by the hand', 'bank_3', 0, 640, 440, 16, -10, 6, 9)
 
-    @group('Edge of the veil', 'Made in code: the rolled edge of the lifted sky, drawn along the approved curve down to the hand.',
-           'Still.', 'Ready')
-    def _():
-        add('veil rim', veil_rim(), 0, 0)
-
-    @group('Stars', 'Existing clean star pieces (her eight engraved stars), one per star, placed at the positions and sizes of the stars in the approved portrait.',
+    @group('Stars', 'Stars drawn from your approved picture (eight-point engraved gold stars), one separate piece per star, placed where your stars are and at their sizes.',
            'A third spin (each at its own speed and direction), a third swell and shrink by about a fifth, a third rock back and forth.', 'Ready')
     def _():
         rng = Random(31)
-        art = [grade(piece(f'star_{i:02d}'), .82, .95) for i in range(1, 9)]
+        import glob as _g
+        n_art = len(_g.glob(str(PA.work.parent.parent / 'paper_parts' / 'ap_star_*.png')))
+        art = [grade(piece(f'ap_star_{i:02d}'), .95, .98, (1, .95, .78)) for i in range(1, n_art + 1)]
         for i, (cx, cy, size) in enumerate(star_positions()):
-            im = resized(rng.choice(art), max(12, round(size * 1.55 + 5)))
+            im = resized(rng.choice(art), max(11, round(size * 1.35 + 4)))
             key = f'clean star {i + 1:02d}'
             spin = rng.choice([-1, 1]) * rng.uniform(40, 170)
             if i % 3 == 0:
@@ -265,14 +292,14 @@ def build():
         order = [C, C, C, L1, L1, L2, L2, L2, L2, L1, L1, C, C, C, R2, R2, R2, R2, C, C, C, HALF, SHUT, SHUT, SHUT, SHUT, SHUT, HALF]
         center('face ahead', assets['face ahead'], sx, sy, cels=order, hold=4 / 9)
 
-    @group('Clouds inside the sky', 'Clean cloud pieces with full outlines (no cut edges): one above the sun, one long bank to the left of the tree, one small one to the right.',
+    @group('Clouds inside the sky', 'Drawn from your approved picture, each with its whole outline: the bank above the sun, the long bank behind the tree, the small cloud to its right.',
            'Each rocks a degree or two on a pin and shifts a few pixels, on different cycles.', 'Ready')
     def _():
-        c1 = grade(resized(piece('cloud_layer_1'), 215), .62, .93)
-        center('cloud above the sun', c1, 486, 298, sway=[1.7, 5.0, 0], slide=[4, 1, 5.0, 0])
-        c2 = grade(resized(piece('b10_cloud_4'), 270), .62, .97)
-        center('cloud left of the tree', c2, 318, 592, sway=[-1.5, 6.2, .8], slide=[-4, 1, 6.2, .8])
-        c3 = grade(resized(piece('b07_cloud_far'), 150), .62, .97)
+        c1 = resized(piece('ap_cloud_1'), 262)
+        center('cloud above the sun', c1, 474, 306, sway=[1.7, 5.0, 0], slide=[4, 1, 5.0, 0])
+        c2 = resized(piece('ap_cloud_2'), 300)
+        center('cloud behind the tree', c2, 330, 590, sway=[-1.5, 6.2, .8], slide=[-4, 1, 6.2, .8])
+        c3 = resized(piece('ap_cloud_3'), 92)
         center('cloud right of the tree', c3, 470, 612, sway=[1.6, 4.4, 2.0], slide=[3, -1, 4.4, 2.0])
 
     @group('Distant hills and village', 'Drawn from your approved picture as one cut-out strip: the grey-violet hills, the village with its spire, the hedgerows.',
@@ -289,10 +316,10 @@ def build():
         add('fields', resized(f, 572, 262), 14, 712)
 
     tree, trunk, clumps = split_tree()
-    tx, ty = 348 - tree.width / 2, 778 - tree.height
+    tx, ty = 352 - tree.width / 2, 780 - tree.height
 
-    @group('Tree: trunk and branches', 'Her clean tree piece with the leaf clumps lifted off it, so the trunk and branches are a separate paper armature.',
-           'Still.', 'Ready (her tree is close to the approved one but a little narrower).')
+    @group('Tree: trunk and branches', "Her own engraved tree (from your art layers, close to the approved tree), with the leaf clumps lifted off so the trunk and branches are a separate paper armature.",
+           'Still.', 'Ready')
     def _():
         add('tree trunk', trunk, tx, ty)
 
@@ -355,7 +382,7 @@ def build():
         add('frame', window(approved, m), 0, 0)
 
 
-FLAT = {'sky', 'behind the veil backdrop', 'veil rim', 'frame', 'paper grain'}
+FLAT = {'sky', 'behind the veil backdrop', 'frame', 'paper grain'}
 
 
 def paper_shadows(pad=4, dx=1.6, dy=2.4, blur=1.3, strength=.42):
