@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101923">
+<title>Beneath the Starry Veil</title>
+<style>
+  :root {
+    color-scheme: dark;
+    background: #101923;
+    color: #eadcc0;
+    font: 16px/1.5 Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  main {
+    width: min(100%, 30rem);
+    margin-inline: auto;
+    padding-block: env(safe-area-inset-top) max(1rem, env(safe-area-inset-bottom));
+  }
+  figure {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 961 / 1536;
+    background: #16232b;
+  }
+  figure img, figure canvas, figure video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  figure img, figure video { object-fit: contain; }
+  figure video { opacity: 0.001; }
+  figure video[data-playing] { opacity: 1; }
+  canvas[hidden], video[hidden], [hidden] { display: none; }
+  .controls {
+    display: grid;
+    justify-items: center;
+    gap: .35rem;
+    padding: 1.05rem 1.15rem .35rem;
+    text-align: center;
+  }
+  button {
+    min-width: 10rem;
+    min-height: 2.75rem;
+    padding: .5rem 1.35rem;
+    border: 1px solid #b69a61;
+    border-radius: 3px;
+    color: inherit;
+    background: #1b2937;
+    font: inherit;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .6; cursor: default; }
+  :focus-visible { outline: 2px solid #f1d99c; outline-offset: 4px; }
+  .status {
+    margin: 0;
+    color: #cebd9e;
+    min-height: 1.4em;
+    font-size: .88rem;
+  }
+  .loading-line { display: block; height: 1px; width: 5rem; background: #514b41; }
+  .status:empty, .loading-line[hidden] { display: none; }
+  .loading-line[data-active] { background: #cfad71; }
+  label {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    min-height: 2rem;
+    font-size: .83rem;
+    color: #cebd9e;
+  }
+  input { accent-color: #e2c48a; }
+</style>
+</head>
+<body>
+<main>
+  <figure>
+    <img id="still" width="961" height="1536"
+      alt="An engraved traveler lifts a navy star canopy to see the clockwork beyond it."
+      fetchpriority="high" src="data:image/webp;base64,{{STILL}}">
+    <video id="motion" muted playsinline loop preload="none" aria-hidden="true" hidden></video>
+    <canvas id="scene" aria-hidden="true" hidden></canvas>
+  </figure>
+  <div class="controls">
+    <button type="button" id="action" disabled>Preview motion</button>
+    <p class="status" id="status" role="status">Loading artwork…</p>
+    <span class="loading-line" id="line" aria-hidden="true" data-active></span>
+    <label><input type="checkbox" id="reduce"> Reduce motion</label>
+  </div>
+</main>
+<script>
+(() => {
+  'use strict';
+
+  const still = document.querySelector('#still');
+  const canvas = document.querySelector('#scene');
+  const video = document.querySelector('#motion');
+  const button = document.querySelector('#action');
+  const status = document.querySelector('#status');
+  const line = document.querySelector('#line');
+  const reduce = document.querySelector('#reduce');
+  const systemMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let artworkReady = false;
+  let artworkFailed = false;
+  let mode = 'standalone';
+  let loading = false;
+  let preview = false;
+  let error = null;
+  let pendingLoad = 0;
+  let frame = 0;
+  let start = 0;
+  let renderer;
+  let gpuUnavailable = false;
+  let videoFailed = false;
+  let videoPending = null;
+  let generation = 0;
+  const motionUnavailable = () => gpuUnavailable && videoFailed;
+
+  function playVideo() {
+    if (videoPending || !video.paused) return;
+    if (!video.src) {
+      const bytes = Uint8Array.from(atob('{{VIDEO}}'), char => char.charCodeAt(0));
+      video.src = URL.createObjectURL(new Blob([bytes], {type: 'video/mp4'}));
+    }
+    video.hidden = false;
+    const attempt = generation;
+    videoPending = video.play().then(() => {
+      if (attempt === generation && wantsMotion()) video.setAttribute('data-playing', '');
+    }).catch(() => {
+      if (attempt === generation && wantsMotion()) {
+        videoFailed = true;
+        video.hidden = true;
+        sync();
+      }
+    }).finally(() => {
+      videoPending = null;
+      if (attempt !== generation) sync();
+    });
+  }
+
+  // App integration: bindLoading(initializationPromise) before initialization completes.
+  // Call beginLoading()/finishLoading() if the host uses events instead of a Promise.
+  // A button click when ready dispatches "celestial:continue" from window.
+  // The standalone Preview motion button is a viewer control and never simulates loading.
+  function beginLoading() {
+    pendingLoad++;
+    mode = 'app';
+    loading = true;
+    preview = false;
+    error = null;
+    sync();
+  }
+
+  function finishLoading() {
+    pendingLoad++;
+    mode = 'app';
+    loading = false;
+    preview = false;
+    error = null;
+    sync();
+  }
+
+  async function bindLoading(promise) {
+    beginLoading();
+    const token = pendingLoad;
+    try {
+      const result = await promise;
+      if (token === pendingLoad) finishLoading();
+      return result;
+    } catch (reason) {
+      if (token === pendingLoad) {
+        error = reason || new Error('Initialization failed');
+        loading = false;
+        sync();
+      }
+      throw reason;
+    }
+  }
+
+  window.celestialOpening = Object.freeze({
+    beginLoading,
+    finishLoading,
+    bindLoading,
+    setReduceMotion(value) {
+      reduce.checked = Boolean(value);
+      sync();
+    }
+  });
+
+  function wantsMotion() {
+    return artworkReady && !motionUnavailable() && !reduce.checked &&
+      !systemMotion.matches && !document.hidden && (loading || preview);
+  }
+
+  function stopMotion() {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    start = 0;
+    canvas.hidden = true;
+    if (!video.hidden) {
+      generation++;
+      video.pause();
+      video.removeAttribute('data-playing');
+      if (video.readyState > 0) video.currentTime = 0;
+      video.hidden = true;
+    }
+  }
+
+  function sync() {
+    const waiting = !artworkReady && !artworkFailed;
+    const motionBlocked = reduce.checked || systemMotion.matches || motionUnavailable();
+    button.textContent = mode === 'app' ? 'Continue' : preview ? 'Stop preview' : 'Preview motion';
+    button.disabled = mode === 'app' ? loading || !!error : waiting || artworkFailed || motionBlocked;
+    status.textContent = error ? 'The app could not finish loading.' :
+      loading ? 'Loading…' : waiting ? 'Loading artwork…' :
+      artworkFailed ? 'The artwork could not be loaded.' :
+      mode === 'standalone' && (reduce.checked || systemMotion.matches) ? 'Motion is paused by Reduce Motion.' :
+      mode === 'standalone' && motionUnavailable() ? 'Motion unavailable on this device.' : '';
+    line.toggleAttribute('data-active', waiting || loading);
+    line.hidden = !waiting && !loading;
+
+    if (!wantsMotion()) stopMotion();
+    else if ((mode === 'standalone' || gpuUnavailable) && !videoFailed) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      canvas.hidden = true;
+      playVideo();
+    }
+    else if (!frame) frame = requestAnimationFrame(tick);
+  }
+
+  button.addEventListener('click', () => {
+    if (mode === 'app') window.dispatchEvent(new Event('celestial:continue'));
+    else {
+      preview = !preview;
+      sync();
+    }
+  });
+  reduce.addEventListener('change', () => {
+    if (reduce.checked) preview = false;
+    sync();
+  });
+  systemMotion.addEventListener('change', () => {
+    if (systemMotion.matches) preview = false;
+    sync();
+  });
+  document.addEventListener('visibilitychange', sync);
+  canvas.addEventListener('webglcontextlost', event => {
+    event.preventDefault();
+    renderer = null;
+    gpuUnavailable = true;
+    sync();
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    gpuUnavailable = false;
+    stopMotion();
+    sync();
+  });
+
+  // Local deformations sample the approved print directly. The frame and terrain stay fixed.
+  const fragment = `precision highp float;
+    uniform sampler2D printTexture;
+    uniform float elapsed;
+    uniform float lift;
+    uniform vec2 activeStar;
+    uniform float sparkle;
+    uniform float blendMotion;
+    varying vec2 uv;
+    const vec2 size = vec2(961.0, 1536.0);
+    const float TAU = 6.28318530718;
+
+    float oval(vec2 p, vec2 center, vec2 radius) {
+      return 1.0 - smoothstep(0.05, 1.0, length((p - center) / radius));
+    }
+
+    float veilEdge(float y) {
+      // Left edge of the curved canopy in plate pixels.
+      if (y < 247.0) return mix(573.0, 378.0, (y-42.0)/205.0);
+      if (y < 490.0) return mix(378.0, 218.0, (y-247.0)/243.0);
+      if (y < 710.0) return mix(218.0, 132.0, (y-490.0)/220.0);
+      return mix(132.0, 108.0, (y-710.0)/210.0);
+    }
+
+    vec2 turn(vec2 p, vec2 origin, float a) {
+      float s = sin(a), c = cos(a);
+      return origin + mat2(c, s, -s, c) * (p-origin);
+    }
+
+    float cloud(vec2 p, vec2 center, vec2 radius, float period, float amplitude) {
+      return oval(p,center,radius) * sin(TAU*elapsed/period) * amplitude;
+    }
+
+    void main() {
+      vec2 p = uv*size;
+      // Freeze the engraved inner rim as well as the decorative outer frame.
+      vec2 low = p - vec2(45.0,42.0);
+      vec2 high = vec2(917.0,1495.0) - p;
+      float inner = smoothstep(0.0, 14.0, min(min(low.x,low.y),min(high.x,high.y)));
+      if (inner == 0.0) {
+        gl_FragColor = texture2D(printTexture,uv);
+        return;
+      }
+
+      vec2 sampleAt = p;
+      if (p.y < 1060.0) {
+        // Far and near engraved bands drift at different rates, inside the visible reveal.
+        float reveal = (1.0 - smoothstep(-26.0,-3.0,p.x-veilEdge(p.y))) *
+          (1.0-smoothstep(890.0,1035.0,p.y));
+        float drift =
+          cloud(p,vec2(295,170),vec2(181,90),61.0,2.0) +
+          cloud(p,vec2(225,285),vec2(174,103),53.0,2.8) +
+          cloud(p,vec2(125,398),vec2(175,119),45.0,3.7) +
+          cloud(p,vec2(104,534),vec2(155,118),37.0,4.4) +
+          cloud(p,vec2(98,706),vec2(147,128),31.0,5.3) +
+          cloud(p,vec2(86,874),vec2(132,99),27.0,5.7);
+        sampleAt += vec2(drift, -0.25*drift)*reveal*inner*1.65;
+      }
+
+      if (p.x < 184.0 && p.y < 390.0) {
+        // Wheel and engraved crescent share a mostly off-frame axle.
+        vec2 axle = vec2(11,227);
+        float radius = length(p-axle);
+        float rim = 1.0 - smoothstep(155.0,167.0,radius);
+        float front = 1.0 - smoothstep(319.0,365.0,p.y);
+        float ring = smoothstep(77.0,88.0,radius)*(1.0-smoothstep(121.0,131.0,radius));
+        float angle = sin(TAU*elapsed/42.0)*mix(0.102,-0.082,ring);
+        sampleAt += (turn(p,axle,angle)-p)*rim*front*inner;
+      }
+
+      if (p.y < 1240.0) {
+        // Pull the lifted fold and hand together. The anchored robe falls out of the mask.
+        float edge = 1.0 - smoothstep(16.0,116.0,abs(p.x-veilEdge(p.y)));
+        float upperVeil = edge * smoothstep(100.0,680.0,p.y) *
+          (1.0-smoothstep(912.0,1004.0,p.y));
+        float grip = oval(p,vec2(150,933),vec2(111,158));
+        float fold = oval(p,vec2(245,1030),vec2(144,181));
+        float liftMask = max(upperVeil*0.86, max(grip,fold*.84));
+        sampleAt += vec2(-10.0,-36.0)*lift*liftMask*inner;
+        float settle = (1.0-smoothstep(0.0,1.0,elapsed/5.6));
+        float onDome = smoothstep(9.0,47.0,p.x-veilEdge(p.y)) *
+          (1.0-smoothstep(655.0,920.0,p.y));
+        sampleAt.y -= 8.0*settle*onDome*inner;
+      }
+
+      if (p.y > 564.0 && p.y < 1224.0 && p.x > 330.0 && p.x < 752.0) {
+        float crown = oval(p,vec2(535,777),vec2(203,213));
+        float trunk = oval(p,vec2(560,991),vec2(37,232));
+        float wind = sin(TAU*elapsed/22.0) * (5.0*crown + .86*trunk);
+        sampleAt.x -= wind;
+      }
+
+      vec3 ink = texture2D(printTexture,mix(p,sampleAt,blendMotion)/size).rgb;
+      float spark = oval(p,activeStar,vec2(24.0)) * sparkle;
+      float sun = oval(p,vec2(829,716),vec2(159,169)) *
+        (0.031+0.031*sin(TAU*elapsed/13.0));
+      float moon = oval(p,vec2(739,214),vec2(126,125)) *
+        (0.031+0.031*sin(TAU*elapsed/17.0+1.3));
+      float gold = smoothstep(0.01,0.19,ink.r-ink.b)*smoothstep(.21,.57,ink.r);
+      ink += (vec3(.63,.43,.16)*spark + vec3(1.0,.79,.52)*(sun+moon))*gold*inner*blendMotion;
+      gl_FragColor = vec4(ink,1.0);
+    }`;
+
+  const stars = [
+    [602,92],[617,165],[688,196],[478,264],[542,289],[600,312],
+    [666,368],[576,395],[707,411],[461,384],[612,455],[505,483],
+    [408,519],[523,559],[284,581],[401,647],[324,719],[197,680],
+    [258,799],[305,846],[236,889]
+  ];
+
+  function makeRenderer() {
+    const gl = canvas.getContext('webgl', {
+      alpha: false, antialias: false, depth: false, stencil: false,
+      powerPreference: 'low-power'
+    });
+    if (!gl) throw new Error('WebGL unavailable');
+
+    function compile(type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        throw new Error(gl.getShaderInfoLog(shader));
+      }
+      return shader;
+    }
+
+    const vert = compile(gl.VERTEX_SHADER, `
+      attribute vec2 position;
+      varying vec2 uv;
+      void main() {
+        gl_Position = vec4(position,0.0,1.0);
+        uv = vec2(position.x*.5+.5,.5-position.y*.5);
+      }`);
+    const frag = compile(gl.FRAGMENT_SHADER, fragment);
+    const program = gl.createProgram();
+    gl.attachShader(program, vert);
+    gl.attachShader(program, frag);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(program));
+    }
+    gl.deleteShader(vert);
+    gl.deleteShader(frag);
+    gl.useProgram(program);
+
+    const positions = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positions);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    const position = gl.getAttribLocation(program, 'position');
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, still);
+    gl.uniform1i(gl.getUniformLocation(program,'printTexture'),0);
+    const elapsed = gl.getUniformLocation(program,'elapsed');
+    const lift = gl.getUniformLocation(program,'lift');
+    const activeStar = gl.getUniformLocation(program,'activeStar');
+    const sparkle = gl.getUniformLocation(program,'sparkle');
+    gl.uniform1f(gl.getUniformLocation(program,'blendMotion'),1);
+
+    return (seconds, plateWidth) => {
+      const width = Math.min(961, Math.max(1, Math.round(plateWidth*Math.min(1.65,devicePixelRatio))));
+      const height = Math.round(width*1536/961);
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      const inhale = Math.min(1, seconds/.9);
+      const rise = Math.min(1, Math.max(0, (seconds-.85)/4.75));
+      const opening = inhale*inhale*(3-2*inhale)*(1-rise*rise*(3-2*rise));
+      const cycle = Math.max(0,seconds-5.6);
+      const poised = Math.sin(Math.PI*cycle/18)**2 * .10;
+      const twinkle = seconds / 2.35;
+      const point = stars[Math.floor(twinkle)%stars.length];
+      const pulse = Math.sin(Math.PI*Math.min(1,(twinkle%1)*1.4))**2 * .46;
+
+      gl.uniform1f(elapsed, seconds);
+      gl.uniform1f(lift, opening+poised);
+      gl.uniform2fv(activeStar, point);
+      gl.uniform1f(sparkle, pulse);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+  }
+
+  let lastPaint = -Infinity;
+  function tick(now) {
+    frame = 0;
+    if (!wantsMotion()) return;
+    if (now-lastPaint >= 28 || canvas.hidden) {
+      try {
+        renderer ||= makeRenderer();
+        if (!start) start = now;
+        renderer((now-start)/1000,still.clientWidth);
+        canvas.hidden = false;
+        lastPaint = now;
+      } catch (reason) {
+        console.warn('Celestial animation fell back to the still image.',reason);
+        gpuUnavailable = true;
+        sync();
+        return;
+      }
+    }
+    frame = requestAnimationFrame(tick);
+  }
+
+  still.decode().then(() => {
+    artworkReady = true;
+    sync();
+  }).catch(() => {
+    artworkFailed = true;
+    sync();
+  });
+  sync();
+})();
+</script>
+</body>
+</html>

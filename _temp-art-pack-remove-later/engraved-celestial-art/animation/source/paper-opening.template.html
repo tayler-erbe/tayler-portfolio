@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101923">
+<title>Beneath the Starry Veil</title>
+<style>
+  :root { color-scheme: dark; background: #101923; color: #eadfc4; font: 16px/1.45 Georgia, serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  main {
+    max-width: 30rem;
+    margin-inline: auto;
+    padding-block: env(safe-area-inset-top) max(.8rem, env(safe-area-inset-bottom));
+  }
+  figure { position: relative; margin: 0; aspect-ratio: 5 / 8; }
+  figure img, canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+  figure img { object-fit: contain; }
+  .controls { display: grid; justify-items: center; gap: .35rem; padding: .85rem 1rem .25rem; }
+  button {
+    min-width: 10rem;
+    min-height: 2.75rem;
+    padding: .5rem 1rem;
+    border: 1px solid #b9a06c;
+    border-radius: .15rem;
+    color: inherit;
+    background: #1b2937;
+    font: inherit;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .62; cursor: default; }
+  .status { color: #c9b899; font-size: .86rem; margin: 0; text-align: center; }
+  .load-line { background: #c4a56f; width: 5rem; height: 1px; margin-block: .2rem; }
+  label { display: flex; align-items: center; gap: .35rem; min-height: 2rem; color: #c9b899; font-size: .85rem; }
+  input { accent-color: #dfc18b; }
+  [hidden], .status:empty { display: none; }
+  :focus-visible { outline: 2px solid #ead195; outline-offset: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <figure id="stage">
+    <img id="poster" alt="An engraved traveler lifts a canopy of gold stars to reveal a paper clockwork sky."
+      width="600" height="960" fetchpriority="high" src="data:image/webp;base64,{{STILL}}">
+    <canvas id="paper" aria-hidden="true" hidden></canvas>
+  </figure>
+  <div class="controls">
+    <button id="action" type="button">Preview motion</button>
+    <p id="status" class="status" role="status"></p>
+    <span id="load-line" class="load-line" aria-hidden="true" hidden></span>
+    <label><input id="reduce" type="checkbox"> Reduce motion</label>
+  </div>
+</main>
+<script>
+(() => {
+  'use strict';
+
+  const scene = {{DATA}};
+  const atlasURL = 'data:image/webp;base64,{{ATLAS}}';
+  const plate = { width: 600, height: 960 };
+  const celsPerSecond = 9;
+  const stage = document.querySelector('#stage');
+  const canvas = document.querySelector('#paper');
+  const button = document.querySelector('#action');
+  const status = document.querySelector('#status');
+  const line = document.querySelector('#load-line');
+  const reduce = document.querySelector('#reduce');
+  const system = matchMedia('(prefers-reduced-motion: reduce)');
+  let atlas;
+  let atlasTask;
+  let drawing;
+  let frame = 0;
+  let start = null;
+  let lastCel = -1;
+  let standalone = true;
+  let preview = false;
+  let loading = false;
+  let loadError = false;
+  let renderError = false;
+  let loadVersion = 0;
+
+  const clips = {};
+  for (const [name, points] of Object.entries(scene.clipPaths)) {
+    const path = new Path2D();
+    path.moveTo(...points[0]);
+    for (const point of points.slice(1)) path.lineTo(...point);
+    path.closePath();
+    clips[name] = path;
+  }
+
+  const motionReduced = () => reduce.checked || system.matches;
+  const wantsMotion = () =>
+    !renderError && !motionReduced() && !document.hidden && (preview || loading);
+
+  function stop() {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    start = null;
+    lastCel = -1;
+    canvas.hidden = true;
+  }
+
+  function prepareAtlas() {
+    if (atlasTask) return;
+    const image = new Image();
+    image.src = atlasURL;
+    atlasTask = image.decode().then(() => {
+      drawing = canvas.getContext('2d', { alpha: false });
+      if (!drawing) throw new Error('Canvas 2D is unavailable.');
+      atlas = image;
+    }).catch(() => { renderError = true; }).finally(sync);
+  }
+
+  function sync() {
+    button.textContent = standalone ? (preview ? 'Stop preview' : 'Preview motion') : 'Continue';
+    button.disabled = standalone ? motionReduced() || renderError : loading || loadError;
+    line.hidden = !loading;
+    status.textContent = loadError ? 'The app could not finish loading.' :
+      loading ? 'Loading…' :
+      standalone && motionReduced() ? 'Motion is paused by Reduce Motion.' :
+      standalone && renderError ? 'The animation could not play in this viewer.' : '';
+
+    if (!wantsMotion()) stop();
+    else if (!atlas) prepareAtlas();
+    else if (!frame) frame = requestAnimationFrame(tick);
+  }
+
+  function setLoading() {
+    loadVersion++;
+    standalone = false;
+    loading = true;
+    preview = false;
+    loadError = false;
+    sync();
+    return loadVersion;
+  }
+
+  function finishLoading() {
+    loadVersion++;
+    standalone = false;
+    loading = false;
+    preview = false;
+    loadError = false;
+    sync();
+  }
+
+  async function bindLoading(promise) {
+    const version = setLoading();
+    try {
+      const value = await promise;
+      if (version === loadVersion) finishLoading();
+      return value;
+    } catch (error) {
+      if (version === loadVersion) {
+        loading = false;
+        loadError = true;
+        sync();
+      }
+      throw error;
+    }
+  }
+
+  // Pass the real app initialization Promise to bindLoading(). The still is shown as soon
+  // as initialization finishes. On Continue, the window emits "celestial:continue".
+  window.celestialOpening = Object.freeze({
+    beginLoading: setLoading,
+    finishLoading,
+    bindLoading,
+    setReduceMotion(value) {
+      reduce.checked = Boolean(value);
+      if (reduce.checked) preview = false;
+      sync();
+    }
+  });
+
+  button.addEventListener('click', () => {
+    if (standalone) {
+      preview = !preview;
+      sync();
+    } else window.dispatchEvent(new Event('celestial:continue'));
+  });
+
+  function onMotionPreference() {
+    if (motionReduced()) preview = false;
+    sync();
+  }
+  reduce.addEventListener('change', onMotionPreference);
+  system.addEventListener('change', onMotionPreference);
+  document.addEventListener('visibilitychange', sync);
+
+  const radians = Math.PI / 180;
+  const wave = (time, period, phase) => Math.sin(2 * Math.PI * time / period + phase);
+
+  function paint(time) {
+    const width = Math.min(plate.width, Math.max(1,
+      Math.round(stage.clientWidth * Math.min(1.65, devicePixelRatio))));
+    const height = Math.round(width * plate.height / plate.width);
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+    drawing.setTransform(width / plate.width, 0, 0, height / plate.height, 0, 0);
+    for (const layer of scene.layers) {
+      const [px, py] = layer.pivot;
+      let [x, y] = layer.at;
+      let rotation = (layer.spin || 0) * time;
+      if (layer.slide) {
+        const [dx, dy, period, phase] = layer.slide;
+        const position = wave(time, period, phase);
+        x += dx * position;
+        y += dy * position;
+      }
+      if (layer.sway) {
+        const [degrees, period, phase] = layer.sway;
+        rotation += degrees * wave(time, period, phase);
+      }
+      const glance = (time + .3) % 6.2;
+      const art = layer.variant && glance > 1.3 && glance < 2.4 ? layer.variant : layer.key;
+      const [sx, sy, w, h, ox, oy] = scene.assets[art];
+      const scale = layer.scale || 1;
+      drawing.save();
+      if (layer.clip) drawing.clip(clips[layer.clip]);
+      drawing.translate(x, y);
+      if (rotation) drawing.rotate((rotation % 360) * radians);
+      drawing.drawImage(atlas, sx, sy, w, h, (ox-px)*scale, (oy-py)*scale, w*scale, h*scale);
+      drawing.restore();
+    }
+  }
+
+  function tick(now) {
+    frame = 0;
+    if (!wantsMotion()) return;
+    if (start === null) start = now;
+    const cel = Math.floor((now-start)*celsPerSecond/1000);
+    if (cel !== lastCel) {
+      try {
+        paint(cel/celsPerSecond);
+        canvas.hidden = false;
+        lastCel = cel;
+      } catch {
+        renderError = true;
+        sync();
+        return;
+      }
+    }
+    frame = requestAnimationFrame(tick);
+  }
+
+  sync();
+})();
+</script>
+</body>
+</html>

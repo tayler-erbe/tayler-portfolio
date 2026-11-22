@@ -4,6 +4,8 @@ Layered, hand-coloured engraving-style pieces for building a slowly animated ope
 
 `reference/original_engraving_reference.jpg` is the target composition: **landscape, about 1.26 : 1**, decorated border frame, a large diagonal navy star dome sweeping from the figure at lower left to the top right, the layers of "beyond the sky" under the dome's edge at upper left, a tree and a rayed sun at right, hills and a village behind the tree.
 
+**Current best animation:** [layered mobile portrait](animation/README.md), with the preferred build, previous studies, and composition and motion notes.
+
 ## Folders
 
 | Folder | What is in it | Notes |
