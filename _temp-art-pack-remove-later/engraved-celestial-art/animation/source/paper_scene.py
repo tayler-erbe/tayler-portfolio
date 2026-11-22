@@ -32,7 +32,7 @@ def alpha_mask(im,coords,shape='polygon',blur=.45):
     result.putalpha(Image.fromarray((np.asarray(im.getchannel('A'),dtype=np.float32)*np.asarray(mask)/255).astype('uint8')))
     return result
 
-def add(key,im,x,y,origin=(0,0),size=1,slide=None,sway=None,spin=0,clip=None,variant=None,cels=None,hold=None):
+def add(key,im,x,y,origin=(0,0),size=1,slide=None,sway=None,spin=0,clip=None,variant=None,cels=None,hold=None,pulse=None):
     assets[key]=im
     row={'key':key,'at':[x,y],'pivot':list(origin)}
     if size!=1: row['scale']=size
@@ -42,6 +42,7 @@ def add(key,im,x,y,origin=(0,0),size=1,slide=None,sway=None,spin=0,clip=None,var
     if clip: row['clip']=clip
     if variant: row['variant']=variant
     if cels: row['cels']=cels; row['hold']=hold
+    if pulse: row['pulse']=pulse
     layers.append(row)
 
 def center(key,im,x,y,**kwargs):
@@ -248,6 +249,8 @@ def render(seconds):
         x,y,ang=pose(row,t)
         px,py=row['pivot']
         scale=row.get('scale',1)
+        if row.get('pulse'):
+            amp,per,ph=row['pulse']; scale*=1+amp*sin(2*pi*t/per+ph)
         if ang or scale!=1:
             pad=max(3,round(max(hypot(px,py),hypot(im.width-px,py),
                                 hypot(px,im.height-py),hypot(im.width-px,im.height-py))*scale)+2)

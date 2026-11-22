@@ -81,10 +81,13 @@ def lift_moon(plate):
     rgb=np.asarray(plate.convert('RGB'),dtype=np.int16)
     r,g,b=rgb.transpose(2,0,1)
     yy,xx=np.indices((H,W))
-    near=((xx-472)/78)**2+((yy-95)/78)**2<1
-    comps,n=label((r>112)&(r-b>-6)&near,np.ones((3,3),dtype=int))
+    near=((xx-442)/100)**2+((yy-122)/100)**2<1
+    from scipy.ndimage import binary_closing, binary_fill_holes
+    # The crescent's engraved shading splits it into several pale islands; close the gaps so it lifts whole.
+    pale=binary_closing((r>88)&(r-b>-28)&(r-b<70)&near,iterations=4)
+    comps,n=label(pale,np.ones((3,3),dtype=int))
     sizes=[(comps==i).sum() for i in range(1,n+1)]
-    body=binary_dilation(comps==1+int(np.argmax(sizes)),iterations=2)
+    body=binary_dilation(binary_fill_holes(comps==1+int(np.argmax(sizes))),iterations=2)
     ys,xs=np.where(body)
     l,t,rr,bb=xs.min()-3,ys.min()-3,xs.max()+4,ys.max()+4
     soft=Image.fromarray(np.uint8(gaussian_filter(body.astype(np.float32),.6)*255))
@@ -97,6 +100,32 @@ def lift_moon(plate):
     cover=Image.fromarray(np.uint8(gaussian_filter(binary_dilation(body,iterations=3).astype(np.float32),1.1)*255))
     clean.paste(Image.fromarray(np.clip(patch,0,255).astype('uint8')).convert('RGBA'),(0,0),cover)
     return clean,cut,((l+rr)/2,(t+bb)/2)
+
+def lift_clouds(plate,box,name,outside=None):
+    # Lift the pale cloud inside the dome off the plate as its own piece and fill beneath it
+    # with the nearest sky colour, so a small rocking movement never opens a hole.
+    from scipy.ndimage import binary_closing, binary_opening, distance_transform_edt
+    l,t,rr,bb=box
+    rgb=np.asarray(plate.convert('RGB'),dtype=np.int16)[t:bb,l:rr]
+    r,g,b=rgb.transpose(2,0,1)
+    luma=(.3*r+.59*g+.11*b)
+    pale=(luma>104)&(r-b<52)&(g-b<40)&(r-g<26)
+    if outside is not None: pale&=np.asarray(polygon_mask(outside))[t:bb,l:rr]==0
+    pale=binary_opening(binary_closing(pale,iterations=2),iterations=2)
+    comps,n=label(pale)
+    keep=np.zeros_like(pale)
+    for i in range(1,n+1):
+        if (comps==i).sum()>420: keep|=comps==i
+    keep=binary_dilation(keep,iterations=2)
+    soft=Image.fromarray(np.uint8(gaussian_filter(keep.astype(np.float32),.8)*255))
+    cut=window(plate.crop(box),soft)
+    wide=binary_dilation(keep,iterations=3)
+    _,idx=distance_transform_edt(wide,return_indices=True)
+    fill=gaussian_filter(rgb[idx[0],idx[1]].astype(np.float32),(5,5,0))
+    clean=plate.copy()
+    clean.paste(Image.fromarray(np.clip(fill,0,255).astype('uint8')).convert('RGBA'),(l,t),
+                Image.fromarray(np.uint8(gaussian_filter(wide.astype(np.float32),1.0)*255)))
+    return clean,cut
 
 def bough(key,box,pivot,sway):
     # A leafy clump lifted from the approved portrait; it rocks about the point where it joins the tree.
@@ -123,6 +152,12 @@ def with_grounded_foliage():
 def make():
     plate,stars=find_stars(approved)
     plate,moon,moon_at=lift_moon(plate)
+    inner=[]
+    for name,box,pivot,sway,slide in [
+            ('cloud over the sun',(392,268,576,402),(486,340),[1.7,5.0,0],[4,1,5.0,0]),
+            ('cloud left of the tree',(150,540,352,618),(250,596),[-1.5,6.2,.8],[-4,1,6.2,.8])]:
+        plate,cut=lift_clouds(plate,box,name,solar)
+        inner.append((name,cut,pivot,(pivot[0]-box[0],pivot[1]-box[1]),sway,slide))
     add('approved foreground and frame',plate,0,0)
 
     # Keep layer edges visible: parallel slanted ribbons and alternating
@@ -170,14 +205,14 @@ def make():
         g=stock('w4_gears',(550,420),box,w,.84)
         x,y=g.width/2,g.height/2
         return alpha_mask(g,(1,1,g.width-2,g.height-2),'ellipse',.6)
-    pinion=clock_gear((336,11,550,230),92)
-    center('upper meshing gear',lean(pinion,-9),141,80,spin=-5.4,clip='reveal')
-    center('main brass gear',lean(clock_gear((0,0,395,398),205),186),20.6,141,spin=2.82,clip='reveal')
-    disk=source('w1_wheel_only',179,sat=.73,light=.88)
+    pinion=clock_gear((336,11,550,230),103)
+    center('upper meshing gear',lean(pinion,-9),155,73,spin=-5.4,clip='reveal')
+    center('main brass gear',lean(clock_gear((0,0,395,398),230),186),20.6,141,spin=2.82,clip='reveal')
+    disk=source('w1_wheel_only',200,sat=.73,light=.88)
     center('blue wheel spokes',disk,20.6,141,spin=2.82,clip='reveal')
-    crescent=source('w2_crescent_only',64,170,sat=.73,light=.91)
-    add('wheel counter-rotating crescent',crescent,20.6,141,(3,85),spin=-1.9,clip='reveal')
-    center('wheel hub',source('w3_hub',30,sat=.75,light=.84),20.6,141,spin=-3.9,clip='reveal')
+    crescent=source('w2_crescent_only',72,190,sat=.73,light=.91)
+    add('wheel counter-rotating crescent',crescent,20.6,141,(3,95),spin=-1.9,clip='reveal')
+    center('wheel hub',source('w3_hub',34,sat=.75,light=.84),20.6,141,spin=-3.9,clip='reveal')
 
     # Below the clockwork: bank, ribbon, bank, pattern, bank. Each later sheet overlaps
     # the one before it, and the small planets sit between sheets so only part of each shows.
@@ -196,9 +231,14 @@ def make():
     bank('near bank','bank_5',10,566,500,13,17,-8,8)
     bank('lowest bank by the hand','bank_3',0,622,420,16,-10,6,9)
 
+    # The clouds inside the dome rock a little, like paper on a pin.
+    for name,cut,at,pivot,sway,slide in inner:
+        add(name,cut,at[0],at[1],pivot,sway=sway,slide=slide)
+    # A third of the stars spin, a third swell and shrink, a third rock in place.
     for i,(name,cut,x,y,pivot,spin) in enumerate(stars):
-        if i%3==0: add(name,cut,x,y,pivot,sway=[22 if spin>0 else -22,1.2+(i%7)*.35,i*.9])
-        else: add(name,cut,x,y,pivot,spin=spin)
+        if i%3==0: add(name,cut,x,y,pivot,pulse=[.20,1.6+(i%5)*.45,i*1.3])
+        elif i%3==1: add(name,cut,x,y,pivot,spin=spin)
+        else: add(name,cut,x,y,pivot,sway=[22 if spin>0 else -22,1.2+(i%7)*.35,i*.9])
     center('crescent moon',moon,moon_at[0],moon_at[1],sway=[5.5,6.2,0],slide=[5,-2,8.5,0])
 
     # A clean solar paper backing and full rays cut from the separate engraving plate.
@@ -251,5 +291,13 @@ if __name__=='__main__':
     for i,k in enumerate(ks,1):
         strip.alpha_composite(assets[k].resize((496,496),RESAMPLE),(i*496,0))
     strip.convert('RGB').save(work/'eye-cels.jpg',quality=92)
+    dbg=Image.new('RGBA',(900,420),'#c33')
+    dbg.alpha_composite(assets['crescent moon'].resize((assets['crescent moon'].width*2,assets['crescent moon'].height*2)),(10,10))
+    xo=300
+    for k in ['cloud over the sun','cloud left of the tree']:
+        dbg.alpha_composite(assets[k],(xo,10)); xo+=assets[k].width+10
+    dbg.alpha_composite(assets['approved foreground and frame'].crop((330,20,580,220)),(300,200))
+    dbg.alpha_composite(assets['approved foreground and frame'].crop((140,520,580,650)),(510,230).__class__((500,200)))
+    dbg.convert('RGB').save(work/'lift-check.jpg',quality=92)
     for t in [0,3,6]:
         render(t).convert('RGB').save(work/f'cloud-revision-{t}.jpg',quality=93)
