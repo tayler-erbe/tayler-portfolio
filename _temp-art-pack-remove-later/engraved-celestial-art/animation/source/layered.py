@@ -274,17 +274,18 @@ def build():
         center('far solar disc', disc, 247, -2, spin=3.0, clip='reveal')
         bank_d('far bank above the rainbow', 'bank_2', 196, 160, 360, 7, .15, 3, .66, .95)
 
-    @group('Behind the veil: the clockwork', 'Existing clean pieces: the large brass gear, the blue spoked wheel, its cream crescent, the hub and the upper gear.',
-           'The big gear and the blue wheel turn together; the cream crescent is a fixed bracket in front of them (it does not move, like the rim in the original); the hub turns against the wheel; the upper gear meshes with the big gear and turns the other way.', 'Ready')
+    @group('Behind the veil: the clockwork', 'Redrawn whole: the big wheel as one piece (36 teeth, riveted rim, twelve spokes, suns and stars, domed hub), the small 20-tooth gear, and the cream crescent bracket.',
+           'The big wheel turns slowly as one piece; the small gear meshes with it and turns the other way at the tooth ratio (36 to 20); the cream crescent is a fixed bracket in front and does not move.', 'Ready')
     def _():
-        big = grade(resized(piece('gear_whole_big'), 236), .62, .80, (1, .97, .86))
-        small = grade(resized(piece('gear_whole_small'), 104), .62, .80, (1, .97, .86))
-        # tooth counts 32 and 20: the small gear turns 32/20 as fast, the other way, so the teeth stay meshed
-        center('upper meshing gear', small, 155, 73, spin=-2.82 * 32 / 20, clip='reveal')
-        center('main brass gear', big, 20.6, 141, spin=2.82, clip='reveal')
-        center('blue wheel spokes', source('w1_wheel_only', 200, sat=.73, light=.88), 20.6, 141, spin=2.82, clip='reveal')
-        add('wheel crescent', source('w2_crescent_only', 72, 190, sat=.73, light=.91), 20.6, 141, (3, 95), clip='reveal')
-        center('wheel hub', source('w3_hub', 34, sat=.75, light=.84), 20.6, 141, spin=-3.9, clip='reveal')
+        tone = dict(saturation=.62, light=.80, tint=(1, .97, .86))
+        wheel = grade(resized(piece('wheel_whole'), 240), tone['saturation'], tone['light'], tone['tint'])
+        small = grade(resized(piece('gear_whole_small'), 104), tone['saturation'], tone['light'], tone['tint'])
+        # One whole wheel (36 teeth) and the small gear (20 teeth): the small one turns 36/20 as fast, the other way,
+        # so the teeth stay meshed.
+        center('upper meshing gear', small, 155, 73, spin=-2.82 * 36 / 20, clip='reveal')
+        center('main wheel', wheel, 20.6, 141, spin=2.82, clip='reveal')
+        bracket = grade(resized(piece('crescent_bracket'), 104), .70, .92, (1, .98, .9))
+        center('crescent bracket', bracket, 60, 166, clip='reveal')
 
     @group('Behind the veil: banks, ribbons and planets', 'Existing clean pieces: the rainbow, five broad cloud banks, three engraved ribbons, the zigzag band and two small planets tucked between them.',
            'Depth rule: each sheet nearer the viewer is drawn a little larger and slides farther and faster (from about 7 px over 20 s just in front of the gears, to about 20 px over 9 s for the nearest bank); neighbours slide in opposite directions. Planets turn.', 'Ready')
