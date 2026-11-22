@@ -282,7 +282,8 @@ def build():
         small = grade(resized(piece('gear_whole_small'), 104), tone['saturation'], tone['light'], tone['tint'])
         # One whole wheel (36 teeth) and the small gear (20 teeth): the small one turns 36/20 as fast, the other way,
         # so the teeth stay meshed.
-        center('upper meshing gear', small, 155, 73, spin=-2.82 * 36 / 20, clip='reveal')
+        # centres set from the measured pitch circles (113 + 48 = 161 px apart), turned so a tooth sits in a gap
+        center('upper meshing gear', lean(small, 12), 164.4, 68.2, spin=-2.82 * 36 / 20, clip='reveal')
         center('main wheel', wheel, 20.6, 141, spin=2.82, clip='reveal')
         bracket = grade(resized(piece('crescent_bracket'), 104), .70, .92, (1, .98, .9))
         center('crescent bracket', bracket, 60, 166, clip='reveal')
@@ -290,7 +291,7 @@ def build():
     @group('Behind the veil: banks, ribbons and planets', 'Existing clean pieces: the rainbow, five broad cloud banks, three engraved ribbons, the zigzag band and two small planets tucked between them.',
            'Depth rule: each sheet nearer the viewer is drawn a little larger and slides farther and faster (from about 7 px over 20 s just in front of the gears, to about 20 px over 9 s for the nearest bank); neighbours slide in opposite directions. Planets turn.', 'Ready')
     def _():
-        stack = [('S', 'rainbow disc', 'b04_rainbow', 160, 184, 112, 0, .78, .93),
+        stack = [('S', 'rainbow disc', 'rainbow_orb', 160, 204, 106, 0, .78, .93),
                  ('B', 'broad bank over the rainbow', 'bank_3', 104, 236, 560, 9),
                  ('S', 'first engraved ribbon', 'b05_light_band_1', 112, 300, 330, 8, .55, .84),
                  ('P', 'middle blue planet', (268, 180, 397, 307), 152, 276, 15, 3.7),
@@ -365,21 +366,17 @@ def build():
         order = [C, C, C, L1, L1, L2, L2, L2, L2, L1, L1, C, C, C, R2, R2, R2, R2, C, C, C, HALF, SHUT, SHUT, SHUT, SHUT, SHUT, HALF]
         center('face ahead', assets['face ahead'], sx, sy, cels=order, hold=4 / 9)
 
-    @group('Clouds inside the sky', 'Drawn from your approved picture: eight cloud pieces laid along one arc that runs from low on the left, behind the tree, up and over the sun, mirroring the veil edge and separating night from the sun; plus the small cloud to the right of the tree.',
+    @group('Clouds inside the sky', 'Two single cloud pieces drawn in the arc shape (puffy billows, whole outlines): one rising from low on the left up behind the tree, one arcing over the sun along the veil curve; plus the small cloud to the right of the tree.',
            'Each rocks a degree or two on a pin and shifts a few pixels, on different cycles.', 'Ready')
     def _():
         # One arc of cloud running from low on the left, behind the tree, up and over the sun to the right edge,
         # parallel to the veil's edge: the boundary between night and the sun, as in the approved picture.
-        # (x, y, width, tilt in degrees, piece, mirrored): a low bank on the left rising behind the tree, then the
-        # bank over the sun tilted along the veil's curve, flattening toward the right edge.
-        arc = [(226, 552, 200, 20, 'ap_cloud_1', 0), (186, 600, 270, 6, 'ap_cloud_1', 0), (252, 584, 250, 12, 'ap_cloud_2', 1), (304, 548, 210, 30, 'ap_cloud_1', 1),
-               (392, 356, 205, 36, 'ap_cloud_1', 0), (448, 322, 245, 25, 'ap_cloud_1', 1), (512, 298, 245, 17, 'ap_cloud_1', 1),
-               (570, 280, 205, 11, 'ap_cloud_2', 1)]
-        for j, (x, y, w, ang, name, flip) in enumerate(arc):
-            im = resized(piece(name), w)
-            if flip: im = im.transpose(Image.FLIP_LEFT_RIGHT)
-            center(f'arc cloud {j + 1}', lean(im, ang), x, y,
-                   sway=[(1.4 + .3 * (j % 3)) * (-1) ** j, 4.4 + .7 * (j % 4), j * .8], slide=[3 * (-1) ** j, 1, 5.0 + .6 * j, j])
+        # Two single cloud pieces drawn in the arc shape: a bank rising from low on the left up behind the tree,
+        # and a bank arcing over the sun along the veil's curve.
+        left = resized(piece('arc_cloud_1'), 250)
+        center('cloud arc behind the tree', lean(left, 4), 246, 566, sway=[1.2, 6.0, 0], slide=[3, 1, 7.0, 0])
+        over = resized(piece('arc_cloud_2'), 290)
+        center('cloud arc over the sun', lean(over, 22), 470, 318, sway=[-1.2, 6.8, 1.3], slide=[-3, 1, 7.8, 1.3])
         c3 = resized(piece('ap_cloud_3'), 92)
         center('cloud right of the tree', c3, 470, 612, sway=[1.6, 4.4, 2.0], slide=[3, -1, 4.4, 2.0])
 
